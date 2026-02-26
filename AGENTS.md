@@ -3,7 +3,7 @@
 > **Application:** Fruit Crops Investment
 > **DOCS_ROOT_PATH:** `prompter/`
 > **Generated:** 2026-02-26
-> **Stage:** Pre-implementation (PRD complete, no codebase yet)
+> **Stage:** Pre-implementation (PRD complete, tech stack selected, no codebase yet)
 
 ---
 
@@ -34,64 +34,132 @@
 
 ## 2. 🧱 Tech Stack
 
-> **Status:** Not yet decided. The PRD specifies platform requirements but does not prescribe specific technologies.
+> **Status:** Decided. The project uses a Laravel + React (Inertia.js) monolith architecture.
 
-**PRD Platform Requirements:**
-- **Mobile:** iOS and Android native apps
-- **Web:** Responsive web application
-- **Admin Panel:** Web-based management dashboard
+### Core Stack
 
-**PRD Integration Requirements:**
+| Layer | Technology | Version / Notes |
+|-------|-----------|-----------------|
+| **Backend Framework** | Laravel | 12.x (PHP >= 8.2) |
+| **Backend Language** | PHP | 8.2+ |
+| **Frontend Framework** | React | 18.x (via Inertia.js 2.x) |
+| **Frontend Language** | TypeScript | 5.x |
+| **SSR Bridge** | Inertia.js | 2.x (`@inertiajs/react`) |
+| **Client-side Routing** | Ziggy | 2.x (`tightenco/ziggy`) — exposes Laravel named routes to JS |
+| **CSS Framework** | Tailwind CSS | 3.x with `@tailwindcss/forms` plugin |
+| **Build Tool** | Vite | 7.x with `laravel-vite-plugin` + `@vitejs/plugin-react` |
+
+### Data & Infrastructure
+
+| Layer | Technology | Version / Notes |
+|-------|-----------|-----------------|
+| **Database (production)** | MySQL | 8.x |
+| **Database (testing)** | SQLite | In-memory (`:memory:`) |
+| **Session Driver** | Database | `SESSION_DRIVER=database` |
+| **Cache Store** | Database | `CACHE_STORE=database` |
+| **Queue Connection** | Database | `QUEUE_CONNECTION=database` |
+| **Local Dev Environment** | Laragon | Self-hosted; no cloud CI/CD detected |
+
+### Authentication & Authorization
+
+| Layer | Technology | Version / Notes |
+|-------|-----------|-----------------|
+| **Auth Scaffolding** | Laravel Breeze | 2.x (React + TypeScript stack) |
+| **Authorization** | Custom `RoleMiddleware` | Simple `role:admin` / `role:cashier` enum check |
+| **API Auth (optional)** | Laravel Sanctum | 4.x (installed, not actively used for SPA) |
+
+### Testing & Code Quality
+
+| Layer | Technology | Version / Notes |
+|-------|-----------|-----------------|
+| **Testing Framework** | PHPUnit | 11.x (with `pest-plugin` allowed) |
+| **Code Style** | Laravel Pint | 1.x |
+
+### Dev Runner
+
+| Tool | Purpose |
+|------|---------|
+| **Concurrently** | Runs `php artisan serve`, queue worker, Pail log viewer, and Vite dev server in parallel via `composer dev` |
+
+### Platform Scope (revised from PRD)
+- **Web:** Responsive web application (Laravel + Inertia.js + React) — **primary platform**
+- **Admin Panel:** Integrated within the same web application (role-based routing)
+- **Mobile:** iOS and Android native apps — **deferred / future scope** (API via Sanctum when needed)
+
+### Integration Requirements (from PRD)
 - Payment gateways (Stripe, local payment methods)
 - Maps API (Google Maps / Mapbox)
 - Weather API for farm conditions
 - SMS / Email notification services
 - Analytics and reporting tools
 
-**Development Tooling (detected):**
+### Development Tooling
 - **Spec Management:** Prompter (spec-driven development framework)
 - **CI/CD:** GitHub Actions (`.github/` directory present)
-
-> Tech stack decisions MUST be documented in `prompter/project.md` and a TDD-Lite document before implementation begins.
+- **Code Formatting:** Laravel Pint (PHP), Prettier (TypeScript/React — to be configured)
 
 ---
 
 ## 3. 🏗️ Architecture Overview
 
-> **Status:** Not yet designed. Architecture decisions are pending FSD and TDD-Lite creation.
+> **Status:** Monolith architecture decided. Laravel + Inertia.js + React single-application deployment.
 
-**Expected Architecture (inferred from PRD):**
+**Architecture: Laravel Monolith with Inertia.js SPA Bridge**
 
 ```
-┌─────────────┐  ┌─────────────┐  ┌──────────────────┐
-│  iOS App    │  │ Android App │  │  Web Application  │
-└──────┬──────┘  └──────┬──────┘  └────────┬─────────┘
-       │                │                   │
-       └────────────────┼───────────────────┘
-                        │
-                 ┌──────▼──────┐
-                 │  API Gateway │
-                 └──────┬──────┘
-                        │
-        ┌───────────────┼───────────────┐
-        │               │               │
-  ┌─────▼─────┐  ┌─────▼─────┐  ┌─────▼──────┐
-  │   Auth    │  │ Investment│  │  Harvest   │
-  │  Service  │  │  Service  │  │  Service   │
-  └─────┬─────┘  └─────┬─────┘  └─────┬──────┘
-        │               │               │
-        └───────────────┼───────────────┘
-                        │
-                 ┌──────▼──────┐
-                 │  Database   │
-                 └─────────────┘
+┌──────────────────────────────────────────────────────┐
+│                    Browser (Client)                   │
+│  ┌────────────────────────────────────────────────┐  │
+│  │  React 18 + TypeScript + Tailwind CSS          │  │
+│  │  (Inertia.js client adapter)                   │  │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────────┐   │  │
+│  │  │  Pages/  │ │Components│ │  Layouts/     │   │  │
+│  │  │ (Inertia)│ │ (React)  │ │  (React)     │   │  │
+│  │  └──────────┘ └──────────┘ └──────────────┘   │  │
+│  └────────────────────────────────────────────────┘  │
+│         │  Inertia Protocol (XHR + JSON props)  │    │
+└─────────┼───────────────────────────────────────┼────┘
+          │                                       │
+┌─────────▼───────────────────────────────────────▼────┐
+│                 Laravel 12 Application               │
+│  ┌────────────┐ ┌────────────┐ ┌────────────────┐   │
+│  │ Controllers│ │ Middleware │ │ Inertia::render│   │
+│  │ (HTTP)     │ │ (Auth/RBAC)│ │ (Props → React)│   │
+│  └─────┬──────┘ └────────────┘ └────────────────┘   │
+│        │                                             │
+│  ┌─────▼──────┐ ┌────────────┐ ┌────────────────┐   │
+│  │  Services  │ │   Models   │ │    Jobs/       │   │
+│  │ (Business  │ │ (Eloquent) │ │  Queues        │   │
+│  │  Logic)    │ │            │ │  (DB driver)   │   │
+│  └─────┬──────┘ └─────┬──────┘ └────────────────┘   │
+│        │               │                             │
+│  ┌─────▼───────────────▼─────────────────────────┐   │
+│  │              MySQL 8.x Database               │   │
+│  │  (sessions, cache, queues, application data)  │   │
+│  └───────────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────┘
+
+External Services:
+  ├── Stripe (payments)
+  ├── Google Maps / Mapbox (geolocation)
+  ├── Weather API (farm conditions)
+  ├── SMS Gateway (OTP, notifications)
+  ├── Email Service (transactional email)
+  └── OAuth Providers (Google, Facebook, Apple)
 ```
 
-**Expected Data Flows:**
-1. Investor → Marketplace Browse → Investment Purchase → Payment Processing
-2. Farm Owner → Farm/Crop Listing → Harvest Reporting → Yield Data
-3. System → Harvest Cycle → Profit Calculation → Distribution to Investors
-4. External → Weather API → Health Alerts → Investor Notifications
+**Key Architectural Decisions:**
+- **Monolith, not microservices:** Single Laravel application serves all roles (investor, farm owner, admin)
+- **Inertia.js bridge:** Server-side routing with client-side React rendering — no separate API layer needed for the web app
+- **Database for everything:** Sessions, cache, and queues all use the database driver (simplifies infrastructure)
+- **Ziggy for routes:** Laravel named routes are available in TypeScript/React via Ziggy
+- **Breeze for auth scaffold:** Authentication UI and logic provided by Laravel Breeze (React + TS variant)
+
+**Data Flows:**
+1. Investor → Inertia Page → Laravel Controller → Eloquent → MySQL → Inertia Props → React
+2. Farm Owner → Form Submission → Controller → Validation → Model → Database
+3. System → Scheduled Jobs → Queue Worker → Business Logic → Notifications
+4. External → Webhook → Controller → Job → Process → Update State
 
 ---
 
@@ -105,26 +173,60 @@ treevest/
 ├── .agent/                        # Agent workflows
 ├── .kilocode/                     # Kilocode AI workflows
 ├── .opencode/                     # OpenCode config
-└── prompter/                      # DOCS_ROOT_PATH — Spec-driven docs
-    ├── AGENTS.md                  # Prompter framework instructions (reference only)
-    ├── prd.md                     # Product Requirements Document ✅
-    ├── project.md                 # Project conventions (template, not filled)
-    └── core/                      # Prompter core templates
-        ├── apply.md
-        ├── archive.md
-        ├── design-system.md
-        ├── epic-generator.md
-        ├── epic-single.md
-        ├── prd-generator.md
-        ├── product-brief.md
-        ├── proposal.md
-        └── skill-creator.md
+├── app/                           # Laravel application code
+│   ├── Http/
+│   │   ├── Controllers/           # Inertia page controllers
+│   │   └── Middleware/            # RoleMiddleware, auth middleware
+│   ├── Models/                    # Eloquent models
+│   ├── Services/                  # Business logic services
+│   └── Jobs/                      # Queue jobs
+├── database/
+│   ├── migrations/                # Database schema migrations
+│   ├── seeders/                   # Data seeders
+│   └── factories/                 # Model factories for testing
+├── resources/
+│   ├── js/
+│   │   ├── Pages/                 # Inertia page components (React/TSX)
+│   │   ├── Components/            # Shared React components
+│   │   ├── Layouts/               # Layout components
+│   │   ├── types/                 # TypeScript type definitions
+│   │   └── app.tsx                # Inertia app entry point
+│   ├── css/
+│   │   └── app.css                # Tailwind CSS entry
+│   └── views/
+│       └── app.blade.php          # Root Blade template (Inertia mount)
+├── routes/
+│   ├── web.php                    # Web routes (Inertia)
+│   └── auth.php                   # Breeze auth routes
+├── tests/
+│   ├── Feature/                   # Feature/integration tests
+│   └── Unit/                      # Unit tests
+├── config/                        # Laravel configuration files
+├── public/                        # Public assets
+├── storage/                       # File storage, logs, cache
+├── prompter/                      # DOCS_ROOT_PATH — Spec-driven docs
+│   ├── AGENTS.md                  # Prompter framework instructions (reference only)
+│   ├── prd.md                     # Product Requirements Document ✅
+│   ├── project.md                 # Project conventions (template, not filled)
+│   ├── epics/                     # EPIC files (DRAFT) ✅
+│   └── core/                      # Prompter core templates
+├── composer.json                  # PHP dependencies
+├── package.json                   # Node.js dependencies
+├── vite.config.ts                 # Vite build configuration
+├── tailwind.config.js             # Tailwind CSS configuration
+├── tsconfig.json                  # TypeScript configuration
+└── phpunit.xml                    # PHPUnit test configuration
 ```
 
 **Key Files:**
 - `prompter/prd.md` — Primary source of truth for product requirements
 - `prompter/AGENTS.md` — Prompter workflow instructions (reference only, do not modify)
 - `prompter/project.md` — Project conventions (needs to be filled in)
+- `prompter/epics/` — EPIC files for project planning (DRAFT)
+- `routes/web.php` — All web routes (Inertia pages)
+- `app/Http/Controllers/` — Controllers returning Inertia responses
+- `resources/js/Pages/` — React page components rendered by Inertia
+- `app/Models/` — Eloquent ORM models
 
 ---
 
@@ -283,9 +385,9 @@ Admin Approval → Listed on Marketplace
 > **Status:** UI Wireframes not yet created. Below are principles inferred from the PRD.
 
 ### Platform-Specific Requirements
-- **Mobile (iOS/Android):** Native apps with platform-specific UX patterns
-- **Web:** Responsive application adapting to desktop, tablet, and mobile viewports
-- **Admin Panel:** Web-based dashboard optimized for desktop use
+- **Web:** Responsive web application (React + Inertia.js + Tailwind CSS) — primary and only platform at launch
+- **Admin Panel:** Integrated within the same web application, role-based route separation
+- **Mobile (iOS/Android):** Deferred — future scope via API (Sanctum) + native apps
 
 ### Key UX Components (from PRD)
 - **Portfolio Dashboard:** Total value, tree count by farm/crop, growth indicators, calendar view for harvest dates, projected vs actual returns, diversification visualization
@@ -346,6 +448,23 @@ The following MUST be documented in `prompter/project.md` before implementation 
 - API response format specification
 - Git workflow and branching strategy
 - Commit message conventions
+
+### Stack-Specific Conventions (expected)
+**PHP / Laravel:**
+- Follow PSR-12 coding standards (enforced by Laravel Pint)
+- Use Eloquent ORM for database queries
+- Controllers return `Inertia::render()` responses (not JSON or Blade views)
+- Business logic in Service classes, not Controllers
+- Form validation via FormRequest classes
+- Database changes via migrations only
+
+**TypeScript / React:**
+- Strict TypeScript mode enabled
+- React functional components with hooks (no class components)
+- Inertia page components in `resources/js/Pages/`
+- Shared components in `resources/js/Components/`
+- Type definitions in `resources/js/types/`
+- Tailwind CSS for all styling (no inline styles or CSS modules)
 
 ### Prompter Conventions (active)
 - Spec files use `SHALL` / `MUST` for normative requirements
@@ -482,7 +601,6 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 
 ### Architectural Constraints
 - No codebase exists yet — project is in documentation/planning phase only
-- Tech stack has not been selected — all architecture is speculative until TDD-Lite is created
 - `prompter/project.md` is an empty template — no coding conventions established
 
 ### Regulatory Concerns
@@ -495,7 +613,7 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 - No ERD exists — data model is inferred only
 - No API Contract exists — API surface is undefined
 - No UI Wireframes exist — user interface is not designed
-- No TDD-Lite exists — technical architecture is undecided
+- No TDD-Lite exists — detailed technical architecture is undocumented (tech stack is selected)
 
 ### Performance Considerations
 - Real-time portfolio tracking may require WebSocket or SSE infrastructure
@@ -507,6 +625,11 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 ## 16. 🧪 Testing Strategy
 
 > **Status:** Not yet defined. Must be established before implementation.
+
+### Testing Stack
+- **Framework:** PHPUnit 11.x (Pest plugin allowed)
+- **Test Database:** SQLite in-memory (`:memory:`)
+- **Code Style:** Laravel Pint 1.x
 
 ### Expected Testing Approach (from PRD deliverables)
 
@@ -583,7 +706,7 @@ prompter show [change] --json --deltas-only
 | API Contract | Backend Lead | `prompter/api_contract.md` (not yet created) |
 | UI Wireframes | Design Lead | `prompter/ui_wireframes.md` (not yet created) |
 | TDD-Lite | Tech Lead | `prompter/tdd_lite.md` (not yet created) |
-| Epics | Product Owner | `prompter/epics.md` (not yet created) |
+| Epics | Product Owner | `prompter/epics/` (DRAFT - PRD-based) |
 | Stories | Product Owner + Dev Team | `prompter/stories.md` (not yet created) |
 
 ### Module Ownership (to be assigned)
@@ -613,7 +736,7 @@ UI Wireframes       ← ⏳ NOT YET CREATED
     ↓
  TDD-Lite           ← ⏳ NOT YET CREATED
     ↓
-  Epics             ← ⏳ NOT YET CREATED
+  Epics             ← ⚠️ DRAFT (PRD-based, in prompter/epics/)
     ↓
  Stories            ← ⏳ NOT YET CREATED
 ```
@@ -654,7 +777,7 @@ UI Wireframes       ← ⏳ NOT YET CREATED
 | API Surface | API Contract | ❌ Not created |
 | UX & Screens | UI Wireframes | ❌ Not created |
 | Architecture | TDD-Lite | ❌ Not created |
-| Work Breakdown | Epics / Stories | ❌ Not created |
+| Work Breakdown | Epics / Stories | ⚠️ DRAFT (EPICs from PRD, pending FSD/TDD) |
 | Project Conventions | `prompter/project.md` | ⚠️ Empty template |
 | Agent Governance | `AGENTS.md` (this file) | ✅ Available |
 | Prompter Workflow | `prompter/AGENTS.md` | ✅ Available (reference only) |
@@ -712,8 +835,7 @@ Since only the PRD exists, any change to the PRD will affect **all** future docu
 
 | Item | Impact | Next Action |
 |------|--------|-------------|
-| **`prompter/project.md`** content | No coding conventions, tech stack, or architecture patterns defined | Fill in template before any implementation |
-| **Tech stack selection** | Cannot make architectural decisions or begin coding | Document in `prompter/project.md` and TDD-Lite |
+| **`prompter/project.md`** content | No coding conventions or architecture patterns defined | Fill in template before any implementation |
 | **Team structure** | Cannot assign module ownership | Define roles and responsibilities |
 | **Git workflow** | No branching or deployment strategy | Document in `prompter/project.md` |
 
@@ -730,7 +852,7 @@ Since only the PRD exists, any change to the PRD will affect **all** future docu
 | **KYC provider** | Specific identity verification service not chosen |
 
 ### Recommended Next Steps (Priority Order)
-1. **Fill in `prompter/project.md`** — Establish tech stack and conventions
+1. **Fill in `prompter/project.md`** — Establish coding conventions and patterns
 2. **Create Product Brief** — Formalize vision and business context
 3. **Create FSD** — Define functional specifications (unlocks ERD, API, and all downstream docs)
 4. **Create ERD** — Define authoritative data model
