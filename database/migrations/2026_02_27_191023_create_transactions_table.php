@@ -11,13 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('fraud_alerts', function (Blueprint $table) {
+        Schema::create('transactions', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->cascadeOnDelete();
-            $table->string('rule_type');
-            $table->string('severity')->default('low');
-            $table->text('notes')->nullable();
-            $table->timestamp('detected_at')->nullable();
+            $table->text('amount'); // Encrypted
+            $table->text('account_number')->nullable(); // Encrypted
             $table->timestamps();
         });
     }
@@ -27,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('fraud_alerts');
+        Schema::dropIfExists('transactions');
     }
 };

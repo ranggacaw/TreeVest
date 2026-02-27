@@ -128,6 +128,14 @@ See `prompter/` directory for detailed project documentation:
 - `prompter/AGENTS.md` - Development workflow and conventions
 - `AGENTS.md` - Project knowledge base
 
+## Security & Compliance
+
+This project includes automated security scanning in its CI/CD pipeline:
+- `composer audit`: Checks PHP dependencies for known vulnerabilities.
+- `npm audit`: Checks Node.js dependencies for known vulnerabilities.
+- `pint --test`: Enforces code style standards.
+- Feature tests verifying security headers and rate limiting.
+
 ## License
 
 Proprietary - All rights reserved.

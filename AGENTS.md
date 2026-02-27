@@ -297,6 +297,10 @@ Admin Approval → Listed on Marketplace
 | **Transaction** | id, user_id, type, amount, currency, status, reference | Ledger of all financial movements |
 | **Notification** | id, user_id, type, message, read_status | Push/email/in-app |
 | **Message** | id, sender_id, receiver_id, content, timestamp | In-app messaging |
+| **AuditLog** | id, user_id, event_type, ip_address, user_agent, event_data, created_at | Immutable security trail |
+| **LegalDocument** | id, type, version, title, content, effective_date, is_active | Terms, Privacy, Risk |
+| **UserDocumentAcceptance** | id, user_id, legal_document_id, accepted_at, ip_address | Consent tracking |
+| **FraudAlert** | id, user_id, rule_type, severity, notes, detected_at | Suspicious activity flags |
 
 ### Expected Relationships
 - User (1) → (N) Investment
@@ -307,6 +311,10 @@ Admin Approval → Listed on Marketplace
 - Tree (1) → (N) Harvest
 - Harvest (1) → (N) Payout
 - Investment (1) → (N) Payout
+- LegalDocument (1) → (N) UserDocumentAcceptance
+- User (1) → (N) UserDocumentAcceptance
+- User (1) → (N) AuditLog
+- User (1) → (N) FraudAlert
 
 ### Fruit Type Reference Data
 

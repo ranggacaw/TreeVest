@@ -25,3 +25,17 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::controller(\App\Http\Controllers\LegalDocumentController::class)->group(function () {
+    Route::get('/legal/privacy', 'privacyPolicy')->name('legal.privacy');
+    Route::get('/legal/terms', 'termsOfService')->name('legal.terms');
+    Route::get('/legal/risk', 'riskDisclosure')->name('legal.risk');
+    Route::post('/legal/accept/{type}', 'accept')
+        ->middleware(['auth', 'throttle:6,1'])
+        ->name('legal.accept');
+});
+
+Route::middleware('auth')->group(function () {
+    Route::post('/account/data-export', [\App\Http\Controllers\GdprController::class, 'export'])->name('account.export');
+    Route::post('/account/delete', [\App\Http\Controllers\GdprController::class, 'destroy'])->name('account.delete');
+});

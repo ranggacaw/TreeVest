@@ -3,46 +3,25 @@
 namespace App\Observers;
 
 use App\Models\AuditLog;
+use Exception;
 
 class AuditLogObserver
 {
     /**
-     * Handle the AuditLog "created" event.
+     * Prevent updates to audit logs.
      */
-    public function created(AuditLog $auditLog): void
+    public function updating(AuditLog $auditLog): bool
     {
-        //
+        throw new Exception('Audit logs are immutable and cannot be updated.');
+        return false;
     }
 
     /**
-     * Handle the AuditLog "updated" event.
+     * Prevent deletion of audit logs.
      */
-    public function updated(AuditLog $auditLog): void
+    public function deleting(AuditLog $auditLog): bool
     {
-        //
-    }
-
-    /**
-     * Handle the AuditLog "deleted" event.
-     */
-    public function deleted(AuditLog $auditLog): void
-    {
-        //
-    }
-
-    /**
-     * Handle the AuditLog "restored" event.
-     */
-    public function restored(AuditLog $auditLog): void
-    {
-        //
-    }
-
-    /**
-     * Handle the AuditLog "force deleted" event.
-     */
-    public function forceDeleted(AuditLog $auditLog): void
-    {
-        //
+        throw new Exception('Audit logs are immutable and cannot be deleted.');
+        return false;
     }
 }
