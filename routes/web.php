@@ -1,6 +1,11 @@
 <?php
 
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\SessionController;
+use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Auth\OAuthController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -22,6 +27,25 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::get('/profile/2fa', [TwoFactorController::class, 'show'])->name('profile.2fa');
+    Route::post('/profile/2fa/enable', [TwoFactorController::class, 'enable'])->name('profile.2fa.enable');
+    Route::post('/profile/2fa/confirm', [TwoFactorController::class, 'confirmEnable'])->name('profile.2fa.confirm');
+    Route::post('/profile/2fa/disable', [TwoFactorController::class, 'disable'])->name('profile.2fa.disable');
+    Route::post('/profile/2fa/recovery-codes', [TwoFactorController::class, 'regenerateRecoveryCodes'])->name('profile.2fa.recovery-codes');
+
+    Route::get('/profile/sessions', [SessionController::class, 'index'])->name('profile.sessions');
+    Route::delete('/profile/sessions/{id}', [SessionController::class, 'destroy'])->name('profile.sessions.destroy');
+    Route::post('/profile/sessions/revoke-all', [SessionController::class, 'destroyAll'])->name('profile.sessions.revoke-all');
+
+    Route::post('/profile/avatar', [AvatarController::class, 'store'])->name('profile.avatar.store');
+    Route::delete('/profile/avatar', [AvatarController::class, 'destroy'])->name('profile.avatar.destroy');
+
+    Route::post('/auth/{provider}/link', [OAuthController::class, 'link'])->name('oauth.link');
+    Route::delete('/profile/oauth/{provider}', [OAuthController::class, 'unlink'])->name('oauth.unlink');
+
+    Route::post('/account/deactivate', [AccountController::class, 'deactivate'])->name('account.deactivate');
+    Route::post('/account/delete-request', [AccountController::class, 'requestDeletion'])->name('account.delete-request');
 });
 
 require __DIR__.'/auth.php';

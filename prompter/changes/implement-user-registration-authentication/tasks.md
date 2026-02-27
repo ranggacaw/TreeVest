@@ -76,96 +76,96 @@
 ## 4. Controller Implementation
 
 ### Phone Authentication
-- [ ] 4.1 Create `App\Http\Controllers\Auth\PhoneAuthController`
-- [ ] 4.2 Implement `showRegisterForm()` → Inertia::render('Auth/PhoneRegister')
-- [ ] 4.3 Implement `register(Request $request)` → validate phone, send OTP, return verification page
-- [ ] 4.4 Implement `verify(Request $request)` → validate OTP, create user, log in, redirect to dashboard
-- [ ] 4.5 Implement `showLoginForm()` → Inertia::render('Auth/PhoneLogin')
-- [ ] 4.6 Implement `login(Request $request)` → send OTP, return verification page
-- [ ] 4.7 Implement `verifyLogin(Request $request)` → validate OTP, log in user, redirect to dashboard
-- [ ] 4.8 Implement `resendOtp(Request $request)` → resend OTP code
+- [x] 4.1 Create `App\Http\Controllers\Auth\PhoneAuthController`
+- [x] 4.2 Implement `showRegisterForm()` → Inertia::render('Auth/PhoneRegister')
+- [x] 4.3 Implement `register(Request $request)` → validate phone, send OTP, return verification page
+- [x] 4.4 Implement `verify(Request $request)` → validate OTP, create user, log in, redirect to dashboard
+- [x] 4.5 Implement `showLoginForm()` → Inertia::render('Auth/PhoneLogin')
+- [x] 4.6 Implement `login(Request $request)` → send OTP, return verification page
+- [x] 4.7 Implement `verifyLogin(Request $request)` → validate OTP, log in user, redirect to dashboard
+- [x] 4.8 Implement `resendOtp(Request $request)` → resend OTP code
 
 ### OAuth Authentication
-- [ ] 4.9 Create `App\Http\Controllers\Auth\OAuthController`
-- [ ] 4.10 Implement `redirect(string $provider)` → redirect to OAuth provider
-- [ ] 4.11 Implement `callback(string $provider)` → handle callback, create/login user, redirect to dashboard
-- [ ] 4.12 Implement `link(Request $request, string $provider)` → link OAuth provider to authenticated user (requires password confirmation)
-- [ ] 4.13 Implement `unlink(string $provider)` → unlink OAuth provider
+- [x] 4.9 Create `App\Http\Controllers\Auth\OAuthController`
+- [x] 4.10 Implement `redirect(string $provider)` → redirect to OAuth provider
+- [x] 4.11 Implement `callback(string $provider)` → handle callback, create/login user, redirect to dashboard
+- [x] 4.12 Implement `link(Request $request, string $provider)` → link OAuth provider to authenticated user (requires password confirmation)
+- [x] 4.13 Implement `unlink(string $provider)` → unlink OAuth provider
 
 ### Two-Factor Authentication
-- [ ] 4.14 Create `App\Http\Controllers\Auth\TwoFactorController`
-- [ ] 4.15 Implement `show()` → Inertia::render('Profile/TwoFactorAuthentication') with 2FA status
-- [ ] 4.16 Implement `enable(Request $request)` → enable TOTP or SMS 2FA, return QR code/recovery codes
-- [ ] 4.17 Implement `confirmEnable(Request $request)` → verify 2FA code, activate 2FA
-- [ ] 4.18 Implement `disable(Request $request)` → disable 2FA (requires password confirmation)
-- [ ] 4.19 Implement `regenerateRecoveryCodes()` → regenerate recovery codes
-- [ ] 4.20 Create `App\Http\Controllers\Auth\TwoFactorChallengeController`
-- [ ] 4.21 Implement `show()` → Inertia::render('Auth/TwoFactorChallenge') during login
-- [ ] 4.22 Implement `verify(Request $request)` → verify 2FA code, complete login
-- [ ] 4.23 Implement `useRecoveryCode(Request $request)` → verify recovery code, complete login
+- [x] 4.14 Create `App\Http\Controllers\Auth\TwoFactorController`
+- [x] 4.15 Implement `show()` → Inertia::render('Profile/TwoFactorAuthentication') with 2FA status
+- [x] 4.16 Implement `enable(Request $request)` → enable TOTP or SMS 2FA, return QR code/recovery codes
+- [x] 4.17 Implement `confirmEnable(Request $request)` → verify 2FA code, activate 2FA
+- [x] 4.18 Implement `disable(Request $request)` → disable 2FA (requires password confirmation)
+- [x] 4.19 Implement `regenerateRecoveryCodes()` → regenerate recovery codes
+- [x] 4.20 Create `App\Http\Controllers\Auth\TwoFactorChallengeController`
+- [x] 4.21 Implement `show()` → Inertia::render('Auth/TwoFactorChallenge') during login
+- [x] 4.22 Implement `verify(Request $request)` → verify 2FA code, complete login
+- [x] 4.23 Implement `useRecoveryCode(Request $request)` → verify recovery code, complete login
 
 ### Session Management
-- [ ] 4.24 Create `App\Http\Controllers\SessionController`
-- [ ] 4.25 Implement `index()` → Inertia::render('Profile/ActiveSessions') with active sessions list
-- [ ] 4.26 Implement `destroy(string $sessionId)` → revoke specific session
-- [ ] 4.27 Implement `destroyAll()` → revoke all other sessions
+- [x] 4.24 Create `App\Http\Controllers\SessionController`
+- [x] 4.25 Implement `index()` → Inertia::render('Profile/ActiveSessions') with active sessions list
+- [x] 4.26 Implement `destroy(string $sessionId)` → revoke specific session
+- [x] 4.27 Implement `destroyAll()` → revoke all other sessions
 
 ### Profile Management Extensions
-- [ ] 4.28 Extend `App\Http\Controllers\ProfileController@update` to handle phone number changes (requires re-verification)
-- [ ] 4.29 Create `App\Http\Controllers\AvatarController`
-- [ ] 4.30 Implement `store(Request $request)` → upload avatar
-- [ ] 4.31 Implement `destroy()` → delete avatar
+- [x] 4.28 Extend `App\Http\Controllers\ProfileController@update` to handle phone number changes (requires re-verification)
+- [x] 4.29 Create `App\Http\Controllers\AvatarController`
+- [x] 4.30 Implement `store(Request $request)` → upload avatar
+- [x] 4.31 Implement `destroy()` → delete avatar
 
 ### Account Deactivation
-- [ ] 4.32 Create `App\Http\Controllers\AccountController`
-- [ ] 4.33 Implement `deactivate(Request $request)` → soft delete user, log out, redirect to deactivation confirmation
-- [ ] 4.34 Implement `requestDeletion(Request $request)` → create GDPR deletion request (admin review)
+- [x] 4.32 Create `App\Http\Controllers\AccountController`
+- [x] 4.33 Implement `deactivate(Request $request)` → soft delete user, log out, redirect to deactivation confirmation
+- [x] 4.34 Implement `requestDeletion(Request $request)` → create GDPR deletion request (admin review)
 
 ## 5. Form Request Validation
 
-- [ ] 5.1 Create `App\Http\Requests\PhoneRegisterRequest` (validate phone, country code, OTP)
-- [ ] 5.2 Create `App\Http\Requests\PhoneLoginRequest` (validate phone or email input)
-- [ ] 5.3 Create `App\Http\Requests\VerifyOtpRequest` (validate OTP code)
-- [ ] 5.4 Create `App\Http\Requests\EnableTwoFactorRequest` (validate 2FA type, password confirmation)
-- [ ] 5.5 Create `App\Http\Requests\VerifyTwoFactorRequest` (validate 2FA code)
-- [ ] 5.6 Create `App\Http\Requests\UpdateProfileRequest` (extend existing, add phone, avatar validation)
-- [ ] 5.7 Create `App\Http\Requests\UploadAvatarRequest` (validate image file)
+- [x] 5.1 Create `App\Http\Requests\PhoneRegisterRequest` (validate phone, country code, OTP)
+- [x] 5.2 Create `App\Http\Requests\PhoneLoginRequest` (validate phone or email input)
+- [x] 5.3 Create `App\Http\Requests\VerifyOtpRequest` (validate OTP code)
+- [x] 5.4 Create `App\Http\Requests\EnableTwoFactorRequest` (validate 2FA type, password confirmation)
+- [x] 5.5 Create `App\Http\Requests\VerifyTwoFactorRequest` (validate 2FA code)
+- [x] 5.6 Create `App\Http\Requests\UpdateProfileRequest` (extend existing, add phone, avatar validation)
+- [x] 5.7 Create `App\Http\Requests\UploadAvatarRequest` (validate image file)
 
 ## 6. Middleware Implementation
 
-- [ ] 6.1 Create `App\Http\Middleware\EnsurePhoneIsVerified` middleware (check phone_verified_at)
-- [ ] 6.2 Create `App\Http\Middleware\RequireTwoFactorAuth` middleware (check if 2FA enabled, redirect to 2FA challenge)
-- [ ] 6.3 Register middlewares in `bootstrap/app.php` or `app/Http/Kernel.php`
+- [x] 6.1 Create `App\Http\Middleware\EnsurePhoneIsVerified` middleware (check phone_verified_at)
+- [x] 6.2 Create `App\Http\Middleware\RequireTwoFactorAuth` middleware (check if 2FA enabled, redirect to 2FA challenge)
+- [x] 6.3 Register middlewares in `bootstrap/app.php` or `app/Http/Kernel.php`
 
 ## 7. Routes Configuration
 
-- [ ] 7.1 Add phone auth routes to `routes/auth.php`
-- [ ] 7.2 Add OAuth routes to `routes/auth.php`
-- [ ] 7.3 Add 2FA routes to `routes/auth.php` and `routes/web.php` (profile)
-- [ ] 7.4 Add session management routes to `routes/web.php`
-- [ ] 7.5 Add avatar upload routes to `routes/web.php`
-- [ ] 7.6 Add account deactivation routes to `routes/web.php`
-- [ ] 7.7 Apply rate limiting middleware to sensitive routes (phone OTP, 2FA verify, OAuth callback)
+- [x] 7.1 Add phone auth routes to `routes/auth.php`
+- [x] 7.2 Add OAuth routes to `routes/auth.php`
+- [x] 7.3 Add 2FA routes to `routes/auth.php` and `routes/web.php` (profile)
+- [x] 7.4 Add session management routes to `routes/web.php`
+- [x] 7.5 Add avatar upload routes to `routes/web.php`
+- [x] 7.6 Add account deactivation routes to `routes/web.php`
+- [x] 7.7 Apply rate limiting middleware to sensitive routes (phone OTP, 2FA verify, OAuth callback)
 
 ## 8. Rate Limiting Configuration
 
-- [ ] 8.1 Add `phone-otp-send` rate limiter (5 per hour per phone)
-- [ ] 8.2 Add `phone-otp-verify` rate limiter (5 per hour per phone)
-- [ ] 8.3 Add `2fa-verify` rate limiter (5 per minute per user)
-- [ ] 8.4 Add `oauth-callback` rate limiter (10 per minute per IP)
-- [ ] 8.5 Apply rate limiters to respective routes
+- [x] 8.1 Add `phone-otp-send` rate limiter (5 per hour per phone)
+- [x] 8.2 Add `phone-otp-verify` rate limiter (5 per hour per phone)
+- [x] 8.3 Add `2fa-verify` rate limiter (5 per minute per user)
+- [x] 8.4 Add `oauth-callback` rate limiter (10 per minute per IP)
+- [x] 8.5 Apply rate limiters to respective routes
 
 ## 9. Audit Logging Extensions
 
-- [ ] 9.1 Extend `AuditLogService` with new auth event types (phone registration, OAuth login, 2FA enabled, etc.)
-- [ ] 9.2 Add audit log calls to all auth controllers (log successful/failed events)
-- [ ] 9.3 Add audit log calls to profile update actions (phone change, avatar upload, 2FA toggle)
+- [x] 9.1 Extend `AuditLogService` with new auth event types (phone registration, OAuth login, 2FA enabled, etc.)
+- [x] 9.2 Add audit log calls to all auth controllers (log successful/failed events)
+- [x] 9.3 Add audit log calls to profile update actions (phone change, avatar upload, 2FA toggle)
 
 ## 10. Frontend Dependencies Installation
 
-- [ ] 10.1 Install `react-phone-number-input` package via npm
-- [ ] 10.2 Install `qrcode.react` package for TOTP QR code display
-- [ ] 10.3 Install any additional UI libraries (optional: `react-otp-input` for OTP field)
+- [x] 10.1 Install `react-phone-number-input` package via npm
+- [x] 10.2 Install `qrcode.react` package for TOTP QR code display
+- [x] 10.3 Install any additional UI libraries (optional: `react-otp-input` for OTP field)
 
 ## 11. React Component Development
 

@@ -7,7 +7,11 @@ use App\Http\Controllers\Auth\EmailVerificationPromptController;
 use App\Http\Controllers\Auth\NewPasswordController;
 use App\Http\Controllers\Auth\PasswordController;
 use App\Http\Controllers\Auth\PasswordResetLinkController;
+use App\Http\Controllers\Auth\PhoneAuthController;
 use App\Http\Controllers\Auth\RegisteredUserController;
+use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\Auth\TwoFactorChallengeController;
 use App\Http\Controllers\Auth\VerifyEmailController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,11 +22,44 @@ Route::middleware('guest')->group(function () {
     Route::post('register', [RegisteredUserController::class, 'store'])
         ->middleware('throttle:auth-throttle');
 
+    Route::get('phone/register', [PhoneAuthController::class, 'showRegisterForm'])
+        ->name('phone.register');
+
+    Route::post('phone/register', [PhoneAuthController::class, 'register'])
+        ->middleware('throttle:phone-otp-send');
+
+    Route::get('phone/verify', [PhoneAuthController::class, 'showLoginForm'])
+        ->name('phone.verify');
+
+    Route::post('phone/verify', [PhoneAuthController::class, 'verify'])
+        ->middleware('throttle:phone-otp-verify');
+
+    Route::get('phone/login', [PhoneAuthController::class, 'showLoginForm'])
+        ->name('phone.login');
+
+    Route::post('phone/login', [PhoneAuthController::class, 'login'])
+        ->middleware('throttle:phone-otp-send');
+
+    Route::post('phone/login/verify', [PhoneAuthController::class, 'verifyLogin'])
+        ->middleware('throttle:phone-otp-verify')
+        ->name('phone.login.verify');
+
+    Route::post('phone/resend-otp', [PhoneAuthController::class, 'resendOtp'])
+        ->middleware('throttle:phone-otp-send')
+        ->name('phone.resend-otp');
+
     Route::get('login', [AuthenticatedSessionController::class, 'create'])
         ->name('login');
 
     Route::post('login', [AuthenticatedSessionController::class, 'store'])
         ->middleware('throttle:auth-throttle');
+
+    Route::get('auth/{provider}/redirect', [OAuthController::class, 'redirect'])
+        ->name('oauth.redirect');
+
+    Route::get('auth/{provider}/callback', [OAuthController::class, 'callback'])
+        ->middleware('throttle:oauth-callback')
+        ->name('oauth.callback');
 
     Route::get('forgot-password', [PasswordResetLinkController::class, 'create'])
         ->name('password.request');
@@ -60,4 +97,15 @@ Route::middleware('auth')->group(function () {
 
     Route::post('logout', [AuthenticatedSessionController::class, 'destroy'])
         ->name('logout');
+
+    Route::get('two-factor/challenge', [TwoFactorChallengeController::class, 'show'])
+        ->name('two-factor.challenge');
+
+    Route::post('two-factor/verify', [TwoFactorChallengeController::class, 'verify'])
+        ->middleware('throttle:2fa-verify')
+        ->name('two-factor.verify');
+
+    Route::post('two-factor/recovery', [TwoFactorChallengeController::class, 'useRecoveryCode'])
+        ->middleware('throttle:2fa-verify')
+        ->name('two-factor.recovery');
 });
