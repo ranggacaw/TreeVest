@@ -18,7 +18,7 @@ class GdprExportServiceTest extends TestCase
             'email' => 'john@example.com',
         ]);
 
-        $service = new GdprExportService();
+        $service = new GdprExportService;
         $data = $service->exportUserData($user->id);
 
         $this->assertEquals('John Doe', $data['user_profile']['name']);

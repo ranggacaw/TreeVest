@@ -13,6 +13,7 @@ class AuditLogObserver
     public function updating(AuditLog $auditLog): bool
     {
         throw new Exception('Audit logs are immutable and cannot be updated.');
+
         return false;
     }
 
@@ -22,6 +23,7 @@ class AuditLogObserver
     public function deleting(AuditLog $auditLog): bool
     {
         throw new Exception('Audit logs are immutable and cannot be deleted.');
+
         return false;
     }
 }

@@ -434,6 +434,14 @@ Admin Approval → Listed on Marketplace
 - Regulatory compliance with securities laws (where applicable)
 - Privacy policy compliant with GDPR and local data protection laws
 
+### Implementation Details (Infrastructure)
+- **Encryption:** Encryption at rest for PII and financial data using Laravel Encrypted Casting.
+- **Audit Logging:** Immutable `audit_logs` table tracking all auth, transaction, and admin events.
+- **Fraud Detection:** Automated rule engine scanning for rapid investments, unusual amounts, and multiple failed auths.
+- **Security Headers:** HSTS, CSP, and X-Content-Type-Options enforced via middleware.
+- **Rate Limiting:** Strict throttling on auth (5/min) and financial endpoints (10/min).
+- **GDPR:** Automated data export and deletion workflows (soft-delete + anonymization).
+
 ### Audit Requirements (inferred)
 - All financial transactions must be logged immutably
 - KYC verification events must be auditable

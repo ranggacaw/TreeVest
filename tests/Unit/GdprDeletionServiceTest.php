@@ -13,11 +13,19 @@ class GdprDeletionServiceTest extends TestCase
 
     public function test_it_deletes_user_data()
     {
-        $user = User::factory()->create();
-        
-        $service = new GdprDeletionService();
+        $user = User::factory()->create([
+            'email' => 'test@example.com',
+            'name' => 'Original Name',
+        ]);
+
+        $service = new GdprDeletionService;
         $service->deleteUserData($user->id);
 
-        $this->assertModelMissing($user);
+        $this->assertSoftDeleted($user);
+
+        $deletedUser = User::withTrashed()->find($user->id);
+        $this->assertEquals('Deleted User', $deletedUser->name);
+        $this->assertStringStartsWith('deleted_'.$user->id, $deletedUser->email);
+        $this->assertNotEquals('test@example.com', $deletedUser->email);
     }
 }

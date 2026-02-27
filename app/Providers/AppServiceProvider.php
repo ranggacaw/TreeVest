@@ -22,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
     {
         Vite::prefetch(concurrency: 3);
         \App\Models\AuditLog::observe(\App\Observers\AuditLogObserver::class);
+        \App\Models\Transaction::observe(\App\Observers\TransactionObserver::class);
         \Illuminate\Support\Facades\Event::subscribe(\App\Listeners\AuthenticationLogSubscriber::class);
 
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {

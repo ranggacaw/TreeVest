@@ -2,11 +2,10 @@
 
 namespace Tests\Feature;
 
+use App\Enums\LegalDocumentType;
 use App\Models\LegalDocument;
 use App\Models\User;
-use App\Enums\LegalDocumentType;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use App\Services\LegalDocumentService;
 use Tests\TestCase;
 
 class LegalDocumentTest extends TestCase
@@ -45,9 +44,9 @@ class LegalDocumentTest extends TestCase
             'is_active' => true,
         ]);
 
-        $response = $this->post("/legal/accept/terms_of_service");
+        $response = $this->post('/legal/accept/terms_of_service');
         $response->assertRedirect();
-        
+
         $this->assertDatabaseHas('user_document_acceptances', [
             'user_id' => $user->id,
             'legal_document_id' => $document->id,

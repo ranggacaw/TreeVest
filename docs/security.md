@@ -22,3 +22,35 @@ Rotating the `APP_KEY` requires careful coordination to prevent data loss, as pr
 
 ## Security Incident Response
 *(To be completed after post-implementation tasks)*
+
+## Security Incident Response
+
+In the event of a suspected or confirmed security breach, the following protocol must be activated immediately:
+
+### 1. Verification & Classification
+- **Confirm Incident:** Analyze logs (AuditLog, SecurityLog) to verify anomaly is real (not false positive).
+- **Classify Severity:**
+  - **Critical:** Data breach (PII/Financial), active exploit, system outage.
+  - **High:** Service disruption, potential vulnerability exposure.
+  - **Medium:** Suspicious activity without confirmable impact.
+  - **Low:** Non-critical anomaly.
+
+### 2. Containment
+- **Disconnect Affected Systems:** Take offline or isolate infected components if necessary.
+- **Revoke Access:** Reset passwords/sessions () for affected accounts or admins.
+- **Block Traffic:** Update firewall rules or AWS WAF to block malicious IPs.
+- **Preserve Evidence:** Do not reboot or wipe logs unless absolutely necessary for containment.
+
+### 3. Eradication
+- **Patch Vulnerabilities:** Deploy hotfixes for code vulnerabilities (SQLi, XSS, etc.).
+- **Remove Backdoors:** Audit for unauthorized SSH keys, cron jobs, or admin accounts.
+- **Rotate Credentials:** Rotate database passwords, API keys, and secret tokens.
+
+### 4. Recovery
+- **Restore Data:** Restore clean backups if data was corrupted or deleted.
+- **Verify Integrity:** Run integrity checks on critical tables (users, transactions).
+- **Monitor:** Enhanced monitoring for 24-48 hours post-incident.
+
+### 5. Notification & Post-Mortem
+- **Notify Stakeholders:** Inform management, legal team, and affected users (GDPR requirement: typically within 72 hours).
+- **Post-Mortem Report:** Document timeline, root cause, impact, and preventive measures.

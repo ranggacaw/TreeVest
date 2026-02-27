@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\RateLimiter;
 use Tests\TestCase;
 
 class RateLimitingTest extends TestCase
@@ -18,7 +17,7 @@ class RateLimitingTest extends TestCase
                 'password' => 'password',
             ]);
         }
-        
+
         // The 6th attempt should be throttled
         $response->assertStatus(429);
     }

@@ -455,3 +455,13 @@ See AGENTS.md Section 7 for the full glossary. Critical terms for code:
 ### API Key Management
 - All API keys and secrets in `.env` — never in code or version control
 - Use Laravel's `config()` helper to access environment values — never `env()` directly outside config files
+
+## Architecture Patterns
+
+### Validation & Sanitization
+- All incoming HTTP requests must be validated via FormRequest classes.
+- BaseRequest (App\Http\Requests\BaseRequest) should be used as the parent class for all FormRequests to ensure common sanitization rules are applied.
+- Custom validation rules (App\Rules) are preferred over closure-based validation for reusability.
+- Use `NoXss` rule for all text inputs to prevent cross-site scripting.
+- Use `NoSqlInjection` rule for search queries and filter parameters.
+- Use `SafeFilename` rule for any file upload names or paths.

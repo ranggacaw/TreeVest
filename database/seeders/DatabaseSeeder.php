@@ -22,7 +22,7 @@ class DatabaseSeeder extends Seeder
             'email' => 'demo@example.com',
             'role' => 'admin',
         ]);
-        
+
         $this->call([
             LegalDocumentSeeder::class,
         ]);

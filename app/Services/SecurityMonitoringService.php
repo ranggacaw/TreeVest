@@ -2,8 +2,6 @@
 
 namespace App\Services;
 
-use App\Enums\FraudRuleType;
-use App\Models\FraudAlert;
 use Illuminate\Support\Facades\Log;
 
 class SecurityMonitoringService

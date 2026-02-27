@@ -21,8 +21,14 @@ class BaseRequest extends FormRequest
     {
         $input = $this->all();
         $sanitized = [];
+        $excludedKeys = ['password', 'password_confirmation', 'current_password'];
 
         foreach ($input as $key => $value) {
+            if (in_array($key, $excludedKeys, true)) {
+                $sanitized[$key] = $value;
+                continue;
+            }
+
             if (is_string($value)) {
                 $sanitized[$key] = strip_tags($value);
             } else {

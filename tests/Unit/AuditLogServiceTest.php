@@ -17,7 +17,7 @@ class AuditLogServiceTest extends TestCase
     {
         $user = \App\Models\User::factory()->create();
 
-        $service = new AuditLogService();
+        $service = new AuditLogService;
         $service->logEvent(AuditEventType::ADMIN_ACTION, $user->id, ['action' => 'test']);
 
         $this->assertDatabaseHas('audit_logs', [
@@ -31,7 +31,7 @@ class AuditLogServiceTest extends TestCase
     {
         $user = \App\Models\User::factory()->create();
 
-        $service = new AuditLogService();
+        $service = new AuditLogService;
         $service->logAuthentication($user->id, true);
 
         $this->assertDatabaseHas('audit_logs', [
@@ -43,7 +43,7 @@ class AuditLogServiceTest extends TestCase
 
     public function test_it_can_log_authentication_failure()
     {
-        $service = new AuditLogService();
+        $service = new AuditLogService;
         $service->logAuthentication(null, false);
 
         $this->assertDatabaseHas('audit_logs', [

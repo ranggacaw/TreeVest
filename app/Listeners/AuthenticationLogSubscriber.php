@@ -4,6 +4,7 @@ namespace App\Listeners;
 
 use App\Enums\AuditEventType;
 use App\Services\AuditLogService;
+use App\Services\FraudDetectionService;
 use Illuminate\Auth\Events\Failed;
 use Illuminate\Auth\Events\Login;
 use Illuminate\Auth\Events\Logout;
@@ -12,7 +13,8 @@ use Illuminate\Events\Dispatcher;
 class AuthenticationLogSubscriber
 {
     public function __construct(
-        protected AuditLogService $auditLogService
+        protected AuditLogService $auditLogService,
+        protected FraudDetectionService $fraudDetectionService
     ) {}
 
     /**
@@ -38,8 +40,12 @@ class AuthenticationLogSubscriber
     {
         // For failed attempts, we prioritize logging the user ID if available
         $userId = $event->user ? $event->user->id : null;
-        
+
         $this->auditLogService->logAuthentication($userId, false);
+
+        if ($event->user) {
+            $this->fraudDetectionService->checkMultipleFailedAuth($event->user);
+        }
     }
 
     /**

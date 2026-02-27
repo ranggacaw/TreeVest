@@ -67,7 +67,7 @@ class LegalDocumentController extends Controller
         if (! $document) {
             abort(404, 'Document not found.');
         }
-        
+
         $this->legalDocumentService->trackAcceptance($request->user()->id, $document->id);
 
         return back()->with('status', 'Document accepted successfully.');

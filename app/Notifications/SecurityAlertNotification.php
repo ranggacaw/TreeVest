@@ -35,11 +35,11 @@ class SecurityAlertNotification extends Notification implements ShouldQueue
     public function toMail(object $notifiable): MailMessage
     {
         return (new MailMessage)
-            ->subject('Security Alert: ' . $this->type)
+            ->subject('Security Alert: '.$this->type)
             ->greeting('Hello Admin,')
             ->line('A security alert has been triggered.')
-            ->line('Type: ' . $this->type)
-            ->line('Details: ' . json_encode($this->details))
+            ->line('Type: '.$this->type)
+            ->line('Details: '.json_encode($this->details))
             ->action('View Alerts', url('/admin/fraud-alerts'))
             ->line('Please investigate immediately.');
     }

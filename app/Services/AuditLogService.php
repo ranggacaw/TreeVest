@@ -31,7 +31,7 @@ class AuditLogService
     public function logAuthentication(?int $userId, bool $success): void
     {
         $eventType = $success ? AuditEventType::LOGIN : AuditEventType::FAILED_LOGIN;
-        
+
         $this->logEvent($eventType, $userId, [
             'success' => $success,
         ]);
