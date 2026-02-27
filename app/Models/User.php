@@ -21,8 +21,15 @@ class User extends Authenticatable
     protected $fillable = [
         'name',
         'email',
+        'phone',
+        'phone_country_code',
+        'phone_verified_at',
+        'avatar_url',
         'password',
         'role',
+        'two_factor_enabled_at',
+        'last_login_at',
+        'last_login_ip',
     ];
 
     /**
@@ -44,9 +51,47 @@ class User extends Authenticatable
     {
         return [
             'email_verified_at' => 'datetime',
+            'phone_verified_at' => 'datetime',
+            'two_factor_enabled_at' => 'datetime',
+            'last_login_at' => 'datetime',
             'password' => 'hashed',
             'phone' => 'encrypted',
             'kyc_document_url' => 'encrypted',
         ];
+    }
+
+    public function oauthProviders()
+    {
+        return $this->hasMany(OAuthProvider::class);
+    }
+
+    public function twoFactorSecret()
+    {
+        return $this->hasOne(TwoFactorSecret::class);
+    }
+
+    public function twoFactorRecoveryCodes()
+    {
+        return $this->hasMany(TwoFactorRecoveryCode::class);
+    }
+
+    public function hasTwoFactorEnabled(): bool
+    {
+        return $this->two_factor_enabled_at !== null && $this->twoFactorSecret !== null;
+    }
+
+    public function hasVerifiedEmail(): bool
+    {
+        return $this->email_verified_at !== null;
+    }
+
+    public function hasVerifiedPhone(): bool
+    {
+        return $this->phone_verified_at !== null;
+    }
+
+    public function hasContact(): bool
+    {
+        return $this->email !== null || $this->phone !== null;
     }
 }

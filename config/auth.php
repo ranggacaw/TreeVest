@@ -112,4 +112,20 @@ return [
 
     'password_timeout' => env('AUTH_PASSWORD_TIMEOUT', 10800),
 
+    /*
+    |--------------------------------------------------------------------------
+    | Two-Factor Authentication
+    |--------------------------------------------------------------------------
+    |
+    | Two-Factor Authentication (2FA) configuration options for the application.
+    | These settings control how TOTP and SMS OTP verification works.
+    |
+    */
+
+    'two_factor' => [
+        'otp_expiry' => env('TWO_FACTOR_OTP_EXPIRY', 10), // minutes
+        'recovery_code_count' => env('TWO_FACTOR_RECOVERY_CODE_COUNT', 8),
+        'totp_window' => env('TWO_FACTOR_TOTP_WINDOW', 1), // ±1 step tolerance
+    ],
+
 ];

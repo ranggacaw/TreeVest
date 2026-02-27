@@ -2,76 +2,76 @@
 
 ## 1. Database Schema & Migrations
 
-- [ ] 1.1 Create `phone_verifications` table migration
-- [ ] 1.2 Create `oauth_providers` table migration
-- [ ] 1.3 Create `two_factor_secrets` table migration
-- [ ] 1.4 Create `two_factor_recovery_codes` table migration
-- [ ] 1.5 Create migration to add columns to `users` table (phone, phone_country_code, phone_verified_at, avatar_url, two_factor_enabled_at, last_login_at, last_login_ip)
-- [ ] 1.6 Add check constraint to `users` table (at least one of email or phone must be non-null)
-- [ ] 1.7 Create Eloquent models for new tables (`PhoneVerification`, `OAuthProvider`, `TwoFactorSecret`, `TwoFactorRecoveryCode`)
-- [ ] 1.8 Add relationships to `User` model (hasMany for oauth providers, hasOne for 2FA secret, hasMany for recovery codes)
-- [ ] 1.9 Update `User` model with new fillable fields and casts (phone encrypted, avatar_url, timestamps)
-- [ ] 1.10 Create database seeders for testing (users with phone, OAuth, 2FA enabled)
+- [x] 1.1 Create `phone_verifications` table migration
+- [x] 1.2 Create `oauth_providers` table migration
+- [x] 1.3 Create `two_factor_secrets` table migration
+- [x] 1.4 Create `two_factor_recovery_codes` table migration
+- [x] 1.5 Create migration to add columns to `users` table (phone, phone_country_code, phone_verified_at, avatar_url, two_factor_enabled_at, last_login_at, last_login_ip)
+- [x] 1.6 Add check constraint to `users` table (at least one of email or phone must be non-null)
+- [x] 1.7 Create Eloquent models for new tables (`PhoneVerification`, `OAuthProvider`, `TwoFactorSecret`, `TwoFactorRecoveryCode`)
+- [x] 1.8 Add relationships to `User` model (hasMany for oauth providers, hasOne for 2FA secret, hasMany for recovery codes)
+- [x] 1.9 Update `User` model with new fillable fields and casts (phone encrypted, avatar_url, timestamps)
+- [x] 1.10 Create database seeders for testing (users with phone, OAuth, 2FA enabled)
 
 ## 2. External Service Configuration
 
-- [ ] 2.1 Install `laravel/socialite` package via composer
-- [ ] 2.2 Install `pragmarx/google2fa` package for TOTP
-- [ ] 2.3 Install `twilio/sdk` package for SMS
-- [ ] 2.4 Add Socialite provider configurations to `config/services.php` (Google, Facebook, Apple)
-- [ ] 2.5 Add Twilio configuration to `config/services.php`
-- [ ] 2.6 Add 2FA configuration to `config/auth.php` (TOTP window, recovery code count, OTP expiry)
-- [ ] 2.7 Create `.env.example` entries for OAuth client IDs/secrets and Twilio credentials
-- [ ] 2.8 Create development OAuth apps (Google, Facebook, Apple) for local/staging testing
+- [x] 2.1 Install `laravel/socialite` package via composer
+- [x] 2.2 Install `pragmarx/google2fa` package for TOTP
+- [x] 2.3 Install `twilio/sdk` package for SMS
+- [x] 2.4 Add Socialite provider configurations to `config/services.php` (Google, Facebook, Apple)
+- [x] 2.5 Add Twilio configuration to `config/services.php`
+- [x] 2.6 Add 2FA configuration to `config/auth.php` (TOTP window, recovery code count, OTP expiry)
+- [x] 2.7 Create `.env.example` entries for OAuth client IDs/secrets and Twilio credentials
+- [x] 2.8 Create development OAuth apps (Google, Facebook, Apple) for local/staging testing
 
 ## 3. Service Layer Implementation
 
 ### Phone Verification Service
-- [ ] 3.1 Create `App\Services\PhoneVerificationService` class
-- [ ] 3.2 Implement `sendVerificationCode(string $phone): bool` method
-- [ ] 3.3 Implement `verifyCode(string $phone, string $code): bool` method
-- [ ] 3.4 Implement `resendCode(string $phone): bool` method (invalidate previous codes)
-- [ ] 3.5 Implement `markPhoneAsVerified(User $user): void` method
-- [ ] 3.6 Add phone number normalization helper (convert to E.164 format)
+- [x] 3.1 Create `App\Services\PhoneVerificationService` class
+- [x] 3.2 Implement `sendVerificationCode(string $phone): bool` method
+- [x] 3.3 Implement `verifyCode(string $phone, string $code): bool` method
+- [x] 3.4 Implement `resendCode(string $phone): bool` method (invalidate previous codes)
+- [x] 3.5 Implement `markPhoneAsVerified(User $user): void` method
+- [x] 3.6 Add phone number normalization helper (convert to E.164 format)
 
 ### SMS Service
-- [ ] 3.7 Create `App\Contracts\SmsServiceInterface` interface
-- [ ] 3.8 Create `App\Services\TwilioSmsProvider` implementing `SmsServiceInterface`
-- [ ] 3.9 Implement `sendOtp(string $phone, string $code): bool` method
-- [ ] 3.10 Add SMS service binding to `AppServiceProvider` (bind interface to Twilio provider)
+- [x] 3.7 Create `App\Contracts\SmsServiceInterface` interface
+- [x] 3.8 Create `App\Services\TwilioSmsProvider` implementing `SmsServiceInterface`
+- [x] 3.9 Implement `sendOtp(string $phone, string $code): bool` method
+- [x] 3.10 Add SMS service binding to `AppServiceProvider` (bind interface to Twilio provider)
 
 ### Two-Factor Authentication Service
-- [ ] 3.11 Create `App\Services\TwoFactorAuthService` class
-- [ ] 3.12 Implement `enableTotp(User $user): array` method (generate secret, QR code, recovery codes)
-- [ ] 3.13 Implement `enableSms(User $user): bool` method
-- [ ] 3.14 Implement `verify(User $user, string $code): bool` method (verify TOTP or SMS code)
-- [ ] 3.15 Implement `verifyRecoveryCode(User $user, string $code): bool` method
-- [ ] 3.16 Implement `disable(User $user): bool` method
-- [ ] 3.17 Implement `regenerateRecoveryCodes(User $user): array` method
-- [ ] 3.18 Add TOTP QR code generation helper using `pragmarx/google2fa`
+- [x] 3.11 Create `App\Services\TwoFactorAuthService` class
+- [x] 3.12 Implement `enableTotp(User $user): array` method (generate secret, QR code, recovery codes)
+- [x] 3.13 Implement `enableSms(User $user): bool` method
+- [x] 3.14 Implement `verify(User $user, string $code): bool` method (verify TOTP or SMS code)
+- [x] 3.15 Implement `verifyRecoveryCode(User $user, string $code): bool` method
+- [x] 3.16 Implement `disable(User $user): bool` method
+- [x] 3.17 Implement `regenerateRecoveryCodes(User $user): array` method
+- [x] 3.18 Add TOTP QR code generation helper using `pragmarx/google2fa`
 
 ### OAuth Provider Service
-- [ ] 3.19 Create `App\Services\OAuthProviderService` class
-- [ ] 3.20 Implement `handleCallback(string $provider, \Laravel\Socialite\Contracts\User $socialiteUser): User` method
-- [ ] 3.21 Implement `linkProvider(User $user, string $provider, \Laravel\Socialite\Contracts\User $socialiteUser): OAuthProvider` method
-- [ ] 3.22 Implement `unlinkProvider(User $user, string $provider): bool` method
-- [ ] 3.23 Implement `refreshToken(OAuthProvider $oauthProvider): bool` method (for OAuth token refresh)
+- [x] 3.19 Create `App\Services\OAuthProviderService` class
+- [x] 3.20 Implement `handleCallback(string $provider, \Laravel\Socialite\Contracts\User $socialiteUser): User` method
+- [x] 3.21 Implement `linkProvider(User $user, string $provider, \Laravel\Socialite\Contracts\User $socialiteUser): OAuthProvider` method
+- [x] 3.22 Implement `unlinkProvider(User $user, string $provider): bool` method
+- [x] 3.23 Implement `refreshToken(OAuthProvider $oauthProvider): bool` method (for OAuth token refresh)
 
 ### Session Service
-- [ ] 3.24 Create `App\Services\SessionService` class
-- [ ] 3.25 Implement `getActiveSessions(User $user): Collection` method (query sessions table)
-- [ ] 3.26 Implement `revokeSession(string $sessionId): bool` method
-- [ ] 3.27 Implement `revokeAllOtherSessions(User $user): int` method
-- [ ] 3.28 Implement `updateLastLogin(User $user, Request $request): void` method (update last_login_at, last_login_ip)
-- [ ] 3.29 Add user agent parser helper (extract device name from user agent string)
+- [x] 3.24 Create `App\Services\SessionService` class
+- [x] 3.25 Implement `getActiveSessions(User $user): Collection` method (query sessions table)
+- [x] 3.26 Implement `revokeSession(string $sessionId): bool` method
+- [x] 3.27 Implement `revokeAllOtherSessions(User $user): int` method
+- [x] 3.28 Implement `updateLastLogin(User $user, Request $request): void` method (update last_login_at, last_login_ip)
+- [x] 3.29 Add user agent parser helper (extract device name from user agent string)
 
 ### Avatar Service
-- [ ] 3.30 Create `App\Services\AvatarService` class
-- [ ] 3.31 Implement `upload(User $user, \Illuminate\Http\UploadedFile $file): string` method (validate, resize, store, return path)
-- [ ] 3.32 Implement `delete(User $user): bool` method (remove file from storage)
-- [ ] 3.33 Implement `getPublicUrl(string $avatarUrl): string` method
-- [ ] 3.34 Add image validation rules (max 2MB, MIME types: jpeg, png, webp)
-- [ ] 3.35 Add image processing (resize to 512x512, strip EXIF data using Intervention Image or GD)
+- [x] 3.30 Create `App\Services\AvatarService` class
+- [x] 3.31 Implement `upload(User $user, \Illuminate\Http\UploadedFile $file): string` method (validate, resize, store, return path)
+- [x] 3.32 Implement `delete(User $user): bool` method (remove file from storage)
+- [x] 3.33 Implement `getPublicUrl(string $avatarUrl): string` method
+- [x] 3.34 Add image validation rules (max 2MB, MIME types: jpeg, png, webp)
+- [x] 3.35 Add image processing (resize to 512x512, strip EXIF data using Intervention Image or GD)
 
 ## 4. Controller Implementation
 
