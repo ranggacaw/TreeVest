@@ -49,7 +49,7 @@ class KycVerificationService
         $filename = Str::uuid().'.'.pathinfo($originalFilename, PATHINFO_EXTENSION);
         $path = $verification->id.'/'.$filename;
 
-        Storage::disk('kyc_documents')->put($path, file_get_contents($file));
+        Storage::disk('kyc_documents')->put($path, $file);
 
         $document = KycDocument::create([
             'kyc_verification_id' => $verification->id,

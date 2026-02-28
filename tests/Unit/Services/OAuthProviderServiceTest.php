@@ -203,14 +203,60 @@ class OAuthProviderServiceTest extends TestCase
 
     protected function createSocialiteUser(string $id, string $email, string $name): SocialiteUser
     {
-        $socialiteUser = Mockery::mock(SocialiteUser::class);
-        $socialiteUser->shouldReceive('getId')->andReturn($id);
-        $socialiteUser->shouldReceive('getEmail')->andReturn($email);
-        $socialiteUser->shouldReceive('getName')->andReturn($name);
-        $socialiteUser->shouldReceive('getToken')->andReturn('access-token-123');
-        $socialiteUser->shouldReceive('getRefreshToken')->andReturn('refresh-token-456');
-        $socialiteUser->shouldReceive('getExpiresIn')->andReturn(3600);
+        return new class ($id, $email, $name) implements \Laravel\Socialite\Contracts\User {
+            public $token = 'access-token-123';
+            public $refreshToken = 'refresh-token-456';
+            public $expiresIn = 3600;
+            protected $id;
+            protected $email;
+            protected $name;
 
-        return $socialiteUser;
+            public function __construct(string $id, string $email, string $name)
+            {
+                $this->id = $id;
+                $this->email = $email;
+                $this->name = $name;
+            }
+
+            public function getId(): string
+            {
+                return $this->id;
+            }
+
+            public function getNickname(): ?string
+            {
+                return null;
+            }
+
+            public function getName(): ?string
+            {
+                return $this->name;
+            }
+
+            public function getEmail(): ?string
+            {
+                return $this->email;
+            }
+
+            public function getAvatar(): ?string
+            {
+                return null;
+            }
+
+            public function getToken(): string
+            {
+                return $this->token;
+            }
+
+            public function getRefreshToken(): ?string
+            {
+                return $this->refreshToken;
+            }
+
+            public function getExpiresIn(): int
+            {
+                return $this->expiresIn;
+            }
+        };
     }
 }

@@ -36,8 +36,13 @@ class ArticleController extends Controller
 
     public function store(Request $request)
     {
+        $request->merge([
+            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title)
+        ]);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:articles,slug',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
             'featured_image' => 'nullable|string|max:500',
@@ -53,7 +58,7 @@ class ArticleController extends Controller
 
         $article = Article::create([
             'title' => $validated['title'],
-            'slug' => Str::slug($validated['title']),
+            'slug' => $validated['slug'],
             'content' => $validated['content'],
             'excerpt' => $validated['excerpt'] ?? null,
             'featured_image' => $validated['featured_image'] ?? null,
@@ -86,8 +91,13 @@ class ArticleController extends Controller
 
     public function update(Request $request, Article $article)
     {
+        $request->merge([
+            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title)
+        ]);
+
         $validated = $request->validate([
             'title' => 'required|string|max:255',
+            'slug' => 'required|string|max:255|unique:articles,slug',
             'content' => 'required|string',
             'excerpt' => 'nullable|string|max:500',
             'featured_image' => 'nullable|string|max:500',
@@ -103,7 +113,7 @@ class ArticleController extends Controller
 
         $article->update([
             'title' => $validated['title'],
-            'slug' => $article->slug === Str::slug($validated['title']) ? $article->slug : Str::slug($validated['title']),
+            'slug' => $validated['slug'],
             'content' => $validated['content'],
             'excerpt' => $validated['excerpt'] ?? null,
             'featured_image' => $validated['featured_image'] ?? null,

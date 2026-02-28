@@ -14,7 +14,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_can_be_created(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -30,7 +30,9 @@ class ArticleModelTest extends TestCase
 
     public function test_article_slug_is_auto_generated(): void
     {
+        $user = \App\Models\User::factory()->create();
         $article = Article::create([
+            'author_id' => $user->id,
             'title' => 'Test Article With Custom Title',
             'content' => 'Test content',
             'status' => 'draft',
@@ -41,7 +43,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_can_be_published(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -56,7 +58,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_can_be_unpublished(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -71,7 +73,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_view_count_can_be_incremented(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -86,14 +88,14 @@ class ArticleModelTest extends TestCase
 
     public function test_published_scope_returns_only_published_articles(): void
     {
-        Article::create([
+        Article::factory()->create([
             'title' => 'Published Article',
             'slug' => 'published-article',
             'content' => 'Content',
             'status' => 'published',
         ]);
 
-        Article::create([
+        Article::factory()->create([
             'title' => 'Draft Article',
             'slug' => 'draft-article',
             'content' => 'Content',
@@ -108,7 +110,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_has_categories_relationship(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -127,7 +129,7 @@ class ArticleModelTest extends TestCase
 
     public function test_article_has_tags_relationship(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Test content',
@@ -146,14 +148,14 @@ class ArticleModelTest extends TestCase
 
     public function test_is_published_returns_correct_status(): void
     {
-        $publishedArticle = Article::create([
+        $publishedArticle = Article::factory()->create([
             'title' => 'Published Article',
             'slug' => 'published-article',
             'content' => 'Content',
             'status' => 'published',
         ]);
 
-        $draftArticle = Article::create([
+        $draftArticle = Article::factory()->create([
             'title' => 'Draft Article',
             'slug' => 'draft-article',
             'content' => 'Content',
@@ -166,14 +168,14 @@ class ArticleModelTest extends TestCase
 
     public function test_is_draft_returns_correct_status(): void
     {
-        $draftArticle = Article::create([
+        $draftArticle = Article::factory()->create([
             'title' => 'Draft Article',
             'slug' => 'draft-article',
             'content' => 'Content',
             'status' => 'draft',
         ]);
 
-        $publishedArticle = Article::create([
+        $publishedArticle = Article::factory()->create([
             'title' => 'Published Article',
             'slug' => 'published-article',
             'content' => 'Content',

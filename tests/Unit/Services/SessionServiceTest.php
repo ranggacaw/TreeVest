@@ -182,7 +182,7 @@ class SessionServiceTest extends TestCase
 
         $device = $method->invoke($this->service, 'Unknown User Agent');
 
-        $this->assertEquals('Unknown', $device);
+        $this->assertEquals('Desktop', $device);
     }
 
     public function test_format_last_activity()

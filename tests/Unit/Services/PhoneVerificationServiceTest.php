@@ -34,17 +34,20 @@ class PhoneVerificationServiceTest extends TestCase
     {
         $service = new PhoneVerificationService($this->smsServiceMock);
 
+        $capturedCode = '';
         $this->smsServiceMock->shouldReceive('sendOtp')
             ->once()
-            ->andReturn(true);
+            ->andReturnUsing(function ($phone, $code) use (&$capturedCode) {
+                $capturedCode = $code;
+                return true;
+            });
 
         $service->sendVerificationCode('+1234567890');
 
         $verification = PhoneVerification::where('phone', '+1234567890')->first();
         $this->assertNotNull($verification);
 
-        $code = app()->make('encrypter')->decrypt($verification->code);
-        $this->assertMatchesRegularExpression('/^\d{6}$/', $code);
+        $this->assertMatchesRegularExpression('/^\d{6}$/', $capturedCode);
     }
 
     public function test_otp_code_expires_after_10_minutes()

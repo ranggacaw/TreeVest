@@ -30,9 +30,9 @@ class OAuthProviderService
                 'user_id' => $existingUser->id,
                 'provider' => $provider,
                 'provider_user_id' => $socialiteUser->getId(),
-                'access_token' => $socialiteUser->token,
-                'refresh_token' => $socialiteUser->refreshToken,
-                'expires_at' => $socialiteUser->expiresIn ? now()->addSeconds($socialiteUser->expiresIn) : null,
+                'access_token' => $socialiteUser->getToken(),
+                'refresh_token' => $socialiteUser->getRefreshToken(),
+                'expires_at' => $socialiteUser->getExpiresIn() ? now()->addSeconds($socialiteUser->getExpiresIn()) : null,
             ]);
 
             return $existingUser;

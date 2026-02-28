@@ -35,7 +35,7 @@ class AvatarService
             $constraint->upsize();
         });
 
-        $fileName = $this->generateFileName($user, $file->getClientOriginalExtension());
+        $fileName = $this->generateFileName($user, 'jpg');
         $directory = "avatars/{$user->id}";
 
         Storage::disk('public')->makeDirectory($directory);

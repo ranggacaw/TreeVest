@@ -41,63 +41,63 @@
 - [x] 7.3 Add authorization checks: farm owner can only manage crops/trees for farms they own
 
 ## 8. Public Marketplace Controllers
-- [ ] 8.1 Create `TreeMarketplaceController` with methods: `index()` (paginated tree list with filters using TreeFilterService, only investable trees), `show($id)` (tree detail with crop, farm, historical harvests, risk disclosure)
-- [ ] 8.2 Add route middleware: public access (no auth required for browsing)
+- [x] 8.1 Create `TreeMarketplaceController` with methods: `index()` (paginated tree list with filters using TreeFilterService, only investable trees), `show($id)` (tree detail with crop, farm, historical harvests, risk disclosure)
+- [x] 8.2 Add route middleware: public access (no auth required for browsing)
 
 ## 9. Admin Controllers
-- [ ] 9.1 Create `Admin/FruitTypeController` with methods: `index()` (list all fruit types), `create()`, `store()`, `edit()`, `update()`, `destroy()` (soft delete if no crops exist)
-- [ ] 9.2 Add route middleware: `role:admin`
+- [x] 9.1 Create `Admin/FruitTypeController` with methods: `index()` (list all fruit types), `create()`, `store()`, `edit()`, `update()`, `destroy()` (soft delete if no crops exist)
+- [x] 9.2 Add route middleware: `role:admin`
 
 ## 10. Routes
-- [ ] 10.1 Add farm owner routes group: `Route::middleware(['auth', 'role:farm_owner'])->prefix('farm-owner')->group(...)` with routes for crops and trees
-- [ ] 10.2 Add public marketplace routes: `Route::get('/trees', [TreeMarketplaceController, 'index'])->name('trees.index')`, `Route::get('/trees/{tree}', [TreeMarketplaceController, 'show'])->name('trees.show')`
-- [ ] 10.3 Add admin routes group: `Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(...)` with routes for fruit types
+- [x] 10.1 Add farm owner routes group: `Route::middleware(['auth', 'role:farm_owner'])->prefix('farm-owner')->group(...)` with routes for crops and trees
+- [x] 10.2 Add public marketplace routes: `Route::get('/trees', [TreeMarketplaceController, 'index'])->name('trees.index')`, `Route::get('/trees/{tree}', [TreeMarketplaceController, 'show'])->name('trees.show')`
+- [x] 10.3 Add admin routes group: `Route::middleware(['auth', 'role:admin'])->prefix('admin')->group(...)` with routes for fruit types
 
 ## 11. React Pages (Farm Owner)
-- [ ] 11.1 Create `Pages/FarmOwner/Crops/Index.tsx` — table of crops grouped by farm, status indicators, links to tree management
-- [ ] 11.2 Create `Pages/FarmOwner/Crops/Create.tsx` — form with farm dropdown (owner's farms only), fruit type dropdown, variant input, harvest cycle select, planted date picker
-- [ ] 11.3 Create `Pages/FarmOwner/Crops/Edit.tsx` — same form as Create, pre-filled
-- [ ] 11.4 Create `Pages/FarmOwner/Trees/Index.tsx` — table of trees grouped by crop, status badges, price display, quick status update dropdown
-- [ ] 11.5 Create `Pages/FarmOwner/Trees/Create.tsx` — form with crop dropdown (owner's crops only), tree identifier input, age input, lifespan input, risk rating radio buttons, min/max investment inputs, status select, pricing config inputs (base price, coefficients), calculated price preview
-- [ ] 11.6 Create `Pages/FarmOwner/Trees/Edit.tsx` — same form as Create, pre-filled, price recalculates on change
+- [x] 11.1 Create `Pages/FarmOwner/Crops/Index.tsx` — table of crops grouped by farm, status indicators, links to tree management
+- [x] 11.2 Create `Pages/FarmOwner/Crops/Create.tsx` — form with farm dropdown (owner's farms only), fruit type dropdown, variant input, harvest cycle select, planted date picker
+- [x] 11.3 Create `Pages/FarmOwner/Crops/Edit.tsx` — same form as Create, pre-filled
+- [x] 11.4 Create `Pages/FarmOwner/Trees/Index.tsx` — table of trees grouped by crop, status badges, price display, quick status update dropdown
+- [x] 11.5 Create `Pages/FarmOwner/Trees/Create.tsx` — form with crop dropdown (owner's crops only), tree identifier input, age input, lifespan input, risk rating radio buttons, min/max investment inputs, status select, pricing config inputs (base price, coefficients), calculated price preview
+- [x] 11.6 Create `Pages/FarmOwner/Trees/Edit.tsx` — same form as Create, pre-filled, price recalculates on change
 
 ## 12. React Pages (Public Marketplace)
-- [ ] 12.1 Create `Pages/Trees/Index.tsx` — grid of tree cards with image (from farm), fruit type, variant, price, expected ROI, risk badge, harvest cycle indicator; filter sidebar with fruit type checkboxes, variant search, price range slider, ROI range slider, risk checkboxes, harvest cycle checkboxes; sorting dropdown (price, ROI, newest)
-- [ ] 12.2 Create `Pages/Trees/Show.tsx` — tree detail page with breadcrumb (Farm > Crop > Tree), tree attributes (age, lifespan, status, risk), pricing (price, min/max investment, expected ROI), harvest cycle info, historical yield chart (or "No data" message), farm profile link, risk disclosure banner, "Invest Now" button (if investable)
-- [ ] 12.3 Create `Components/TreeCard.tsx` — reusable tree card component
-- [ ] 12.4 Create `Components/RiskBadge.tsx` — colored badge for low/medium/high risk
-- [ ] 12.5 Create `Components/HarvestCycleIcon.tsx` — icon representation of harvest cycle
+- [x] 12.1 Create `Pages/Trees/Index.tsx` — grid of tree cards with image (from farm), fruit type, variant, price, expected ROI, risk badge, harvest cycle indicator; filter sidebar with fruit type checkboxes, variant search, price range slider, ROI range slider, risk checkboxes, harvest cycle checkboxes; sorting dropdown (price, ROI, newest)
+- [x] 12.2 Create `Pages/Trees/Show.tsx` — tree detail page with breadcrumb (Farm > Crop > Tree), tree attributes (age, lifespan, status, risk), pricing (price, min/max investment, expected ROI), harvest cycle info, historical yield chart (or "No data" message), farm profile link, risk disclosure banner, "Invest Now" button (if investable)
+- [x] 12.3 Create `Components/TreeCard.tsx` — reusable tree card component
+- [x] 12.4 Create `Components/RiskBadge.tsx` — colored badge for low/medium/high risk
+- [x] 12.5 Create `Components/HarvestCycleIcon.tsx` — icon representation of harvest cycle
 
 ## 13. React Pages (Admin)
-- [ ] 13.1 Create `Pages/Admin/FruitTypes/Index.tsx` — table of fruit types with variant count, active status toggle, edit/delete actions
-- [ ] 13.2 Create `Pages/Admin/FruitTypes/Create.tsx` — form with name, slug, description
-- [ ] 13.3 Create `Pages/Admin/FruitTypes/Edit.tsx` — same form as Create, pre-filled
+- [x] 13.1 Create `Pages/Admin/FruitTypes/Index.tsx` — table of fruit types with variant count, active status toggle, edit/delete actions
+- [x] 13.2 Create `Pages/Admin/FruitTypes/Create.tsx` — form with name, slug, description
+- [x] 13.3 Create `Pages/Admin/FruitTypes/Edit.tsx` — same form as Create, pre-filled
 
 ## 14. Events & Audit Logging
-- [ ] 14.1 Dispatch `FruitCropCreated`, `FruitCropUpdated`, `FruitCropDeleted` events
-- [ ] 14.2 Dispatch `TreeCreated`, `TreeUpdated`, `TreeDeleted`, `TreeStatusChanged` events
-- [ ] 14.3 Add audit log listeners for all events with contextual data (farm_id, crop_id, tree_id, old/new values)
+- [x] 14.1 Dispatch `FruitCropCreated`, `FruitCropUpdated`, `FruitCropDeleted` events
+- [x] 14.2 Dispatch `TreeCreated`, `TreeUpdated`, `TreeDeleted`, `TreeStatusChanged` events
+- [x] 14.3 Add audit log listeners for all events with contextual data (farm_id, crop_id, tree_id, old/new values)
 
 ## 15. Testing
-- [ ] 15.1 Unit test `TreePricingService::calculatePrice()` with various input combinations
-- [ ] 15.2 Unit test `TreeFilterService::applyFilters()` with each filter type
-- [ ] 15.3 Feature test farm owner crop CRUD: authorization (owner only), validation, audit logs
-- [ ] 15.4 Feature test farm owner tree CRUD: authorization, price calculation on create/update, status transitions
-- [ ] 15.5 Feature test public marketplace: filter combinations, pagination, tree detail access (investable only)
-- [ ] 15.6 Feature test admin fruit type CRUD: authorization (admin only), soft delete prevents deletion if crops exist
-- [ ] 15.7 Test tree status transitions: seedling → growing → productive → declining → retired (sequential only)
-- [ ] 15.8 Test investable scope: only productive/growing trees returned in marketplace
+- [x] 15.1 Unit test `TreePricingService::calculatePrice()` with various input combinations
+- [x] 15.2 Unit test `TreeFilterService::applyFilters()` with each filter type
+- [x] 15.3 Feature test farm owner crop CRUD: authorization (owner only), validation, audit logs
+- [x] 15.4 Feature test farm owner tree CRUD: authorization, price calculation on create/update, status transitions
+- [x] 15.5 Feature test public marketplace: filter combinations, pagination, tree detail access (investable only)
+- [x] 15.6 Feature test admin fruit type CRUD: authorization (admin only), soft delete prevents deletion if crops exist
+- [x] 15.7 Test tree status transitions: seedling → growing → productive → declining → retired (sequential only)
+- [x] 15.8 Test investable scope: only productive/growing trees returned in marketplace
 
 ## 16. Validation Edge Cases
-- [ ] 16.1 Test tree creation fails if fruit_crop belongs to a different farm than farm owner
-- [ ] 16.2 Test tree price recalculation on age_years update
-- [ ] 16.3 Test tree cannot be deleted if investments exist (future, add check in controller)
-- [ ] 16.4 Test crop cannot be deleted if trees exist
+- [x] 16.1 Test tree creation fails if fruit_crop belongs to a different farm than farm owner
+- [x] 16.2 Test tree price recalculation on age_years update
+- [x] 16.3 Test tree cannot be deleted if investments exist (future, add check in controller)
+- [x] 16.4 Test crop cannot be deleted if trees exist
 
 ## 17. Configuration
 - [x] 17.1 Add pricing defaults to `config/treevest.php`: `tree_pricing` (default_base_price, default_age_coefficient, default_crop_premium, default_risk_multipliers [low, medium, high])
 
 ## Post-Implementation
-- [ ] Update root AGENTS.md Section 6 (Data Models) to reflect FruitCrop, Tree, TreeHarvest entities and relationships
-- [ ] Update root AGENTS.md Section 7 (Domain Vocabulary) to add definitions for Tree Identifier, Productive Lifespan, Pricing Config
-- [ ] Update root AGENTS.md Section 10 (Integration Map) if any external services needed (none expected)
+- [x] Update root AGENTS.md Section 6 (Data Models) to reflect FruitCrop, Tree, TreeHarvest entities and relationships
+- [x] Update root AGENTS.md Section 7 (Domain Vocabulary) to add definitions for Tree Identifier, Productive Lifespan, Pricing Config
+- [x] Update root AGENTS.md Section 10 (Integration Map) if any external services needed (none expected)

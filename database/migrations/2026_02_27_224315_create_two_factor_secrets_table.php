@@ -13,7 +13,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained()->onDelete('cascade')->unique();
             $table->enum('type', ['totp', 'sms']);
             $table->text('secret');
-            $table->timestamp('enabled_at');
+            $table->timestamp('enabled_at')->nullable();
             $table->timestamp('last_used_at')->nullable();
             $table->timestamps();
         });

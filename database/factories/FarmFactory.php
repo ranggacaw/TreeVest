@@ -23,7 +23,8 @@ class FarmFactory extends Factory
             'state' => fake()->state(),
             'country' => fake()->country(),
             'postal_code' => fake()->postcode(),
-            'coordinates' => null,
+            'latitude' => fake()->latitude(),
+            'longitude' => fake()->longitude(),
             'size_hectares' => fake()->randomFloat(2, 1, 100),
             'capacity_trees' => fake()->numberBetween(100, 10000),
             'status' => FarmStatus::PENDING_APPROVAL,
@@ -63,7 +64,8 @@ class FarmFactory extends Factory
     public function withCoordinates(float $lat = 3.1390, float $lng = 101.6869): static
     {
         return $this->state(fn (array $attributes) => [
-            'coordinates' => DB::raw("ST_GeomFromText('POINT($lng $lat)', 4326)"),
+            'latitude' => (string) $lat,
+            'longitude' => (string) $lng,
         ]);
     }
 }

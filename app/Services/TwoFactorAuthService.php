@@ -103,18 +103,18 @@ class TwoFactorAuthService
     {
         $recoveryCode = TwoFactorRecoveryCode::where('user_id', $user->id)
             ->where('used_at', null)
-            ->where('code', $code)
             ->first();
 
         if (! $recoveryCode) {
             return false;
         }
 
+        if (! password_verify($code, $recoveryCode->code)) {
+            return false;
+        }
+
         $recoveryCode->used_at = Carbon::now();
         $recoveryCode->save();
-
-        $user->twoFactorSecret->last_used_at = Carbon::now();
-        $user->twoFactorSecret->save();
 
         return true;
     }

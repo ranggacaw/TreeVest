@@ -80,7 +80,7 @@ class KycVerification extends Model
     public function hasRequiredDocuments(): bool
     {
         $requiredTypes = config('treevest.kyc.jurisdictions.'.$this->jurisdiction_code.'.required_documents', []);
-        $existingTypes = $this->documents->pluck('document_type')->unique()->values()->toArray();
+        $existingTypes = $this->documents->pluck('document_type.value')->unique()->values()->toArray();
 
         return empty(array_diff($requiredTypes, $existingTypes));
     }

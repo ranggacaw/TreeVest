@@ -40,12 +40,15 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_create_article(): void
     {
+        $category = \App\Models\Category::factory()->create();
+
         $response = $this->post(route('admin.articles.store'), [
             'title' => 'New Article',
             'slug' => 'new-article',
             'content' => '<p>Article content</p>',
             'excerpt' => 'Article excerpt',
             'status' => 'draft',
+            'category_ids' => [$category->id],
         ]);
 
         $this->assertDatabaseHas('articles', [
@@ -56,7 +59,7 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_view_edit_article_page(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Content',
@@ -70,12 +73,14 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_update_article(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Content',
             'status' => 'draft',
         ]);
+
+        $category = \App\Models\Category::factory()->create();
 
         $response = $this->put(route('admin.articles.update', $article->id), [
             'title' => 'Updated Title',
@@ -83,6 +88,7 @@ class AdminArticleTest extends TestCase
             'content' => '<p>Updated content</p>',
             'excerpt' => 'Updated excerpt',
             'status' => 'draft',
+            'category_ids' => [$category->id],
         ]);
 
         $this->assertDatabaseHas('articles', [
@@ -93,7 +99,7 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_delete_article(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Content',
@@ -109,7 +115,7 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_publish_article(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Content',
@@ -124,7 +130,7 @@ class AdminArticleTest extends TestCase
 
     public function test_admin_can_unpublish_article(): void
     {
-        $article = Article::create([
+        $article = Article::factory()->create([
             'title' => 'Test Article',
             'slug' => 'test-article',
             'content' => 'Content',
@@ -150,7 +156,9 @@ class AdminArticleTest extends TestCase
 
     public function test_article_slug_must_be_unique(): void
     {
-        Article::create([
+        $category = \App\Models\Category::factory()->create();
+
+        Article::factory()->create([
             'title' => 'Existing Article',
             'slug' => 'existing-article',
             'content' => 'Content',
@@ -162,6 +170,7 @@ class AdminArticleTest extends TestCase
             'slug' => 'existing-article',
             'content' => 'Content',
             'status' => 'draft',
+            'category_ids' => [$category->id],
         ]);
 
         $response->assertSessionHasErrors('slug');

@@ -332,10 +332,11 @@ Admin Approval → Listed on Marketplace
 | **Farm** | id, owner_id, name, description, address, city, state, country, postal_code, coordinates, size_hectares, capacity_trees, status, soil_type, climate, historical_performance, virtual_tour_url, rejection_reason, approved_at, approved_by | Geospatial data, images, virtual tours, status workflow |
 | **FarmImage** | id, farm_id, file_path, original_filename, mime_type, file_size, is_featured, sort_order | Farm gallery images |
 | **FarmCertification** | id, farm_id, name, issuer, certificate_number, issued_date, expiry_date, file_path, notes | Farm certifications and permits |
-| **FruitCrop** | id, fruit_type, variant, farm_id | e.g., Durian → Musang King |
-| **Tree** | id, crop_id, farm_id, price, expected_roi, harvest_cycle, age, lifespan, risk_rating, min_investment, max_investment | Investable unit |
+| **FruitType** | id, name, slug, description, is_active | e.g., Durian, Mango, Grapes |
+| **FruitCrop** | id, farm_id, fruit_type_id, variant, description, harvest_cycle, planted_date | e.g., Musang King variant on a specific farm |
+| **Tree** | id, fruit_crop_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json | Investable unit |
 | **Investment** | id, investor_id, tree_id, amount, purchase_date, status | Core transaction |
-| **Harvest** | id, tree_id, harvest_date, estimated_yield, actual_yield, market_price, status | Tied to payout |
+| **TreeHarvest** | id, tree_id, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes | Tied to payout |
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
 | **Transaction** | id, user_id, type, amount, currency, status, reference | Ledger of all financial movements |
 | **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count, meta_title, meta_description, meta_keywords | Educational and encyclopedia content |
