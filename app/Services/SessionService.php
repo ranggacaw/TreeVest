@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Models\User;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Jenssegers\Agent\Agent;
 
 class SessionService
@@ -13,7 +13,7 @@ class SessionService
 
     public function __construct()
     {
-        $this->agent = new Agent();
+        $this->agent = new Agent;
     }
 
     public function getActiveSessions(User $user): \Illuminate\Support\Collection

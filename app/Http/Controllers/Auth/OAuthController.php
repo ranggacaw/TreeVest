@@ -3,15 +3,11 @@
 namespace App\Http\Controllers\Auth;
 
 use App\Http\Controllers\Controller;
-use App\Models\User;
 use App\Services\OAuthProviderService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Route;
 use Laravel\Socialite\Facades\Socialite;
-use Inertia\Inertia;
-use Inertia\Response;
 
 class OAuthController extends Controller
 {
@@ -72,7 +68,7 @@ class OAuthController extends Controller
 
         $success = $this->oauthProviderService->unlinkProvider(Auth::user(), $provider);
 
-        if (!$success) {
+        if (! $success) {
             return back()->with('error', 'Failed to unlink OAuth provider.');
         }
 

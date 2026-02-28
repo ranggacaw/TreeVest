@@ -30,6 +30,6 @@ class TwoFactorRecoveryCode extends Model
 
     public function isValid(): bool
     {
-        return !$this->isUsed();
+        return ! $this->isUsed();
     }
 }

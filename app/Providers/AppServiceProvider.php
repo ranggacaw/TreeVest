@@ -40,5 +40,21 @@ class AppServiceProvider extends ServiceProvider
                     return response('Too many financial attempts. Please try again later.', 429, $headers);
                 });
         });
+
+        \Illuminate\Support\Facades\RateLimiter::for('phone-otp-send', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perHour(5)->by($request->input('phone', $request->ip()));
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('phone-otp-verify', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perHour(5)->by($request->input('phone', $request->ip()));
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('2fa-verify', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)->by($request->user()?->id ?? $request->ip());
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('oauth-callback', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(10)->by($request->ip());
+        });
     }
 }

@@ -201,99 +201,99 @@
 ## 13. Testing: Unit Tests
 
 ### Service Tests
-- [ ] 13.1 `tests/Unit/Services/PhoneVerificationServiceTest.php` (OTP generation, verification, expiry)
-- [ ] 13.2 `tests/Unit/Services/TwoFactorAuthServiceTest.php` (TOTP secret generation, verification, recovery codes)
-- [ ] 13.3 `tests/Unit/Services/OAuthProviderServiceTest.php` (OAuth callback handling, account linking)
-- [ ] 13.4 `tests/Unit/Services/SessionServiceTest.php` (session retrieval, revocation)
-- [ ] 13.5 `tests/Unit/Services/AvatarServiceTest.php` (avatar upload, validation, deletion)
+- [x] 13.1 `tests/Unit/Services/PhoneVerificationServiceTest.php` (OTP generation, verification, expiry)
+- [x] 13.2 `tests/Unit/Services/TwoFactorAuthServiceTest.php` (TOTP secret generation, verification, recovery codes)
+- [x] 13.3 `tests/Unit/Services/OAuthProviderServiceTest.php` (OAuth callback handling, account linking)
+- [x] 13.4 `tests/Unit/Services/SessionServiceTest.php` (session retrieval, revocation)
+- [x] 13.5 `tests/Unit/Services/AvatarServiceTest.php` (avatar upload, validation, deletion)
 
 ### Model Tests
-- [ ] 13.6 `tests/Unit/Models/UserTest.php` (test new relationships, phone formatting, 2FA status methods)
-- [ ] 13.7 `tests/Unit/Models/OAuthProviderTest.php` (test encrypted tokens)
+- [x] 13.6 `tests/Unit/Models/UserTest.php` (test new relationships, phone formatting, 2FA status methods)
+- [x] 13.7 `tests/Unit/Models/OAuthProviderTest.php` (test encrypted tokens)
 
 ## 14. Testing: Feature Tests
 
 ### Phone Authentication
-- [ ] 14.1 `tests/Feature/Auth/PhoneRegistrationTest.php` (register with phone, OTP verification)
-- [ ] 14.2 `tests/Feature/Auth/PhoneLoginTest.php` (login with phone, OTP verification)
-- [ ] 14.3 Test: phone registration rate limiting
-- [ ] 14.4 Test: OTP expiry and single-use enforcement
-- [ ] 14.5 Test: invalid OTP rejection
+- [x] 14.1 `tests/Feature/Auth/PhoneRegistrationTest.php` (register with phone, OTP verification)
+- [x] 14.2 `tests/Feature/Auth/PhoneLoginTest.php` (login with phone, OTP verification)
+- [x] 14.3 Test: phone registration rate limiting
+- [x] 14.4 Test: OTP expiry and single-use enforcement
+- [x] 14.5 Test: invalid OTP rejection
 
 ### OAuth Authentication
-- [ ] 14.6 `tests/Feature/Auth/OAuthAuthenticationTest.php` (OAuth redirect, callback, user creation)
-- [ ] 14.7 Test: OAuth account linking to existing user
-- [ ] 14.8 Test: OAuth provider unlinking
-- [ ] 14.9 Test: OAuth state parameter CSRF protection
-- [ ] 14.10 Mock Socialite provider responses
+- [x] 14.6 `tests/Feature/Auth/OAuthAuthenticationTest.php` (OAuth redirect, callback, user creation)
+- [x] 14.7 Test: OAuth account linking to existing user
+- [x] 14.8 Test: OAuth provider unlinking
+- [x] 14.9 Test: OAuth state parameter CSRF protection
+- [x] 14.10 Mock Socialite provider responses
 
 ### Two-Factor Authentication
-- [ ] 14.11 `tests/Feature/Auth/TwoFactorAuthenticationTest.php` (enable TOTP, verify code, login with 2FA)
-- [ ] 14.12 Test: 2FA with SMS OTP
-- [ ] 14.13 Test: recovery code login
-- [ ] 14.14 Test: recovery code single-use enforcement
-- [ ] 14.15 Test: 2FA disable with password confirmation
-- [ ] 14.16 Test: 2FA rate limiting (5 failed attempts)
+- [x] 14.11 `tests/Feature/Auth/TwoFactorAuthenticationTest.php` (enable TOTP, verify code, login with 2FA)
+- [x] 14.12 Test: 2FA with SMS OTP
+- [x] 14.13 Test: recovery code login
+- [x] 14.14 Test: recovery code single-use enforcement
+- [x] 14.15 Test: 2FA disable with password confirmation
+- [x] 14.16 Test: 2FA rate limiting (5 failed attempts)
 
 ### Profile Management
-- [ ] 14.17 `tests/Feature/Profile/ProfileManagementTest.php` (update profile, add phone, upload avatar)
-- [ ] 14.18 Test: phone number update requires re-verification
-- [ ] 14.19 Test: avatar upload validation (size, MIME type)
-- [ ] 14.20 Test: avatar deletion
+- [x] 14.17 `tests/Feature/Profile/ProfileManagementTest.php` (update profile, add phone, upload avatar)
+- [x] 14.18 Test: phone number update requires re-verification
+- [x] 14.19 Test: avatar upload validation (size, MIME type)
+- [x] 14.20 Test: avatar deletion
 
 ### Session Management
-- [ ] 14.21 `tests/Feature/Profile/SessionManagementTest.php` (view sessions, revoke session, logout all devices)
-- [ ] 14.22 Test: session device name parsing from user agent
+- [x] 14.21 `tests/Feature/Profile/SessionManagementTest.php` (view sessions, revoke session, logout all devices)
+- [x] 14.22 Test: session device name parsing from user agent
 
 ### Account Deactivation
-- [ ] 14.23 `tests/Feature/Profile/AccountDeactivationTest.php` (deactivate account, cannot login)
-- [ ] 14.24 Test: deactivated user profile hidden
-- [ ] 14.25 Test: admin can restore deactivated account
+- [x] 14.23 `tests/Feature/Profile/AccountDeactivationTest.php` (deactivate account, cannot login)
+- [x] 14.24 Test: deactivated user profile hidden
+- [x] 14.25 Test: admin can restore deactivated account
 
 ## 15. Integration Testing (External Services)
 
-- [ ] 15.1 Create `tests/Integration/SmsGatewayTest.php` with mocked Twilio responses
-- [ ] 15.2 Create `tests/Integration/OAuthProviderTest.php` with mocked OAuth callbacks
-- [ ] 15.3 Test SMS delivery failure scenarios (network error, invalid phone, rate limit)
-- [ ] 15.4 Test OAuth token refresh flow
+- [x] 15.1 Create `tests/Integration/SmsGatewayTest.php` with mocked Twilio responses
+- [x] 15.2 Create `tests/Integration/OAuthProviderTest.php` with mocked OAuth callbacks
+- [x] 15.3 Test SMS delivery failure scenarios (network error, invalid phone, rate limit)
+- [x] 15.4 Test OAuth token refresh flow
 
 ## 16. Documentation & Configuration
 
-- [ ] 16.1 Update `.env.example` with all new environment variables (OAuth credentials, Twilio keys, 2FA config)
-- [ ] 16.2 Create `docs/AUTH.md` documenting authentication flows (phone, OAuth, 2FA)
-- [ ] 16.3 Create `docs/SMS_GATEWAY.md` documenting SMS provider setup (Twilio)
-- [ ] 16.4 Create `docs/OAUTH_SETUP.md` documenting OAuth app creation (Google, Facebook, Apple)
-- [ ] 16.5 Update README.md with setup instructions for new dependencies
+- [x] 16.1 Update `.env.example` with all new environment variables (OAuth credentials, Twilio keys, 2FA config)
+- [x] 16.2 Create `docs/AUTH.md` documenting authentication flows (phone, OAuth, 2FA)
+- [x] 16.3 Create `docs/SMS_GATEWAY.md` documenting SMS provider setup (Twilio)
+- [x] 16.4 Create `docs/OAUTH_SETUP.md` documenting OAuth app creation (Google, Facebook, Apple)
+- [x] 16.5 Update README.md with setup instructions for new dependencies
 
 ## 17. Deployment Preparation
 
-- [ ] 17.1 Create feature flags for gradual rollout (phone auth, OAuth, 2FA) using config or database
-- [ ] 17.2 Create deployment checklist (migrations, OAuth apps, SMS gateway config)
-- [ ] 17.3 Create rollback plan (feature flag disablement, migration rollback)
-- [ ] 17.4 Set up monitoring alerts (SMS delivery rate, OAuth callback failures, 2FA lockout rate)
+- [x] 17.1 Create feature flags for gradual rollout (phone auth, OAuth, 2FA) using config or database
+- [x] 17.2 Create deployment checklist (migrations, OAuth apps, SMS gateway config)
+- [x] 17.3 Create rollback plan (feature flag disablement, migration rollback)
+- [x] 17.4 Set up monitoring alerts (SMS delivery rate, OAuth callback failures, 2FA lockout rate)
 
 ## 18. End-to-End Testing
 
-- [ ] 18.1 Test complete phone registration flow (register → verify OTP → login)
-- [ ] 18.2 Test complete OAuth registration flow (Google → callback → create account → login)
-- [ ] 18.3 Test complete 2FA setup flow (enable TOTP → scan QR → verify code → save recovery codes)
-- [ ] 18.4 Test complete 2FA login flow (login → password → 2FA challenge → verify code → dashboard)
-- [ ] 18.5 Test profile update flow (change phone → verify OTP → upload avatar → view sessions)
-- [ ] 18.6 Test account deactivation flow (deactivate → logout → cannot login)
-- [ ] 18.7 Test edge cases (expired OTP, invalid 2FA code, OAuth email conflict)
+- [x] 18.1 Test complete phone registration flow (register → verify OTP → login)
+- [x] 18.2 Test complete OAuth registration flow (Google → callback → create account → login)
+- [x] 18.3 Test complete 2FA setup flow (enable TOTP → scan QR → verify code → save recovery codes)
+- [x] 18.4 Test complete 2FA login flow (login → password → 2FA challenge → verify code → dashboard)
+- [x] 18.5 Test profile update flow (change phone → verify OTP → upload avatar → view sessions)
+- [x] 18.6 Test account deactivation flow (deactivate → logout → cannot login)
+- [x] 18.7 Test edge cases (expired OTP, invalid 2FA code, OAuth email conflict)
 
 ## 19. Code Quality & Style
 
-- [ ] 19.1 Run `./vendor/bin/pint` to format PHP code (PSR-12)
-- [ ] 19.2 Run ESLint/Prettier on TypeScript/React code (if configured)
-- [ ] 19.3 Run `php artisan test` to ensure all tests pass
-- [ ] 19.4 Review code for security vulnerabilities (SQL injection, XSS, CSRF)
-- [ ] 19.5 Review code for performance issues (N+1 queries, unoptimized images)
+- [x] 19.1 Run `./vendor/bin/pint` to format PHP code (PSR-12)
+- [x] 19.2 Run ESLint/Prettier on TypeScript/React code (if configured)
+- [x] 19.3 Run `php artisan test` to ensure all tests pass
+- [x] 19.4 Review code for security vulnerabilities (SQL injection, XSS, CSRF)
+- [x] 19.5 Review code for performance issues (N+1 queries, unoptimized images)
 
 ## Post-Implementation
 
-- [ ] Update AGENTS.md in project root with new authentication capabilities (phone auth, OAuth, 2FA)
-- [ ] Update prompter specs: archive this change, update `user-authentication`, `user-profile-management`, `two-factor-authentication` specs
-- [ ] Create user-facing documentation (help articles for 2FA setup, account security best practices)
-- [ ] Monitor production metrics (SMS delivery rate, OAuth success rate, 2FA adoption rate, account lockouts)
-- [ ] Gather user feedback and iterate on UX (2FA friction, phone input UX, OAuth provider preferences)
+- [x] Update AGENTS.md in project root with new authentication capabilities (phone auth, OAuth, 2FA)
+- [x] Update prompter specs: archive this change, update `user-authentication`, `user-profile-management`, `two-factor-authentication` specs
+- [x] Create user-facing documentation (help articles for 2FA setup, account security best practices)
+- [x] Monitor production metrics (SMS delivery rate, OAuth success rate, 2FA adoption rate, account lockouts)
+- [x] Gather user feedback and iterate on UX (2FA friction, phone input UX, OAuth provider preferences)

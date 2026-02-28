@@ -13,7 +13,7 @@ class EnsurePhoneIsVerified
     {
         $user = Auth::user();
 
-        if ($user && $user->phone && !$user->phone_verified_at) {
+        if ($user && $user->phone && ! $user->phone_verified_at) {
             return redirect()->route('verification.phone.notice')
                 ->with('status', 'You must verify your phone number.');
         }

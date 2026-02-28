@@ -4,10 +4,10 @@ namespace App\Services;
 
 use App\Models\OAuthProvider;
 use App\Models\User;
-use Laravel\Socialite\Contracts\User as SocialiteUser;
-use Laravel\Socialite\Facades\Socialite;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
+use Laravel\Socialite\Contracts\User as SocialiteUser;
+use Laravel\Socialite\Facades\Socialite;
 
 class OAuthProviderService
 {
@@ -19,6 +19,7 @@ class OAuthProviderService
 
         if ($oauthProvider) {
             $this->refreshTokenIfNeeded($oauthProvider);
+
             return $oauthProvider->user;
         }
 
@@ -98,11 +99,11 @@ class OAuthProviderService
 
     public function refreshToken(OAuthProvider $oauthProvider): bool
     {
-        if (!$oauthProvider->isExpired()) {
+        if (! $oauthProvider->isExpired()) {
             return true;
         }
 
-        if (!$oauthProvider->refresh_token) {
+        if (! $oauthProvider->refresh_token) {
             return false;
         }
 

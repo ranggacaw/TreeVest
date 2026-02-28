@@ -65,6 +65,10 @@
 | Layer | Technology | Version / Notes |
 |-------|-----------|-----------------|
 | **Auth Scaffolding** | Laravel Breeze | 2.x (React + TypeScript stack) |
+| **Phone Auth** | Custom Implementation | SMS OTP verification (6-digit codes, 10-minute expiry) |
+| **OAuth Providers** | Laravel Socialite | Google, Facebook, Apple OAuth integration |
+| **2FA** | PragmaRX Google2FA | TOTP (app-based) and SMS OTP 2FA with 8 recovery codes |
+| **SMS Gateway** | Twilio SDK | SMS delivery for OTP and notifications |
 | **Authorization** | Custom `RoleMiddleware` | Simple `role:admin` / `role:cashier` enum check |
 | **API Auth (optional)** | Laravel Sanctum | 4.x (installed, not actively used for SPA) |
 
@@ -562,10 +566,10 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 | **Local Payment Methods** | Region-specific payment processing | High |
 | **Google Maps / Mapbox** | Farm location display, map-based discovery | High |
 | **Weather API** | Farm condition monitoring, weather impact alerts | Medium |
-| **SMS Service** | OTP delivery, notification fallback | High |
+| **SMS Service** | OTP delivery, notifications fallback | High |
 | **Email Service** | Notifications, KYC communications, reports | High |
 | **Analytics Platform** | User behavior tracking, business metrics | Medium |
-| **OAuth Providers** | Social media login (Google, Facebook, Apple, etc.) | High |
+| **OAuth Providers** | Social media login (Google, Facebook, Apple) | High |
 
 ### Internal Service Communication
 - Not yet defined — pending architecture decisions in TDD-Lite

@@ -2,10 +2,9 @@
 
 namespace App\Services;
 
+use App\Contracts\SmsServiceInterface;
 use App\Models\PhoneVerification;
 use App\Models\User;
-use App\Contracts\SmsServiceInterface;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
 
 class PhoneVerificationService
@@ -39,7 +38,7 @@ class PhoneVerificationService
             ->latest()
             ->first();
 
-        if (!$verification) {
+        if (! $verification) {
             return false;
         }
 
@@ -47,7 +46,7 @@ class PhoneVerificationService
             return false;
         }
 
-        if (!password_verify($code, $verification->code)) {
+        if (! password_verify($code, $verification->code)) {
             return false;
         }
 
@@ -79,8 +78,8 @@ class PhoneVerificationService
     {
         $phone = preg_replace('/[^0-9+]/', '', $phone);
 
-        if (!str_starts_with($phone, '+')) {
-            $phone = '+' . $phone;
+        if (! str_starts_with($phone, '+')) {
+            $phone = '+'.$phone;
         }
 
         return $phone;

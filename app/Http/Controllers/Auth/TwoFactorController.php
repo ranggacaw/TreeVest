@@ -7,7 +7,6 @@ use App\Services\TwoFactorAuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -82,13 +81,13 @@ class TwoFactorController extends Controller
         $user = Auth::user();
         $twoFactorSecret = $user->twoFactorSecret;
 
-        if (!$twoFactorSecret) {
+        if (! $twoFactorSecret) {
             return back()->with('error', '2FA setup not initialized.');
         }
 
         $isValid = $this->twoFactorAuthService->verify($user, $request->input('code'));
 
-        if (!$isValid) {
+        if (! $isValid) {
             return back()->with('error', 'Invalid 2FA code.');
         }
 
@@ -112,7 +111,7 @@ class TwoFactorController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->twoFactorSecret || !$user->twoFactorSecret->isEnabled()) {
+        if (! $user->twoFactorSecret || ! $user->twoFactorSecret->isEnabled()) {
             return back()->with('error', '2FA is not enabled.');
         }
 

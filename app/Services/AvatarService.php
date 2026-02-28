@@ -5,21 +5,24 @@ namespace App\Services;
 use App\Models\User;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class AvatarService
 {
     protected ImageManager $imageManager;
 
     protected int $maxSize = 2097152; // 2MB
+
     protected array $allowedMimeTypes = ['image/jpeg', 'image/png', 'image/webp'];
+
     protected int $maxWidth = 512;
+
     protected int $maxHeight = 512;
 
     public function __construct()
     {
-        $this->imageManager = new ImageManager(new Driver());
+        $this->imageManager = new ImageManager(new Driver);
     }
 
     public function upload(User $user, UploadedFile $file): string
@@ -37,7 +40,7 @@ class AvatarService
 
         Storage::disk('public')->makeDirectory($directory);
 
-        $path = $directory . '/' . $fileName;
+        $path = $directory.'/'.$fileName;
         Storage::disk('public')->put($path, $image->toJpeg(85));
 
         $this->deleteOldAvatar($user);
@@ -50,7 +53,7 @@ class AvatarService
 
     public function delete(User $user): bool
     {
-        if (!$user->avatar_url) {
+        if (! $user->avatar_url) {
             return false;
         }
 
@@ -73,7 +76,7 @@ class AvatarService
             throw new \InvalidArgumentException('Avatar file size must not exceed 2MB.');
         }
 
-        if (!in_array($file->getMimeType(), $this->allowedMimeTypes)) {
+        if (! in_array($file->getMimeType(), $this->allowedMimeTypes)) {
             throw new \InvalidArgumentException('Avatar file must be JPEG, PNG, or WebP format.');
         }
     }
@@ -87,6 +90,6 @@ class AvatarService
 
     protected function generateFileName(User $user, string $extension): string
     {
-        return $user->id . '_' . time() . '.' . $extension;
+        return $user->id.'_'.time().'.'.$extension;
     }
 }

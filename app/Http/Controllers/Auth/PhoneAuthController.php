@@ -9,8 +9,8 @@ use App\Services\SessionService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\RateLimiter;
+use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Str;
 use Illuminate\Validation\ValidationException;
 use Inertia\Inertia;
@@ -41,7 +41,7 @@ class PhoneAuthController extends Controller
 
         $sent = $this->phoneVerificationService->sendVerificationCode($request->input('phone'));
 
-        if (!$sent) {
+        if (! $sent) {
             RateLimiter::hit($this->throttleKey($request->input('phone')));
             throw ValidationException::withMessages([
                 'phone' => 'Failed to send verification code. Please try again.',
@@ -62,7 +62,7 @@ class PhoneAuthController extends Controller
     {
         $registrationData = Session::get('phone_registration');
 
-        if (!$registrationData) {
+        if (! $registrationData) {
             return redirect()->route('phone.register');
         }
 
@@ -74,7 +74,7 @@ class PhoneAuthController extends Controller
 
         $isValid = $this->phoneVerificationService->verifyCode($registrationData['phone'], $request->input('code'));
 
-        if (!$isValid) {
+        if (! $isValid) {
             RateLimiter::hit($this->throttleKey($registrationData['phone']));
 
             throw ValidationException::withMessages([
@@ -115,9 +115,9 @@ class PhoneAuthController extends Controller
             'identifier' => ['required', 'string'],
         ]);
 
-        $user = User::where('phone', 'like', '%' . $request->input('identifier'))->first();
+        $user = User::where('phone', 'like', '%'.$request->input('identifier'))->first();
 
-        if (!$user) {
+        if (! $user) {
             throw ValidationException::withMessages([
                 'identifier' => 'No account found with this phone number.',
             ]);
@@ -127,7 +127,7 @@ class PhoneAuthController extends Controller
 
         $sent = $this->phoneVerificationService->sendVerificationCode($user->phone);
 
-        if (!$sent) {
+        if (! $sent) {
             RateLimiter::hit($this->throttleKey($user->phone));
             throw ValidationException::withMessages([
                 'identifier' => 'Failed to send verification code. Please try again.',
@@ -148,14 +148,15 @@ class PhoneAuthController extends Controller
     {
         $loginData = Session::get('phone_login');
 
-        if (!$loginData) {
+        if (! $loginData) {
             return redirect()->route('phone.login');
         }
 
         $user = User::find($loginData['user_id']);
 
-        if (!$user) {
+        if (! $user) {
             Session::forget('phone_login');
+
             return redirect()->route('phone.login');
         }
 
@@ -167,7 +168,7 @@ class PhoneAuthController extends Controller
 
         $isValid = $this->phoneVerificationService->verifyCode($user->phone, $request->input('code'));
 
-        if (!$isValid) {
+        if (! $isValid) {
             RateLimiter::hit($this->throttleKey($user->phone));
 
             throw ValidationException::withMessages([
@@ -193,7 +194,7 @@ class PhoneAuthController extends Controller
 
         $phone = $loginData['phone'] ?? $registrationData['phone'] ?? null;
 
-        if (!$phone) {
+        if (! $phone) {
             throw ValidationException::withMessages([
                 'phone' => 'Session expired. Please start over.',
             ]);
@@ -203,7 +204,7 @@ class PhoneAuthController extends Controller
 
         $sent = $this->phoneVerificationService->sendVerificationCode($phone);
 
-        if (!$sent) {
+        if (! $sent) {
             RateLimiter::hit($this->throttleKey($phone));
             throw ValidationException::withMessages([
                 'phone' => 'Failed to send verification code. Please try again.',
@@ -217,7 +218,7 @@ class PhoneAuthController extends Controller
 
     protected function ensureIsNotRateLimited(string $phone): void
     {
-        if (!RateLimiter::tooManyAttempts($this->throttleKey($phone), 5)) {
+        if (! RateLimiter::tooManyAttempts($this->throttleKey($phone), 5)) {
             return;
         }
 
@@ -233,6 +234,6 @@ class PhoneAuthController extends Controller
 
     protected function throttleKey(string $phone): string
     {
-        return Str::transliterate(Str::lower($phone) . '|' . request()->ip());
+        return Str::transliterate(Str::lower($phone).'|'.request()->ip());
     }
 }

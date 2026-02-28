@@ -1,11 +1,11 @@
 <?php
 
+use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
-use App\Http\Controllers\AvatarController;
-use App\Http\Controllers\AccountController;
-use App\Http\Controllers\Auth\TwoFactorController;
-use App\Http\Controllers\Auth\OAuthController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;

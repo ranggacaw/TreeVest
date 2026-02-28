@@ -40,7 +40,7 @@ class AvatarController extends Controller
     {
         $user = Auth::user();
 
-        if (!$user->avatar_url) {
+        if (! $user->avatar_url) {
             return back()->with('error', 'No avatar to delete.');
         }
 

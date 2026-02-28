@@ -14,12 +14,12 @@ class RequireTwoFactorAuth
     {
         $user = Auth::user();
 
-        if (!$user) {
+        if (! $user) {
             return $next($request);
         }
 
         if ($user->two_factor_enabled_at) {
-            if (!Session::get('auth.two_factor_confirmed')) {
+            if (! Session::get('auth.two_factor_confirmed')) {
                 return redirect()->route('two-factor.challenge');
             }
         }

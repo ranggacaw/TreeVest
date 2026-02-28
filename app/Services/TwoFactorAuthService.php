@@ -2,12 +2,12 @@
 
 namespace App\Services;
 
-use App\Models\TwoFactorSecret;
 use App\Models\TwoFactorRecoveryCode;
+use App\Models\TwoFactorSecret;
 use App\Models\User;
-use PragmaRX\Google2FA\Google2FA;
-use Illuminate\Support\Str;
 use Carbon\Carbon;
+use Illuminate\Support\Str;
+use PragmaRX\Google2FA\Google2FA;
 
 class TwoFactorAuthService
 {
@@ -15,7 +15,7 @@ class TwoFactorAuthService
 
     public function __construct()
     {
-        $this->google2fa = new Google2FA();
+        $this->google2fa = new Google2FA;
     }
 
     public function enableTotp(User $user): array
@@ -65,7 +65,7 @@ class TwoFactorAuthService
     {
         $secret = $user->twoFactorSecret;
 
-        if (!$secret) {
+        if (! $secret) {
             return false;
         }
 
@@ -84,7 +84,7 @@ class TwoFactorAuthService
     {
         $secret = $user->twoFactorSecret;
 
-        if (!$secret || !$secret->isEnabled()) {
+        if (! $secret || ! $secret->isEnabled()) {
             return false;
         }
 
@@ -106,7 +106,7 @@ class TwoFactorAuthService
             ->where('code', $code)
             ->first();
 
-        if (!$recoveryCode) {
+        if (! $recoveryCode) {
             return false;
         }
 
@@ -158,7 +158,7 @@ class TwoFactorAuthService
             ->latest()
             ->first();
 
-        if (!$verification) {
+        if (! $verification) {
             return false;
         }
 
@@ -169,8 +169,9 @@ class TwoFactorAuthService
     {
         $codes = [];
         for ($i = 0; $i < $count; $i++) {
-            $codes[] = strtoupper(Str::random(10) . '-' . Str::random(10));
+            $codes[] = strtoupper(Str::random(10).'-'.Str::random(10));
         }
+
         return $codes;
     }
 

@@ -19,7 +19,9 @@ Treevest operates similarly to a stock exchange but for agricultural investments
 
 - **Backend:** Laravel 12.x (PHP 8.2+)
 - **Frontend:** React 18.x + TypeScript 5.x via Inertia.js 2.x
-- **Authentication:** Laravel Breeze with React
+- **Authentication:** Laravel Breeze with Phone, OAuth (Google, Facebook, Apple), and 2FA support
+- **SMS Gateway:** Twilio
+- **2FA Library:** PragmaRX Google2FA
 - **Styling:** Tailwind CSS 3.x
 - **Build Tool:** Vite 7.x
 - **Database:** MySQL 8.x (production), SQLite (testing)
@@ -35,6 +37,8 @@ Treevest operates similarly to a stock exchange but for agricultural investments
 - Node.js and npm
 - MySQL 8.x
 - Laragon (recommended for local development)
+- Twilio account (for SMS OTP verification) - see [docs/SMS_GATEWAY.md](docs/SMS_GATEWAY.md)
+- Google, Facebook, and Apple developer accounts (for OAuth) - see [docs/OAUTH_SETUP.md](docs/OAUTH_SETUP.md)
 
 ### Installation
 
@@ -70,9 +74,34 @@ Treevest operates similarly to a stock exchange but for agricultural investments
    ```
 
 8. Build frontend assets:
-   ```bash
-   npm run build
-   ```
+    ```bash
+    npm run build
+    ```
+
+9. Configure authentication services (optional):
+
+   a. Set up SMS gateway (Twilio) for phone-based authentication:
+      - Create a Twilio account at [https://www.twilio.com](https://www.twilio.com)
+      - Add credentials to `.env`:
+        ```env
+        TWILIO_SID=your_account_sid
+        TWILIO_TOKEN=your_auth_token
+        TWILIO_FROM=+1234567890
+        ```
+      - See [docs/SMS_GATEWAY.md](docs/SMS_GATEWAY.md) for detailed setup
+
+   b. Set up OAuth providers (Google, Facebook, Apple):
+      - Create OAuth applications for each provider
+      - Add credentials to `.env`:
+        ```env
+        GOOGLE_CLIENT_ID=your_google_client_id
+        GOOGLE_CLIENT_SECRET=your_google_client_secret
+        FACEBOOK_CLIENT_ID=your_facebook_app_id
+        FACEBOOK_CLIENT_SECRET=your_facebook_app_secret
+        APPLE_CLIENT_ID=your_apple_client_id
+        APPLE_CLIENT_SECRET=your_apple_client_secret
+        ```
+      - See [docs/OAUTH_SETUP.md](docs/OAUTH_SETUP.md) for detailed setup
 
 ### Development
 
@@ -123,10 +152,17 @@ Format code with Laravel Pint:
 
 ## Documentation
 
+### Project Documentation
 See `prompter/` directory for detailed project documentation:
 - `prompter/prd.md` - Product Requirements Document
 - `prompter/AGENTS.md` - Development workflow and conventions
 - `AGENTS.md` - Project knowledge base
+
+### Authentication Documentation
+- `docs/AUTH.md` - Complete authentication guide (email, phone, OAuth, 2FA)
+- `docs/SMS_GATEWAY.md` - Twilio SMS gateway setup instructions
+- `docs/OAUTH_SETUP.md` - Google, Facebook, and Apple OAuth setup guide
+- `docs/security.md` - Security guidelines and best practices
 
 ## Security & Compliance
 

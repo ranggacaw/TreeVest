@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Services\SessionService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -26,7 +25,7 @@ class SessionController extends Controller
     {
         $success = $this->sessionService->revokeSession($sessionId);
 
-        if (!$success) {
+        if (! $success) {
             return back()->with('error', 'Failed to revoke session.');
         }
 

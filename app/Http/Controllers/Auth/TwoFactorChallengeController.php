@@ -7,7 +7,6 @@ use App\Services\TwoFactorAuthService;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\Support\Facades\Session;
 use Inertia\Inertia;
 use Inertia\Response;
@@ -20,13 +19,13 @@ class TwoFactorChallengeController extends Controller
 
     public function show(): Response|RedirectResponse
     {
-        if (!Auth::check()) {
+        if (! Auth::check()) {
             return redirect()->route('login');
         }
 
         $user = Auth::user();
 
-        if (!$user->twoFactorSecret || !$user->twoFactorSecret->isEnabled()) {
+        if (! $user->twoFactorSecret || ! $user->twoFactorSecret->isEnabled()) {
             return redirect()->intended(route('dashboard', absolute: false));
         }
 
@@ -45,7 +44,7 @@ class TwoFactorChallengeController extends Controller
 
         $isValid = $this->twoFactorAuthService->verify($user, $request->input('code'));
 
-        if (!$isValid) {
+        if (! $isValid) {
             return back()->withErrors(['code' => 'Invalid 2FA code.']);
         }
 
@@ -64,7 +63,7 @@ class TwoFactorChallengeController extends Controller
 
         $isValid = $this->twoFactorAuthService->verifyRecoveryCode($user, $request->input('code'));
 
-        if (!$isValid) {
+        if (! $isValid) {
             return back()->withErrors(['code' => 'Invalid recovery code.']);
         }
 
