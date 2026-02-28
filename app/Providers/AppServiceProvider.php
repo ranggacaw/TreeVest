@@ -24,6 +24,10 @@ class AppServiceProvider extends ServiceProvider
         \App\Models\AuditLog::observe(\App\Observers\AuditLogObserver::class);
         \App\Models\Transaction::observe(\App\Observers\TransactionObserver::class);
         \Illuminate\Support\Facades\Event::subscribe(\App\Listeners\AuthenticationLogSubscriber::class);
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\RoleChanged::class,
+            \App\Listeners\LogRoleChange::class
+        );
 
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)

@@ -63,3 +63,27 @@ Route::middleware('auth')->group(function () {
     Route::post('/account/data-export', [\App\Http\Controllers\GdprController::class, 'export'])->name('account.export');
     Route::post('/account/delete', [\App\Http\Controllers\GdprController::class, 'destroy'])->name('account.delete');
 });
+
+Route::middleware(['auth', 'role:admin'])->group(function () {
+    Route::prefix('admin')->name('admin.')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Admin/Dashboard');
+        })->name('dashboard');
+    });
+});
+
+Route::middleware(['auth', 'role:farm_owner'])->group(function () {
+    Route::prefix('farm-owner')->name('farm-owner.')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('FarmOwner/Dashboard');
+        })->name('dashboard');
+    });
+});
+
+Route::middleware(['auth', 'role:investor'])->group(function () {
+    Route::prefix('investor')->name('investor.')->group(function () {
+        Route::get('/dashboard', function () {
+            return Inertia::render('Investor/Dashboard');
+        })->name('dashboard');
+    });
+});

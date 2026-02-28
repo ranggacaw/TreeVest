@@ -33,4 +33,6 @@ enum AuditEventType: string
     case PAYOUT_PROCESSED = 'payout_processed';
     case KYC_SUBMITTED = 'kyc_submitted';
     case ADMIN_ACTION = 'admin_action';
+    case ROLE_CHANGED = 'user.role.changed';
+    case UNAUTHORIZED_ACCESS_ATTEMPT = 'unauthorized_access_attempt';
 }

@@ -57,6 +57,7 @@ class User extends Authenticatable
             'password' => 'hashed',
             'phone' => 'encrypted',
             'kyc_document_url' => 'encrypted',
+            'role' => 'string',
         ];
     }
 
@@ -93,5 +94,25 @@ class User extends Authenticatable
     public function hasContact(): bool
     {
         return $this->email !== null || $this->phone !== null;
+    }
+
+    public function isInvestor(): bool
+    {
+        return $this->role === 'investor';
+    }
+
+    public function isFarmOwner(): bool
+    {
+        return $this->role === 'farm_owner';
+    }
+
+    public function isAdmin(): bool
+    {
+        return $this->role === 'admin';
+    }
+
+    public function hasRole(string $role): bool
+    {
+        return $this->role === $role;
     }
 }

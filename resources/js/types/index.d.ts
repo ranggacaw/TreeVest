@@ -1,7 +1,10 @@
+export type Role = 'investor' | 'farm_owner' | 'admin';
+
 export interface User {
     id: number;
     name: string;
     email: string;
+    role: Role;
     email_verified_at?: string;
     phone?: string;
     phone_country_code?: string;
@@ -16,6 +19,6 @@ export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
 > = T & {
     auth: {
-        user: User;
+        user: User | null;
     };
 };

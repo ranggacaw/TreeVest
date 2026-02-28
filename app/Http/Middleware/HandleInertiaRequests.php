@@ -32,7 +32,18 @@ class HandleInertiaRequests extends Middleware
         return [
             ...parent::share($request),
             'auth' => [
-                'user' => $request->user(),
+                'user' => $request->user() ? [
+                    'id' => $request->user()->id,
+                    'name' => $request->user()->name,
+                    'email' => $request->user()->email,
+                    'role' => $request->user()->role,
+                    'phone' => $request->user()->phone,
+                    'avatar_url' => $request->user()->avatar_url,
+                    'email_verified_at' => $request->user()->email_verified_at?->toISOString(),
+                    'phone_verified_at' => $request->user()->phone_verified_at?->toISOString(),
+                    'two_factor_enabled_at' => $request->user()->two_factor_enabled_at?->toISOString(),
+                    'last_login_at' => $request->user()->last_login_at?->toISOString(),
+                ] : null,
             ],
         ];
     }
