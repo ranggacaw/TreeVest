@@ -17,6 +17,7 @@ class ArticleFactory extends Factory
     public function definition(): array
     {
         $title = fake()->sentence(rand(5, 10));
+
         return [
             'title' => $title,
             'slug' => \Illuminate\Support\Str::slug($title),

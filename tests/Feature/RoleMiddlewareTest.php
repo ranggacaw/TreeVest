@@ -51,4 +51,3 @@ class RoleMiddlewareTest extends TestCase
         $response->assertRedirect('/login');
     }
 }
-

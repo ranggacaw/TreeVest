@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -9,6 +11,7 @@ use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
+use App\Http\Controllers\SitemapController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -69,13 +72,14 @@ Route::middleware('auth')->group(function () {
 
 Route::middleware(['auth', 'role:admin'])->group(function () {
     Route::prefix('admin')->name('admin.')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('Admin/Dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
         Route::resource('articles', AdminArticleController::class);
         Route::post('articles/{article}/publish', [AdminArticleController::class, 'publish'])->name('articles.publish');
         Route::post('articles/{article}/unpublish', [AdminArticleController::class, 'unpublish'])->name('articles.unpublish');
+
+        Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
+        Route::delete('/media/delete', [MediaController::class, 'delete'])->name('media.delete');
     });
 });
 
@@ -104,3 +108,5 @@ Route::prefix('encyclopedia')->name('encyclopedia.')->group(function () {
     Route::get('/', [EncyclopediaController::class, 'index'])->name('index');
     Route::get('/{article:slug}', [EncyclopediaController::class, 'show'])->name('show');
 });
+
+Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');

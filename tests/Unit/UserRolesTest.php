@@ -58,4 +58,3 @@ class UserRolesTest extends TestCase
         $this->assertFalse($user->hasRole('admin'));
     }
 }
-

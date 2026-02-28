@@ -15,26 +15,35 @@ class ArticleController extends Controller
         $tag = $request->get('tag');
         $search = $request->get('search');
 
-        $query = Article::published()->with(['categories', 'tags', 'author']);
+        $cacheKey = "articles:{$category}:{$tag}:".md5($search ?? '');
 
-        if ($category) {
-            $query->whereHas('categories', function ($q) use ($category) {
-                $q->where('slug', $category);
-            });
-        }
+        $articles = cache()->remember($cacheKey, 300, function () use ($category, $tag, $search) {
+            $query = Article::published()->with(['categories', 'tags', 'author']);
 
-        if ($tag) {
-            $query->whereHas('tags', function ($q) use ($tag) {
-                $q->where('slug', $tag);
-            });
-        }
+            if ($category) {
+                $query->whereHas('categories', function ($q) use ($category) {
+                    $q->where('slug', $category);
+                });
+            }
 
-        if ($search) {
-            $query->search($search);
-        }
+            if ($tag) {
+                $query->whereHas('tags', function ($q) use ($tag) {
+                    $q->where('slug', $tag);
+                });
+            }
 
-        $articles = $query->orderBy('published_at', 'desc')->paginate(12);
-        $categories = Category::all();
+            if ($search) {
+                $query->searchWithRanking($search);
+            } else {
+                $query->orderBy('published_at', 'desc');
+            }
+
+            return $query->paginate(12);
+        });
+
+        $categories = cache()->remember('categories:all', 3600, function () {
+            return Category::all();
+        });
 
         return Inertia::render('Education/Index', [
             'articles' => $articles,
@@ -56,13 +65,17 @@ class ArticleController extends Controller
         $article->incrementViewCount();
         $article->load(['categories', 'tags', 'author']);
 
-        $relatedArticles = Article::published()
-            ->where('id', '!=', $article->id)
-            ->whereHas('categories', function ($q) use ($article) {
-                $q->whereIn('categories.id', $article->categories->pluck('id'));
-            })
-            ->limit(4)
-            ->get();
+        $relatedCacheKey = "article:{$article->id}:related";
+
+        $relatedArticles = cache()->remember($relatedCacheKey, 600, function () use ($article) {
+            return Article::published()
+                ->where('id', '!=', $article->id)
+                ->whereHas('categories', function ($q) use ($article) {
+                    $q->whereIn('categories.id', $article->categories->pluck('id'));
+                })
+                ->limit(4)
+                ->get();
+        });
 
         return Inertia::render('Education/Show', [
             'article' => $article,

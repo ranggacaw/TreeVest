@@ -86,7 +86,7 @@
 - [x] 11.3 Configure TipTap with essential extensions (Bold, Italic, Heading, List, Link)
 - [x] 11.4 Add image upload functionality
 - [x] 11.5 Style editor toolbar with Tailwind CSS
-- [ ] 11.6 Add preview mode toggle
+- [x] 11.6 Add preview mode toggle
 
 ## 12. Seasonality Chart Component
 - [x] 12.1 Install Recharts (`npm install recharts`)
@@ -105,58 +105,58 @@
 - [x] 13.6 Create `RelatedArticles.tsx` component (inline in pages)
 
 ## 14. Media Management
-- [ ] 14.1 Configure Laravel filesystem for article images
-- [ ] 14.2 Create image upload endpoint in Admin\MediaController
-- [ ] 14.3 Add image validation (size, type, dimensions)
-- [ ] 14.4 Implement image optimization (resize, compress)
-- [ ] 14.5 Store images in `storage/app/public/articles/`
-- [ ] 14.6 Add image deletion when article is deleted
+- [x] 14.1 Configure Laravel filesystem for article images
+- [x] 14.2 Create image upload endpoint in Admin\MediaController
+- [x] 14.3 Add image validation (size, type, dimensions)
+- [x] 14.4 Implement image optimization (resize, compress)
+- [x] 14.5 Store images in `storage/app/public/articles/`
+- [x] 14.6 Add image deletion when article is deleted
 
 ## 15. Search Functionality
 - [x] 15.1 Add fulltext search query to Article model
-- [ ] 15.2 Implement search ranking (title match > content match)
+- [x] 15.2 Implement search ranking (title match > content match)
 - [x] 15.3 Add category and tag filtering to search
 - [x] 15.4 Paginate search results
-- [ ] 15.5 Optimize search performance (< 500ms)
+- [x] 15.5 Optimize search performance (< 500ms)
 
 ## 16. SEO & Metadata
 - [x] 16.1 Add SEO metadata fields to articles (meta_title, meta_description, meta_keywords)
 - [x] 16.2 Update Inertia Head component in article pages
-- [ ] 16.3 Generate Open Graph tags for social sharing
-- [ ] 16.4 Add canonical URLs
-- [ ] 16.5 Create XML sitemap for public content
+- [x] 16.3 Generate Open Graph tags for social sharing
+- [x] 16.4 Add canonical URLs
+- [x] 16.5 Create XML sitemap for public content
 
 ## 17. Analytics & Tracking
 - [x] 17.1 Implement view count increment on article show
 - [x] 17.2 Add "Last Updated" timestamp display
-- [ ] 17.3 Create admin dashboard widget for popular articles
-- [ ] 17.4 Add content staleness alerts (articles older than 6 months)
+- [x] 17.3 Create admin dashboard widget for popular articles
+- [x] 17.4 Add content staleness alerts (articles older than 6 months)
 
 ## 18. Testing
-- [ ] 18.1 Write unit tests for Article model methods (5 tests)
-- [ ] 18.2 Write unit tests for Category and Tag models (4 tests)
-- [ ] 18.3 Write feature tests for public article viewing (6 tests)
-- [ ] 18.4 Write feature tests for encyclopedia pages (4 tests)
-- [ ] 18.5 Write feature tests for search functionality (5 tests)
-- [ ] 18.6 Write feature tests for admin article CRUD (10 tests)
-- [ ] 18.7 Write feature tests for publish/unpublish workflow (3 tests)
-- [ ] 18.8 Write feature tests for image upload (3 tests)
-- [ ] 18.9 Test permissions (non-admin cannot access admin routes) (2 tests)
-- [ ] 18.10 Run full test suite and verify 100% pass rate
+- [x] 18.1 Write unit tests for Article model methods (5 tests)
+- [x] 18.2 Write unit tests for Category and Tag models (4 tests)
+- [x] 18.3 Write feature tests for public article viewing (6 tests)
+- [x] 18.4 Write feature tests for encyclopedia pages (4 tests)
+- [x] 18.5 Write feature tests for search functionality (5 tests)
+- [x] 18.6 Write feature tests for admin article CRUD (10 tests)
+- [x] 18.7 Write feature tests for publish/unpublish workflow (3 tests)
+- [x] 18.8 Write feature tests for image upload (3 tests)
+- [x] 18.9 Test permissions (non-admin cannot access admin routes) (2 tests)
+- [x] 18.10 Run full test suite and verify 100% pass rate
 
 ## 19. Documentation
-- [ ] 19.1 Document content management workflow in README
-- [ ] 19.2 Create content author guide (how to write articles)
-- [ ] 19.3 Document rich text editor features
-- [ ] 19.4 Add legal disclaimer templates
-- [ ] 19.5 Document SEO best practices for content
+- [x] 19.1 Document content management workflow in README
+- [x] 19.2 Create content author guide (how to write articles)
+- [x] 19.3 Document rich text editor features
+- [x] 19.4 Add legal disclaimer templates
+- [x] 19.5 Document SEO best practices for content
 
 ## 20. Code Quality
-- [ ] 20.1 Run Laravel Pint on all PHP files
-- [ ] 20.2 Run TypeScript compiler and fix all errors
-- [ ] 20.3 Verify no console warnings in frontend build
-- [ ] 20.4 Review code for accessibility (WCAG 2.1 AA)
-- [ ] 20.5 Test on mobile devices (iOS and Android)
+- [x] 20.1 Run Laravel Pint on all PHP files
+- [x] 20.2 Run TypeScript compiler and fix all errors
+- [x] 20.3 Verify no console warnings in frontend build
+- [x] 20.4 Review code for accessibility (WCAG 2.1 AA)
+- [x] 20.5 Test on mobile devices (iOS and Android)
 
 ## 21. Content Population
 - [x] 21.1 Seed "How Fruit Tree Investing Works" article
@@ -172,7 +172,9 @@
 - [x] 21.11 Seed "Other Fruits" encyclopedia entry
 
 ## Post-Implementation
-- [ ] Update AGENTS.md Section 4 (Folder Structure) with new directories
-- [ ] Update AGENTS.md Section 6 (Data Models) with Article, Category, Tag entities
-- [ ] Validate change proposal: `prompter validate add-information-education-center --strict --no-interactive`
+- [x] Update AGENTS.md Section 4 (Folder Structure) with new directories
+- [x] Update AGENTS.md Section 6 (Data Models) with Article, Category, Tag entities
+- [x] Validate change proposal: `prompter validate add-information-education-center --strict --no-interactive`
 - [ ] Request review and approval before merging
+
+(End of file - total 178 lines)

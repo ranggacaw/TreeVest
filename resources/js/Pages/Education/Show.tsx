@@ -25,6 +25,9 @@ interface Props {
 }
 
 export default function EducationShow({ article, relatedArticles }: Props) {
+    const canonicalUrl = route('education.show', article.slug);
+    const ogImage = article.featured_image || route('home');
+
     return (
         <>
             <Head title={article.meta_title || article.title}>
@@ -34,6 +37,17 @@ export default function EducationShow({ article, relatedArticles }: Props) {
                 {article.meta_keywords && (
                     <meta name="keywords" content={article.meta_keywords} />
                 )}
+                <link rel="canonical" href={canonicalUrl} />
+                <meta property="og:title" content={article.meta_title || article.title} />
+                <meta property="og:description" content={article.meta_description || article.excerpt} />
+                <meta property="og:type" content="article" />
+                <meta property="og:url" content={canonicalUrl} />
+                {article.featured_image && <meta property="og:image" content={ogImage} />}
+                <meta property="og:site_name" content="Treevest" />
+                <meta name="twitter:card" content="summary_large_image" />
+                <meta name="twitter:title" content={article.meta_title || article.title} />
+                <meta name="twitter:description" content={article.meta_description || article.excerpt} />
+                {article.featured_image && <meta name="twitter:image" content={ogImage} />}
             </Head>
 
             <div className="min-h-screen bg-gray-50">

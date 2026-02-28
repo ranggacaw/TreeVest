@@ -177,25 +177,50 @@ treevest/
 ├── .agent/                        # Agent workflows
 ├── .kilocode/                     # Kilocode AI workflows
 ├── .opencode/                     # OpenCode config
+├── docs/                          # Documentation files
+│   └── CONTENT_GUIDE.md          # Content management guide
 ├── app/                           # Laravel application code
 │   ├── Http/
 │   │   ├── Controllers/           # Inertia page controllers
+│   │   │   ├── Admin/             # Admin controllers
+│   │   │   │   ├── ArticleController.php
+│   │   │   │   ├── DashboardController.php
+│   │   │   │   └── MediaController.php
+│   │   │   ├── ArticleController.php
+│   │   │   ├── EncyclopediaController.php
+│   │   │   └── SitemapController.php
 │   │   └── Middleware/            # RoleMiddleware, auth middleware
 │   ├── Models/                    # Eloquent models
+│   │   ├── Article.php
+│   │   ├── Category.php
+│   │   └── Tag.php
 │   ├── Services/                  # Business logic services
 │   └── Jobs/                      # Queue jobs
 ├── database/
 │   ├── migrations/                # Database schema migrations
 │   ├── seeders/                   # Data seeders
+│   │   ├── CategorySeeder.php
+│   │   ├── TagSeeder.php
+│   │   ├── EducationContentSeeder.php
+│   │   └── EncyclopediaSeeder.php
 │   └── factories/                 # Model factories for testing
 ├── resources/
 │   ├── js/
 │   │   ├── Pages/                 # Inertia page components (React/TSX)
 │   │   │   ├── Education/          # Education center pages
+│   │   │   │   ├── Index.tsx
+│   │   │   │   └── Show.tsx
 │   │   │   ├── Encyclopedia/       # Fruit encyclopedia pages
+│   │   │   │   ├── Index.tsx
+│   │   │   │   └── Show.tsx
 │   │   │   ├── Search/            # Search results page
+│   │   │   │   └── Index.tsx
 │   │   │   └── Admin/             # Admin pages
+│   │   │       ├── Dashboard.tsx
 │   │   │       └── Articles/      # Admin article CMS
+│   │   │           ├── Index.tsx
+│   │   │           ├── Create.tsx
+│   │   │           └── Edit.tsx
 │   │   ├── Components/            # Shared React components
 │   │   │   ├── RichTextEditor.tsx # TipTap rich text editor
 │   │   │   └── SeasonalityChart.tsx # Recharts seasonality chart
@@ -205,13 +230,18 @@ treevest/
 │   ├── css/
 │   │   └── app.css                # Tailwind CSS entry
 │   └── views/
-│       └── app.blade.php          # Root Blade template (Inertia mount)
+│       ├── app.blade.php          # Root Blade template (Inertia mount)
+│       └── sitemap.blade.php       # XML sitemap template
 ├── routes/
 │   ├── web.php                    # Web routes (Inertia)
 │   └── auth.php                   # Breeze auth routes
 ├── tests/
 │   ├── Feature/                   # Feature/integration tests
+│   │   ├── PublicArticleTest.php
+│   │   ├── AdminArticleTest.php
+│   │   └── ArticlePermissionTest.php
 │   └── Unit/                      # Unit tests
+│       └── ArticleModelTest.php
 ├── config/                        # Laravel configuration files
 ├── public/                        # Public assets
 ├── storage/                       # File storage, logs, cache
@@ -306,7 +336,7 @@ Admin Approval → Listed on Marketplace
 | **Harvest** | id, tree_id, harvest_date, estimated_yield, actual_yield, market_price, status | Tied to payout |
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
 | **Transaction** | id, user_id, type, amount, currency, status, reference | Ledger of all financial movements |
-| **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count | Educational and encyclopedia content |
+| **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count, meta_title, meta_description, meta_keywords | Educational and encyclopedia content |
 | **Category** | id, name, slug, description | Article categorization |
 | **Tag** | id, name, slug | Article tags for filtering |
 | **Notification** | id, user_id, type, message, read_status | Push/email/in-app |
