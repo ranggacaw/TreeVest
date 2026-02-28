@@ -13,6 +13,7 @@ class AppServiceProvider extends ServiceProvider
     public function register(): void
     {
         $this->app->bind(\App\Contracts\SmsServiceInterface::class, \App\Services\TwilioSmsProvider::class);
+        $this->app->bind(\App\Contracts\KycProviderInterface::class, \App\Services\KycProviders\ManualKycProvider::class);
     }
 
     /**
@@ -59,6 +60,10 @@ class AppServiceProvider extends ServiceProvider
 
         \Illuminate\Support\Facades\RateLimiter::for('oauth-callback', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(10)->by($request->ip());
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('kyc-upload', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perHour(5)->by($request->user()?->id ?? $request->ip());
         });
     }
 }

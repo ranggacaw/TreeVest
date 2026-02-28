@@ -30,6 +30,9 @@ class User extends Authenticatable
         'two_factor_enabled_at',
         'last_login_at',
         'last_login_ip',
+        'kyc_status',
+        'kyc_verified_at',
+        'kyc_expires_at',
     ];
 
     /**
@@ -114,5 +117,34 @@ class User extends Authenticatable
     public function hasRole(string $role): bool
     {
         return $this->role === $role;
+    }
+
+    public function kycVerifications()
+    {
+        return $this->hasMany(\App\Models\KycVerification::class);
+    }
+
+    public function latestKycVerification()
+    {
+        return $this->hasOne(\App\Models\KycVerification::class)->latestOfMany();
+    }
+
+    public function hasVerifiedKyc(): bool
+    {
+        return $this->kyc_status === 'verified' && $this->kyc_verified_at !== null;
+    }
+
+    public function needsKycReverification(): bool
+    {
+        if (! $this->hasVerifiedKyc()) {
+            return false;
+        }
+
+        return $this->kyc_expires_at !== null && $this->kyc_expires_at->isPast();
+    }
+
+    public function canInvest(): bool
+    {
+        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
     }
 }

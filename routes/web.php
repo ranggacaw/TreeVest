@@ -9,6 +9,7 @@ use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
+use App\Http\Controllers\KycController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
@@ -52,6 +53,14 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/account/deactivate', [AccountController::class, 'deactivate'])->name('account.deactivate');
     Route::post('/account/delete-request', [AccountController::class, 'requestDeletion'])->name('account.delete-request');
+
+    Route::prefix('profile/kyc')->name('kyc.')->group(function () {
+        Route::get('/', [KycController::class, 'index'])->name('index');
+        Route::get('/upload', [KycController::class, 'upload'])->name('upload');
+        Route::post('/', [KycController::class, 'store'])->name('store')->middleware('throttle:kyc-upload');
+        Route::post('/submit', [KycController::class, 'submit'])->name('submit');
+        Route::get('/{verification}', [KycController::class, 'show'])->name('show');
+    });
 });
 
 require __DIR__.'/auth.php';

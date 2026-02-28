@@ -60,6 +60,13 @@ return [
             'report' => false,
         ],
 
+        'kyc_documents' => [
+            'driver' => env('KYC_STORAGE_DRIVER', 'local'),
+            'root' => storage_path('app/kyc_documents'),
+            'visibility' => 'private',
+            'throw' => true,
+        ],
+
     ],
 
     /*
