@@ -1,6 +1,8 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FarmApprovalController;
@@ -126,6 +128,17 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         })->name('dashboard');
     });
 });
+
+Route::middleware('auth')->group(function () {
+    Route::prefix('payment-methods')->name('payment-methods.')->group(function () {
+        Route::get('/', [PaymentMethodController::class, 'index'])->name('index');
+        Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
+        Route::delete('/{paymentMethod}', [PaymentMethodController::class, 'destroy'])->name('destroy');
+        Route::patch('/{paymentMethod}/set-default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
+    });
+});
+
+Route::post('/stripe/webhook', [StripeWebhookController::class, 'handle'])->name('stripe.webhook');
 
 Route::prefix('farms')->name('farms.')->group(function () {
     Route::get('/', [MarketplaceFarmController::class, 'index'])->name('index');

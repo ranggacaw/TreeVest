@@ -45,6 +45,9 @@ class HandleInertiaRequests extends Middleware
                     'last_login_at' => $request->user()->last_login_at?->toISOString(),
                 ] : null,
             ],
+            'stripe' => [
+                'publishable_key' => config('services.stripe.key'),
+            ],
         ];
     }
 }

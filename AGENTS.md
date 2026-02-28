@@ -338,7 +338,8 @@ Admin Approval → Listed on Marketplace
 | **Investment** | id, investor_id, tree_id, amount, purchase_date, status | Core transaction |
 | **TreeHarvest** | id, tree_id, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes | Tied to payout |
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
-| **Transaction** | id, user_id, type, amount, currency, status, reference | Ledger of all financial movements |
+| **Transaction** | id, user_id, type, status, amount (cents), currency, stripe_payment_intent_id, payment_method_id, related_investment_id, related_payout_id, metadata, stripe_metadata, failure_reason, completed_at, failed_at | Immutable financial record ledger |
+| **PaymentMethod** | id, user_id, stripe_payment_method_id, type (card/bank_account), last4, brand, exp_month, exp_year, is_default | Saved payment methods for users |
 | **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count, meta_title, meta_description, meta_keywords | Educational and encyclopedia content |
 | **Category** | id, name, slug, description | Article categorization |
 | **Tag** | id, name, slug | Article tags for filtering |
@@ -630,9 +631,11 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 - Not yet defined — pending architecture decisions in TDD-Lite
 
 ### Webhook Configurations
-- Not yet defined — expected for: payment status updates, harvest event triggers
+- Stripe webhook endpoint: `/stripe/webhook` — handles `payment_intent.succeeded` and `payment_intent.payment_failed` events
+- Expected future webhooks: harvest event triggers
 
 ### Async Job Dependencies (expected)
+- Payment webhook processing (`ProcessStripeWebhook`) — handles Stripe webhook events with idempotency
 - Harvest date reminder notifications (scheduled)
 - Yield estimation recalculations (periodic)
 - Market price updates (real-time or periodic)
