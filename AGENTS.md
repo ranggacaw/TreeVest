@@ -191,7 +191,14 @@ treevest/
 ├── resources/
 │   ├── js/
 │   │   ├── Pages/                 # Inertia page components (React/TSX)
+│   │   │   ├── Education/          # Education center pages
+│   │   │   ├── Encyclopedia/       # Fruit encyclopedia pages
+│   │   │   ├── Search/            # Search results page
+│   │   │   └── Admin/             # Admin pages
+│   │   │       └── Articles/      # Admin article CMS
 │   │   ├── Components/            # Shared React components
+│   │   │   ├── RichTextEditor.tsx # TipTap rich text editor
+│   │   │   └── SeasonalityChart.tsx # Recharts seasonality chart
 │   │   ├── Layouts/               # Layout components
 │   │   ├── types/                 # TypeScript type definitions
 │   │   └── app.tsx                # Inertia app entry point
@@ -299,6 +306,9 @@ Admin Approval → Listed on Marketplace
 | **Harvest** | id, tree_id, harvest_date, estimated_yield, actual_yield, market_price, status | Tied to payout |
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
 | **Transaction** | id, user_id, type, amount, currency, status, reference | Ledger of all financial movements |
+| **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count | Educational and encyclopedia content |
+| **Category** | id, name, slug, description | Article categorization |
+| **Tag** | id, name, slug | Article tags for filtering |
 | **Notification** | id, user_id, type, message, read_status | Push/email/in-app |
 | **Message** | id, sender_id, receiver_id, content, timestamp | In-app messaging |
 | **AuditLog** | id, user_id, event_type, ip_address, user_agent, event_data, created_at | Immutable security trail |
@@ -309,12 +319,15 @@ Admin Approval → Listed on Marketplace
 ### Expected Relationships
 - User (1) → (N) Investment
 - User (1) → (N) Farm (as owner)
+- User (1) → (N) Article (as author)
 - Farm (1) → (N) FruitCrop
 - FruitCrop (1) → (N) Tree
 - Tree (1) → (N) Investment
 - Tree (1) → (N) Harvest
 - Harvest (1) → (N) Payout
 - Investment (1) → (N) Payout
+- Article (N) ↔ (N) Category (many-to-many)
+- Article (N) ↔ (N) Tag (many-to-many)
 - LegalDocument (1) → (N) UserDocumentAcceptance
 - User (1) → (N) UserDocumentAcceptance
 - User (1) → (N) AuditLog

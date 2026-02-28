@@ -1,9 +1,12 @@
 <?php
 
 use App\Http\Controllers\AccountController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
+use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use Illuminate\Foundation\Application;
@@ -69,6 +72,10 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('Admin/Dashboard');
         })->name('dashboard');
+
+        Route::resource('articles', AdminArticleController::class);
+        Route::post('articles/{article}/publish', [AdminArticleController::class, 'publish'])->name('articles.publish');
+        Route::post('articles/{article}/unpublish', [AdminArticleController::class, 'unpublish'])->name('articles.unpublish');
     });
 });
 
@@ -86,4 +93,14 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             return Inertia::render('Investor/Dashboard');
         })->name('dashboard');
     });
+});
+
+Route::prefix('education')->name('education.')->group(function () {
+    Route::get('/', [ArticleController::class, 'index'])->name('index');
+    Route::get('/{article:slug}', [ArticleController::class, 'show'])->name('show');
+});
+
+Route::prefix('encyclopedia')->name('encyclopedia.')->group(function () {
+    Route::get('/', [EncyclopediaController::class, 'index'])->name('index');
+    Route::get('/{article:slug}', [EncyclopediaController::class, 'show'])->name('show');
 });

@@ -25,6 +25,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             LegalDocumentSeeder::class,
+            CategorySeeder::class,
+            TagSeeder::class,
+            EducationContentSeeder::class,
+            EncyclopediaSeeder::class,
         ]);
     }
 }
