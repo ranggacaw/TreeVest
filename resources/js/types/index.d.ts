@@ -1,6 +1,7 @@
 export type Role = 'investor' | 'farm_owner' | 'admin';
 export type KycStatus = 'pending' | 'submitted' | 'verified' | 'rejected';
 export type KycDocumentType = 'passport' | 'national_id' | 'drivers_license' | 'proof_of_address';
+export type FarmStatus = 'pending_approval' | 'active' | 'suspended' | 'deactivated';
 
 export interface User {
     id: number;
@@ -44,6 +45,64 @@ export interface KycVerification {
     provider_reference_id?: string;
     has_required_documents?: boolean;
     documents?: KycDocument[];
+}
+
+export interface FarmImage {
+    id: number;
+    farm_id: number;
+    file_path: string;
+    original_filename?: string;
+    mime_type?: string;
+    file_size?: number;
+    caption?: string;
+    is_featured: boolean;
+    sort_order: number;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface FarmCertification {
+    id: number;
+    farm_id: number;
+    name: string;
+    issuer?: string;
+    certificate_number?: string;
+    issued_date?: string;
+    expiry_date?: string;
+    file_path?: string;
+    notes?: string;
+    created_at: string;
+    updated_at: string;
+}
+
+export interface Farm {
+    id: number;
+    owner_id: number;
+    name: string;
+    description?: string;
+    address?: string;
+    city?: string;
+    state?: string;
+    country?: string;
+    postal_code?: string;
+    latitude?: number;
+    longitude?: number;
+    size_hectares?: number;
+    capacity_trees?: number;
+    status: FarmStatus;
+    soil_type?: string;
+    climate?: string;
+    historical_performance?: string;
+    virtual_tour_url?: string;
+    rejection_reason?: string;
+    approved_at?: string;
+    approved_by?: number;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string;
+    images?: FarmImage[];
+    certifications?: FarmCertification[];
+    owner?: User;
 }
 
 export type PageProps<

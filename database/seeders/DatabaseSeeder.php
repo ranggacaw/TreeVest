@@ -29,6 +29,7 @@ class DatabaseSeeder extends Seeder
             TagSeeder::class,
             EducationContentSeeder::class,
             EncyclopediaSeeder::class,
+            FarmSeeder::class,
         ]);
     }
 }

@@ -3,13 +3,16 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\Admin\FarmApprovalController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
+use App\Http\Controllers\FarmController;
 use App\Http\Controllers\KycController;
+use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
@@ -87,6 +90,12 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('articles/{article}/publish', [AdminArticleController::class, 'publish'])->name('articles.publish');
         Route::post('articles/{article}/unpublish', [AdminArticleController::class, 'unpublish'])->name('articles.unpublish');
 
+        Route::resource('farms', FarmApprovalController::class);
+        Route::post('farms/{farm}/approve', [FarmApprovalController::class, 'approve'])->name('farms.approve');
+        Route::post('farms/{farm}/reject', [FarmApprovalController::class, 'reject'])->name('farms.reject');
+        Route::post('farms/{farm}/suspend', [FarmApprovalController::class, 'suspend'])->name('farms.suspend');
+        Route::post('farms/{farm}/reinstate', [FarmApprovalController::class, 'reinstate'])->name('farms.reinstate');
+
         Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
         Route::delete('/media/delete', [MediaController::class, 'delete'])->name('media.delete');
     });
@@ -98,6 +107,16 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             return Inertia::render('FarmOwner/Dashboard');
         })->name('dashboard');
     });
+
+    Route::prefix('farms/manage')->name('farms.manage.')->group(function () {
+        Route::get('/', [FarmController::class, 'index'])->name('index');
+        Route::get('/create', [FarmController::class, 'create'])->name('create');
+        Route::post('/', [FarmController::class, 'store'])->name('store');
+        Route::get('/{farm}', [FarmController::class, 'show'])->name('show');
+        Route::get('/{farm}/edit', [FarmController::class, 'edit'])->name('edit');
+        Route::put('/{farm}', [FarmController::class, 'update'])->name('update');
+        Route::delete('/{farm}', [FarmController::class, 'destroy'])->name('destroy');
+    });
 });
 
 Route::middleware(['auth', 'role:investor'])->group(function () {
@@ -106,6 +125,12 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             return Inertia::render('Investor/Dashboard');
         })->name('dashboard');
     });
+});
+
+Route::prefix('farms')->name('farms.')->group(function () {
+    Route::get('/', [MarketplaceFarmController::class, 'index'])->name('index');
+    Route::get('/nearby', [MarketplaceFarmController::class, 'nearby'])->name('nearby');
+    Route::get('/{farm}', [MarketplaceFarmController::class, 'show'])->name('show');
 });
 
 Route::prefix('education')->name('education.')->group(function () {
