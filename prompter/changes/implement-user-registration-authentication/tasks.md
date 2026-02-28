@@ -170,33 +170,33 @@
 ## 11. React Component Development
 
 ### Shared Components
-- [ ] 11.1 Create `resources/js/Components/Auth/PhoneInput.tsx` (phone number input with country selector)
-- [ ] 11.2 Create `resources/js/Components/Auth/OAuthButtons.tsx` (Google, Facebook, Apple sign-in buttons)
-- [ ] 11.3 Create `resources/js/Components/Auth/OtpInput.tsx` (6-digit OTP input field)
-- [ ] 11.4 Create `resources/js/Components/Auth/TwoFactorSetup.tsx` (TOTP QR code display + SMS setup)
-- [ ] 11.5 Create `resources/js/Components/Auth/RecoveryCodeDisplay.tsx` (display/download recovery codes)
-- [ ] 11.6 Create `resources/js/Components/Profile/SessionCard.tsx` (device session display card)
-- [ ] 11.7 Create `resources/js/Components/Profile/AvatarUpload.tsx` (avatar upload with preview)
+- [x] 11.1 Create `resources/js/Components/Auth/PhoneInput.tsx` (phone number input with country selector)
+- [x] 11.2 Create `resources/js/Components/Auth/OAuthButtons.tsx` (Google, Facebook, Apple sign-in buttons)
+- [x] 11.3 Create `resources/js/Components/Auth/OtpInput.tsx` (6-digit OTP input field)
+- [x] 11.4 Create `resources/js/Components/Auth/TwoFactorSetup.tsx` (TOTP QR code display + SMS setup)
+- [x] 11.5 Create `resources/js/Components/Auth/RecoveryCodeDisplay.tsx` (display/download recovery codes)
+- [x] 11.6 Create `resources/js/Components/Profile/SessionCard.tsx` (device session display card)
+- [x] 11.7 Create `resources/js/Components/Profile/AvatarUpload.tsx` (avatar upload with preview)
 
 ### Auth Pages
-- [ ] 11.8 Create `resources/js/Pages/Auth/PhoneRegister.tsx` (phone registration form)
-- [ ] 11.9 Create `resources/js/Pages/Auth/PhoneLogin.tsx` (phone login form)
-- [ ] 11.10 Create `resources/js/Pages/Auth/PhoneVerify.tsx` (OTP verification page)
-- [ ] 11.11 Create `resources/js/Pages/Auth/TwoFactorChallenge.tsx` (2FA verification during login)
-- [ ] 11.12 Extend `resources/js/Pages/Auth/Login.tsx` to add OAuth buttons and "Login with Phone" link
-- [ ] 11.13 Extend `resources/js/Pages/Auth/Register.tsx` to add OAuth buttons and "Register with Phone" link
+- [x] 11.8 Create `resources/js/Pages/Auth/PhoneRegister.tsx` (phone registration form)
+- [x] 11.9 Create `resources/js/Pages/Auth/PhoneLogin.tsx` (phone login form)
+- [x] 11.10 Create `resources/js/Pages/Auth/PhoneVerify.tsx` (OTP verification page)
+- [x] 11.11 Create `resources/js/Pages/Auth/TwoFactorChallenge.tsx` (2FA verification during login)
+- [x] 11.12 Extend `resources/js/Pages/Auth/Login.tsx` to add OAuth buttons and "Login with Phone" link
+- [x] 11.13 Extend `resources/js/Pages/Auth/Register.tsx` to add OAuth buttons and "Register with Phone" link
 
 ### Profile Pages
-- [ ] 11.14 Create `resources/js/Pages/Profile/TwoFactorAuthentication.tsx` (2FA settings page)
-- [ ] 11.15 Create `resources/js/Pages/Profile/ActiveSessions.tsx` (session management page)
-- [ ] 11.16 Create `resources/js/Pages/Profile/AccountSettings.tsx` (account deactivation page)
-- [ ] 11.17 Extend `resources/js/Pages/Profile/Edit.tsx` to add phone field, avatar upload, and link to 2FA/session pages
+- [x] 11.14 Create `resources/js/Pages/Profile/TwoFactorAuthentication.tsx` (2FA settings page)
+- [x] 11.15 Create `resources/js/Pages/Profile/ActiveSessions.tsx` (session management page)
+- [x] 11.16 Create `resources/js/Pages/Profile/AccountSettings.tsx` (account deactivation page)
+- [x] 11.17 Extend `resources/js/Pages/Profile/Edit.tsx` to add phone field, avatar upload, and link to 2FA/session pages
 
 ## 12. TypeScript Type Definitions
 
-- [ ] 12.1 Create `resources/js/types/auth.d.ts` with types for PhoneAuth, OAuth, TwoFactor, Session
-- [ ] 12.2 Extend `resources/js/types/index.d.ts` with User model extensions (phone, avatar, 2FA status)
-- [ ] 12.3 Add Inertia page props types for new pages (PhoneRegister, TwoFactorChallenge, etc.)
+- [x] 12.1 Create `resources/js/types/auth.d.ts` with types for PhoneAuth, OAuth, TwoFactor, Session
+- [x] 12.2 Extend `resources/js/types/index.d.ts` with User model extensions (phone, avatar, 2FA status)
+- [x] 12.3 Add Inertia page props types for new pages (PhoneRegister, TwoFactorChallenge, etc.)
 
 ## 13. Testing: Unit Tests
 

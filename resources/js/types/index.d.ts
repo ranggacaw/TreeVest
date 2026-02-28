@@ -3,6 +3,13 @@ export interface User {
     name: string;
     email: string;
     email_verified_at?: string;
+    phone?: string;
+    phone_country_code?: string;
+    phone_verified_at?: string;
+    avatar_url?: string;
+    two_factor_enabled_at?: string;
+    last_login_at?: string;
+    last_login_ip?: string;
 }
 
 export type PageProps<
