@@ -230,4 +230,20 @@ class AuditLogService
             'details' => $details,
         ]);
     }
+
+    /**
+     * Log a user-related audit event.
+     */
+    public static function log(\App\Models\User $user, AuditEventType $eventType, array $data = []): void
+    {
+        (new self)->logEvent($eventType, $user->id, $data);
+    }
+
+    /**
+     * Log a system event (no user context).
+     */
+    public static function logSystemEvent(AuditEventType $eventType, array $data = []): void
+    {
+        (new self)->logEvent($eventType, null, $data);
+    }
 }

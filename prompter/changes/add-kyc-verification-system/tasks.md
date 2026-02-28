@@ -22,7 +22,7 @@
 ## 4. Middleware
 - [x] 4.1 Create `app/Http/Middleware/EnsureKycIsVerified.php` middleware
 - [x] 4.2 Register middleware in `bootstrap/app.php` with alias `kyc.verified`
-- [ ] 4.3 Add middleware to route groups that require KYC (to be used by investment routes in EPIC-006)
+- [x] 4.3 Add middleware to route groups that require KYC (to be used by investment routes in EPIC-006)
 
 ## 5. Controllers
 - [x] 5.1 Create `app/Http/Controllers/KycController.php` with actions: index (show status), create (upload form), store (upload documents), submit (submit for review), show (view documents)
@@ -33,8 +33,8 @@
 - [x] 6.1 Create `resources/js/Pages/Profile/KycVerification/Index.tsx` - displays current KYC status, verification history, and call-to-action
 - [x] 6.2 Create `resources/js/Pages/Profile/KycVerification/Upload.tsx` - document upload interface with drag-drop
 - [x] 6.3 Create `resources/js/Components/KycStatusBadge.tsx` - reusable component for displaying KYC status with colors
-- [ ] 6.4 Create `resources/js/Components/KycDocumentUploader.tsx` - reusable document upload component with preview
-- [ ] 6.5 Add KYC prompt to `resources/js/Pages/Dashboard.tsx` for unverified users
+- [x] 6.4 Create `resources/js/Components/KycDocumentUploader.tsx` - reusable document upload component with preview
+- [x] 6.5 Add KYC prompt to `resources/js/Pages/Dashboard.tsx` for unverified users
 - [x] 6.6 Add types to `resources/js/types/index.d.ts`: KycVerification, KycDocument, KycStatus enum
 
 ## 7. Routes
@@ -64,19 +64,19 @@
 - [x] 11.3 Configure filesystem disk for KYC documents in `config/filesystems.php` (use `private` disk with encryption)
 
 ## 12. Testing
-- [ ] 12.1 Create `tests/Unit/Services/KycVerificationServiceTest.php` - test verification lifecycle
-- [ ] 12.2 Create `tests/Unit/Services/ManualKycProviderTest.php` - test manual provider logic
-- [ ] 12.3 Create `tests/Feature/KycVerificationTest.php` - test user upload and submission flow
-- [ ] 12.4 Create `tests/Feature/KycMiddlewareTest.php` - test middleware blocking unverified users
-- [ ] 12.5 Create `tests/Unit/Models/UserTest.php` additions - test hasVerifiedKyc() and needsKycReverification()
-- [ ] 12.6 Create `tests/Feature/KycExpiryTest.php` - test expiry checking and reminder jobs
+- [x] 12.1 Create `tests/Unit/Services/KycVerificationServiceTest.php` - test verification lifecycle
+- [x] 12.2 Create `tests/Unit/Services/ManualKycProviderTest.php` - test manual provider logic
+- [x] 12.3 Create `tests/Feature/KycVerificationTest.php` - test user upload and submission flow
+- [x] 12.4 Create `tests/Feature/KycMiddlewareTest.php` - test middleware blocking unverified users
+- [x] 12.5 Create `tests/Unit/Models/UserTest.php` additions - test hasVerifiedKyc() and needsKycReverification()
+- [x] 12.6 Create `tests/Feature/KycExpiryTest.php` - test expiry checking and reminder jobs
 - [x] 12.7 Create factory `database/factories/KycVerificationFactory.php` for test data
 - [x] 12.8 Create factory `database/factories/KycDocumentFactory.php` for test data
-- [ ] 12.9 Run all tests with `php artisan test` and ensure 100% pass rate
+- [x] 12.9 Run all tests with `php artisan test` and ensure 100% pass rate
 
 ## 13. Documentation
-- [ ] 13.1 Update root `AGENTS.md` Section 6 (Data Models) to include KycVerification and KycDocument entities
-- [ ] 13.2 Update root `AGENTS.md` Section 7 (Domain Vocabulary) with KYC-related terms
+- [x] 13.1 Update root `AGENTS.md` Section 6 (Data Models) to include KycVerification and KycDocument entities
+- [x] 13.2 Update root `AGENTS.md` Section 7 (Domain Vocabulary) with KYC-related terms
 - [ ] 13.3 Update root `AGENTS.md` Section 9 (UI/UX) with KYC workflow details
 - [ ] 13.4 Add inline PHPDoc comments to all new classes and methods
 - [ ] 13.5 Add inline TSDoc comments to all new React components
@@ -95,7 +95,7 @@
 
 ## Post-Implementation
 - [x] Run `./vendor/bin/pint` to format all PHP code
-- [ ] Run `php artisan test` to verify all tests pass
+- [x] Run `php artisan test` to verify all tests pass
 - [x] Run `prompter validate add-kyc-verification-system --strict --no-interactive` to validate proposal
-- [ ] Update root `AGENTS.md` with KYC capability details
+- [x] Update root `AGENTS.md` with KYC capability details
 - [ ] Create PR with reference to EPIC-002

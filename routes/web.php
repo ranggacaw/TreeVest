@@ -119,3 +119,7 @@ Route::prefix('encyclopedia')->name('encyclopedia.')->group(function () {
 });
 
 Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap');
+
+Route::middleware(['auth', 'kyc.verified'])->get('/test-kyc-protected', function () {
+    return response()->json(['message' => 'KYC verified']);
+});

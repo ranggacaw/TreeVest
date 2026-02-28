@@ -198,4 +198,94 @@ class UserTest extends TestCase
             'id' => $user->id,
         ]);
     }
+
+    public function test_has_verified_kyc_returns_true_when_verified()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+        ]);
+
+        $this->assertTrue($user->hasVerifiedKyc());
+    }
+
+    public function test_has_verified_kyc_returns_false_when_not_verified()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'pending',
+        ]);
+
+        $this->assertFalse($user->hasVerifiedKyc());
+    }
+
+    public function test_has_verified_kyc_returns_false_when_rejected()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'rejected',
+        ]);
+
+        $this->assertFalse($user->hasVerifiedKyc());
+    }
+
+    public function test_needs_kyc_reverification_returns_true_when_expired()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+            'kyc_expires_at' => now()->subDay(),
+        ]);
+
+        $this->assertTrue($user->needsKycReverification());
+    }
+
+    public function test_needs_kyc_reverification_returns_false_when_valid()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+            'kyc_expires_at' => now()->addYear(),
+        ]);
+
+        $this->assertFalse($user->needsKycReverification());
+    }
+
+    public function test_needs_kyc_reverification_returns_false_when_not_verified()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'pending',
+        ]);
+
+        $this->assertFalse($user->needsKycReverification());
+    }
+
+    public function test_is_kyc_valid_returns_true_when_verified_and_not_expired()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+            'kyc_expires_at' => now()->addYear(),
+        ]);
+
+        $this->assertTrue($user->isKycValid());
+    }
+
+    public function test_is_kyc_valid_returns_false_when_not_verified()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'pending',
+        ]);
+
+        $this->assertFalse($user->isKycValid());
+    }
+
+    public function test_is_kyc_valid_returns_false_when_expired()
+    {
+        $user = User::factory()->create([
+            'kyc_status' => 'verified',
+            'kyc_verified_at' => now(),
+            'kyc_expires_at' => now()->subDay(),
+        ]);
+
+        $this->assertFalse($user->isKycValid());
+    }
 }

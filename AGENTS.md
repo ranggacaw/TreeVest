@@ -328,7 +328,7 @@ Admin Approval → Listed on Marketplace
 
 | Entity | Key Attributes | Notes |
 |--------|---------------|-------|
-| **User** | id, email, phone, role, kyc_status, 2fa_enabled | Polymorphic: Investor, FarmOwner, Admin |
+| **User** | id, email, phone, role, kyc_status, kyc_verified_at, kyc_expires_at, 2fa_enabled | Polymorphic: Investor, FarmOwner, Admin |
 | **Farm** | id, name, location, size, capacity, certifications, owner_id | Geospatial data, images, virtual tours |
 | **FruitCrop** | id, fruit_type, variant, farm_id | e.g., Durian → Musang King |
 | **Tree** | id, crop_id, farm_id, price, expected_roi, harvest_cycle, age, lifespan, risk_rating, min_investment, max_investment | Investable unit |
@@ -345,11 +345,15 @@ Admin Approval → Listed on Marketplace
 | **LegalDocument** | id, type, version, title, content, effective_date, is_active | Terms, Privacy, Risk |
 | **UserDocumentAcceptance** | id, user_id, legal_document_id, accepted_at, ip_address | Consent tracking |
 | **FraudAlert** | id, user_id, rule_type, severity, notes, detected_at | Suspicious activity flags |
+| **KycVerification** | id, user_id, jurisdiction_code, status, submitted_at, verified_at, rejected_at, rejection_reason, verified_by_admin_id, expires_at, provider, provider_reference_id | User identity verification record |
+| **KycDocument** | id, kyc_verification_id, document_type, file_path, original_filename, mime_type, file_size, uploaded_at | KYC supporting documents |
 
 ### Expected Relationships
 - User (1) → (N) Investment
 - User (1) → (N) Farm (as owner)
 - User (1) → (N) Article (as author)
+- User (1) → (N) KycVerification
+- KycVerification (1) → (N) KycDocument
 - Farm (1) → (N) FruitCrop
 - FruitCrop (1) → (N) Tree
 - Tree (1) → (N) Investment
@@ -385,6 +389,9 @@ Admin Approval → Listed on Marketplace
 | **Harvest Cycle** | The recurring period during which a tree produces fruit (annual, bi-annual, seasonal) |
 | **ROI** | Return on Investment — expected percentage return based on historical yield and market pricing |
 | **KYC** | Know Your Customer — mandatory identity verification process |
+| **KYC Verification** | The process of verifying a user's identity through document submission |
+| **KYC Document** | Identity document submitted for verification (passport, national ID, etc.) |
+| **KYC Expiry** | Date when KYC verification expires, requiring reverification |
 | **Farm Listing** | A comprehensive profile of a partner farm available on the marketplace |
 | **Yield** | The quantity/weight of fruit produced by a tree during one harvest cycle |
 | **Payout** | Distribution of profit to an investor following a completed harvest |

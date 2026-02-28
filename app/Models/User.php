@@ -147,4 +147,9 @@ class User extends Authenticatable
     {
         return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
     }
+
+    public function isKycValid(): bool
+    {
+        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
+    }
 }
