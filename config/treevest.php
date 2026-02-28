@@ -23,4 +23,15 @@ return [
         'expiry_period_days' => env('KYC_EXPIRY_PERIOD_DAYS', 365),
         'expiry_reminder_days' => [30, 14, 7],
     ],
+
+    'tree_pricing' => [
+        'default_base_price' => 100000,
+        'default_age_coefficient' => 0.05,
+        'default_crop_premium' => 1.0,
+        'default_risk_multipliers' => [
+            'low' => 1.0,
+            'medium' => 1.1,
+            'high' => 1.2,
+        ],
+    ],
 ];

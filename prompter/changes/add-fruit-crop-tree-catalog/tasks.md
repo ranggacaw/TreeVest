@@ -1,44 +1,44 @@
 # Implementation Tasks
 
 ## 1. Database Schema & Migrations
-- [ ] 1.1 Create `create_fruit_types_table` migration (id, name, slug, description, is_active, timestamps)
-- [ ] 1.2 Create `create_fruit_crops_table` migration (id, farm_id FK, fruit_type_id FK, variant, description, harvest_cycle enum, planted_date, timestamps)
-- [ ] 1.3 Create `create_trees_table` migration (id, fruit_crop_id FK, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating enum, min_investment_cents, max_investment_cents, status enum, historical_yield_json, pricing_config_json, timestamps, soft deletes)
-- [ ] 1.4 Create `create_tree_harvests_table` migration (id, tree_id FK, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes, timestamps)
-- [ ] 1.5 Add indexes: `fruit_crops(farm_id, fruit_type_id)`, `trees(fruit_crop_id, status)`, `trees(status, price_cents)`, `tree_harvests(tree_id, harvest_date)`
+- [x] 1.1 Create `create_fruit_types_table` migration (id, name, slug, description, is_active, timestamps)
+- [x] 1.2 Create `create_fruit_crops_table` migration (id, farm_id FK, fruit_type_id FK, variant, description, harvest_cycle enum, planted_date, timestamps)
+- [x] 1.3 Create `create_trees_table` migration (id, fruit_crop_id FK, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating enum, min_investment_cents, max_investment_cents, status enum, historical_yield_json, pricing_config_json, timestamps, soft deletes)
+- [x] 1.4 Create `create_tree_harvests_table` migration (id, tree_id FK, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes, timestamps)
+- [x] 1.5 Add indexes: `fruit_crops(farm_id, fruit_type_id)`, `trees(fruit_crop_id, status)`, `trees(status, price_cents)`, `tree_harvests(tree_id, harvest_date)`
 
 ## 2. Enums
-- [ ] 2.1 Create `TreeLifecycleStage` enum (seedling, growing, productive, declining, retired)
-- [ ] 2.2 Create `RiskRating` enum (low, medium, high)
-- [ ] 2.3 Create `HarvestCycle` enum (annual, biannual, seasonal)
+- [x] 2.1 Create `TreeLifecycleStage` enum (seedling, growing, productive, declining, retired)
+- [x] 2.2 Create `RiskRating` enum (low, medium, high)
+- [x] 2.3 Create `HarvestCycle` enum (annual, biannual, seasonal)
 
 ## 3. Eloquent Models
-- [ ] 3.1 Create `FruitType` model with relationships: `hasMany(FruitCrop)`
-- [ ] 3.2 Create `FruitCrop` model with relationships: `belongsTo(Farm)`, `belongsTo(FruitType)`, `hasMany(Tree)`
-- [ ] 3.3 Create `Tree` model with relationships: `belongsTo(FruitCrop)`, `hasMany(TreeHarvest)`, `hasMany(Investment)` (future), casts: `status`, `risk_rating`, `historical_yield` (array), `pricing_config` (array), accessors: `priceFormatted`, `expectedRoiFormatted`, scopes: `investable()`, `byFruitType()`, `byRiskRating()`, `byPriceRange()`
-- [ ] 3.4 Create `TreeHarvest` model with relationships: `belongsTo(Tree)`, casts: `harvest_date` (date)
-- [ ] 3.5 Add relationships to `Farm` model: `hasMany(FruitCrop)`
+- [x] 3.1 Create `FruitType` model with relationships: `hasMany(FruitCrop)`
+- [x] 3.2 Create `FruitCrop` model with relationships: `belongsTo(Farm)`, `belongsTo(FruitType)`, `hasMany(Tree)`
+- [x] 3.3 Create `Tree` model with relationships: `belongsTo(FruitCrop)`, `hasMany(TreeHarvest)`, `hasMany(Investment)` (future), casts: `status`, `risk_rating`, `historical_yield` (array), `pricing_config` (array), accessors: `priceFormatted`, `expectedRoiFormatted`, scopes: `investable()`, `byFruitType()`, `byRiskRating()`, `byPriceRange()`
+- [x] 3.4 Create `TreeHarvest` model with relationships: `belongsTo(Tree)`, casts: `harvest_date` (date)
+- [x] 3.5 Add relationships to `Farm` model: `hasMany(FruitCrop)`
 
 ## 4. Seeders & Reference Data
-- [ ] 4.1 Create `FruitTypeSeeder` with PRD fruit types: Durian (variants: Musang King, D24, Black Thorn, Red Prawn), Mango (Alphonso, Nam Doc Mai, Carabao, Kent), Grapes (Thompson Seedless, Concord, Shine Muscat), Melon (Honeydew, Cantaloupe, Yubari King), Citrus (Valencia Orange, Meyer Lemon, Pomelo), Others (Avocado, Longan, Rambutan, Mangosteen)
-- [ ] 4.2 Run seeder in `DatabaseSeeder`
+- [x] 4.1 Create `FruitTypeSeeder` with PRD fruit types: Durian (variants: Musang King, D24, Black Thorn, Red Prawn), Mango (Alphonso, Nam Doc Mai, Carabao, Kent), Grapes (Thompson Seedless, Concord, Shine Muscat), Melon (Honeydew, Cantaloupe, Yubari King), Citrus (Valencia Orange, Meyer Lemon, Pomelo), Others (Avocado, Longan, Rambutan, Mangosteen)
+- [x] 4.2 Run seeder in `DatabaseSeeder`
 
 ## 5. Services
-- [ ] 5.1 Create `TreePricingService` with method `calculatePrice(Tree $tree): int` using formula: `base_price * (1 + age_coefficient * age_years) * crop_premium * risk_multiplier` — coefficients stored in tree `pricing_config_json`
-- [ ] 5.2 Create `TreeFilterService` with method `applyFilters(Builder $query, array $filters): Builder` handling: fruit_type, variant, price_min, price_max, roi_min, roi_max, risk_rating, harvest_cycle, status
-- [ ] 5.3 Add `TreePricingService::updateTreePrice(Tree $tree)` to recalculate and save price when tree attributes change
+- [x] 5.1 Create `TreePricingService` with method `calculatePrice(Tree $tree): int` using formula: `base_price * (1 + age_coefficient * age_years) * crop_premium * risk_multiplier` — coefficients stored in tree `pricing_config_json`
+- [x] 5.2 Create `TreeFilterService` with method `applyFilters(Builder $query, array $filters): Builder` handling: fruit_type, variant, price_min, price_max, roi_min, roi_max, risk_rating, harvest_cycle, status
+- [x] 5.3 Add `TreePricingService::updateTreePrice(Tree $tree)` to recalculate and save price when tree attributes change
 
 ## 6. FormRequests
-- [ ] 6.1 Create `StoreFruitCropRequest` with validation: farm_id (exists), fruit_type_id (exists), variant (required, max 100), harvest_cycle (in enum), planted_date (date, nullable), description (max 1000, NoXss)
-- [ ] 6.2 Create `UpdateFruitCropRequest` (same as Store)
-- [ ] 6.3 Create `StoreTreeRequest` with validation: fruit_crop_id (exists), tree_identifier (required, unique per crop, max 50), age_years (integer, min 0, max 100), productive_lifespan_years (integer, min age_years), risk_rating (in enum), min_investment_cents (integer, min 1), max_investment_cents (integer, gte min), status (in enum), pricing_config (array with base_price, age_coefficient, crop_premium, risk_multiplier)
-- [ ] 6.4 Create `UpdateTreeRequest` (same as Store, with status transition validation)
-- [ ] 6.5 Create `UpdateTreeStatusRequest` with validation: status (in enum, valid transition from current status)
+- [x] 6.1 Create `StoreFruitCropRequest` with validation: farm_id (exists), fruit_type_id (exists), variant (required, max 100), harvest_cycle (in enum), planted_date (date, nullable), description (max 1000, NoXss)
+- [x] 6.2 Create `UpdateFruitCropRequest` (same as Store)
+- [x] 6.3 Create `StoreTreeRequest` with validation: fruit_crop_id (exists), tree_identifier (required, unique per crop, max 50), age_years (integer, min 0, max 100), productive_lifespan_years (integer, min age_years), risk_rating (in enum), min_investment_cents (integer, min 1), max_investment_cents (integer, gte min), status (in enum), pricing_config (array with base_price, age_coefficient, crop_premium, risk_multiplier)
+- [x] 6.4 Create `UpdateTreeRequest` (same as Store, with status transition validation)
+- [x] 6.5 Create `UpdateTreeStatusRequest` with validation: status (in enum, valid transition from current status)
 
 ## 7. Farm Owner Controllers
-- [ ] 7.1 Create `FarmOwner/FruitCropController` with methods: `index()` (list crops for owner's farms), `create()` (form with farm and fruit type selection), `store()`, `edit()`, `update()`, `destroy()` (soft delete if no trees exist)
-- [ ] 7.2 Create `FarmOwner/TreeController` with methods: `index()` (list trees for owner's crops), `create()` (form with crop selection), `store()` (call TreePricingService), `edit()`, `update()` (recalculate price), `updateStatus()` (manual status transition)
-- [ ] 7.3 Add authorization checks: farm owner can only manage crops/trees for farms they own
+- [x] 7.1 Create `FarmOwner/FruitCropController` with methods: `index()` (list crops for owner's farms), `create()` (form with farm and fruit type selection), `store()`, `edit()`, `update()`, `destroy()` (soft delete if no trees exist)
+- [x] 7.2 Create `FarmOwner/TreeController` with methods: `index()` (list trees for owner's crops), `create()` (form with crop selection), `store()` (call TreePricingService), `edit()`, `update()` (recalculate price), `updateStatus()` (manual status transition)
+- [x] 7.3 Add authorization checks: farm owner can only manage crops/trees for farms they own
 
 ## 8. Public Marketplace Controllers
 - [ ] 8.1 Create `TreeMarketplaceController` with methods: `index()` (paginated tree list with filters using TreeFilterService, only investable trees), `show($id)` (tree detail with crop, farm, historical harvests, risk disclosure)
@@ -95,7 +95,7 @@
 - [ ] 16.4 Test crop cannot be deleted if trees exist
 
 ## 17. Configuration
-- [ ] 17.1 Add pricing defaults to `config/treevest.php`: `tree_pricing` (default_base_price, default_age_coefficient, default_crop_premium, default_risk_multipliers [low, medium, high])
+- [x] 17.1 Add pricing defaults to `config/treevest.php`: `tree_pricing` (default_base_price, default_age_coefficient, default_crop_premium, default_risk_multipliers [low, medium, high])
 
 ## Post-Implementation
 - [ ] Update root AGENTS.md Section 6 (Data Models) to reflect FruitCrop, Tree, TreeHarvest entities and relationships

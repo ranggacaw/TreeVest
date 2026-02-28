@@ -30,6 +30,7 @@ class DatabaseSeeder extends Seeder
             EducationContentSeeder::class,
             EncyclopediaSeeder::class,
             FarmSeeder::class,
+            FruitTypeSeeder::class,
         ]);
     }
 }

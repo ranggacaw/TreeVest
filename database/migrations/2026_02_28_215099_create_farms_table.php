@@ -19,10 +19,11 @@ return new class extends Migration
             $table->string('state')->nullable();
             $table->string('country')->nullable();
             $table->string('postal_code')->nullable();
-            $table->point('coordinates')->srid(4326)->nullable();
+            $table->string('latitude', 20)->nullable();
+            $table->string('longitude', 20)->nullable();
             $table->decimal('size_hectares', 10, 2)->nullable();
             $table->integer('capacity_trees')->nullable();
-            $table->enum('status', array_column(FarmStatus::cases(), 'value))->default(FarmStatus::PENDING_APPROVAL->value);
+            $table->enum('status', array_column(FarmStatus::cases(), 'value'))->default(FarmStatus::PENDING_APPROVAL->value);
             $table->text('soil_type')->nullable();
             $table->text('climate')->nullable();
             $table->text('historical_performance')->nullable();
@@ -33,7 +34,6 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->spatialIndex('coordinates');
             $table->index('status');
             $table->index('owner_id');
         });

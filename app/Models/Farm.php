@@ -23,7 +23,8 @@ class Farm extends Model
         'state',
         'country',
         'postal_code',
-        'coordinates',
+        'latitude',
+        'longitude',
         'size_hectares',
         'capacity_trees',
         'status',
@@ -39,11 +40,12 @@ class Farm extends Model
     protected function casts(): array
     {
         return [
-            'coordinates' => 'object',
             'status' => FarmStatus::class,
             'size_hectares' => 'decimal:2',
             'capacity_trees' => 'integer',
             'approved_at' => 'datetime',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
@@ -67,43 +69,14 @@ class Farm extends Model
         return $this->hasMany(FarmCertification::class);
     }
 
+    public function fruitCrops(): HasMany
+    {
+        return $this->hasMany(FruitCrop::class);
+    }
+
     public function featuredImage(): ?FarmImage
     {
         return $this->images()->where('is_featured', true)->first();
-    }
-
-    public function getLatitudeAttribute(): ?float
-    {
-        if (!$this->coordinates) {
-            return null;
-        }
-
-        if (is_array($this->coordinates)) {
-            return $this->coordinates['y'] ?? $this->coordinates['lat'] ?? null;
-        }
-
-        if (is_object($this->coordinates) && isset($this->coordinates->y)) {
-            return $this->coordinates->y;
-        }
-
-        return null;
-    }
-
-    public function getLongitudeAttribute(): ?float
-    {
-        if (!$this->coordinates) {
-            return null;
-        }
-
-        if (is_array($this->coordinates)) {
-            return $this->coordinates['x'] ?? $this->coordinates['lng'] ?? null;
-        }
-
-        if (is_object($this->coordinates) && isset($this->coordinates->x)) {
-            return $this->coordinates->x;
-        }
-
-        return null;
     }
 
     public function getFullAddressAttribute(): string
