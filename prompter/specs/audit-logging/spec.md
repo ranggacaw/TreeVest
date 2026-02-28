@@ -156,7 +156,8 @@ The system SHALL capture comprehensive context in audit log event_data for authe
 - **THEN** the audit log `event_data` includes: `{"recovery_code_used": true, "remaining_codes": 7, "warning": "User should regenerate recovery codes"}`
 
 ### Requirement: Audit Log Event Type Enum Extension
-The system SHALL extend the event type enum to include all new authentication event types.
+
+The system SHALL extend the event type enum to include all new authentication event types **and farm management event types**.
 
 #### Scenario: Event type enum includes phone events
 - **WHEN** the system defines the event type enum
@@ -181,6 +182,10 @@ The system SHALL extend the event type enum to include all new authentication ev
 #### Scenario: Event type enum includes account events
 - **WHEN** the system defines the event type enum
 - **THEN** it includes: `user_account_deactivated`, `user_account_deletion_requested`, `user_account_restored`
+
+#### Scenario: Event type enum includes farm management events
+- **WHEN** the system defines the event type enum
+- **THEN** it includes: `farm_created`, `farm_updated`, `farm_approved`, `farm_suspended`, `farm_deactivated`, `farm_activated`, `farm_image_uploaded`, `farm_image_deleted`, `farm_status_changed`
 
 ### Requirement: AuditLogService Authentication Helper Extensions
 The system SHALL extend the AuditLogService with helper methods for authentication events.
