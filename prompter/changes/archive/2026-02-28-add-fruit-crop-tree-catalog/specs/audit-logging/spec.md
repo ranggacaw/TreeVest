@@ -1,37 +1,9 @@
 # Audit Logging (Fruit Crop & Tree Catalog)
 
-## MODIFIED Requirements
+## ADDED Requirements
 
-### Requirement: Comprehensive Event Type Support
-The system SHALL support audit logging for all security-relevant events including authentication, farm management, **fruit crop management, and tree management**.
-
-#### Scenario: Phone authentication events
-- **WHEN** a user registers or logs in with phone
-- **THEN** the system logs events with types `user.registered.phone`, `user.login.phone`, `user.phone.added`, `user.phone.changed`, `user.phone.verified`
-
-#### Scenario: OAuth authentication events
-- **WHEN** a user registers or logs in with OAuth (Google, Facebook, Apple)
-- **THEN** the system logs events with types `user.registered.oauth.{provider}`, `user.login.oauth.{provider}`, `user.oauth.linked.{provider}`, `user.oauth.unlinked.{provider}`
-
-#### Scenario: 2FA events
-- **WHEN** a user enables, disables, or uses 2FA
-- **THEN** the system logs events with types `user.2fa.enabled.totp`, `user.2fa.enabled.sms`, `user.2fa.disabled`, `user.2fa.failed`, `user.2fa.recovery_code_used`, `user.2fa.recovery_codes_regenerated`, `user.login.2fa.totp`, `user.login.2fa.sms`
-
-#### Scenario: Profile management events
-- **WHEN** a user updates their profile or account settings
-- **THEN** the system logs events with types `user.profile.updated`, `user.email.changed`, `user.avatar.uploaded`, `user.avatar.deleted`
-
-#### Scenario: Session management events
-- **WHEN** a user manages their active sessions
-- **THEN** the system logs events with types `user.session.revoked`, `user.session.revoked.all`, `user.logout`
-
-#### Scenario: Account status events
-- **WHEN** a user or admin changes account status
-- **THEN** the system logs events with types `user.account.deactivated`, `user.account.deletion_requested`, `user.account.restored`
-
-#### Scenario: Farm management events
-- **WHEN** a farm is created, updated, or its status changes
-- **THEN** the system logs events with types `farm.created`, `farm.updated`, `farm.approved`, `farm.suspended`, `farm.deactivated`, `farm.activated`, `farm.image.uploaded`, `farm.image.deleted`, `farm.status.changed`
+### Requirement: Fruit Crop and Tree Event Type Support
+The system SHALL support audit logging for fruit crop and tree management operations to maintain comprehensive security and ownership tracking.
 
 #### Scenario: Fruit crop management events
 - **WHEN** a fruit crop is created, updated, or deleted
@@ -59,8 +31,6 @@ The system SHALL support audit logging for all security-relevant events includin
 - **AND** the event_data includes: fruit_type_id, name, slug, admin_user_id
 
 ---
-
-## ADDED Requirements
 
 ### Requirement: Crop and Tree Audit Log Context
 The system SHALL capture comprehensive context for all crop and tree operations to support ownership verification and dispute resolution.
