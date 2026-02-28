@@ -13,12 +13,16 @@ return new class extends Migration
             $table->string('email')->nullable()->change();
         });
 
-        DB::statement('ALTER TABLE users ADD CONSTRAINT chk_users_has_contact CHECK (email IS NOT NULL OR phone IS NOT NULL)');
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE users ADD CONSTRAINT chk_users_has_contact CHECK (email IS NOT NULL OR phone IS NOT NULL)');
+        }
     }
 
     public function down(): void
     {
-        DB::statement('ALTER TABLE users DROP CONSTRAINT chk_users_has_contact');
+        if (DB::connection()->getDriverName() === 'mysql') {
+            DB::statement('ALTER TABLE users DROP CONSTRAINT chk_users_has_contact');
+        }
 
         Schema::table('users', function (Blueprint $table) {
             $table->string('email')->nullable(false)->change();

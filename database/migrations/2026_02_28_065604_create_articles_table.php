@@ -2,6 +2,7 @@
 
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
@@ -24,9 +25,13 @@ return new class extends Migration
             $table->string('meta_keywords')->nullable();
             $table->timestamps();
             $table->softDeletes();
-
-            $table->fullText(['title', 'content']);
         });
+
+        if (DB::connection()->getDriverName() === 'mysql') {
+            Schema::table('articles', function (Blueprint $table) {
+                $table->fullText(['title', 'content']);
+            });
+        }
     }
 
     public function down(): void
