@@ -13,6 +13,9 @@ use App\Exceptions\TreeNotInvestableException;
 use App\Models\Investment;
 use App\Models\Tree;
 use App\Models\User;
+use App\Notifications\InvestmentCancelledNotification;
+use App\Notifications\InvestmentConfirmedNotification;
+use App\Notifications\InvestmentPurchasedNotification;
 use Illuminate\Support\Facades\DB;
 
 class InvestmentService
@@ -114,6 +117,13 @@ class InvestmentService
                 ]
             );
 
+            // Dispatch notification
+            $user->notify(new InvestmentPurchasedNotification([
+                'tree_identifier' => $tree->tree_identifier,
+                'formatted_amount' => 'RM '.number_format($amountCents / 100, 2),
+                'investment_url' => route('investments.confirmation', $investment->id),
+            ]));
+
             return $investment;
         });
     }
@@ -134,6 +144,13 @@ class InvestmentService
                 'event' => 'investment_confirmed',
             ]
         );
+
+        // Dispatch notification
+        $investment->user->notify(new InvestmentConfirmedNotification([
+            'tree_identifier' => $investment->tree->tree_identifier,
+            'formatted_amount' => $investment->formatted_amount,
+            'investment_url' => route('investments.show', $investment->id),
+        ]));
 
         return $investment;
     }
@@ -163,6 +180,13 @@ class InvestmentService
                     'event' => 'investment_cancelled',
                 ]
             );
+
+            // Dispatch notification
+            $investment->user->notify(new InvestmentCancelledNotification([
+                'tree_identifier' => $investment->tree->tree_identifier,
+                'formatted_amount' => $investment->formatted_amount,
+                'cancellation_reason' => $reason ?? 'User request',
+            ]));
 
             return $investment;
         });

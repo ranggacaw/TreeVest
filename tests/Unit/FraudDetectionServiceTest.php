@@ -25,13 +25,21 @@ class FraudDetectionServiceTest extends TestCase
         // Create 2 transactions in the last minute
         Transaction::forceCreate([
             'user_id' => $user->id,
+            'type' => \App\Enums\TransactionType::InvestmentPurchase,
+            'status' => \App\Enums\TransactionStatus::Completed,
             'amount' => 100,
+            'currency' => 'MYR',
             'created_at' => now(),
+            'updated_at' => now(),
         ]);
         Transaction::forceCreate([
             'user_id' => $user->id,
+            'type' => \App\Enums\TransactionType::InvestmentPurchase,
+            'status' => \App\Enums\TransactionStatus::Completed,
             'amount' => 100,
+            'currency' => 'MYR',
             'created_at' => now(),
+            'updated_at' => now(),
         ]);
 
         $newTransaction = new Transaction([
