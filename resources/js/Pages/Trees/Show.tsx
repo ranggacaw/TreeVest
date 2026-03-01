@@ -2,8 +2,15 @@ import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import RiskBadge from '@/Components/RiskBadge';
 import HarvestCycleIcon from '@/Components/HarvestCycleIcon';
+import HealthStatusIndicator from '@/Components/HealthStatusIndicator';
+import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 
-export default function Show({ tree, auth }: PageProps<{ tree: any }>) {
+export default function Show({ tree, auth, healthStatus, recentUpdates, currentWeather }: PageProps<{ 
+    tree: any; 
+    healthStatus?: any;
+    recentUpdates?: any[];
+    currentWeather?: any;
+}>) {
     const crop = tree.fruit_crop;
     const farm = crop?.farm;
     const fruitType = crop?.fruit_type;
@@ -130,6 +137,119 @@ export default function Show({ tree, auth }: PageProps<{ tree: any }>) {
                             </div>
                         </div>
                     </div>
+                </div>
+
+                {/* Health Status & Weather Section */}
+                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    {/* Health Status Section */}
+                    {healthStatus && (
+                        <div className="bg-white rounded-lg shadow-sm p-6">
+                            <div className="flex items-center justify-between mb-4">
+                                <h2 className="text-xl font-bold text-gray-900">Health Status</h2>
+                                <HealthStatusIndicator status={healthStatus.overall_status} size="md" />
+                            </div>
+                            
+                            <div className="space-y-3">
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-600">Last Updated:</span>
+                                    <span className="text-gray-900 font-medium">
+                                        {healthStatus.last_update_date ? 
+                                            new Date(healthStatus.last_update_date).toLocaleDateString() : 
+                                            'No updates yet'
+                                        }
+                                    </span>
+                                </div>
+                                <div className="flex justify-between items-center text-sm">
+                                    <span className="text-gray-600">Active Alerts:</span>
+                                    <span className="text-gray-900 font-medium">{healthStatus.active_alerts_count || 0}</span>
+                                </div>
+                            </div>
+
+                            {recentUpdates && recentUpdates.length > 0 && (
+                                <div className="mt-6 border-t pt-4">
+                                    <h3 className="text-sm font-semibold text-gray-700 mb-3">Recent Updates</h3>
+                                    <div className="space-y-3">
+                                        {recentUpdates.slice(0, 3).map((update: any) => (
+                                            <Link 
+                                                key={update.id} 
+                                                href={route('investments.health-feed.show', update.id)}
+                                                className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                            >
+                                                <div className="flex items-start justify-between mb-1">
+                                                    <span className="text-sm font-medium text-gray-900 line-clamp-1">
+                                                        {update.title}
+                                                    </span>
+                                                    <HealthSeverityBadge severity={update.severity} />
+                                                </div>
+                                                <span className="text-xs text-gray-500">
+                                                    {new Date(update.created_at).toLocaleDateString()}
+                                                </span>
+                                            </Link>
+                                        ))}
+                                    </div>
+                                    <Link 
+                                        href={route('investments.health-feed')}
+                                        className="mt-3 inline-block text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+                                    >
+                                        View all updates →
+                                    </Link>
+                                </div>
+                            )}
+                        </div>
+                    )}
+
+                    {/* Current Weather Section */}
+                    {currentWeather && (
+                        <div className="bg-white rounded-lg shadow-sm p-6">
+                            <h2 className="text-xl font-bold text-gray-900 mb-4">Current Weather</h2>
+                            
+                            <div className="flex items-center justify-between mb-6">
+                                <div>
+                                    <div className="text-4xl font-bold text-gray-900">
+                                        {currentWeather.temperature_celsius}°C
+                                    </div>
+                                    <div className="text-sm text-gray-600 capitalize">
+                                        {currentWeather.weather_condition}
+                                    </div>
+                                </div>
+                                <div className="text-6xl">
+                                    {currentWeather.weather_condition?.includes('rain') ? '🌧️' : 
+                                     currentWeather.weather_condition?.includes('cloud') ? '☁️' : 
+                                     '☀️'}
+                                </div>
+                            </div>
+
+                            <div className="grid grid-cols-2 gap-4">
+                                <div className="bg-gray-50 p-3 rounded-lg">
+                                    <div className="text-xs text-gray-500 mb-1">Humidity</div>
+                                    <div className="text-lg font-semibold text-gray-900">
+                                        {currentWeather.humidity_percent}%
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg">
+                                    <div className="text-xs text-gray-500 mb-1">Wind Speed</div>
+                                    <div className="text-lg font-semibold text-gray-900">
+                                        {currentWeather.wind_speed_kmh} km/h
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg">
+                                    <div className="text-xs text-gray-500 mb-1">Rainfall</div>
+                                    <div className="text-lg font-semibold text-gray-900">
+                                        {currentWeather.rainfall_mm || 0} mm
+                                    </div>
+                                </div>
+                                <div className="bg-gray-50 p-3 rounded-lg">
+                                    <div className="text-xs text-gray-500 mb-1">Updated</div>
+                                    <div className="text-sm font-semibold text-gray-900">
+                                        {new Date(currentWeather.recorded_at).toLocaleTimeString([], { 
+                                            hour: '2-digit', 
+                                            minute: '2-digit' 
+                                        })}
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    )}
                 </div>
 
                 {/* Historical Yields section */}

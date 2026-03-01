@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Enums\InvestmentStatus;
+use App\Models\Transaction;
 use App\Models\Tree;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
@@ -46,10 +47,12 @@ class InvestmentFactory extends Factory
         ]);
     }
 
-    public function withTransaction(int $transactionId): static
+    public function withTransaction(int|Transaction $transactionId): static
     {
+        $id = $transactionId instanceof Transaction ? $transactionId->id : $transactionId;
+
         return $this->state(fn (array $attributes) => [
-            'transaction_id' => $transactionId,
+            'transaction_id' => $id,
         ]);
     }
 }

@@ -168,4 +168,9 @@ class User extends Authenticatable
             ->forChannel($channel)
             ->first();
     }
+
+    public function paymentMethods()
+    {
+        return $this->hasMany(PaymentMethod::class);
+    }
 }

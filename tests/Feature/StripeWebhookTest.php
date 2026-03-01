@@ -18,14 +18,14 @@ class StripeWebhookTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        Queue::fake();
         Config::set('services.stripe.webhook_secret', 'whsec_test_secret');
     }
 
     public function test_webhook_with_invalid_signature_rejected()
     {
-        $response = $this->post('/stripe/webhook', [], [
-            'Stripe-Signature' => 'invalid_signature',
+        $response = $this->call('POST', '/stripe/webhook', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_Stripe-Signature' => 'invalid_signature',
         ]);
 
         $response->assertStatus(403);
@@ -33,6 +33,8 @@ class StripeWebhookTest extends TestCase
 
     public function test_webhook_dispatches_job_on_valid_signature()
     {
+        Queue::fake();
+
         $user = User::factory()->create();
         $transaction = Transaction::factory()->create([
             'user_id' => $user->id,
@@ -55,9 +57,10 @@ class StripeWebhookTest extends TestCase
         $timestamp = time();
         $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
 
-        $response = $this->post('/stripe/webhook', $payload, [
-            'Stripe-Signature' => "t={$timestamp},v1={$signature}",
-        ]);
+        $response = $this->call('POST', '/stripe/webhook', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_Stripe-Signature' => "t={$timestamp},v1={$signature}",
+        ], $payload);
 
         $response->assertStatus(202);
     }
@@ -74,7 +77,7 @@ class StripeWebhookTest extends TestCase
 
         $this->assertEquals(TransactionStatus::Processing, $transaction->status);
 
-        $this->post('/stripe/webhook', json_encode([
+        $payload = json_encode([
             'id' => 'evt_test_success',
             'type' => 'payment_intent.succeeded',
             'data' => [
@@ -82,9 +85,15 @@ class StripeWebhookTest extends TestCase
                 'status' => 'succeeded',
                 'amount' => 10000,
             ],
-        ]), [
-            'Stripe-Signature' => 't='.time().',v1=valid_signature_for_test',
         ]);
+
+        $timestamp = time();
+        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
+
+        $this->call('POST', '/stripe/webhook', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_Stripe-Signature' => "t={$timestamp},v1={$signature}",
+        ], $payload);
 
         $transaction->refresh();
         $this->assertEquals(TransactionStatus::Completed, $transaction->status);
@@ -100,7 +109,7 @@ class StripeWebhookTest extends TestCase
             'stripe_payment_intent_id' => 'pi_test_789',
         ]);
 
-        $this->post('/stripe/webhook', json_encode([
+        $payload = json_encode([
             'id' => 'evt_test_fail',
             'type' => 'payment_intent.payment_failed',
             'data' => [
@@ -109,9 +118,15 @@ class StripeWebhookTest extends TestCase
                     'message' => 'Card declined',
                 ],
             ],
-        ]), [
-            'Stripe-Signature' => 't='.time().',v1=valid_signature_for_test',
         ]);
+
+        $timestamp = time();
+        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
+
+        $this->call('POST', '/stripe/webhook', [], [], [], [
+            'CONTENT_TYPE' => 'application/json',
+            'HTTP_Stripe-Signature' => "t={$timestamp},v1={$signature}",
+        ], $payload);
 
         $transaction->refresh();
         $this->assertEquals(TransactionStatus::Failed, $transaction->status);

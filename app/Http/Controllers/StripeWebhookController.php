@@ -3,13 +3,14 @@
 namespace App\Http\Controllers;
 
 use App\Jobs\ProcessStripeWebhook;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Stripe\Webhook;
 
 class StripeWebhookController extends Controller
 {
-    public function handle(Request $request): Response
+    public function handle(Request $request): JsonResponse
     {
         $payload = $request->getContent();
         $sigHeader = $request->header('Stripe-Signature');

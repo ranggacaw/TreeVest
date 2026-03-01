@@ -17,8 +17,10 @@ class TransactionStatusTest extends TestCase
             'cancelled',
         ];
 
+        $actualValues = array_map(fn ($case) => $case->value, TransactionStatus::cases());
+
         foreach ($expectedCases as $expected) {
-            $this->assertArrayHasKey($expected, array_column(TransactionStatus::cases(), 'value'));
+            $this->assertContains($expected, $actualValues);
         }
     }
 

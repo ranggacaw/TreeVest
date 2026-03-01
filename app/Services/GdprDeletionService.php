@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Models\Transaction;
 use App\Models\User;
+use App\Support\TransactionHelper;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
@@ -14,7 +15,7 @@ class GdprDeletionService
      */
     public function deleteUserData(int $userId): void
     {
-        DB::transaction(function () use ($userId) {
+        TransactionHelper::smart(function () use ($userId) {
             $user = User::findOrFail($userId);
 
             // Anonymize sensitive fields before soft deletion

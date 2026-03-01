@@ -1,5 +1,4 @@
 import { Link } from '@inertiajs/react';
-import { useTranslation } from 'react-i18next';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import HealthUpdateCard from '@/Components/HealthUpdateCard';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
@@ -61,21 +60,19 @@ interface Props {
 }
 
 export default function Index({ healthUpdates, healthAlerts, filters }: Props) {
-  const { t } = useTranslation('health');
-
   return (
     <AuthenticatedLayout>
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">
-            {t('healthFeed.title')}
+            Health Feed
           </h1>
           <div className="flex gap-2">
             <Link
               href={route('investments.health-alerts')}
               className="px-4 py-2 bg-yellow-50 text-yellow-700 rounded-lg hover:bg-yellow-100 border border-yellow-200"
             >
-              {t('healthFeed.alerts')} ({healthAlerts.total})
+              Alerts ({healthAlerts.total})
             </Link>
           </div>
         </div>
@@ -86,23 +83,23 @@ export default function Index({ healthUpdates, healthAlerts, filters }: Props) {
               className="rounded-lg border-gray-300 text-sm"
               defaultValue={filters.severity || ''}
             >
-              <option value="">{t('filters.allSeverities')}</option>
-              <option value="low">{t('severity.low')}</option>
-              <option value="medium">{t('severity.medium')}</option>
-              <option value="high">{t('severity.high')}</option>
-              <option value="critical">{t('severity.critical')}</option>
+              <option value="">All Severities</option>
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
             </select>
 
             <select
               className="rounded-lg border-gray-300 text-sm"
               defaultValue={filters.update_type || ''}
             >
-              <option value="">{t('filters.allTypes')}</option>
-              <option value="routine">{t('updateType.routine')}</option>
-              <option value="pest">{t('updateType.pest')}</option>
-              <option value="disease">{t('updateType.disease')}</option>
-              <option value="damage">{t('updateType.damage')}</option>
-              <option value="weather_impact">{t('updateType.weather_impact')}</option>
+              <option value="">All Types</option>
+              <option value="routine">Routine Check</option>
+              <option value="pest">Pest Issue</option>
+              <option value="disease">Disease</option>
+              <option value="damage">Physical Damage</option>
+              <option value="weather_impact">Weather Impact</option>
             </select>
           </div>
         </div>
@@ -115,12 +112,12 @@ export default function Index({ healthUpdates, healthAlerts, filters }: Props) {
           </div>
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
-            <p className="text-gray-500">{t('healthFeed.noUpdates')}</p>
+            <p className="text-gray-500">No health updates available</p>
             <Link
               href={route('trees.index')}
               className="mt-4 inline-block text-emerald-600 hover:text-emerald-700"
             >
-              {t('healthFeed.exploreTrees')}
+              Explore Trees
             </Link>
           </div>
         )}

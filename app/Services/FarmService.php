@@ -14,6 +14,7 @@ use App\Models\Farm;
 use App\Models\FarmCertification;
 use App\Models\FarmImage;
 use App\Models\User;
+use App\Support\TransactionHelper;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
@@ -23,7 +24,7 @@ class FarmService
 {
     public function createFarm(User $owner, StoreFarmRequest $request): Farm
     {
-        return DB::transaction(function () use ($owner, $request) {
+        return TransactionHelper::smart(function () use ($owner, $request) {
             $farm = Farm::create([
                 'owner_id' => $owner->id,
                 'name' => $request->input('name'),
@@ -60,7 +61,7 @@ class FarmService
 
     public function updateFarm(Farm $farm, UpdateFarmRequest $request): Farm
     {
-        return DB::transaction(function () use ($farm, $request) {
+        return TransactionHelper::smart(function () use ($farm, $request) {
             $farm->update([
                 'name' => $request->input('name'),
                 'description' => $request->input('description'),
@@ -105,7 +106,7 @@ class FarmService
 
     public function deleteFarm(Farm $farm): void
     {
-        DB::transaction(function () use ($farm) {
+        TransactionHelper::smart(function () use ($farm) {
             foreach ($farm->images as $image) {
                 Storage::disk('public')->delete($image->file_path);
             }

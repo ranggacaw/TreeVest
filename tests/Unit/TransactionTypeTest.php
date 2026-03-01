@@ -17,8 +17,10 @@ class TransactionTypeTest extends TestCase
             'withdrawal',
         ];
 
+        $actualValues = array_map(fn ($case) => $case->value, TransactionType::cases());
+
         foreach ($expectedCases as $expected) {
-            $this->assertArrayHasKey($expected, array_column(TransactionType::cases(), 'value'));
+            $this->assertContains($expected, $actualValues);
         }
     }
 

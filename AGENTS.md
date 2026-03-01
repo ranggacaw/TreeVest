@@ -186,6 +186,10 @@ treevest/
 │   │   │   │   ├── ArticleController.php
 │   │   │   │   ├── DashboardController.php
 │   │   │   │   └── MediaController.php
+│   │   │   ├── Investor/          # Investor-specific controllers
+│   │   │   │   └── HealthFeedController.php
+│   │   │   ├── FarmOwner/         # Farm owner controllers
+│   │   │   │   └── HealthUpdateController.php
 │   │   │   ├── ArticleController.php
 │   │   │   ├── EncyclopediaController.php
 │   │   │   └── SitemapController.php
@@ -193,9 +197,28 @@ treevest/
 │   ├── Models/                    # Eloquent models
 │   │   ├── Article.php
 │   │   ├── Category.php
-│   │   └── Tag.php
+│   │   ├── Tag.php
+│   │   ├── TreeHealthUpdate.php
+│   │   ├── WeatherData.php
+│   │   └── HealthAlert.php
 │   ├── Services/                  # Business logic services
-│   └── Jobs/                      # Queue jobs
+│   │   ├── WeatherService.php
+│   │   ├── WeatherAlertService.php
+│   │   └── HealthMonitoringService.php
+│   ├── Jobs/                      # Queue jobs
+│   │   ├── FetchWeatherData.php
+│   │   ├── GenerateWeatherAlerts.php
+│   │   └── ProcessHealthUpdate.php
+│   ├── Events/                    # Domain events
+│   │   ├── HealthUpdateCreated.php
+│   │   └── WeatherAlertGenerated.php
+│   ├── Listeners/                 # Event listeners
+│   │   ├── HealthUpdateCreatedListener.php
+│   │   └── WeatherAlertGeneratedListener.php
+│   └── Enums/                     # Enum definitions
+│       ├── HealthSeverity.php
+│       ├── HealthUpdateType.php
+│       └── HealthAlertType.php
 ├── database/
 │   ├── migrations/                # Database schema migrations
 │   ├── seeders/                   # Data seeders
@@ -215,6 +238,15 @@ treevest/
 │   │   │   │   └── Show.tsx
 │   │   │   ├── Search/            # Search results page
 │   │   │   │   └── Index.tsx
+│   │   │   ├── Investments/       # Investor pages
+│   │   │   │   └── HealthFeed/    # Health feed pages
+│   │   │   │       ├── Index.tsx
+│   │   │   │       └── Show.tsx
+│   │   │   ├── FarmOwner/         # Farm owner pages
+│   │   │   │   └── HealthUpdates/ # Health update management
+│   │   │   │       ├── Index.tsx
+│   │   │   │       ├── Create.tsx
+│   │   │   │       └── Edit.tsx
 │   │   │   └── Admin/             # Admin pages
 │   │   │       ├── Dashboard.tsx
 │   │   │       └── Articles/      # Admin article CMS
@@ -223,7 +255,14 @@ treevest/
 │   │   │           └── Edit.tsx
 │   │   ├── Components/            # Shared React components
 │   │   │   ├── RichTextEditor.tsx # TipTap rich text editor
-│   │   │   └── SeasonalityChart.tsx # Recharts seasonality chart
+│   │   │   ├── SeasonalityChart.tsx # Recharts seasonality chart
+│   │   │   ├── HealthUpdateCard.tsx # Health update card component
+│   │   │   ├── HealthUpdateForm.tsx # Reusable health update form
+│   │   │   ├── HealthSeverityBadge.tsx # Severity badge
+│   │   │   ├── HealthStatusIndicator.tsx # Health status indicator
+│   │   │   ├── WeatherAlertBanner.tsx # Weather alert component
+│   │   │   ├── PhotoGallery.tsx # Lightbox photo gallery
+│   │   │   └── ImageUploader.tsx # Drag-drop image upload
 │   │   ├── Layouts/               # Layout components
 │   │   ├── types/                 # TypeScript type definitions
 │   │   └── app.tsx                # Inertia app entry point
@@ -354,17 +393,25 @@ Admin Approval → Listed on Marketplace
 | **FraudAlert** | id, user_id, rule_type, severity, notes, detected_at | Suspicious activity flags |
 | **KycVerification** | id, user_id, jurisdiction_code, status, submitted_at, verified_at, rejected_at, rejection_reason, verified_by_admin_id, expires_at, provider, provider_reference_id | User identity verification record |
 | **KycDocument** | id, kyc_verification_id, document_type, file_path, original_filename, mime_type, file_size, uploaded_at | KYC supporting documents |
+| **TreeHealthUpdate** | id, fruit_crop_id, author_id, severity, update_type, title, description, visibility, photos, created_at, updated_at | Health updates for crops/trees submitted by farm owners |
+| **WeatherData** | id, farm_id, temperature_celsius, humidity_percent, wind_speed_kmh, rainfall_mm, weather_condition, recorded_at | Weather data fetched from OpenWeatherMap API |
+| **HealthAlert** | id, farm_id, fruit_crop_id, alert_type, severity, title, message, is_resolved, resolved_at, created_at | Automated and manual health alerts for farms/crops |
 
 ### Expected Relationships
 - User (1) → (N) Investment
 - User (1) → (N) Farm (as owner)
 - User (1) → (N) Article (as author)
 - User (1) → (N) KycVerification
+- User (1) → (N) TreeHealthUpdate (as author)
 - KycVerification (1) → (N) KycDocument
 - Farm (1) → (N) FarmImage
 - Farm (1) → (N) FarmCertification
 - Farm (1) → (N) FruitCrop
+- Farm (1) → (N) WeatherData
+- Farm (1) → (N) HealthAlert
 - FruitCrop (1) → (N) Tree
+- FruitCrop (1) → (N) TreeHealthUpdate
+- FruitCrop (1) → (N) HealthAlert
 - Tree (1) → (N) Investment
 - Tree (1) → (N) Harvest
 - Harvest (1) → (N) Payout
@@ -629,7 +676,7 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 | **Stripe** | Payment gateway — investment purchases and payouts | Critical |
 | **Local Payment Methods** | Region-specific payment processing | High |
 | **Google Maps / Mapbox** | Farm location display, map-based discovery | High |
-| **Weather API** | Farm condition monitoring, weather impact alerts | Medium |
+| **OpenWeatherMap API** | Real-time weather data for farms, automated weather alerts | Medium |
 | **Twilio** | SMS delivery for OTP and notifications | High |
 | **Email Service (Mailgun/SendGrid/SES)** | Transactional notifications, KYC communications, reports | High |
 | **Pusher / Soketi** | Real-time web push notifications via Laravel Broadcasting | Medium |
@@ -645,6 +692,9 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 
 ### Async Job Dependencies (expected)
 - Payment webhook processing (`ProcessStripeWebhook`) — handles Stripe webhook events with idempotency
+- Weather data fetching (`FetchWeatherData`) — scheduled job runs every 6 hours
+- Weather alert generation (`GenerateWeatherAlerts`) — triggered after weather fetch
+- Health update notifications (event-driven via `HealthUpdateCreatedListener`)
 - Harvest date reminder notifications (scheduled)
 - Yield estimation recalculations (periodic)
 - Market price updates (real-time or periodic)

@@ -55,9 +55,9 @@
 - [x] 6.1 Create `resources/js/Pages/Investments/HealthFeed/Index.tsx` (health feed list)
 - [x] 6.2 Create `resources/js/Pages/Investments/HealthFeed/Show.tsx` (health update detail)
 - [x] 6.3 Create `resources/js/Components/HealthUpdateCard.tsx` (health update card component)
-- [ ] 6.4 Create `resources/js/Components/WeatherAlertBanner.tsx` (weather alert component)
+- [x] 6.4 Create `resources/js/Components/WeatherAlertBanner.tsx` (weather alert component)
 - [x] 6.5 Create `resources/js/Components/HealthSeverityBadge.tsx` (severity badge)
-- [ ] 6.6 Create `resources/js/Components/PhotoGallery.tsx` (lightbox photo gallery)
+- [x] 6.6 Create `resources/js/Components/PhotoGallery.tsx` (lightbox photo gallery)
 - [x] 6.7 Implement health feed filtering UI (dropdown filters)
 - [x] 6.8 Create `Investor/HealthFeedController` to serve Inertia pages
 
@@ -65,26 +65,26 @@
 
 - [x] 7.1 Create `resources/js/Pages/FarmOwner/HealthUpdates/Index.tsx` (list updates)
 - [x] 7.2 Create `resources/js/Pages/FarmOwner/HealthUpdates/Create.tsx` (create form)
-- [ ] 7.3 Create `resources/js/Pages/FarmOwner/HealthUpdates/Edit.tsx` (edit form)
-- [ ] 7.4 Create `resources/js/Components/HealthUpdateForm.tsx` (reusable form component)
+- [x] 7.3 Create `resources/js/Pages/FarmOwner/HealthUpdates/Edit.tsx` (edit form)
+- [x] 7.4 Create `resources/js/Components/HealthUpdateForm.tsx` (reusable form component)
 - [x] 7.5 Create `resources/js/Components/ImageUploader.tsx` (drag-drop image upload)
 - [x] 7.6 Implement form validation using Inertia `useForm()`
 - [ ] 7.7 Add success/error toast notifications on submit
 
 ## 8. Tree & Portfolio Integration
 
-- [ ] 8.1 Modify `Trees/Show.tsx` to display health status section
-- [ ] 8.2 Add recent health updates widget to tree detail page
-- [ ] 8.3 Add current weather conditions widget to tree detail page
-- [x] 8.4 Create `resources/js/Components/HealthStatusIndicator.tsx)
-- [ ]` (status badge 8.5 Modify portfolio dashboard to show health indicators per tree
+- [x] 8.1 Modify `Trees/Show.tsx` to display health status section
+- [x] 8.2 Add recent health updates widget to tree detail page
+- [x] 8.3 Add current weather conditions widget to tree detail page
+- [x] 8.4 Create `resources/js/Components/HealthStatusIndicator.tsx` (status badge)
+- [ ] 8.5 Modify portfolio dashboard to show health indicators per tree
 - [ ] 8.6 Add health alert count badge in portfolio view
 
 ## 9. Notification Integration
 
 - [x] 9.1 Modify notification type enum to add `health` and `weather` types
-- [ ] 9.2 Create `HealthUpdateCreatedListener` to dispatch health notification
-- [ ] 9.3 Create `WeatherAlertGeneratedListener` to dispatch weather notification
+- [x] 9.2 Create `HealthUpdateCreatedListener` to dispatch health notification
+- [x] 9.3 Create `WeatherAlertGeneratedListener` to dispatch weather notification
 - [ ] 9.4 Create notification templates for health/weather types (email, SMS, database)
 - [ ] 9.5 Update default notification preferences to include health/weather types (enabled for email + database)
 
@@ -117,13 +117,13 @@
 
 ## 13. Documentation
 
-- [ ] 13.1 Update AGENTS.md Section 6 (Data Models) with new entities and relationships
-- [ ] 13.2 Update AGENTS.md Section 13 (Integration Map) with OpenWeatherMap integration
+- [x] 13.1 Update AGENTS.md Section 6 (Data Models) with new entities and relationships
+- [x] 13.2 Update AGENTS.md Section 13 (Integration Map) with OpenWeatherMap integration
 - [x] 13.3 Document weather alert thresholds in `design.md`
 - [ ] 13.4 Add API key setup instructions to README
 
 ## Post-Implementation
 
-- [ ] Update AGENTS.md in the project root for new changes in this spec
+- [x] Update AGENTS.md in the project root for new changes in this spec
 - [ ] Run full test suite and ensure 100% pass rate
 - [ ] Validate with `prompter validate add-tree-health-monitoring --strict --no-interactive`

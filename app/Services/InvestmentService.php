@@ -16,6 +16,7 @@ use App\Models\User;
 use App\Notifications\InvestmentCancelledNotification;
 use App\Notifications\InvestmentConfirmedNotification;
 use App\Notifications\InvestmentPurchasedNotification;
+use App\Support\TransactionHelper;
 use Illuminate\Support\Facades\DB;
 
 class InvestmentService
@@ -81,7 +82,7 @@ class InvestmentService
             throw new \InvalidArgumentException($firstError);
         }
 
-        return DB::transaction(function () use ($user, $tree, $amountCents, $paymentMethodId) {
+        return TransactionHelper::smart(function () use ($user, $tree, $amountCents, $paymentMethodId) {
             $transaction = $this->paymentService->initiatePayment(
                 $user->id,
                 $amountCents,
@@ -132,6 +133,11 @@ class InvestmentService
     {
         $investment = Investment::findOrFail($investmentId);
 
+        // Idempotency check - if already active, return without logging again
+        if ($investment->status === InvestmentStatus::Active) {
+            return $investment;
+        }
+
         $investment->status = InvestmentStatus::Active;
         $investment->save();
 
@@ -163,7 +169,7 @@ class InvestmentService
             throw new InvestmentNotCancellableException($investmentId);
         }
 
-        return DB::transaction(function () use ($investment, $reason) {
+        return TransactionHelper::smart(function () use ($investment, $reason) {
             if ($investment->transaction_id) {
                 $this->paymentService->cancelPendingTransaction($investment->transaction_id);
             }
@@ -210,7 +216,7 @@ class InvestmentService
             throw new InvestmentLimitExceededException($newTotalAmount, $tree->max_investment_cents);
         }
 
-        return DB::transaction(function () use ($investment, $topUpAmountCents, $paymentMethodId, $newTotalAmount) {
+        return TransactionHelper::smart(function () use ($investment, $topUpAmountCents, $paymentMethodId, $newTotalAmount) {
             $originalAmount = $investment->amount_cents;
 
             $transaction = $this->paymentService->initiatePayment(
