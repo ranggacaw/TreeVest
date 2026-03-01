@@ -5,16 +5,17 @@ namespace App\Jobs;
 use App\Events\PayoutsCreated;
 use App\Models\Harvest;
 use App\Services\ProfitCalculationService;
+use Exception;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
 use Illuminate\Support\Facades\Log;
-use Exception;
 
 class CalculateProfitAndCreatePayouts implements ShouldQueue
 {
     use Queueable;
 
     public int $tries = 3;
+
     public int $backoff = [60, 300, 900];
 
     public function __construct(

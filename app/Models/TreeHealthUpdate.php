@@ -7,7 +7,6 @@ use App\Enums\HealthUpdateType;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Support\Facades\Storage;
 
 class TreeHealthUpdate extends Model
@@ -70,6 +69,7 @@ class TreeHealthUpdate extends Model
 
         return collect($this->photos)->map(function ($photo) {
             $thumbnailPath = str_replace('/photos/', '/photos/thumbnails/', $photo);
+
             return Storage::disk('public')->url($thumbnailPath);
         })->toArray();
     }

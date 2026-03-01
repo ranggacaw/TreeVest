@@ -10,7 +10,7 @@ use Illuminate\Support\Facades\Log;
 class WeatherService
 {
     private const BASE_URL = 'https://api.openweathermap.org/data/2.5';
-    
+
     private ?string $apiKey;
 
     public function __construct()
@@ -20,29 +20,32 @@ class WeatherService
 
     public function fetchWeatherForFarm(Farm $farm): ?WeatherData
     {
-        if (!$farm->hasLocation()) {
+        if (! $farm->hasLocation()) {
             Log::warning("Farm {$farm->id} has no location coordinates for weather fetching");
+
             return null;
         }
 
         if (empty($this->apiKey)) {
             Log::warning('OpenWeatherMap API key not configured');
+
             return null;
         }
 
         try {
-            $response = Http::timeout(10)->get(self::BASE_URL . '/weather', [
+            $response = Http::timeout(10)->get(self::BASE_URL.'/weather', [
                 'lat' => $farm->latitude,
                 'lon' => $farm->longitude,
                 'appid' => $this->apiKey,
                 'units' => 'metric',
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 Log::error('OpenWeatherMap API error', [
                     'status' => $response->status(),
                     'body' => $response->body(),
                 ]);
+
                 return null;
             }
 
@@ -54,18 +57,19 @@ class WeatherService
                 'farm_id' => $farm->id,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }
 
     public function fetchForecastForFarm(Farm $farm, int $hours = 24): ?array
     {
-        if (!$farm->hasLocation() || empty($this->apiKey)) {
+        if (! $farm->hasLocation() || empty($this->apiKey)) {
             return null;
         }
 
         try {
-            $response = Http::timeout(10)->get(self::BASE_URL . '/forecast', [
+            $response = Http::timeout(10)->get(self::BASE_URL.'/forecast', [
                 'lat' => $farm->latitude,
                 'lon' => $farm->longitude,
                 'appid' => $this->apiKey,
@@ -73,7 +77,7 @@ class WeatherService
                 'cnt' => ceil($hours / 3),
             ]);
 
-            if (!$response->successful()) {
+            if (! $response->successful()) {
                 return null;
             }
 
@@ -83,6 +87,7 @@ class WeatherService
                 'farm_id' => $farm->id,
                 'error' => $e->getMessage(),
             ]);
+
             return null;
         }
     }

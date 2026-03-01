@@ -70,7 +70,7 @@ class HarvestService
 
     public function recordActualYield(Harvest $harvest, float $kg, QualityGrade $grade, User $actor): Harvest
     {
-        if (!in_array($harvest->status, [HarvestStatus::Scheduled, HarvestStatus::InProgress], true)) {
+        if (! in_array($harvest->status, [HarvestStatus::Scheduled, HarvestStatus::InProgress], true)) {
             throw new InvalidHarvestTransitionException(
                 "Cannot record yield for harvest with status {$harvest->status->value}"
             );

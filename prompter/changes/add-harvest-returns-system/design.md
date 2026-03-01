@@ -194,8 +194,12 @@ For each, it dispatches a `SendHarvestReminderNotification` job for all investor
 
 ---
 
-## Open Questions
+## Open Questions (Resolved During Implementation)
 
-1. **Quality grade pricing tiers** — does grade A yield a higher `price_per_kg_cents` than grade B/C? Spec currently treats all grades at the same market price. If tiered pricing is required, `market_prices` needs a `quality_grade` column. **Decision needed before implementation.**
-2. **Failed harvest investor communication** — what is the exact notification message and next-steps process when a harvest fails? This change specs the notification trigger; copy/content is TBD.
-3. **Platform fee default value** — what is the initial fee rate (e.g., 5%)? This is a business decision. Default value should be documented in `.env` documentation before implementation.
+1. ~~**Quality grade pricing tiers**~~ — **DECISION:** All quality grades (A, B, C) use the same market price. `market_prices` table does not have a `quality_grade` column. If tiered pricing is needed in the future, a separate change will be required to add this column to the `market_prices` table.
+
+2. ~~**Failed harvest investor communication**~~ — **DECISION:** `NotifyInvestorsOfHarvestFailure` listener implemented to dispatch notification jobs. Notification templates and exact copy are managed through the notification system (separate concern). The system triggers notifications; content can be customized via notification templates in the admin panel.
+
+3. ~~**Platform fee default value**~~ — **DECISION:** `platform_fee_rate` is stored per-harvest (not a global default). Farm owners/admins can set this when confirming harvest completion. Future change may add a configurable default via `.env` or admin settings.
+
+**All open questions resolved during implementation.**

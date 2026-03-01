@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Investor;
 
 use App\Http\Controllers\Controller;
-use App\Models\HealthAlert;
 use App\Models\TreeHealthUpdate;
 use App\Services\HealthMonitoringService;
 use Illuminate\Http\Request;

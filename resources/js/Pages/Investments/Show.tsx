@@ -11,6 +11,26 @@ interface HarvestData {
     notes?: string;
 }
 
+interface PayoutData {
+    id: number;
+    gross_amount_cents: number;
+    gross_amount_formatted: string;
+    platform_fee_cents: number;
+    platform_fee_formatted: string;
+    net_amount_cents: number;
+    net_amount_formatted: string;
+    status: string;
+    status_label: string;
+    currency: string;
+    harvest?: {
+        id: number;
+        harvest_date: string;
+    };
+    completed_at?: string;
+    failed_at?: string;
+    failed_reason?: string;
+}
+
 interface InvestmentData {
     id: number;
     amount_cents: number;
@@ -45,6 +65,7 @@ interface InvestmentData {
         completed: HarvestData[];
         upcoming: HarvestData[];
     };
+    payouts?: PayoutData[];
     transaction?: {
         id: number;
         status: string;
@@ -264,6 +285,49 @@ export default function Show({ auth, investment }: Props) {
                                         </div>
                                     )}
                                 </>
+                            )}
+
+                            {investment.payouts && investment.payouts.length > 0 && (
+                                <div className="border-t border-gray-200 mt-6 pt-6">
+                                    <h4 className="text-sm font-medium text-gray-500 mb-4">Payout History</h4>
+                                    <div className="overflow-x-auto">
+                                        <table className="min-w-full divide-y divide-gray-200">
+                                            <thead className="bg-gray-50">
+                                                <tr>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harvest Date</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gross Amount</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Platform Fee</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Net Amount</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody className="bg-white divide-y divide-gray-200">
+                                                {investment.payouts.map((payout) => (
+                                                    <tr key={payout.id}>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                                            {payout.harvest
+                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString('en-MY')
+                                                                : '-'}
+                                                        </td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.gross_amount_formatted}</td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.platform_fee_formatted}</td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.net_amount_formatted}</td>
+                                                        <td className="px-4 py-3 text-sm text-gray-900">
+                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
+                                                                payout.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                                payout.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                                payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                                                'bg-yellow-100 text-yellow-800'
+                                                            }`}>
+                                                                {payout.status_label}
+                                                            </span>
+                                                        </td>
+                                                    </tr>
+                                                ))}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
                             )}
 
                             {investment.status === 'pending_payment' && (

@@ -12,6 +12,6 @@ Artisan::command('inspire', function () {
 
 Schedule::job(new CheckKycExpiry)->daily();
 
-Schedule::job(new FetchWeatherData())->everySixHours();
+Schedule::job(new FetchWeatherData)->everySixHours();
 
 Schedule::command('app:send-harvest-reminders')->daily();

@@ -108,20 +108,20 @@ class HealthAlert extends Model
 
     public function requiresNotification(): bool
     {
-        return !$this->isResolved() && 
+        return ! $this->isResolved() &&
                in_array($this->severity, [HealthSeverity::MEDIUM, HealthSeverity::HIGH, HealthSeverity::CRITICAL]);
     }
 
     public function getInvestorNotificationRecipients(): \Illuminate\Database\Eloquent\Collection
     {
         $cropId = $this->fruit_crop_id;
-        
-        if (!$cropId) {
+
+        if (! $cropId) {
             return collect();
         }
 
         $treeIds = Tree::where('fruit_crop_id', $cropId)->pluck('id');
-        
+
         return User::whereHas('investments', function ($query) use ($treeIds) {
             $query->whereIn('tree_id', $treeIds)
                 ->where('status', InvestmentStatus::Active);

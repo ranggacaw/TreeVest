@@ -7,7 +7,6 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreHealthUpdateRequest;
 use App\Http\Requests\UpdateHealthUpdateRequest;
 use App\Jobs\ProcessHealthUpdate;
-use App\Models\Farm;
 use App\Models\FruitCrop;
 use App\Models\TreeHealthUpdate;
 use Illuminate\Http\RedirectResponse;
@@ -28,9 +27,9 @@ class HealthUpdateController extends Controller
         $updates = TreeHealthUpdate::whereHas('fruitCrop.farm', function ($query) use ($request) {
             $query->where('owner_id', $request->user()->id);
         })
-        ->with(['fruitCrop.farm', 'author'])
-        ->orderBy('created_at', 'desc')
-        ->paginate(15);
+            ->with(['fruitCrop.farm', 'author'])
+            ->orderBy('created_at', 'desc')
+            ->paginate(15);
 
         return Inertia::render('FarmOwner/HealthUpdates/Index', [
             'healthUpdates' => $updates,
@@ -53,7 +52,7 @@ class HealthUpdateController extends Controller
     public function store(StoreHealthUpdateRequest $request): RedirectResponse
     {
         $fruitCrop = FruitCrop::findOrFail($request->input('fruit_crop_id'));
-        
+
         Gate::authorize('manage-health-updates', $fruitCrop->farm);
 
         $photos = $this->handlePhotoUpload($request->file('photos', []), $fruitCrop);
@@ -87,7 +86,7 @@ class HealthUpdateController extends Controller
     {
         Gate::authorize('manage-health-updates', $healthUpdate->fruitCrop->farm);
 
-        if (!$healthUpdate->isEditable()) {
+        if (! $healthUpdate->isEditable()) {
             abort(403, 'This health update can no longer be edited.');
         }
 
@@ -108,7 +107,7 @@ class HealthUpdateController extends Controller
     {
         Gate::authorize('manage-health-updates', $healthUpdate->fruitCrop->farm);
 
-        if (!$healthUpdate->isEditable()) {
+        if (! $healthUpdate->isEditable()) {
             abort(403, 'This health update can no longer be edited.');
         }
 
@@ -132,7 +131,7 @@ class HealthUpdateController extends Controller
     {
         Gate::authorize('manage-health-updates', $healthUpdate->fruitCrop->farm);
 
-        if (!$healthUpdate->isEditable()) {
+        if (! $healthUpdate->isEditable()) {
             abort(403, 'This health update can no longer be deleted.');
         }
 
@@ -154,7 +153,7 @@ class HealthUpdateController extends Controller
         $month = now()->format('m');
 
         foreach ($photos as $photo) {
-            $filename = Str::uuid() . '.' . $photo->getClientOriginalExtension();
+            $filename = Str::uuid().'.'.$photo->getClientOriginalExtension();
             $path = $photo->storeAs(
                 "health-updates/{$fruitCrop->id}/{$year}/{$month}",
                 $filename,
@@ -175,7 +174,7 @@ class HealthUpdateController extends Controller
 
         foreach ($healthUpdate->photos as $photo) {
             Storage::disk('public')->delete($photo);
-            
+
             $thumbnailPath = str_replace('/photos/', '/photos/thumbnails/', $photo);
             Storage::disk('public')->delete($thumbnailPath);
         }

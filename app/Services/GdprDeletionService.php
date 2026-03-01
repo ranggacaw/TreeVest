@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\Transaction;
 use App\Models\User;
 use App\Support\TransactionHelper;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 
 class GdprDeletionService

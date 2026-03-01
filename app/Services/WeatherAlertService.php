@@ -12,9 +12,13 @@ use Illuminate\Support\Facades\Log;
 class WeatherAlertService
 {
     private const THRESHOLD_HEAVY_RAINFALL = 50;
+
     private const THRESHOLD_EXTREME_HEAT = 35;
+
     private const THRESHOLD_STRONG_WIND = 30;
+
     private const THRESHOLD_LOW_HUMIDITY = 30;
+
     private const HUMIDITY_CHECK_DAYS = 3;
 
     public function generateAlertsForWeatherData(WeatherData $weatherData): array
@@ -56,14 +60,14 @@ class WeatherAlertService
 
         if ($weatherData->hasLowHumidity()) {
             $recentLowHumidity = $this->checkRecentLowHumidity($weatherData->farm);
-            
+
             if ($recentLowHumidity >= self::THRESHOLD_LOW_HUMIDITY) {
                 $alerts[] = $this->createAlert(
                     $weatherData->farm,
                     HealthAlertType::WEATHER,
                     HealthSeverity::MEDIUM,
                     'Low Humidity Alert',
-                    "Humidity has been below 30% for at least 3 consecutive days. Risk of drought stress. Increase irrigation frequency and monitor soil moisture levels.",
+                    'Humidity has been below 30% for at least 3 consecutive days. Risk of drought stress. Increase irrigation frequency and monitor soil moisture levels.',
                     null
                 );
             }
@@ -82,7 +86,7 @@ class WeatherAlertService
         foreach ($weatherData as $data) {
             $alerts = $this->generateAlertsForWeatherData($data);
             $count += count($alerts);
-            
+
             $data->update(['alert_triggered' => count($alerts) > 0]);
         }
 
@@ -112,7 +116,8 @@ class WeatherAlertService
 
         if ($recentAlert) {
             Log::info("Alert debounced: {$type->value} for farm {$farm->id}");
-            return new HealthAlert();
+
+            return new HealthAlert;
         }
 
         return HealthAlert::create([

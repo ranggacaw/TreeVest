@@ -34,7 +34,7 @@ class SendHarvestReminders extends Command
 
         foreach ($harvests7Days as $harvest) {
             $remindersSent = $harvest->reminders_sent ?? [];
-            if (!in_array('7day', $remindersSent, true)) {
+            if (! in_array('7day', $remindersSent, true)) {
                 $investments = Investment::where('tree_id', $harvest->tree_id)
                     ->where('status', InvestmentStatus::Active)
                     ->get();
@@ -56,7 +56,7 @@ class SendHarvestReminders extends Command
 
         foreach ($harvests1Day as $harvest) {
             $remindersSent = $harvest->reminders_sent ?? [];
-            if (!in_array('1day', $remindersSent, true)) {
+            if (! in_array('1day', $remindersSent, true)) {
                 $investments = Investment::where('tree_id', $harvest->tree_id)
                     ->where('status', InvestmentStatus::Active)
                     ->get();

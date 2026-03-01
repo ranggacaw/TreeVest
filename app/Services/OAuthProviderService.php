@@ -5,7 +5,6 @@ namespace App\Services;
 use App\Models\OAuthProvider;
 use App\Models\User;
 use App\Support\TransactionHelper;
-use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Str;
 use Laravel\Socialite\Contracts\User as SocialiteUser;
 use Laravel\Socialite\Facades\Socialite;

@@ -2,9 +2,9 @@
 
 namespace App\Listeners;
 
+use App\Enums\NotificationType;
 use App\Events\WeatherAlertGenerated;
 use App\Services\NotificationService;
-use App\Enums\NotificationType;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -19,7 +19,7 @@ class WeatherAlertGeneratedListener implements ShouldQueue
     public function handle(WeatherAlertGenerated $event): void
     {
         $healthAlert = $event->healthAlert;
-        
+
         // If alert is for a specific crop
         if ($healthAlert->fruit_crop_id) {
             $fruitCrop = $healthAlert->fruitCrop;

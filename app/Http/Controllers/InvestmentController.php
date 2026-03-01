@@ -44,7 +44,7 @@ class InvestmentController extends Controller
 
     public function show(int $investment)
     {
-        $investment = Investment::with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'tree.harvests', 'transaction'])
+        $investment = Investment::with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'tree.harvests', 'transaction', 'payouts.harvest'])
             ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
@@ -105,6 +105,25 @@ class InvestmentController extends Controller
                         'estimated_yield_kg' => $h->estimated_yield_kg,
                     ])->toArray(),
                 ],
+                'payouts' => $investment->payouts->map(fn ($p) => [
+                    'id' => $p->id,
+                    'gross_amount_cents' => $p->gross_amount_cents,
+                    'gross_amount_formatted' => $p->gross_amount_formatted,
+                    'platform_fee_cents' => $p->platform_fee_cents,
+                    'platform_fee_formatted' => $p->platform_fee_formatted,
+                    'net_amount_cents' => $p->net_amount_cents,
+                    'net_amount_formatted' => $p->net_amount_formatted,
+                    'status' => $p->status->value,
+                    'status_label' => $p->status->getLabel(),
+                    'currency' => $p->currency,
+                    'harvest' => $p->harvest ? [
+                        'id' => $p->harvest->id,
+                        'harvest_date' => $p->harvest->harvest_date->toDateString(),
+                    ] : null,
+                    'completed_at' => $p->completed_at?->toIso8601String(),
+                    'failed_at' => $p->failed_at?->toIso8601String(),
+                    'failed_reason' => $p->failed_reason,
+                ])->toArray(),
                 'transaction' => $investment->transaction ? [
                     'id' => $investment->transaction->id,
                     'status' => $investment->transaction->status->value,

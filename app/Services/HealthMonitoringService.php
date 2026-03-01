@@ -3,21 +3,19 @@
 namespace App\Services;
 
 use App\Enums\HealthSeverity;
-use App\Enums\HealthUpdateType;
 use App\Models\Farm;
 use App\Models\FruitCrop;
 use App\Models\Tree;
 use App\Models\TreeHealthUpdate;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Collection;
-use Illuminate\Support\Facades\Log;
 
 class HealthMonitoringService
 {
     public function getHealthFeedForInvestor(User $investor, array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
         $cropIds = $this->getInvestorCropIds($investor);
-        
+
         if ($cropIds->isEmpty()) {
             return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
         }
@@ -34,8 +32,8 @@ class HealthMonitoringService
     public function getHealthStatusForTree(Tree $tree): array
     {
         $crop = $tree->fruitCrop;
-        
-        if (!$crop) {
+
+        if (! $crop) {
             return $this->getDefaultHealthStatus();
         }
 
@@ -56,7 +54,7 @@ class HealthMonitoringService
                 'created_at' => $latestUpdate->created_at->toIso8601String(),
             ] : null,
             'active_alerts_count' => $recentAlerts->count(),
-            'alerts' => $recentAlerts->map(fn($alert) => [
+            'alerts' => $recentAlerts->map(fn ($alert) => [
                 'id' => $alert->id,
                 'title' => $alert->title,
                 'severity' => $alert->severity->value,
@@ -88,7 +86,7 @@ class HealthMonitoringService
                 'created_at' => $latestUpdate->created_at->toIso8601String(),
             ] : null,
             'active_alerts_count' => $recentAlerts->count(),
-            'alerts' => $recentAlerts->map(fn($alert) => [
+            'alerts' => $recentAlerts->map(fn ($alert) => [
                 'id' => $alert->id,
                 'title' => $alert->title,
                 'message' => $alert->message,
@@ -107,12 +105,12 @@ class HealthMonitoringService
     public function getHealthSummaryForFarms(array $farmIds): Collection
     {
         $farms = Farm::whereIn('id', $farmIds)->get();
-        
+
         return $farms->map(function ($farm) {
             $recentUpdates = $farm->fruitCrops()
                 ->with('healthUpdates')
                 ->get()
-                ->flatMap(fn($crop) => $crop->healthUpdates)
+                ->flatMap(fn ($crop) => $crop->healthUpdates)
                 ->sortByDesc('created_at')
                 ->take(5);
 
@@ -124,7 +122,7 @@ class HealthMonitoringService
             return [
                 'farm_id' => $farm->id,
                 'farm_name' => $farm->name,
-                'recent_updates' => $recentUpdates->map(fn($update) => [
+                'recent_updates' => $recentUpdates->map(fn ($update) => [
                     'id' => $update->id,
                     'title' => $update->title,
                     'severity' => $update->severity->value,
@@ -138,7 +136,7 @@ class HealthMonitoringService
     public function getHealthAlertsForInvestor(User $investor, array $filters = []): \Illuminate\Pagination\LengthAwarePaginator
     {
         $cropIds = $this->getInvestorCropIds($investor);
-        
+
         if ($cropIds->isEmpty()) {
             return new \Illuminate\Pagination\LengthAwarePaginator([], 0, 15);
         }
@@ -186,14 +184,16 @@ class HealthMonitoringService
         }
 
         if (isset($filters['farm_id'])) {
-            $query->whereHas('fruitCrop', fn($q) => 
-                $q->where('farm_id', $filters['farm_id'])
+            $query->whereHas(
+                'fruitCrop',
+                fn ($q) => $q->where('farm_id', $filters['farm_id'])
             );
         }
 
         if (isset($filters['fruit_type'])) {
-            $query->whereHas('fruitCrop.fruitType', fn($q) => 
-                $q->where('name', 'like', '%' . $filters['fruit_type'] . '%')
+            $query->whereHas(
+                'fruitCrop.fruitType',
+                fn ($q) => $q->where('name', 'like', '%'.$filters['fruit_type'].'%')
             );
         }
 
@@ -209,10 +209,11 @@ class HealthMonitoringService
             if ($alerts->contains('severity', HealthSeverity::HIGH)) {
                 return 'warning';
             }
+
             return 'attention';
         }
 
-        if (!$latestUpdate) {
+        if (! $latestUpdate) {
             return 'unknown';
         }
 

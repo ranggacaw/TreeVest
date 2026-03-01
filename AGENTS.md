@@ -185,13 +185,18 @@ treevest/
 │   │   │   ├── Admin/             # Admin controllers
 │   │   │   │   ├── ArticleController.php
 │   │   │   │   ├── DashboardController.php
-│   │   │   │   └── MediaController.php
+│   │   │   │   ├── MediaController.php
+│   │   │   │   ├── MarketPriceController.php
+│   │   │   │   └── HarvestController.php
 │   │   │   ├── Investor/          # Investor-specific controllers
-│   │   │   │   └── HealthFeedController.php
+│   │   │   │   ├── HealthFeedController.php
+│   │   │   │   └── PayoutController.php
 │   │   │   ├── FarmOwner/         # Farm owner controllers
-│   │   │   │   └── HealthUpdateController.php
+│   │   │   │   ├── HealthUpdateController.php
+│   │   │   │   └── HarvestController.php
 │   │   │   ├── ArticleController.php
 │   │   │   ├── EncyclopediaController.php
+│   │   │   ├── InvestmentController.php
 │   │   │   └── SitemapController.php
 │   │   └── Middleware/            # RoleMiddleware, auth middleware
 │   ├── Models/                    # Eloquent models
@@ -200,25 +205,45 @@ treevest/
 │   │   ├── Tag.php
 │   │   ├── TreeHealthUpdate.php
 │   │   ├── WeatherData.php
-│   │   └── HealthAlert.php
+│   │   ├── HealthAlert.php
+│   │   ├── Harvest.php
+│   │   ├── MarketPrice.php
+│   │   └── Payout.php
 │   ├── Services/                  # Business logic services
 │   │   ├── WeatherService.php
 │   │   ├── WeatherAlertService.php
-│   │   └── HealthMonitoringService.php
+│   │   ├── HealthMonitoringService.php
+│   │   ├── HarvestService.php
+│   │   ├── MarketPriceService.php
+│   │   ├── ProfitCalculationService.php
+│   │   └── PayoutService.php
 │   ├── Jobs/                      # Queue jobs
 │   │   ├── FetchWeatherData.php
 │   │   ├── GenerateWeatherAlerts.php
-│   │   └── ProcessHealthUpdate.php
+│   │   ├── ProcessHealthUpdate.php
+│   │   ├── CalculateProfitAndCreatePayouts.php
+│   │   └── SendHarvestReminderNotification.php
 │   ├── Events/                    # Domain events
 │   │   ├── HealthUpdateCreated.php
-│   │   └── WeatherAlertGenerated.php
+│   │   ├── WeatherAlertGenerated.php
+│   │   ├── HarvestScheduled.php
+│   │   ├── HarvestCompleted.php
+│   │   ├── HarvestFailed.php
+│   │   └── PayoutsCreated.php
 │   ├── Listeners/                 # Event listeners
 │   │   ├── HealthUpdateCreatedListener.php
-│   │   └── WeatherAlertGeneratedListener.php
+│   │   ├── WeatherAlertGeneratedListener.php
+│   │   ├── CalculateProfitAndCreatePayoutsListener.php
+│   │   ├── NotifyInvestorsOfHarvestCompletion.php
+│   │   ├── NotifyInvestorsOfHarvestFailure.php
+│   │   └── NotifyInvestorsOfPayoutCreated.php
 │   └── Enums/                     # Enum definitions
 │       ├── HealthSeverity.php
 │       ├── HealthUpdateType.php
-│       └── HealthAlertType.php
+│       ├── HealthAlertType.php
+│       ├── HarvestStatus.php
+│       ├── PayoutStatus.php
+│       └── QualityGrade.php
 ├── database/
 │   ├── migrations/                # Database schema migrations
 │   ├── seeders/                   # Data seeders
@@ -239,20 +264,34 @@ treevest/
 │   │   │   ├── Search/            # Search results page
 │   │   │   │   └── Index.tsx
 │   │   │   ├── Investments/       # Investor pages
-│   │   │   │   └── HealthFeed/    # Health feed pages
-│   │   │   │       ├── Index.tsx
-│   │   │   │       └── Show.tsx
+│   │   │   │   ├── HealthFeed/    # Health feed pages
+│   │   │   │   │   ├── Index.tsx
+│   │   │   │   │   └── Show.tsx
+│   │   │   │   ├── Show.tsx       # Investment details with payout history
+│   │   │   │   ├── Payouts/       # Payout management
+│   │   │   │   │   ├── Index.tsx
+│   │   │   │   │   └── Show.tsx
 │   │   │   ├── FarmOwner/         # Farm owner pages
-│   │   │   │   └── HealthUpdates/ # Health update management
+│   │   │   │   ├── HealthUpdates/ # Health update management
+│   │   │   │   │   ├── Index.tsx
+│   │   │   │   │   ├── Create.tsx
+│   │   │   │   │   └── Edit.tsx
+│   │   │   │   └── Harvests/      # Harvest management
 │   │   │   │       ├── Index.tsx
 │   │   │   │       ├── Create.tsx
-│   │   │   │       └── Edit.tsx
+│   │   │   │       └── Show.tsx
 │   │   │   └── Admin/             # Admin pages
 │   │   │       ├── Dashboard.tsx
-│   │   │       └── Articles/      # Admin article CMS
-│   │   │           ├── Index.tsx
-│   │   │           ├── Create.tsx
-│   │   │           └── Edit.tsx
+│   │   │       ├── Articles/       # Admin article CMS
+│   │   │       │   ├── Index.tsx
+│   │   │       │   ├── Create.tsx
+│   │   │       │   └── Edit.tsx
+│   │   │       ├── MarketPrices/   # Market price management
+│   │   │       │   ├── Index.tsx
+│   │   │       │   ├── Create.tsx
+│   │   │       │   └── Edit.tsx
+│   │   │       └── Harvests/      # Admin harvest oversight
+│   │   │           └── Index.tsx
 │   │   ├── Components/            # Shared React components
 │   │   │   ├── RichTextEditor.tsx # TipTap rich text editor
 │   │   │   ├── SeasonalityChart.tsx # Recharts seasonality chart

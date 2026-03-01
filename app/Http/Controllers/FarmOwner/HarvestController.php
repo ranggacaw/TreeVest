@@ -2,11 +2,10 @@
 
 namespace App\Http\Controllers\FarmOwner;
 
+use App\Enums\QualityGrade;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\FarmOwner\RecordYieldRequest;
 use App\Http\Requests\FarmOwner\StoreHarvestRequest;
-use App\Enums\HarvestStatus;
-use App\Enums\QualityGrade;
 use App\Models\Harvest;
 use App\Models\Tree;
 use App\Services\HarvestService;

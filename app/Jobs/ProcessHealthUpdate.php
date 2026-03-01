@@ -10,14 +10,15 @@ use Illuminate\Queue\InteractsWithQueue;
 use Illuminate\Queue\SerializesModels;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Storage;
-use Intervention\Image\ImageManager;
 use Intervention\Image\Drivers\Gd\Driver;
+use Intervention\Image\ImageManager;
 
 class ProcessHealthUpdate implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels;
 
     public int $tries = 3;
+
     public int $backoff = 30;
 
     public function __construct(
@@ -38,19 +39,19 @@ class ProcessHealthUpdate implements ShouldQueue
         }
 
         try {
-            $manager = new ImageManager(new Driver());
+            $manager = new ImageManager(new Driver);
             $disk = Storage::disk('public');
 
             foreach ($photos as $photoPath) {
-                if (!$disk->exists($photoPath)) {
+                if (! $disk->exists($photoPath)) {
                     continue;
                 }
 
                 $image = $manager->read($disk->get($photoPath));
-                
+
                 $maxWidth = 1920;
                 $maxHeight = 1080;
-                
+
                 if ($image->width() > $maxWidth || $image->height() > $maxHeight) {
                     $image->scaleDown($maxWidth, $maxHeight);
                     $disk->put($photoPath, (string) $image->encode());
@@ -58,8 +59,8 @@ class ProcessHealthUpdate implements ShouldQueue
 
                 $thumbnailPath = str_replace('/photos/', '/photos/thumbnails/', $photoPath);
                 $thumbnailDir = dirname($thumbnailPath);
-                
-                if (!$disk->exists($thumbnailDir)) {
+
+                if (! $disk->exists($thumbnailDir)) {
                     $disk->makeDirectory($thumbnailDir);
                 }
 

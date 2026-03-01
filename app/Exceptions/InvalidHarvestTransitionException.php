@@ -4,6 +4,4 @@ namespace App\Exceptions;
 
 use RuntimeException;
 
-class InvalidHarvestTransitionException extends RuntimeException
-{
-}
+class InvalidHarvestTransitionException extends RuntimeException {}

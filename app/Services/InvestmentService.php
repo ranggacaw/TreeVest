@@ -17,7 +17,6 @@ use App\Notifications\InvestmentCancelledNotification;
 use App\Notifications\InvestmentConfirmedNotification;
 use App\Notifications\InvestmentPurchasedNotification;
 use App\Support\TransactionHelper;
-use Illuminate\Support\Facades\DB;
 
 class InvestmentService
 {

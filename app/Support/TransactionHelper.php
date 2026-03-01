@@ -9,8 +9,6 @@ class TransactionHelper
     /**
      * Execute a callback within a database transaction, or immediately if already in a transaction.
      *
-     * @param  \Closure  $callback
-     * @param  int  $attempts
      * @return mixed
      *
      * @throws \Throwable

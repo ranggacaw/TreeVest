@@ -29,6 +29,7 @@ class InvestmentDataSeeder extends Seeder
 
         if ($farms->isEmpty() || $fruitTypes->isEmpty()) {
             $this->command->error('Please run FarmSeeder and FruitTypeSeeder first!');
+
             return;
         }
 
@@ -63,7 +64,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 20; $i++) {
                 $tree = Tree::create([
                     'fruit_crop_id' => $crop1->id,
-                    'tree_identifier' => 'MK-DUR-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'MK-DUR-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(150000, 250000), // RM 1,500 - RM 2,500
                     'expected_roi_percent' => rand(12, 18) + (rand(0, 99) / 100),
                     'age_years' => 8,
@@ -104,7 +105,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 15; $i++) {
                 Tree::create([
                     'fruit_crop_id' => $crop2->id,
-                    'tree_identifier' => 'BT-DUR-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'BT-DUR-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(120000, 200000), // RM 1,200 - RM 2,000
                     'expected_roi_percent' => rand(10, 16) + (rand(0, 99) / 100),
                     'age_years' => 6,
@@ -150,7 +151,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 25; $i++) {
                 Tree::create([
                     'fruit_crop_id' => $crop3->id,
-                    'tree_identifier' => 'ALP-MAN-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'ALP-MAN-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(80000, 150000), // RM 800 - RM 1,500
                     'expected_roi_percent' => rand(10, 15) + (rand(0, 99) / 100),
                     'age_years' => 7,
@@ -173,7 +174,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 20; $i++) {
                 Tree::create([
                     'fruit_crop_id' => $crop4->id,
-                    'tree_identifier' => 'NDM-MAN-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'NDM-MAN-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(70000, 130000), // RM 700 - RM 1,300
                     'expected_roi_percent' => rand(9, 14) + (rand(0, 99) / 100),
                     'age_years' => 5,
@@ -209,7 +210,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 30; $i++) {
                 Tree::create([
                     'fruit_crop_id' => $crop5->id,
-                    'tree_identifier' => 'SM-GRP-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'SM-GRP-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(50000, 100000), // RM 500 - RM 1,000
                     'expected_roi_percent' => rand(15, 22) + (rand(0, 99) / 100),
                     'age_years' => 4,
@@ -245,7 +246,7 @@ class InvestmentDataSeeder extends Seeder
             for ($i = 1; $i <= 20; $i++) {
                 Tree::create([
                     'fruit_crop_id' => $crop6->id,
-                    'tree_identifier' => 'VO-CIT-' . str_pad($i, 4, '0', STR_PAD_LEFT),
+                    'tree_identifier' => 'VO-CIT-'.str_pad($i, 4, '0', STR_PAD_LEFT),
                     'price_cents' => rand(60000, 110000), // RM 600 - RM 1,100
                     'expected_roi_percent' => rand(11, 16) + (rand(0, 99) / 100),
                     'age_years' => 6,

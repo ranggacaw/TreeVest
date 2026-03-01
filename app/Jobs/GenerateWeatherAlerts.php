@@ -17,7 +17,7 @@ class GenerateWeatherAlerts implements ShouldQueue
     public function handle(WeatherAlertService $alertService): void
     {
         $count = $alertService->generateAlertsForAllFarms();
-        
+
         Log::info("Generated {$count} weather alerts");
     }
 
