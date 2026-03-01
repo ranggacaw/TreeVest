@@ -9,6 +9,8 @@ enum NotificationType: string
     case Payment = 'payment';
     case Market = 'market';
     case System = 'system';
+    case Health = 'health';
+    case Weather = 'weather';
 
     public function label(): string
     {
@@ -18,6 +20,8 @@ enum NotificationType: string
             self::Payment => 'Payment',
             self::Market => 'Market',
             self::System => 'System',
+            self::Health => 'Health',
+            self::Weather => 'Weather',
         };
     }
 }

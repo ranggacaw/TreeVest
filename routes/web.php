@@ -12,7 +12,9 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\FarmOwner\HealthUpdateController as FarmOwnerHealthUpdateController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\Investor\HealthFeedController as InvestorHealthFeedController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\NotificationController;
@@ -128,6 +130,15 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('FarmOwner/Dashboard');
         })->name('dashboard');
+
+        Route::prefix('health-updates')->name('health-updates.')->group(function () {
+            Route::get('/', [FarmOwnerHealthUpdateController::class, 'index'])->name('index');
+            Route::get('/create', [FarmOwnerHealthUpdateController::class, 'create'])->name('create');
+            Route::post('/', [FarmOwnerHealthUpdateController::class, 'store'])->name('store');
+            Route::get('/{healthUpdate}/edit', [FarmOwnerHealthUpdateController::class, 'edit'])->name('edit');
+            Route::put('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'update'])->name('update');
+            Route::delete('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'destroy'])->name('destroy');
+        });
     });
 
     Route::prefix('farms/manage')->name('farms.manage.')->group(function () {
@@ -167,6 +178,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/{investment}/confirmation', [InvestmentController::class, 'confirmation'])->name('confirmation');
         Route::post('/{investment}/cancel', [InvestmentController::class, 'cancel'])->name('cancel');
         Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up');
+
+        Route::get('/health-feed', [InvestorHealthFeedController::class, 'index'])->name('health-feed.index');
+        Route::get('/health-feed/{healthUpdate}', [InvestorHealthFeedController::class, 'show'])->name('health-feed.show');
+        Route::get('/health-alerts', [InvestorHealthFeedController::class, 'alerts'])->name('health-alerts');
     });
 });
 

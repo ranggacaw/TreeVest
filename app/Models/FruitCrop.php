@@ -44,4 +44,24 @@ class FruitCrop extends Model
     {
         return $this->hasMany(Tree::class);
     }
+
+    public function healthUpdates(): HasMany
+    {
+        return $this->hasMany(TreeHealthUpdate::class)->orderBy('created_at', 'desc');
+    }
+
+    public function healthAlerts(): HasMany
+    {
+        return $this->hasMany(HealthAlert::class)->orderBy('created_at', 'desc');
+    }
+
+    public function latestHealthUpdate(): ?TreeHealthUpdate
+    {
+        return $this->healthUpdates()->first();
+    }
+
+    public function activeHealthAlerts(): HasMany
+    {
+        return $this->healthAlerts()->unresolved();
+    }
 }

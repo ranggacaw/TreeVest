@@ -74,6 +74,31 @@ class Farm extends Model
         return $this->hasMany(FruitCrop::class);
     }
 
+    public function weatherData(): HasMany
+    {
+        return $this->hasMany(WeatherData::class)->orderBy('fetched_at', 'desc');
+    }
+
+    public function healthAlerts(): HasMany
+    {
+        return $this->hasMany(HealthAlert::class)->orderBy('created_at', 'desc');
+    }
+
+    public function latestWeather(): ?WeatherData
+    {
+        return $this->weatherData()->first();
+    }
+
+    public function activeHealthAlerts(): HasMany
+    {
+        return $this->healthAlerts()->unresolved();
+    }
+
+    public function hasLocation(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
     public function featuredImage(): ?FarmImage
     {
         return $this->images()->where('is_featured', true)->first();
