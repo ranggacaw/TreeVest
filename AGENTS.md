@@ -474,6 +474,8 @@ Admin Approval → Listed on Marketplace
 | **FruitCrop** | id, farm_id, fruit_type_id, variant, description, harvest_cycle, planted_date | e.g., Musang King variant on a specific farm |
 | **Tree** | id, fruit_crop_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json | Investable unit |
 | **Investment** | id, investor_id, tree_id, amount, purchase_date, status | Core transaction |
+| **MarketListing** | id, investment_id FK, seller_id FK, ask_price_cents, currency, platform_fee_rate, platform_fee_cents, net_proceeds_cents, status ENUM, buyer_id FK null, purchased_at null, cancelled_at null, expires_at null, notes text null, metadata json null, timestamps, deleted_at | Secondary market listing for investment resale |
+| **InvestmentTransfer** | id, investment_id FK, listing_id FK, from_user_id FK, to_user_id FK, transfer_price_cents, platform_fee_cents, transaction_id FK null, transferred_at, timestamps | Immutable record of ownership transfer |
 | **TreeHarvest** | id, tree_id, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes | Tied to payout |
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
 | **Transaction** | id, user_id, type, status, amount (cents), currency, stripe_payment_intent_id, payment_method_id, related_investment_id, related_payout_id, metadata, stripe_metadata, failure_reason, completed_at, failed_at | Immutable financial record ledger |
@@ -516,6 +518,9 @@ Admin Approval → Listed on Marketplace
 - Tree (1) → (N) Investment
 - Tree (1) → (N) Harvest
 - Harvest (1) → (N) Payout
+- Investment (1) → (N) Payout
+- Investment (1) → (N) MarketListing
+- MarketListing (1) → (N) InvestmentTransfer
 - Investment (1) → (N) Payout
 - Article (N) ↔ (N) Category (many-to-many)
 - Article (N) ↔ (N) Tag (many-to-many)
@@ -571,7 +576,7 @@ Admin Approval → Listed on Marketplace
 | Domain | Statuses |
 |--------|----------|
 | KYC | pending, submitted, verified, rejected |
-| Investment | pending_payment, active, matured, sold, cancelled |
+| Investment | pending_payment, active, **listed**, **sold**, cancelled |
 | Harvest | scheduled, in_progress, completed, failed |
 | Payout | pending, processing, completed, failed |
 | Tree | seedling, growing, productive, declining, retired |
