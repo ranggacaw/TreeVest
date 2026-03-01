@@ -52,7 +52,7 @@ class Tree extends Model
 
     public function harvests(): HasMany
     {
-        return $this->hasMany(TreeHarvest::class)->orderBy('harvest_date', 'desc');
+        return $this->hasMany(Harvest::class)->orderBy('scheduled_date', 'desc');
     }
 
     public function scopeInvestable($query)

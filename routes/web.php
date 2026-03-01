@@ -120,6 +120,19 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
         Route::resource('notification-templates', AdminNotificationTemplateController::class);
 
+        Route::prefix('market-prices')->name('market-prices.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\MarketPriceController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\Admin\MarketPriceController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\Admin\MarketPriceController::class, 'store'])->name('store');
+            Route::get('/{marketPrice}/edit', [\App\Http\Controllers\Admin\MarketPriceController::class, 'edit'])->name('edit');
+            Route::patch('/{marketPrice}', [\App\Http\Controllers\Admin\MarketPriceController::class, 'update'])->name('update');
+        });
+
+        Route::prefix('harvests')->name('harvests.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\HarvestController::class, 'index'])->name('index');
+            Route::get('/{harvest}', [\App\Http\Controllers\Admin\HarvestController::class, 'show'])->name('show');
+        });
+
         Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
         Route::delete('/media/delete', [MediaController::class, 'delete'])->name('media.delete');
     });
@@ -139,6 +152,17 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::put('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'update'])->name('update');
             Route::delete('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'destroy'])->name('destroy');
         });
+
+        Route::prefix('harvests')->name('harvests.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'store'])->name('store');
+            Route::get('/{harvest}', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'show'])->name('show');
+            Route::post('/{harvest}/start', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'startHarvest'])->name('start');
+            Route::post('/{harvest}/record-yield', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'recordYield'])->name('record-yield');
+            Route::post('/{harvest}/confirm', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'confirm'])->name('confirm');
+            Route::post('/{harvest}/fail', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'fail'])->name('fail');
+        });
     });
 
     Route::prefix('farms/manage')->name('farms.manage.')->group(function () {
@@ -157,6 +181,11 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::get('/dashboard', function () {
             return Inertia::render('Investor/Dashboard');
         })->name('dashboard');
+
+        Route::prefix('payouts')->name('payouts.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Investor\PayoutController::class, 'index'])->name('index');
+            Route::get('/{payout}', [\App\Http\Controllers\Investor\PayoutController::class, 'show'])->name('show');
+        });
     });
 
     Route::get('/portfolio', [PortfolioDashboardController::class, 'index'])->name('portfolio.dashboard');

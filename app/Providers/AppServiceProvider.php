@@ -30,6 +30,26 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\LogRoleChange::class
         );
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\HarvestCompleted::class,
+            \App\Listeners\CalculateProfitAndCreatePayoutsListener::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\HarvestCompleted::class,
+            \App\Listeners\NotifyInvestorsOfHarvestCompletion::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\HarvestFailed::class,
+            \App\Listeners\NotifyInvestorsOfHarvestFailure::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\PayoutsCreated::class,
+            \App\Listeners\NotifyInvestorsOfPayoutCreated::class
+        );
+
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)
                 ->by($request->ip())

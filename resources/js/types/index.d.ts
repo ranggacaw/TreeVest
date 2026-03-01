@@ -3,6 +3,10 @@ export type KycStatus = 'pending' | 'submitted' | 'verified' | 'rejected';
 export type KycDocumentType = 'passport' | 'national_id' | 'drivers_license' | 'proof_of_address';
 export type FarmStatus = 'pending_approval' | 'active' | 'suspended' | 'deactivated';
 export type InvestmentStatus = 'pending_payment' | 'active' | 'matured' | 'sold' | 'cancelled';
+export type HarvestStatus = 'scheduled' | 'in_progress' | 'completed' | 'failed';
+export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
+export type QualityGrade = 'A' | 'B' | 'C';
+export type PayoutMethod = 'bank_transfer' | 'digital_wallet';
 
 export interface User {
     id: number;
@@ -295,4 +299,100 @@ export interface InvestmentWithDetails {
         quality_grade?: string;
         notes?: string;
     }>;
+}
+
+export interface Harvest {
+    id: number;
+    tree_id: number;
+    fruit_crop_id: number;
+    scheduled_date: string;
+    status: HarvestStatus;
+    estimated_yield_kg: number | null;
+    actual_yield_kg: number | null;
+    quality_grade: QualityGrade | null;
+    market_price_id: number | null;
+    platform_fee_rate: number;
+    notes: string | null;
+    confirmed_by: number | null;
+    confirmed_at: string | null;
+    completed_at: string | null;
+    failed_at: string | null;
+    reminders_sent: string[];
+    created_at: string;
+    updated_at: string;
+    deleted_at: string | null;
+    tree?: {
+        id: number;
+        tree_identifier: string;
+        price_cents: number;
+        expected_roi_percent: number;
+        risk_rating: string;
+    };
+    fruit_crop?: {
+        id: number;
+        variant: string;
+        fruit_type_id: number;
+    };
+    market_price?: MarketPrice;
+    confirmed_by_user?: User;
+    payouts?: Payout[];
+}
+
+export interface MarketPrice {
+    id: number;
+    fruit_type_id: number;
+    price_per_kg_cents: number;
+    currency: string;
+    effective_date: string;
+    created_by: number;
+    notes: string | null;
+    created_at: string;
+    updated_at: string;
+    fruit_type?: {
+        id: number;
+        name: string;
+        slug: string;
+    };
+    created_by_user?: User;
+}
+
+export interface Payout {
+    id: number;
+    investment_id: number;
+    harvest_id: number;
+    investor_id: number;
+    gross_amount_cents: number;
+    platform_fee_cents: number;
+    net_amount_cents: number;
+    currency: string;
+    status: PayoutStatus;
+    payout_method: PayoutMethod | null;
+    transaction_id: number | null;
+    notes: string | null;
+    processing_started_at: string | null;
+    completed_at: string | null;
+    failed_at: string | null;
+    failed_reason: string | null;
+    created_at: string;
+    updated_at: string;
+    gross_amount_formatted: string;
+    platform_fee_formatted: string;
+    net_amount_formatted: string;
+    investment?: {
+        id: number;
+        amount_cents: number;
+        formatted_amount: string;
+        purchase_date: string;
+        tree: {
+            id: number;
+            tree_identifier: string;
+        };
+    };
+    harvest?: Harvest;
+    investor?: User;
+    transaction?: {
+        id: number;
+        status: string;
+        stripe_payment_intent_id?: string;
+    };
 }
