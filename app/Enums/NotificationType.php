@@ -11,6 +11,7 @@ enum NotificationType: string
     case System = 'system';
     case Health = 'health';
     case Weather = 'weather';
+    case SecondarySale = 'secondary_sale';
     case Report = 'report';
 
     public function label(): string
@@ -23,6 +24,7 @@ enum NotificationType: string
             self::System => 'System',
             self::Health => 'Health',
             self::Weather => 'Weather',
+            self::SecondarySale => 'Secondary Sale',
             self::Report => 'Report',
         };
     }

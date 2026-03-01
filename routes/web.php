@@ -243,3 +243,18 @@ Route::get('/sitemap.xml', [SitemapController::class, 'index'])->name('sitemap')
 Route::middleware(['auth', 'kyc.verified'])->get('/test-kyc-protected', function () {
     return response()->json(['message' => 'KYC verified']);
 });
+
+Route::middleware('auth')->prefix('secondary-market')->name('secondary-market.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\SecondaryMarket\ListingController::class, 'index'])->name('index');
+    Route::get('/create', [\App\Http\Controllers\SecondaryMarket\ListingController::class, 'create'])->name('create');
+    Route::post('/', [\App\Http\Controllers\SecondaryMarket\ListingController::class, 'store'])->name('store');
+    Route::get('/{listing}', [\App\Http\Controllers\SecondaryMarket\ListingController::class, 'show'])->name('show');
+    Route::delete('/{listing}', [\App\Http\Controllers\SecondaryMarket\ListingController::class, 'destroy'])->name('destroy');
+    Route::post('/{listing}/purchase', [\App\Http\Controllers\SecondaryMarket\PurchaseController::class, 'store'])->name('purchase.store');
+    Route::post('/{listing}/purchase/confirm', [\App\Http\Controllers\SecondaryMarket\PurchaseController::class, 'confirm'])->name('purchase.confirm');
+});
+
+Route::middleware(['auth', 'role:admin'])->prefix('admin/market-listings')->name('admin.market-listings.')->group(function () {
+    Route::get('/', [\App\Http\Controllers\Admin\MarketListingController::class, 'index'])->name('index');
+    Route::delete('/{listing}', [\App\Http\Controllers\Admin\MarketListingController::class, 'destroy'])->name('destroy');
+});

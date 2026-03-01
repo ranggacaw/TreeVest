@@ -48,6 +48,21 @@ class Investment extends Model
         return $this->belongsTo(Transaction::class);
     }
 
+    public function listings()
+    {
+        return $this->hasMany(MarketListing::class);
+    }
+
+    public function activeListing()
+    {
+        return $this->hasOne(MarketListing::class)->where('status', 'active');
+    }
+
+    public function transfers()
+    {
+        return $this->hasMany(InvestmentTransfer::class);
+    }
+
     public function scopeForUser($query, int $userId)
     {
         return $query->where('user_id', $userId);

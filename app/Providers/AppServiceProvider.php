@@ -55,6 +55,16 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\NotifyInvestorReportReady::class
         );
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\ListingPurchased::class,
+            \App\Listeners\NotifySellerOfSale::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\ListingPurchased::class,
+            \App\Listeners\NotifyBuyerOfPurchase::class
+        );
+
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)
                 ->by($request->ip())

@@ -17,3 +17,5 @@ Schedule::job(new FetchWeatherData)->everySixHours();
 Schedule::command('app:send-harvest-reminders')->daily();
 
 Schedule::command('app:purge-expired-reports')->dailyAt('02:00');
+
+Schedule::command('listings:expire')->dailyAt('03:00');

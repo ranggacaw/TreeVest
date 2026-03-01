@@ -17,11 +17,17 @@ class PaymentService
         protected FraudDetectionService $fraudDetectionService,
         protected AuditLogService $auditLogService,
         protected ?InvestmentService $investmentService = null,
+        protected ?SecondaryMarketService $secondaryMarketService = null,
     ) {}
 
     public function setInvestmentService(InvestmentService $investmentService): void
     {
         $this->investmentService = $investmentService;
+    }
+
+    public function setSecondaryMarketService(SecondaryMarketService $secondaryMarketService): void
+    {
+        $this->secondaryMarketService = $secondaryMarketService;
     }
 
     public function initiatePayment(int $userId, int $amount, string $currency, TransactionType $type, ?int $paymentMethodId = null, ?int $relatedId = null): Transaction
@@ -158,6 +164,16 @@ class PaymentService
             $investment = \App\Models\Investment::where('transaction_id', $transaction->id)->first();
             if ($investment) {
                 $this->investmentService->confirmInvestment($investment->id);
+            }
+        }
+
+        if ($this->secondaryMarketService && $transaction->type === TransactionType::SecondaryPurchase) {
+            $listingId = $transaction->metadata['listing_id'] ?? null;
+            if ($listingId) {
+                $listing = \App\Models\MarketListing::find($listingId);
+                if ($listing) {
+                    $this->secondaryMarketService->confirmPurchase($listing, $transaction);
+                }
             }
         }
     }

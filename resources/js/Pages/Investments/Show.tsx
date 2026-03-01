@@ -89,6 +89,7 @@ export default function Show({ auth, investment }: Props) {
     const statusColors: Record<string, string> = {
         pending_payment: 'bg-yellow-100 text-yellow-800',
         active: 'bg-green-100 text-green-800',
+        listed: 'bg-blue-100 text-blue-800',
         matured: 'bg-blue-100 text-blue-800',
         sold: 'bg-purple-100 text-purple-800',
         cancelled: 'bg-red-100 text-red-800',
@@ -344,11 +345,35 @@ export default function Show({ auth, investment }: Props) {
 
                             {investment.status === 'active' && (
                                 <div className="border-t border-gray-200 mt-6 pt-6">
+                                    <div className="flex gap-3">
+                                        <Link
+                                            href={`/investments/${investment.id}/top-up`}
+                                            className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700"
+                                        >
+                                            Top Up Investment
+                                        </Link>
+                                        <Link
+                                            href={`/secondary-market/create?investment_id=${investment.id}`}
+                                            className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700"
+                                        >
+                                            List for Sale
+                                        </Link>
+                                    </div>
+                                </div>
+                            )}
+
+                            {investment.status === 'listed' && (
+                                <div className="border-t border-gray-200 mt-6 pt-6">
+                                    <div className="p-4 bg-blue-50 border border-blue-200 rounded mb-4">
+                                        <p className="text-sm text-blue-800">
+                                            This investment is currently listed for sale on the secondary market.
+                                        </p>
+                                    </div>
                                     <Link
-                                        href={`/investments/${investment.id}/top-up`}
-                                        className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700"
+                                        href="/secondary-market"
+                                        className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
                                     >
-                                        Top Up Investment
+                                        View Listings
                                     </Link>
                                 </div>
                             )}

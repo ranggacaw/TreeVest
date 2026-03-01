@@ -47,6 +47,10 @@ class NotificationPreferenceSeeder extends Seeder
             return $type === NotificationType::Payment;
         }
 
+        if ($type === NotificationType::SecondarySale) {
+            return true;
+        }
+
         return true;
     }
 }

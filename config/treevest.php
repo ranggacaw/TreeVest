@@ -34,4 +34,6 @@ return [
             'high' => 1.2,
         ],
     ],
+
+    'secondary_market_fee_rate' => env('SECONDARY_MARKET_FEE_RATE', 0.02),
 ];

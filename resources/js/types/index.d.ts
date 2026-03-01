@@ -2,13 +2,14 @@ export type Role = 'investor' | 'farm_owner' | 'admin';
 export type KycStatus = 'pending' | 'submitted' | 'verified' | 'rejected';
 export type KycDocumentType = 'passport' | 'national_id' | 'drivers_license' | 'proof_of_address';
 export type FarmStatus = 'pending_approval' | 'active' | 'suspended' | 'deactivated';
-export type InvestmentStatus = 'pending_payment' | 'active' | 'matured' | 'sold' | 'cancelled';
+export type InvestmentStatus = 'pending_payment' | 'active' | 'listed' | 'matured' | 'sold' | 'cancelled';
 export type HarvestStatus = 'scheduled' | 'in_progress' | 'completed' | 'failed';
 export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
 export type QualityGrade = 'A' | 'B' | 'C';
 export type PayoutMethod = 'bank_transfer' | 'digital_wallet';
 export type ReportType = 'profit_loss' | 'tax_summary';
 export type GeneratedReportStatus = 'pending' | 'generating' | 'completed' | 'failed';
+export type ListingStatus = 'active' | 'sold' | 'cancelled';
 
 export interface User {
     id: number;
@@ -165,6 +166,18 @@ export interface Investment {
         identifier: string;
         price_formatted?: string;
         expected_roi?: number;
+        expected_roi_percent?: number;
+        risk_rating?: string;
+        fruit_type?: {
+            id: number;
+            name: string;
+        };
+        fruit_crop?: {
+            variant: string;
+            farm?: {
+                name: string;
+            };
+        };
     };
     transaction?: {
         id: number;
@@ -477,5 +490,88 @@ export interface TaxSummaryData {
         totalIncomeCents: number;
         totalInvestedCents: number;
         netCents: number;
+    };
+}
+
+export interface MarketListing {
+    id: number;
+    investment_id: number;
+    seller_id: number;
+    ask_price_cents: number;
+    formatted_ask_price: string;
+    currency: string;
+    platform_fee_rate: number;
+    platform_fee_cents: number;
+    formatted_platform_fee: string;
+    net_proceeds_cents: number;
+    formatted_net_proceeds: string;
+    status: ListingStatus;
+    buyer_id: number | null;
+    purchased_at: string | null;
+    cancelled_at: string | null;
+    expires_at: string | null;
+    notes: string | null;
+    metadata: Record<string, unknown> | null;
+    created_at: string;
+    updated_at: string;
+    investment: {
+        id: number;
+        amount_cents: number;
+        purchase_date: string;
+        tree: {
+            id: number;
+            identifier: string;
+            price_cents: number;
+            price_formatted: string;
+            expected_roi_percent: number;
+            risk_rating: string;
+            age_years: number;
+            fruit_type: {
+                id: number;
+                name: string;
+            };
+            fruit_crop: {
+                variant: string;
+                farm: {
+                    name: string;
+                    city?: string;
+                };
+            };
+        };
+    };
+    seller: User;
+    buyer?: User;
+}
+
+export interface InvestmentTransfer {
+    id: number;
+    investment_id: number;
+    listing_id: number;
+    from_user_id: number;
+    to_user_id: number;
+    transfer_price_cents: number;
+    formatted_transfer_price: string;
+    platform_fee_cents: number;
+    formatted_platform_fee: string;
+    transaction_id: number | null;
+    transferred_at: string;
+    created_at: string;
+    updated_at: string;
+    investment?: {
+        id: number;
+        tree: {
+            identifier: string;
+        };
+    };
+    listing?: {
+        id: number;
+        ask_price_cents: number;
+        formatted_ask_price: string;
+    };
+    fromUser?: User;
+    toUser?: User;
+    transaction?: {
+        id: number;
+        status: string;
     };
 }

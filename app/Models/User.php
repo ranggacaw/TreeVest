@@ -188,4 +188,26 @@ class User extends Authenticatable
     {
         return $this->hasMany(GeneratedReport::class);
     }
+
+    public function marketListings()
+    {
+        return $this->hasMany(\App\Models\MarketListing::class, 'seller_id');
+    }
+
+    public function investmentTransfersAsSeller()
+    {
+        return $this->hasMany(\App\Models\InvestmentTransfer::class, 'from_user_id');
+    }
+
+    public function investmentTransfersAsBuyer()
+    {
+        return $this->hasMany(\App\Models\InvestmentTransfer::class, 'to_user_id');
+    }
+
+    public function allInvestmentTransfers()
+    {
+        return \App\Models\InvestmentTransfer::where(function ($q) {
+            $q->where('from_user_id', $this->id)->orWhere('to_user_id', $this->id);
+        });
+    }
 }

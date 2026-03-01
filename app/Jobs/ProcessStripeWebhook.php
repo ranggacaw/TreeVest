@@ -37,6 +37,9 @@ class ProcessStripeWebhook implements ShouldQueue
             $investmentService = app(InvestmentService::class);
             $paymentService->setInvestmentService($investmentService);
 
+            $secondaryMarketService = app(\App\Services\SecondaryMarketService::class);
+            $paymentService->setSecondaryMarketService($secondaryMarketService);
+
             $paymentService->handleWebhookEvent($this->eventId, $this->eventType, $this->eventData);
 
             Log::info("Webhook event {$this->eventId} ({$this->eventType}) processed successfully");

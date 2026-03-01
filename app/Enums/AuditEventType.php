@@ -51,4 +51,10 @@ enum AuditEventType: string
     case FARM_REINSTATED = 'farm.reinstated';
     case UNAUTHORIZED_ACCESS_ATTEMPT = 'unauthorized_access_attempt';
     case ADMIN_AUDIT_LOG_ACCESSED = 'admin_audit_log_accessed';
+    case LISTING_CREATED = 'listing_created';
+    case LISTING_CANCELLED = 'listing_cancelled';
+    case LISTING_ADMIN_CANCELLED = 'listing_admin_cancelled';
+    case LISTING_PURCHASED = 'listing_purchased';
+    case OWNERSHIP_TRANSFERRED = 'ownership_transferred';
+    case UNAUTHORIZED_LISTING_CANCELLATION = 'unauthorized_listing_cancellation';
 }
