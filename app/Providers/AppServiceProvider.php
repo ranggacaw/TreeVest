@@ -50,6 +50,11 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\NotifyInvestorsOfPayoutCreated::class
         );
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\ReportReady::class,
+            \App\Listeners\NotifyInvestorReportReady::class
+        );
+
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)
                 ->by($request->ip())
@@ -84,6 +89,10 @@ class AppServiceProvider extends ServiceProvider
 
         \Illuminate\Support\Facades\RateLimiter::for('kyc-upload', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perHour(5)->by($request->user()?->id ?? $request->ip());
+        });
+
+        \Illuminate\Support\Facades\RateLimiter::for('report-pdf', function (\Illuminate\Http\Request $request) {
+            return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)->by($request->user()?->id ?? $request->ip());
         });
     }
 }

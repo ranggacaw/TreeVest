@@ -15,6 +15,8 @@ use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FarmOwner\HealthUpdateController as FarmOwnerHealthUpdateController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\Investor\HealthFeedController as InvestorHealthFeedController;
+use App\Http\Controllers\Investor\ReportController;
+use App\Http\Controllers\Investor\TaxReportController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\NotificationController;
@@ -186,6 +188,17 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             Route::get('/', [\App\Http\Controllers\Investor\PayoutController::class, 'index'])->name('index');
             Route::get('/{payout}', [\App\Http\Controllers\Investor\PayoutController::class, 'show'])->name('show');
         });
+    });
+
+    Route::prefix('reports')->name('reports.')->group(function () {
+        Route::get('/', [ReportController::class, 'index'])->name('index');
+        Route::post('/pdf', [ReportController::class, 'requestPdf'])->name('pdf.request')->middleware('throttle:report-pdf');
+        Route::get('/csv', [ReportController::class, 'exportCsv'])->name('csv');
+        Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
+        Route::get('/tax', fn() => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
+        Route::get('/tax/{year}', [TaxReportController::class, 'show'])->name('tax.show');
+        Route::post('/tax/{year}/pdf', [TaxReportController::class, 'requestPdf'])->name('tax.pdf.request')->middleware('throttle:report-pdf');
+        Route::get('/tax/{year}/csv', [TaxReportController::class, 'exportCsv'])->name('tax.csv');
     });
 
     Route::get('/portfolio', [PortfolioDashboardController::class, 'index'])->name('portfolio.dashboard');

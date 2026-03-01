@@ -43,7 +43,7 @@ class NotificationService
             NotificationType::Harvest => new HarvestNotification($data),
             NotificationType::Payment => new PaymentNotification($data),
             NotificationType::Market => new MarketAlertNotification($data),
-            NotificationType::System => new SystemNotification($data),
+            NotificationType::System, NotificationType::Report => new SystemNotification($data),
         };
     }
 

@@ -15,3 +15,5 @@ Schedule::job(new CheckKycExpiry)->daily();
 Schedule::job(new FetchWeatherData)->everySixHours();
 
 Schedule::command('app:send-harvest-reminders')->daily();
+
+Schedule::command('app:purge-expired-reports')->dailyAt('02:00');

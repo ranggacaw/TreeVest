@@ -7,6 +7,8 @@ export type HarvestStatus = 'scheduled' | 'in_progress' | 'completed' | 'failed'
 export type PayoutStatus = 'pending' | 'processing' | 'completed' | 'failed';
 export type QualityGrade = 'A' | 'B' | 'C';
 export type PayoutMethod = 'bank_transfer' | 'digital_wallet';
+export type ReportType = 'profit_loss' | 'tax_summary';
+export type GeneratedReportStatus = 'pending' | 'generating' | 'completed' | 'failed';
 
 export interface User {
     id: number;
@@ -394,5 +396,80 @@ export interface Payout {
         id: number;
         status: string;
         stripe_payment_intent_id?: string;
+    };
+}
+
+export interface ProfitLossRow {
+    investmentId: number;
+    treeIdentifier: string;
+    fruitType: string;
+    variant: string;
+    farmName: string;
+    amountInvestedCents: number;
+    totalPayoutsCents: number;
+    netCents: number;
+    actualRoiPercent: number;
+    status: string;
+    purchaseDate: string;
+}
+
+export interface ProfitLossSummary {
+    totalInvestedCents: number;
+    totalPayoutsCents: number;
+    netCents: number;
+    overallRoiPercent: number;
+}
+
+export interface PerformanceDataPoint {
+    month: string;
+    investedCents: number;
+    payoutsCents: number;
+    cumulativeCents: number;
+}
+
+export interface GeneratedReport {
+    id: number;
+    user_id: number;
+    report_type: ReportType;
+    parameters: Record<string, unknown>;
+    status: GeneratedReportStatus;
+    file_path: string | null;
+    failure_reason: string | null;
+    expires_at: string | null;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string;
+}
+
+export interface TaxSummaryPayoutRow {
+    payoutId: number;
+    date: string;
+    farmName: string;
+    grossAmountCents: number;
+    platformFeeCents: number;
+    netAmountCents: number;
+}
+
+export interface TaxSummaryInvestmentRow {
+    investmentId: number;
+    date: string;
+    farmName: string;
+    amountCents: number;
+}
+
+export interface TaxSummaryData {
+    year: number;
+    income: {
+        rows: TaxSummaryPayoutRow[];
+        totalCents: number;
+    };
+    investments: {
+        rows: TaxSummaryInvestmentRow[];
+        totalCents: number;
+    };
+    summary: {
+        totalIncomeCents: number;
+        totalInvestedCents: number;
+        netCents: number;
     };
 }

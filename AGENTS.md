@@ -21,7 +21,7 @@
 | Investment Marketplace | Farm listings, fruit crop variants, per-tree investment details |
 | Investment Tracking Dashboard | Real-time portfolio management, tree health monitoring |
 | Harvest & Returns System | Harvest scheduling, yield estimation, profit distribution |
-| Financial Features | Payment processing, multi-currency, secondary market, reporting |
+| Financial Features | Payment processing, multi-currency, secondary market, financial reporting, tax reporting |
 | Information & Education Center | Investment education, farm & crop encyclopedia |
 | Communication | In-app messaging, push/email notifications, support chat |
 
@@ -190,7 +190,9 @@ treevest/
 │   │   │   │   └── HarvestController.php
 │   │   │   ├── Investor/          # Investor-specific controllers
 │   │   │   │   ├── HealthFeedController.php
-│   │   │   │   └── PayoutController.php
+│   │   │   │   ├── PayoutController.php
+│   │   │   │   ├── ReportController.php
+│   │   │   │   └── TaxReportController.php
 │   │   │   ├── FarmOwner/         # Farm owner controllers
 │   │   │   │   ├── HealthUpdateController.php
 │   │   │   │   └── HarvestController.php
@@ -208,7 +210,8 @@ treevest/
 │   │   ├── HealthAlert.php
 │   │   ├── Harvest.php
 │   │   ├── MarketPrice.php
-│   │   └── Payout.php
+│   │   ├── Payout.php
+│   │   ├── GeneratedReport.php
 │   ├── Services/                  # Business logic services
 │   │   ├── WeatherService.php
 │   │   ├── WeatherAlertService.php
@@ -216,34 +219,42 @@ treevest/
 │   │   ├── HarvestService.php
 │   │   ├── MarketPriceService.php
 │   │   ├── ProfitCalculationService.php
-│   │   └── PayoutService.php
+│   │   ├── PayoutService.php
+│   │   ├── ReportDataService.php
+│   │   ├── PdfReportService.php
+│   │   └── CsvReportService.php
 │   ├── Jobs/                      # Queue jobs
 │   │   ├── FetchWeatherData.php
 │   │   ├── GenerateWeatherAlerts.php
 │   │   ├── ProcessHealthUpdate.php
 │   │   ├── CalculateProfitAndCreatePayouts.php
-│   │   └── SendHarvestReminderNotification.php
+│   │   ├── SendHarvestReminderNotification.php
+│   │   └── GeneratePdfReport.php
 │   ├── Events/                    # Domain events
 │   │   ├── HealthUpdateCreated.php
 │   │   ├── WeatherAlertGenerated.php
 │   │   ├── HarvestScheduled.php
 │   │   ├── HarvestCompleted.php
 │   │   ├── HarvestFailed.php
-│   │   └── PayoutsCreated.php
+│   │   ├── PayoutsCreated.php
+│   │   └── ReportReady.php
 │   ├── Listeners/                 # Event listeners
 │   │   ├── HealthUpdateCreatedListener.php
 │   │   ├── WeatherAlertGeneratedListener.php
 │   │   ├── CalculateProfitAndCreatePayoutsListener.php
 │   │   ├── NotifyInvestorsOfHarvestCompletion.php
 │   │   ├── NotifyInvestorsOfHarvestFailure.php
-│   │   └── NotifyInvestorsOfPayoutCreated.php
+│   │   ├── NotifyInvestorsOfPayoutCreated.php
+│   │   └── NotifyInvestorReportReady.php
 │   └── Enums/                     # Enum definitions
 │       ├── HealthSeverity.php
 │       ├── HealthUpdateType.php
 │       ├── HealthAlertType.php
 │       ├── HarvestStatus.php
 │       ├── PayoutStatus.php
-│       └── QualityGrade.php
+│       ├── QualityGrade.php
+│       ├── ReportType.php
+│       └── GeneratedReportStatus.php
 ├── database/
 │   ├── migrations/                # Database schema migrations
 │   ├── seeders/                   # Data seeders
@@ -271,6 +282,9 @@ treevest/
 │   │   │   │   ├── Payouts/       # Payout management
 │   │   │   │   │   ├── Index.tsx
 │   │   │   │   │   └── Show.tsx
+│   │   │   │   └── Reports/       # Financial reports
+│   │   │   │       ├── Index.tsx       # P&L and analytics
+│   │   │   │       └── Tax/Show.tsx  # Tax summary
 │   │   │   ├── FarmOwner/         # Farm owner pages
 │   │   │   │   ├── HealthUpdates/ # Health update management
 │   │   │   │   │   ├── Index.tsx
@@ -301,7 +315,11 @@ treevest/
 │   │   │   ├── HealthStatusIndicator.tsx # Health status indicator
 │   │   │   ├── WeatherAlertBanner.tsx # Weather alert component
 │   │   │   ├── PhotoGallery.tsx # Lightbox photo gallery
-│   │   │   └── ImageUploader.tsx # Drag-drop image upload
+│   │   │   ├── ImageUploader.tsx # Drag-drop image upload
+│   │   │   ├── ReportFilterForm.tsx # Report filter form component
+│   │   │   ├── ProfitLossTable.tsx # Profit & Loss table component
+│   │   │   ├── PerformanceBarChart.tsx # Performance bar chart component
+│   │   │   └── ReturnsTrendChart.tsx # Returns trend chart component
 │   │   ├── Layouts/               # Layout components
 │   │   ├── types/                 # TypeScript type definitions
 │   │   └── app.tsx                # Inertia app entry point
@@ -309,7 +327,11 @@ treevest/
 │   │   └── app.css                # Tailwind CSS entry
 │   └── views/
 │       ├── app.blade.php          # Root Blade template (Inertia mount)
-│       └── sitemap.blade.php       # XML sitemap template
+│       ├── sitemap.blade.php       # XML sitemap template
+│       └── reports/               # Report PDF templates
+│           ├── pdf/               # PDF report templates
+│           │   ├── financial-report.blade.php
+│           │   └── tax-summary.blade.php
 ├── routes/
 │   ├── web.php                    # Web routes (Inertia)
 │   └── auth.php                   # Breeze auth routes
@@ -317,9 +339,14 @@ treevest/
 │   ├── Feature/                   # Feature/integration tests
 │   │   ├── PublicArticleTest.php
 │   │   ├── AdminArticleTest.php
-│   │   └── ArticlePermissionTest.php
+│   │   ├── ArticlePermissionTest.php
+│   │   ├── ReportControllerTest.php
+│   │   ├── TaxReportControllerTest.php
+│   │   └── ReportDownloadTest.php
 │   └── Unit/                      # Unit tests
-│       └── ArticleModelTest.php
+│       ├── ArticleModelTest.php
+│       ├── ReportDataServiceTest.php
+│       └── GeneratePdfReportJobTest.php
 ├── config/                        # Laravel configuration files
 ├── public/                        # Public assets
 ├── storage/                       # File storage, logs, cache
@@ -418,6 +445,7 @@ Admin Approval → Listed on Marketplace
 | **Payout** | id, investment_id, harvest_id, amount, method, status | Bank/wallet/reinvest |
 | **Transaction** | id, user_id, type, status, amount (cents), currency, stripe_payment_intent_id, payment_method_id, related_investment_id, related_payout_id, metadata, stripe_metadata, failure_reason, completed_at, failed_at | Immutable financial record ledger |
 | **PaymentMethod** | id, user_id, stripe_payment_method_id, type (card/bank_account), last4, brand, exp_month, exp_year, is_default | Saved payment methods for users |
+| **GeneratedReport** | id, user_id, report_type, parameters, status, file_path, failure_reason, expires_at | Tracks async PDF report generation (profit_loss, tax_summary) |
 | **Article** | id, title, slug, content, excerpt, featured_image, status, published_at, author_id, view_count, meta_title, meta_description, meta_keywords | Educational and encyclopedia content |
 | **Category** | id, name, slug, description | Article categorization |
 | **Tag** | id, name, slug | Article tags for filtering |
@@ -442,6 +470,7 @@ Admin Approval → Listed on Marketplace
 - User (1) → (N) Article (as author)
 - User (1) → (N) KycVerification
 - User (1) → (N) TreeHealthUpdate (as author)
+- User (1) → (N) GeneratedReport (as owner of reports)
 - KycVerification (1) → (N) KycDocument
 - Farm (1) → (N) FarmImage
 - Farm (1) → (N) FarmCertification
@@ -457,6 +486,7 @@ Admin Approval → Listed on Marketplace
 - Investment (1) → (N) Payout
 - Article (N) ↔ (N) Category (many-to-many)
 - Article (N) ↔ (N) Tag (many-to-many)
+- GeneratedReport (1) → (N) User (belongs to)
 - LegalDocument (1) → (N) UserDocumentAcceptance
 - User (1) → (N) UserDocumentAcceptance
 - User (1) → (N) AuditLog
@@ -500,6 +530,8 @@ Admin Approval → Listed on Marketplace
 | **Notification Channel** | Delivery method for notifications: email, SMS, push (web), or database (in-app) |
 | **Notification Template** | Admin-configurable message templates with placeholder support for dynamic content |
 | **Notification Preference** | User-configurable settings controlling which notification types are delivered via which channels |
+| **Generated Report** | A record tracking async PDF report generation with status (pending, generating, completed, failed) and file storage location |
+| **Report Type** | Type of financial report: profit_loss (P&L statement) or tax_summary (year-end tax report) |
 
 ### Status Enumerations (expected)
 
@@ -511,6 +543,7 @@ Admin Approval → Listed on Marketplace
 | Payout | pending, processing, completed, failed |
 | Tree | seedling, growing, productive, declining, retired |
 | Farm | pending_approval, active, suspended, deactivated |
+| Generated Report | pending, generating, completed, failed |
 | Notification Delivery | sent, delivered, failed, bounced |
 
 ---
@@ -556,6 +589,7 @@ Admin Approval → Listed on Marketplace
 - **Marketplace:** Farm cards with images, map integration (Google Maps/Mapbox), filtering by fruit type/risk/ROI
 - **Health Monitoring:** Live crop condition updates, weather impact alerts, pest/disease notifications, growth progress photos
 - **Financial Reports:** P&L statements, analytics charts, downloadable PDF/CSV exports
+- **Tax Reports:** Year-end tax summary with income (payouts) and investment activity tables
 
 ### Expected UX Patterns
 - Map-based farm discovery with geospatial filtering
