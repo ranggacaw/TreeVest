@@ -31,6 +31,8 @@ class DatabaseSeeder extends Seeder
             EncyclopediaSeeder::class,
             FarmSeeder::class,
             FruitTypeSeeder::class,
+            NotificationTemplateSeeder::class,
+            NotificationPreferenceSeeder::class,
         ]);
     }
 }

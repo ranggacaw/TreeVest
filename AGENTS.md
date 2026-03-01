@@ -344,6 +344,9 @@ Admin Approval → Listed on Marketplace
 | **Category** | id, name, slug, description | Article categorization |
 | **Tag** | id, name, slug | Article tags for filtering |
 | **Notification** | id, user_id, type, message, read_status | Push/email/in-app |
+| **NotificationPreference** | id, user_id, notification_type, channel, enabled | User preferences for notification channels |
+| **NotificationDeliveryLog** | id, notification_id, user_id, channel, status, provider_id, error_message, sent_at, delivered_at, failed_at | Delivery status tracking |
+| **NotificationTemplate** | id, type, channel, subject, body, is_active | Admin-configurable notification templates |
 | **Message** | id, sender_id, receiver_id, content, timestamp | In-app messaging |
 | **AuditLog** | id, user_id, event_type, ip_address, user_agent, event_data, created_at | Immutable security trail |
 | **LegalDocument** | id, type, version, title, content, effective_date, is_active | Terms, Privacy, Risk |
@@ -407,6 +410,10 @@ Admin Approval → Listed on Marketplace
 | **Portfolio** | An investor's collection of tree investments across farms and crop types |
 | **Reinvestment** | Payout option where returns are automatically used to purchase additional tree investments |
 | **2FA** | Two-Factor Authentication — additional security layer for account access |
+| **Notification** | A message sent to users via various channels (email, SMS, push, database) |
+| **Notification Channel** | Delivery method for notifications: email, SMS, push (web), or database (in-app) |
+| **Notification Template** | Admin-configurable message templates with placeholder support for dynamic content |
+| **Notification Preference** | User-configurable settings controlling which notification types are delivered via which channels |
 
 ### Status Enumerations (expected)
 
@@ -418,6 +425,7 @@ Admin Approval → Listed on Marketplace
 | Payout | pending, processing, completed, failed |
 | Tree | seedling, growing, productive, declining, retired |
 | Farm | pending_approval, active, suspended, deactivated |
+| Notification Delivery | sent, delivered, failed, bounced |
 
 ---
 
@@ -622,8 +630,9 @@ When an upstream document changes, all downstream documents MUST be flagged for 
 | **Local Payment Methods** | Region-specific payment processing | High |
 | **Google Maps / Mapbox** | Farm location display, map-based discovery | High |
 | **Weather API** | Farm condition monitoring, weather impact alerts | Medium |
-| **SMS Service** | OTP delivery, notifications fallback | High |
-| **Email Service** | Notifications, KYC communications, reports | High |
+| **Twilio** | SMS delivery for OTP and notifications | High |
+| **Email Service (Mailgun/SendGrid/SES)** | Transactional notifications, KYC communications, reports | High |
+| **Pusher / Soketi** | Real-time web push notifications via Laravel Broadcasting | Medium |
 | **Analytics Platform** | User behavior tracking, business metrics | Medium |
 | **OAuth Providers** | Social media login (Google, Facebook, Apple) | High |
 

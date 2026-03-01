@@ -2,6 +2,8 @@
 
 namespace App\Models;
 
+use App\Enums\NotificationChannel;
+use App\Enums\NotificationType;
 // use Illuminate\Contracts\Auth\MustVerifyEmail;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -152,5 +154,18 @@ class User extends Authenticatable
     public function isKycValid(): bool
     {
         return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
+    }
+
+    public function notificationPreferences()
+    {
+        return $this->hasMany(NotificationPreference::class);
+    }
+
+    public function getNotificationPreference(NotificationType|string $type, NotificationChannel|string $channel): ?NotificationPreference
+    {
+        return $this->notificationPreferences()
+            ->forType($type)
+            ->forChannel($channel)
+            ->first();
     }
 }

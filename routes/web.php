@@ -7,6 +7,7 @@ use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FarmApprovalController;
 use App\Http\Controllers\Admin\MediaController;
+use App\Http\Controllers\Admin\NotificationTemplateController as AdminNotificationTemplateController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -15,6 +16,8 @@ use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\FarmController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
+use App\Http\Controllers\NotificationController;
+use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
@@ -66,6 +69,19 @@ Route::middleware('auth')->group(function () {
         Route::post('/submit', [KycController::class, 'submit'])->name('submit');
         Route::get('/{verification}', [KycController::class, 'show'])->name('show');
     });
+
+    Route::prefix('notifications')->name('notifications.')->group(function () {
+        Route::get('/', [NotificationController::class, 'index'])->name('index');
+        Route::get('/{id}', [NotificationController::class, 'show'])->name('show');
+        Route::post('/{id}/read', [NotificationController::class, 'markAsRead'])->name('read');
+        Route::post('/read-all', [NotificationController::class, 'markAllAsRead'])->name('read-all');
+        Route::delete('/{id}', [NotificationController::class, 'destroy'])->name('destroy');
+    });
+
+    Route::prefix('settings')->name('settings.')->group(function () {
+        Route::get('/notifications', [NotificationPreferenceController::class, 'index'])->name('notifications');
+        Route::post('/notifications', [NotificationPreferenceController::class, 'update'])->name('notifications.update');
+    });
 });
 
 require __DIR__.'/auth.php';
@@ -97,6 +113,8 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('farms/{farm}/reject', [FarmApprovalController::class, 'reject'])->name('farms.reject');
         Route::post('farms/{farm}/suspend', [FarmApprovalController::class, 'suspend'])->name('farms.suspend');
         Route::post('farms/{farm}/reinstate', [FarmApprovalController::class, 'reinstate'])->name('farms.reinstate');
+
+        Route::resource('notification-templates', AdminNotificationTemplateController::class);
 
         Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
         Route::delete('/media/delete', [MediaController::class, 'delete'])->name('media.delete');
