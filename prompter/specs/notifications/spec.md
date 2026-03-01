@@ -50,7 +50,7 @@ The system SHALL support dispatching notifications through multiple channels: da
 
 ### Requirement: Notification Type Classification
 
-The system SHALL support seven notification types: `investment` (investment opportunities, purchase confirmations), `harvest` (harvest schedule, yield updates, completion), `payment` (payment confirmations, payout distributions), `market` (price changes, market opportunities), `system` (platform announcements, maintenance alerts), **`health`** (health updates, pest/disease reports), and **`weather`** (weather alerts affecting farms).
+The system SHALL support eight notification types: `investment` (investment opportunities, purchase confirmations), `harvest` (harvest schedule, yield updates, completion), `payment` (payment confirmations, payout distributions), `market` (price changes, market opportunities), `system` (platform announcements, maintenance alerts), `health` (health updates, pest/disease reports), `weather` (weather alerts affecting farms), and **`secondary_sale`** (secondary market listing purchased, listing sold, transfer completed).
 
 #### Scenario: Investment purchase confirmation
 - **WHEN** a user completes an investment purchase
@@ -77,11 +77,21 @@ The system SHALL support seven notification types: `investment` (investment oppo
 - **THEN** the system sends a `weather` type notification to all investors with trees on the affected farm
 - **AND** the notification contains farm name, alert type, severity, and weather details
 
+#### Scenario: Secondary sale sold notification sent to seller
+- **WHEN** a `ListingPurchased` event is dispatched after a secondary market purchase is confirmed
+- **THEN** the system sends a `secondary_sale` type notification to the seller with message: "Your listing for [Fruit Type] [Variant] on [Farm Name] has been sold for RM [ask_price]. Your net proceeds of RM [net_proceeds] are being processed."
+- **AND** the notification action links to `/secondary-market/{listing_id}`
+
+#### Scenario: Secondary sale purchased notification sent to buyer
+- **WHEN** a `ListingPurchased` event is dispatched
+- **THEN** the system sends a `secondary_sale` type notification to the buyer with message: "You have successfully purchased a [Fruit Type] [Variant] investment on [Farm Name] for RM [ask_price]. View your new investment in your portfolio."
+- **AND** the notification action links to `/investments/{investment_id}`
+
 ---
 
 ### Requirement: User Notification Preferences
 
-The system SHALL allow users to manage notification preferences on a per-type and per-channel basis. Users SHALL be able to enable or disable notifications for each combination of notification type (investment, harvest, payment, market, system, **health**, **weather**) and channel (email, database, SMS, push). Default preferences SHALL be created on user registration.
+The system SHALL allow users to manage notification preferences on a per-type and per-channel basis. Users SHALL be able to enable or disable notifications for each combination of notification type (investment, harvest, payment, market, system, health, weather, **secondary_sale**) and channel (email, database, SMS, push). Default preferences SHALL be created on user registration.
 
 #### Scenario: User disables all SMS notifications
 - **WHEN** a user disables the SMS channel for all notification types
@@ -96,7 +106,7 @@ The system SHALL allow users to manage notification preferences on a per-type an
 #### Scenario: Default preferences on user registration
 - **WHEN** a new user registers
 - **THEN** the system creates default notification preferences
-- **AND** email and database channels are enabled for all types (investment, harvest, payment, market, system, health, weather)
+- **AND** email and database channels are enabled for all types (investment, harvest, payment, market, system, health, weather, secondary_sale)
 - **AND** SMS is enabled only for payment type
 - **AND** push is disabled for all types (user must opt-in)
 
@@ -388,14 +398,18 @@ The system SHALL create default notification preferences on user registration. D
   - `system` + `database` = enabled
   - `system` + `sms` = disabled
   - `system` + `push` = disabled
-  - **`health` + `email` = enabled**
-  - **`health` + `database` = enabled**
-  - **`health` + `sms` = disabled**
-  - **`health` + `push` = disabled**
-  - **`weather` + `email` = enabled**
-  - **`weather` + `database` = enabled**
-  - **`weather` + `sms` = disabled**
-  - **`weather` + `push` = disabled**
+  - `health` + `email` = enabled
+  - `health` + `database` = enabled
+  - `health` + `sms` = disabled
+  - `health` + `push` = disabled
+  - `weather` + `email` = enabled
+  - `weather` + `database` = enabled
+  - `weather` + `sms` = disabled
+  - `weather` + `push` = disabled
+  - **`secondary_sale` + `email` = enabled**
+  - **`secondary_sale` + `database` = enabled**
+  - **`secondary_sale` + `sms` = enabled**
+  - **`secondary_sale` + `push` = disabled**
 
 ### Requirement: Notification Queue Processing
 

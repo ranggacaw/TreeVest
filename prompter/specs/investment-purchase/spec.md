@@ -23,11 +23,17 @@ The system SHALL create and track investment records linking users to trees with
 
 #### Scenario: User views investment detail
 - **WHEN** a user accesses their investment detail page
-- **THEN** the system displays: investment ID, tree details (name, variant, farm), amount invested, purchase date, current status, expected ROI, transaction history, cancellation button (if status is pending_payment)
+- **THEN** the system displays: investment ID, tree details (name, variant, farm), amount invested, purchase date, current status, expected ROI, transaction history, cancellation button (if status is pending_payment), "List for Sale" button (if status is active), "Cancel Listing" button (if status is listed)
 
 #### Scenario: Investment status transitions tracked
 - **WHEN** an investment status changes
-- **THEN** the system validates the transition is allowed (pending_payment → active, active → matured, active → sold, pending_payment → cancelled)
+- **THEN** the system validates the transition is allowed:
+  - `pending_payment → active`
+  - `active → listed` (secondary market listing created)
+  - `listed → active` (listing cancelled)
+  - `listed → sold` (secondary market purchase confirmed)
+  - `active → matured`
+  - `pending_payment → cancelled`
 - **AND** rejects invalid transitions with an error
 
 ---
@@ -142,6 +148,11 @@ The system SHALL allow users to cancel pending investment purchases before payme
 - **THEN** the system rejects the cancellation
 - **AND** displays an error: "This investment has already been activated and cannot be cancelled."
 
+#### Scenario: Cancellation of listed investment rejected
+- **WHEN** a user attempts to cancel an investment with status 'listed' (i.e., it has an open secondary market listing)
+- **THEN** the system rejects the cancellation
+- **AND** displays an error: "This investment has an active listing on the secondary market. Cancel the listing first."
+
 #### Scenario: Cancellation of completed investment rejected
 - **WHEN** a user attempts to cancel an investment with status 'matured' or 'sold'
 - **THEN** the system rejects the cancellation
@@ -176,12 +187,15 @@ The system SHALL allow users to add additional funds to an existing active inves
 - **THEN** the system rejects the top-up
 - **AND** displays an error: "You cannot top up a pending investment. Please wait for payment confirmation."
 
+#### Scenario: Top-up on listed investment rejected
+- **WHEN** a user attempts to top up an investment with status 'listed'
+- **THEN** the system rejects the top-up
+- **AND** displays an error: "You cannot top up an investment that is currently listed for sale on the secondary market."
+
 #### Scenario: Top-up on matured investment rejected
 - **WHEN** a user attempts to top up an investment with status 'matured' or 'sold'
 - **THEN** the system rejects the top-up
 - **AND** displays an error: "This investment has been finalized and cannot be topped up."
-
----
 
 ### Requirement: Investment Portfolio Querying
 The system SHALL provide efficient querying of user investments for portfolio displays and reporting.
