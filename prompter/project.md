@@ -15,7 +15,12 @@
 - Native mobile apps (iOS/Android) — deferred to future scope
 - Gamification features (badges, leaderboards) — optional / deferred
 - Virtual 360-degree farm tours — deferred
-- Multi-language / multi-region expansion — deferred
+
+### Internationalization (i18n)
+- **Active Support:** English (`en`) and Bahasa Indonesia (`id`) locales are fully implemented
+- **Infrastructure:** Dual-system i18n with Laravel `lang/` files (server-side) and react-i18next (client-side)
+- **Features:** Language switcher UI, locale-aware middleware, RTL layout preparation, translation files for both locales
+- **Future Expansion:** Additional locales can be added by extending `APP_AVAILABLE_LOCALES` env variable and adding translation files
 
 ---
 

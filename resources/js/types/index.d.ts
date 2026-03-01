@@ -112,9 +112,15 @@ export interface Farm {
     owner?: User;
 }
 
+export interface LocalePageProps {
+    locale: string;
+    availableLocales: Record<string, string>;
+    isRtl: boolean;
+}
+
 export type PageProps<
     T extends Record<string, unknown> = Record<string, unknown>,
-> = T & {
+> = T & LocalePageProps & {
     auth: {
         user: User | null;
     };

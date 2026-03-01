@@ -123,4 +123,20 @@ return [
         'store' => env('APP_MAINTENANCE_STORE', 'database'),
     ],
 
+    'available_locales' => [
+        'en' => 'English',
+        'id' => 'Bahasa Indonesia',
+        'de' => 'German',
+        'es' => 'Spanish',
+        'fr' => 'French',
+        'it' => 'Italian',
+        'pt' => 'Portuguese',
+        'ru' => 'Russian',
+        'ja' => 'Japanese',
+        'ko' => 'Korean',
+        'zh' => 'Chinese',
+        'th' => 'Thai',
+        'vi' => 'Vietnamese',
+        'ms' => 'Malay',
+    ],
 ];

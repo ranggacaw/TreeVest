@@ -30,6 +30,7 @@ class User extends Authenticatable
         'avatar_url',
         'password',
         'role',
+        'locale',
         'two_factor_enabled_at',
         'last_login_at',
         'last_login_ip',
@@ -67,6 +68,7 @@ class User extends Authenticatable
             'phone' => 'encrypted',
             'kyc_document_url' => 'encrypted',
             'role' => 'string',
+            'locale' => 'string',
         ];
     }
 

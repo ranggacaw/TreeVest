@@ -29,8 +29,21 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
+        view()->share('isRtl', in_array(app()->getLocale(), ['ar', 'he', 'fa'], true));
+
+        $availableLocalesEnv = env('APP_AVAILABLE_LOCALES', 'en');
+        $availableLocalesCodes = array_map('trim', explode(',', $availableLocalesEnv));
+        $allLocales = config('app.available_locales', []);
+        $availableLocales = array_intersect_key($allLocales, array_flip($availableLocalesCodes));
+
+        $rtlLocales = ['ar', 'he', 'fa'];
+        $isRtl = in_array(app()->getLocale(), $rtlLocales, true);
+
         return [
             ...parent::share($request),
+            'locale' => app()->getLocale(),
+            'availableLocales' => $availableLocales,
+            'isRtl' => $isRtl,
             'auth' => [
                 'user' => $request->user() ? [
                     'id' => $request->user()->id,

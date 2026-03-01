@@ -2,34 +2,7 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
-use App\Http\Controllers\Admin\AuditLogController;
-use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\Admin\FarmApprovalController;
-use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
-use App\Http\Controllers\Admin\KycReviewController;
-use App\Http\Controllers\Admin\MediaController;
-use App\Http\Controllers\Admin\NotificationTemplateController as AdminNotificationTemplateController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\ArticleController;
-use App\Http\Controllers\Auth\OAuthController;
-use App\Http\Controllers\Auth\TwoFactorController;
-use App\Http\Controllers\AvatarController;
-use App\Http\Controllers\EncyclopediaController;
-use App\Http\Controllers\FarmController;
-use App\Http\Controllers\FarmOwner\HealthUpdateController as FarmOwnerHealthUpdateController;
-use App\Http\Controllers\InvestmentController;
-use App\Http\Controllers\Investor\HealthFeedController as InvestorHealthFeedController;
-use App\Http\Controllers\Investor\ReportController;
-use App\Http\Controllers\Investor\TaxReportController;
-use App\Http\Controllers\KycController;
-use App\Http\Controllers\MarketplaceFarmController;
-use App\Http\Controllers\NotificationController;
-use App\Http\Controllers\NotificationPreferenceController;
-use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\PortfolioDashboardController;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\SessionController;
-use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\ProfileLocaleController;
 use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -52,6 +25,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    Route::patch('/profile/locale', [ProfileLocaleController::class, 'update'])->name('profile.locale');
 
     Route::get('/profile/2fa', [TwoFactorController::class, 'show'])->name('profile.2fa');
     Route::post('/profile/2fa/enable', [TwoFactorController::class, 'enable'])->name('profile.2fa.enable');
