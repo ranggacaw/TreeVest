@@ -44,12 +44,20 @@ class InvestmentController extends Controller
 
     public function show(int $investment)
     {
-        $investment = Investment::with(['tree.fruitCrop.farm', 'transaction'])
+        $investment = Investment::with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'tree.harvests', 'transaction'])
             ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
             abort(403);
         }
+
+        $completedHarvests = $investment->tree->harvests
+            ->whereNotNull('actual_yield_kg')
+            ->where('harvest_date', '<=', now()->toDateString());
+
+        $upcomingHarvests = $investment->tree->harvests
+            ->where('harvest_date', '>', now()->toDateString())
+            ->sortBy('harvest_date');
 
         return Inertia::render('Investments/Show', [
             'investment' => [
@@ -60,6 +68,8 @@ class InvestmentController extends Controller
                 'status_label' => $investment->status->getLabel(),
                 'purchase_date' => $investment->purchase_date->toIso8601String(),
                 'created_at' => $investment->created_at->toIso8601String(),
+                'current_value_cents' => $investment->amount_cents,
+                'projected_return_cents' => (int) ($investment->amount_cents * ($investment->tree->expected_roi_percent ?? 0) / 100),
                 'tree' => [
                     'id' => $investment->tree->id,
                     'identifier' => $investment->tree->tree_identifier,
@@ -67,14 +77,33 @@ class InvestmentController extends Controller
                     'price_formatted' => $investment->tree->price_formatted,
                     'expected_roi' => $investment->tree->expected_roi_percent,
                     'risk_rating' => $investment->tree->risk_rating->value,
+                    'age_years' => $investment->tree->age_years,
+                    'productive_lifespan_years' => $investment->tree->productive_lifespan_years,
+                    'status' => $investment->tree->status->value,
                     'fruit_crop' => [
                         'variant' => $investment->tree->fruitCrop->variant,
                         'fruit_type' => $investment->tree->fruitCrop->fruitType->name,
+                        'harvest_cycle' => $investment->tree->fruitCrop->harvest_cycle->value,
                     ],
                     'farm' => [
                         'name' => $investment->tree->fruitCrop->farm->name,
-                        'location' => $investment->tree->fruitCrop->farm->location,
+                        'location' => $investment->tree->fruitCrop->farm->city.', '.$investment->tree->fruitCrop->farm->state,
                     ],
+                ],
+                'harvests' => [
+                    'completed' => $completedHarvests->map(fn ($h) => [
+                        'id' => $h->id,
+                        'harvest_date' => $h->harvest_date->toDateString(),
+                        'estimated_yield_kg' => $h->estimated_yield_kg,
+                        'actual_yield_kg' => $h->actual_yield_kg,
+                        'quality_grade' => $h->quality_grade,
+                        'notes' => $h->notes,
+                    ])->toArray(),
+                    'upcoming' => $upcomingHarvests->map(fn ($h) => [
+                        'id' => $h->id,
+                        'harvest_date' => $h->harvest_date->toDateString(),
+                        'estimated_yield_kg' => $h->estimated_yield_kg,
+                    ])->toArray(),
                 ],
                 'transaction' => $investment->transaction ? [
                     'id' => $investment->transaction->id,

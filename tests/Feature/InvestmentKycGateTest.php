@@ -3,7 +3,6 @@
 namespace Tests\Feature;
 
 use App\Enums\TreeLifecycleStage;
-use App\Http\Middleware\KycVerifiedMiddleware;
 use App\Models\Tree;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

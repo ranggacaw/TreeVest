@@ -182,3 +182,113 @@ export interface PaymentMethod {
     exp_month: number;
     exp_year: number;
 }
+
+export interface PortfolioSummary {
+    total_value_cents: number;
+    tree_count: number;
+    total_invested_cents: number;
+    average_roi_percent: number;
+    total_payouts_cents: number;
+    tree_count_by_status: Record<string, number>;
+}
+
+export interface DiversificationData {
+    category: string;
+    value_cents: number;
+    count: number;
+}
+
+export interface HarvestEvent {
+    id: number;
+    harvest_date: string;
+    estimated_yield_kg: number;
+    tree_id: number;
+    tree_identifier: string;
+    fruit_type: string;
+    variant: string;
+    farm_name: string;
+    status: string;
+}
+
+export interface PerformanceInvestment {
+    investment_id: number;
+    tree_identifier: string;
+    amount_cents: number;
+    projected_return_cents: number;
+    actual_return_cents: number;
+    difference_cents: number;
+}
+
+export interface PerformanceMetrics {
+    projected_returns_cents: number;
+    actual_returns_cents: number;
+    difference_cents: number;
+    percentage_gain_loss: number;
+    investments: PerformanceInvestment[];
+}
+
+export interface PortfolioInvestment {
+    id: number;
+    amount_cents: number;
+    purchase_date: string;
+    current_value_cents: number;
+    projected_return_cents: number;
+    actual_return_cents: number;
+    status: string;
+    tree: {
+        id: number;
+        identifier: string;
+        status: string;
+        risk_rating: string;
+        expected_roi_percent: number;
+        fruit_type: string;
+        variant: string;
+        farm_name: string;
+    };
+    next_harvest?: string;
+}
+
+export interface PaginatedInvestments {
+    data: PortfolioInvestment[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+export interface InvestmentWithDetails {
+    id: number;
+    amount_cents: number;
+    purchase_date: string;
+    status: string;
+    current_value_cents: number;
+    projected_return_cents: number;
+    actual_return_cents: number;
+    tree: {
+        id: number;
+        identifier: string;
+        status: string;
+        age_years: number;
+        productive_lifespan_years: number;
+        expected_roi_percent: number;
+        risk_rating: string;
+        fruit_type: string;
+        variant: string;
+        harvest_cycle: string;
+    };
+    farm?: {
+        id: number;
+        name: string;
+        city: string;
+        state: string;
+        image_url?: string;
+    };
+    harvests: Array<{
+        id: number;
+        harvest_date: string;
+        estimated_yield_kg: number;
+        actual_yield_kg: number | null;
+        quality_grade?: string;
+        notes?: string;
+    }>;
+}

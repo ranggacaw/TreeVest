@@ -4,13 +4,12 @@ namespace Tests\Unit;
 
 use App\Enums\AuditEventType;
 use App\Enums\InvestmentStatus;
-use App\Enums\RiskRating;
-use App\Enums\TreeLifecycleStage;
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
+use App\Enums\TreeLifecycleStage;
+use App\Exceptions\InvalidInvestmentAmountException;
 use App\Exceptions\InvestmentLimitExceededException;
 use App\Exceptions\InvestmentNotCancellableException;
-use App\Exceptions\InvalidInvestmentAmountException;
 use App\Exceptions\KycNotVerifiedException;
 use App\Exceptions\TreeNotInvestableException;
 use App\Models\Investment;
@@ -21,7 +20,6 @@ use App\Services\AuditLogService;
 use App\Services\InvestmentService;
 use App\Services\PaymentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\DB;
 use Mockery;
 use Tests\TestCase;
 

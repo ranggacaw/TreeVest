@@ -18,6 +18,7 @@ use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationPreferenceController;
 use App\Http\Controllers\PaymentMethodController;
+use App\Http\Controllers\PortfolioDashboardController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
@@ -146,6 +147,8 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             return Inertia::render('Investor/Dashboard');
         })->name('dashboard');
     });
+
+    Route::get('/portfolio', [PortfolioDashboardController::class, 'index'])->name('portfolio.dashboard');
 });
 
 Route::middleware('auth')->group(function () {

@@ -5,12 +5,9 @@ namespace Tests\Feature;
 use App\Enums\InvestmentStatus;
 use App\Enums\TreeLifecycleStage;
 use App\Models\Investment;
-use App\Models\Transaction;
 use App\Models\Tree;
 use App\Models\User;
-use App\Services\InvestmentService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Mockery;
 use Tests\TestCase;
 
 class InvestmentPurchaseFlowTest extends TestCase
@@ -45,10 +42,11 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->get(route('investments.create', ['tree' => $tree->id]));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investments/Purchase/Configure')
-            ->has('tree')
-            ->where('tree.id', $tree->id)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investments/Purchase/Configure')
+                ->has('tree')
+                ->where('tree.id', $tree->id)
         );
     }
 
@@ -203,9 +201,10 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->get(route('investments.index'));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investments/Index')
-            ->has('investments')
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investments/Index')
+                ->has('investments')
         );
     }
 
@@ -223,9 +222,10 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->get(route('investments.show', $investment->id));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investments/Show')
-            ->where('investment.id', $investment->id)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investments/Show')
+                ->where('investment.id', $investment->id)
         );
     }
 
@@ -262,9 +262,10 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->get(route('investments.confirmation', $investment->id));
 
         $response->assertOk();
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investments/Purchase/Confirmation')
-            ->where('investment.id', $investment->id)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investments/Purchase/Confirmation')
+                ->where('investment.id', $investment->id)
         );
     }
 

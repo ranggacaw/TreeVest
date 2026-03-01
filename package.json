@@ -14,6 +14,7 @@
         "@types/node": "^18.13.0",
         "@types/react": "^18.0.28",
         "@types/react-dom": "^18.0.10",
+        "@types/recharts": "^1.8.29",
         "@vitejs/plugin-react": "^4.2.0",
         "autoprefixer": "^10.4.12",
         "axios": "^1.11.0",
@@ -33,6 +34,7 @@
         "@tailwindcss/typography": "^0.5.19",
         "@tiptap/react": "^3.20.0",
         "@tiptap/starter-kit": "^3.20.0",
+        "date-fns": "^4.1.0",
         "qrcode.react": "^4.2.0",
         "react-phone-number-input": "^3.4.16",
         "recharts": "^3.7.0"

@@ -153,7 +153,7 @@ class InvestmentConcurrencyTest extends TestCase
 
         // This test verifies that if payment service fails,
         // the investment record is not left in an inconsistent state
-        
+
         $initialInvestmentCount = Investment::count();
 
         try {
@@ -174,10 +174,10 @@ class InvestmentConcurrencyTest extends TestCase
         // investment count should remain unchanged or investment should be created
         // (this test primarily documents expected behavior)
         $finalInvestmentCount = Investment::count();
-        
+
         // Either investment was created successfully, or none was created due to rollback
         $this->assertTrue(
-            $finalInvestmentCount === $initialInvestmentCount || 
+            $finalInvestmentCount === $initialInvestmentCount ||
             $finalInvestmentCount === $initialInvestmentCount + 1
         );
     }
