@@ -112,6 +112,10 @@ export type PageProps<
     auth: {
         user: User | null;
     };
+    flash?: {
+        success?: string;
+        error?: string;
+    };
 };
 
 export interface Tree {

@@ -15,12 +15,13 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
-    const user = usePage().props.auth.user;
+    const page = usePage();
+    const user = page.props.auth?.user;
 
     const { data, setData, patch, errors, processing, recentlySuccessful } =
         useForm({
-            name: user.name,
-            email: user.email,
+            name: user?.name || '',
+            email: user?.email || '',
         });
 
     const submit: FormEventHandler = (e) => {
@@ -28,6 +29,10 @@ export default function UpdateProfileInformation({
 
         patch(route('profile.update'));
     };
+
+    if (!user) {
+        return null;
+    }
 
     return (
         <section className={className}>

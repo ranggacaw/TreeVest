@@ -15,22 +15,25 @@ class DatabaseSeeder extends Seeder
      */
     public function run(): void
     {
-        // User::factory(10)->create();
-
-        User::factory()->create([
-            'name' => 'Demo User',
-            'email' => 'demo@example.com',
-            'role' => 'admin',
-        ]);
-
         $this->call([
+            // Core reference data
             LegalDocumentSeeder::class,
+            FruitTypeSeeder::class,
+            
+            // Users with different roles
+            UserSeeder::class,
+            
+            // Content (articles, categories, tags)
             CategorySeeder::class,
             TagSeeder::class,
             EducationContentSeeder::class,
             EncyclopediaSeeder::class,
+            
+            // Farm and investment data
             FarmSeeder::class,
-            FruitTypeSeeder::class,
+            InvestmentDataSeeder::class,
+            
+            // Notification system
             NotificationTemplateSeeder::class,
             NotificationPreferenceSeeder::class,
         ]);
