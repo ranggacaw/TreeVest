@@ -13,10 +13,10 @@ class TreeFilterServiceTest extends TestCase
 
     public function test_apply_filters()
     {
-        $service = new TreeFilterService();
+        $service = new TreeFilterService;
 
         $query = Tree::query();
-        
+
         $filters = [
             'risk_rating' => ['low'],
             'price_min' => 0,
@@ -24,7 +24,7 @@ class TreeFilterServiceTest extends TestCase
         ];
 
         $query = $service->applyFilters($query, $filters);
-        
+
         $sql = $query->toSql();
         $this->assertStringContainsString('"risk_rating" in (?)', $sql);
         $this->assertStringContainsString('"price_cents" between ? and ?', $sql);

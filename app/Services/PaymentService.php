@@ -6,7 +6,6 @@ use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
 use App\Exceptions\FraudDetectedException;
 use App\Models\FraudAlert;
-use App\Models\PaymentMethod;
 use App\Models\Transaction;
 use Illuminate\Support\Facades\Log;
 use Stripe\Exception\ApiErrorException;
@@ -17,7 +16,13 @@ class PaymentService
         public StripeService $stripeService,
         protected FraudDetectionService $fraudDetectionService,
         protected AuditLogService $auditLogService,
+        protected ?InvestmentService $investmentService = null,
     ) {}
+
+    public function setInvestmentService(InvestmentService $investmentService): void
+    {
+        $this->investmentService = $investmentService;
+    }
 
     public function initiatePayment(int $userId, int $amount, string $currency, TransactionType $type, ?int $paymentMethodId = null, ?int $relatedId = null): Transaction
     {
@@ -120,12 +125,12 @@ class PaymentService
     protected function handlePaymentIntentSucceeded(string $eventId, array $eventData): void
     {
         $paymentIntentId = $eventData['id'] ?? null;
-        if (!$paymentIntentId) {
+        if (! $paymentIntentId) {
             return;
         }
 
         $transaction = Transaction::where('stripe_payment_intent_id', $paymentIntentId)->first();
-        if (!$transaction) {
+        if (! $transaction) {
             return;
         }
 
@@ -148,6 +153,13 @@ class PaymentService
                 'status' => 'completed_via_webhook',
             ]
         );
+
+        if ($this->investmentService && $transaction->type === TransactionType::InvestmentPurchase) {
+            $investment = \App\Models\Investment::where('transaction_id', $transaction->id)->first();
+            if ($investment) {
+                $this->investmentService->confirmInvestment($investment->id);
+            }
+        }
     }
 
     protected function handlePaymentIntentFailed(string $eventId, array $eventData): void
@@ -155,12 +167,12 @@ class PaymentService
         $paymentIntentId = $eventData['id'] ?? null;
         $lastPaymentError = $eventData['last_payment_error'] ?? [];
 
-        if (!$paymentIntentId) {
+        if (! $paymentIntentId) {
             return;
         }
 
         $transaction = Transaction::where('stripe_payment_intent_id', $paymentIntentId)->first();
-        if (!$transaction) {
+        if (! $transaction) {
             return;
         }
 

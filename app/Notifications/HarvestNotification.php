@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Enums\NotificationType;
-use App\Models\User;
 
 class HarvestNotification extends BaseNotification
 {

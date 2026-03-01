@@ -39,6 +39,7 @@ class PhoneVerificationServiceTest extends TestCase
             ->once()
             ->andReturnUsing(function ($phone, $code) use (&$capturedCode) {
                 $capturedCode = $code;
+
                 return true;
             });
 

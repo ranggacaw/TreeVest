@@ -82,12 +82,12 @@ class Tree extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'RM ' . number_format($this->price_cents / 100, 2);
+        return 'RM '.number_format($this->price_cents / 100, 2);
     }
 
     public function getExpectedRoiFormattedAttribute(): string
     {
-        return $this->expected_roi_percent . '%';
+        return $this->expected_roi_percent.'%';
     }
 
     public function isInvestable(): bool

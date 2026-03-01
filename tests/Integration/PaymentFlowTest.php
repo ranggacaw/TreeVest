@@ -4,11 +4,9 @@ namespace Tests\Integration;
 
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
-use App\Models\AuditLog;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Support\Facades\Config;
 use Tests\TestCase;
 
 class PaymentFlowTest extends TestCase
@@ -19,7 +17,7 @@ class PaymentFlowTest extends TestCase
     {
         parent::setUp();
 
-        if (!config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
+        if (! config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
             $this->markTestSkipped('Stripe API keys not configured');
         }
     }

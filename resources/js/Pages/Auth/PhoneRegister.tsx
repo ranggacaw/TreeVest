@@ -17,7 +17,7 @@ export default function PhoneRegister() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('auth.phone.register'), {
+        post(route('phone.register'), {
             onFinish: () => reset('name', 'phone'),
         });
     };

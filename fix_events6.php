@@ -1,7 +1,8 @@
 <?php
+
 $events = [
     'FruitCropCreated', 'FruitCropUpdated', 'FruitCropDeleted',
-    'TreeCreated', 'TreeUpdated', 'TreeDeleted'
+    'TreeCreated', 'TreeUpdated', 'TreeDeleted',
 ];
 
 foreach ($events as $event) {

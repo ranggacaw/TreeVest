@@ -11,8 +11,8 @@ use App\Models\NotificationTemplate;
 use App\Models\User;
 use Illuminate\Bus\Queueable;
 use Illuminate\Contracts\Queue\ShouldQueue;
-use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Messages\BroadcastMessage;
+use Illuminate\Notifications\Messages\MailMessage;
 use Illuminate\Notifications\Notification;
 
 abstract class BaseNotification extends Notification implements ShouldQueue
@@ -20,7 +20,9 @@ abstract class BaseNotification extends Notification implements ShouldQueue
     use Queueable;
 
     protected string $notificationType;
+
     protected array $data;
+
     protected ?NotificationTemplate $template = null;
 
     public function __construct(array $data = [])
@@ -92,7 +94,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
         $message = (new MailMessage)
             ->subject($subject)
-            ->greeting('Hello ' . $notifiable->name)
+            ->greeting('Hello '.$notifiable->name)
             ->line($body);
 
         if ($url = $this->getActionUrl()) {
@@ -135,7 +137,7 @@ abstract class BaseNotification extends Notification implements ShouldQueue
 
     protected function getTemplate(NotificationChannel $channel): ?NotificationTemplate
     {
-        if (!$this->template) {
+        if (! $this->template) {
             $this->template = NotificationTemplate::active()
                 ->forType($this->notificationType)
                 ->forChannel($channel)

@@ -12,9 +12,7 @@ class TreeDeleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public Tree $tree)
-    {
-    }
+    public function __construct(public Tree $tree) {}
 
     public function broadcastOn(): array
     {

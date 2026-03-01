@@ -37,7 +37,7 @@ class FarmCertification extends Model
 
     public function getFileUrlAttribute(): ?string
     {
-        if (!$this->file_path) {
+        if (! $this->file_path) {
             return null;
         }
 

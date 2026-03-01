@@ -43,7 +43,7 @@ class MarketplaceFarmController extends Controller
 
     public function show(Farm $farm)
     {
-        if (!$farm->isActive()) {
+        if (! $farm->isActive()) {
             abort(404);
         }
 

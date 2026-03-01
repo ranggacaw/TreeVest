@@ -10,7 +10,7 @@ class TreePricingServiceTest extends TestCase
 {
     public function test_calculate_price()
     {
-        $service = new TreePricingService();
+        $service = new TreePricingService;
 
         $tree = new Tree([
             'age_years' => 5,
@@ -19,7 +19,7 @@ class TreePricingServiceTest extends TestCase
                 'age_coefficient' => 0.1,
                 'crop_premium' => 1.5,
                 'risk_multiplier' => 1.2,
-            ]
+            ],
         ]);
 
         $price = $service->calculatePrice($tree);

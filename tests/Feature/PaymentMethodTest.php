@@ -33,13 +33,13 @@ class PaymentMethodTest extends TestCase
         $user = User::factory()->create();
 
         $response = $this->actingAs($user)->post('/payment-methods', [
-            'stripe_payment_method_id' => 'pm_test_' . uniqid(),
+            'stripe_payment_method_id' => 'pm_test_'.uniqid(),
         ]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('payment_methods', [
             'user_id' => $user->id,
-            'stripe_payment_method_id' => 'pm_test_' . uniqid(),
+            'stripe_payment_method_id' => 'pm_test_'.uniqid(),
         ]);
     }
 

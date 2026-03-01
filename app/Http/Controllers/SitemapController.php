@@ -15,7 +15,10 @@ class SitemapController extends Controller
 
         $categories = Category::all();
 
+        $xml = '<?xml version="1.0" encoding="UTF-8"?>';
+
         return response()->view('sitemap', [
+            'xml' => $xml,
             'articles' => $articles,
             'categories' => $categories,
         ])->header('Content-Type', 'application/xml');

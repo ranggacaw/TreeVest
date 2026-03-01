@@ -14,8 +14,8 @@ class FarmImageFactory extends Factory
     {
         return [
             'farm_id' => Farm::factory(),
-            'file_path' => 'farms/' . fake()->uuid() . '.jpg',
-            'original_filename' => fake()->word() . '.jpg',
+            'file_path' => 'farms/'.fake()->uuid().'.jpg',
+            'original_filename' => fake()->word().'.jpg',
             'mime_type' => 'image/jpeg',
             'file_size' => fake()->numberBetween(50000, 5000000),
             'caption' => fake()->optional(0.7)->sentence(),

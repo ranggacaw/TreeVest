@@ -14,7 +14,7 @@ class PaymentMethodFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'stripe_payment_method_id' => 'pm_test_' . $this->faker->uuid(),
+            'stripe_payment_method_id' => 'pm_test_'.$this->faker->uuid(),
             'type' => 'card',
             'last4' => $this->faker->randomNumber(4, true),
             'brand' => $this->faker->randomElement(['visa', 'mastercard', 'amex']),

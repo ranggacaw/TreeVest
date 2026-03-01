@@ -142,7 +142,7 @@ class Farm extends Model
 
     public function transitionTo(FarmStatus $newStatus): bool
     {
-        if (!$this->canTransitionTo($newStatus)) {
+        if (! $this->canTransitionTo($newStatus)) {
             return false;
         }
 
@@ -192,7 +192,7 @@ class Farm extends Model
 
     public function getImageUrl(?string $path): ?string
     {
-        if (!$path) {
+        if (! $path) {
             return null;
         }
 

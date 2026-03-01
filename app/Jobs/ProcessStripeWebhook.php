@@ -3,6 +3,7 @@
 namespace App\Jobs;
 
 use App\Models\AuditLog;
+use App\Services\InvestmentService;
 use App\Services\PaymentService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Foundation\Queue\Queueable;
@@ -28,10 +29,14 @@ class ProcessStripeWebhook implements ShouldQueue
 
         if ($alreadyProcessed) {
             Log::info("Webhook event {$this->eventId} already processed, skipping");
+
             return;
         }
 
         try {
+            $investmentService = app(InvestmentService::class);
+            $paymentService->setInvestmentService($investmentService);
+
             $paymentService->handleWebhookEvent($this->eventId, $this->eventType, $this->eventData);
 
             Log::info("Webhook event {$this->eventId} ({$this->eventType}) processed successfully");

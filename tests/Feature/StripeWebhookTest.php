@@ -4,7 +4,6 @@ namespace Tests\Feature;
 
 use App\Enums\TransactionStatus;
 use App\Enums\TransactionType;
-use App\Models\AuditLog;
 use App\Models\Transaction;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
@@ -54,7 +53,7 @@ class StripeWebhookTest extends TestCase
         ]);
 
         $timestamp = time();
-        $signature = hash_hmac('sha256', $timestamp . '.' . $payload, 'whsec_test_secret');
+        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
 
         $response = $this->post('/stripe/webhook', $payload, [
             'Stripe-Signature' => "t={$timestamp},v1={$signature}",
@@ -84,7 +83,7 @@ class StripeWebhookTest extends TestCase
                 'amount' => 10000,
             ],
         ]), [
-            'Stripe-Signature' => 't=' . time() . ',v1=valid_signature_for_test',
+            'Stripe-Signature' => 't='.time().',v1=valid_signature_for_test',
         ]);
 
         $transaction->refresh();
@@ -111,7 +110,7 @@ class StripeWebhookTest extends TestCase
                 ],
             ],
         ]), [
-            'Stripe-Signature' => 't=' . time() . ',v1=valid_signature_for_test',
+            'Stripe-Signature' => 't='.time().',v1=valid_signature_for_test',
         ]);
 
         $transaction->refresh();

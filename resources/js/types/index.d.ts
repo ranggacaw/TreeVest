@@ -2,6 +2,7 @@ export type Role = 'investor' | 'farm_owner' | 'admin';
 export type KycStatus = 'pending' | 'submitted' | 'verified' | 'rejected';
 export type KycDocumentType = 'passport' | 'national_id' | 'drivers_license' | 'proof_of_address';
 export type FarmStatus = 'pending_approval' | 'active' | 'suspended' | 'deactivated';
+export type InvestmentStatus = 'pending_payment' | 'active' | 'matured' | 'sold' | 'cancelled';
 
 export interface User {
     id: number;
@@ -112,3 +113,72 @@ export type PageProps<
         user: User | null;
     };
 };
+
+export interface Tree {
+    id: number;
+    identifier: string;
+    price_cents: number;
+    price_formatted: string;
+    expected_roi: number;
+    expected_roi_formatted: string;
+    risk_rating: string;
+    min_investment_cents: number;
+    max_investment_cents: number;
+    min_investment_formatted: string;
+    max_investment_formatted: string;
+    fruit_crop: {
+        variant: string;
+        fruit_type: string;
+    };
+    farm: {
+        name: string;
+        location?: string;
+    };
+}
+
+export interface Investment {
+    id: number;
+    amount_cents: number;
+    formatted_amount: string;
+    status: InvestmentStatus;
+    status_label?: string;
+    purchase_date: string;
+    created_at?: string;
+    tree: {
+        id: number;
+        identifier: string;
+        price_formatted?: string;
+        expected_roi?: number;
+    };
+    transaction?: {
+        id: number;
+        status: string;
+        stripe_payment_intent_id?: string;
+    };
+}
+
+export interface InvestmentDetail extends Investment {
+    tree: Tree & {
+        fruit_crop: {
+            variant: string;
+            fruit_type: string;
+        };
+        farm: {
+            name: string;
+            location?: string;
+        };
+    };
+    transaction?: {
+        id: number;
+        client_secret?: string;
+    };
+}
+
+export interface PaymentMethod {
+    id: number;
+    type: string;
+    last4: string;
+    brand: string;
+    exp_month: number;
+    exp_year: number;
+}

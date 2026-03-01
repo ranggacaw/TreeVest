@@ -111,7 +111,7 @@ export default function Login({
 
             <div className="mt-4 text-center">
                 <Link
-                    href={route('auth.phone.login')}
+                    href={route('phone.login')}
                     className="rounded-md text-sm text-indigo-600 underline hover:text-indigo-900 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                 >
                     Login with Phone Number

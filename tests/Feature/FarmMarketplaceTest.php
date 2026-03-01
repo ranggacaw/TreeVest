@@ -5,7 +5,6 @@ namespace Tests\Feature;
 use App\Enums\FarmStatus;
 use App\Models\Farm;
 use App\Models\FarmImage;
-use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -32,8 +31,9 @@ class FarmMarketplaceTest extends TestCase
         $response = $this->get('/farms');
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->has('farms.data', 1)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->has('farms.data', 1)
         );
     }
 
@@ -121,9 +121,10 @@ class FarmMarketplaceTest extends TestCase
         $response = $this->get("/farms/{$farm->id}");
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->where('farm.name', 'Test Farm')
-            ->where('farm.size_hectares', 10.5)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->where('farm.name', 'Test Farm')
+                ->where('farm.size_hectares', 10.5)
         );
     }
 }

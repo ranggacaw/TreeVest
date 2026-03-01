@@ -1,9 +1,14 @@
 <?php
+
 namespace Database\Factories;
+
 use App\Models\FruitCrop;
 use Illuminate\Database\Eloquent\Factories\Factory;
-class TreeFactory extends Factory {
-    public function definition(): array {
+
+class TreeFactory extends Factory
+{
+    public function definition(): array
+    {
         return [
             'fruit_crop_id' => FruitCrop::factory(),
             'tree_identifier' => $this->faker->unique()->word(),

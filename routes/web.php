@@ -1,8 +1,6 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\PaymentMethodController;
-use App\Http\Controllers\StripeWebhookController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FarmApprovalController;
@@ -14,13 +12,16 @@ use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\NotificationController;
 use App\Http\Controllers\NotificationPreferenceController;
+use App\Http\Controllers\PaymentMethodController;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
+use App\Http\Controllers\StripeWebhookController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -153,6 +154,16 @@ Route::middleware('auth')->group(function () {
         Route::post('/', [PaymentMethodController::class, 'store'])->name('store');
         Route::delete('/{paymentMethod}', [PaymentMethodController::class, 'destroy'])->name('destroy');
         Route::patch('/{paymentMethod}/set-default', [PaymentMethodController::class, 'setDefault'])->name('set-default');
+    });
+
+    Route::prefix('investments')->name('investments.')->group(function () {
+        Route::get('/', [InvestmentController::class, 'index'])->name('index');
+        Route::get('/create/{tree}', [InvestmentController::class, 'create'])->name('create');
+        Route::post('/', [InvestmentController::class, 'store'])->name('store');
+        Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
+        Route::get('/{investment}/confirmation', [InvestmentController::class, 'confirmation'])->name('confirmation');
+        Route::post('/{investment}/cancel', [InvestmentController::class, 'cancel'])->name('cancel');
+        Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up');
     });
 });
 

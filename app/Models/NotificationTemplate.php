@@ -41,7 +41,7 @@ class NotificationTemplate extends Model
 
     public function renderSubject(array $data = []): string
     {
-        if (!$this->subject) {
+        if (! $this->subject) {
             return '';
         }
 

@@ -3,7 +3,6 @@
 namespace App\Notifications;
 
 use App\Enums\NotificationType;
-use App\Models\User;
 
 class InvestmentNotification extends BaseNotification
 {
@@ -20,6 +19,7 @@ class InvestmentNotification extends BaseNotification
     protected function getDefaultBody(): string
     {
         $treeName = $this->data['tree_name'] ?? 'a new opportunity';
+
         return "A new investment opportunity is available: {$treeName}";
     }
 

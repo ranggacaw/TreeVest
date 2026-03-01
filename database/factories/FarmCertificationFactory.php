@@ -26,7 +26,7 @@ class FarmCertificationFactory extends Factory
             'certificate_number' => strtoupper(fake()->bothify('???-######')),
             'issued_date' => fake()->date('Y-m-d', '-1 year'),
             'expiry_date' => fake()->date('Y-m-d', '+2 years'),
-            'file_path' => fake()->optional(0.7)->uuid() . '.pdf',
+            'file_path' => fake()->optional(0.7)->uuid().'.pdf',
             'notes' => fake()->optional(0.3)->sentence(),
         ];
     }

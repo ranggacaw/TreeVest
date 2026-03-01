@@ -20,7 +20,7 @@ class TransactionFactory extends Factory
             'status' => TransactionStatus::Pending,
             'amount' => $this->faker->numberBetween(1000, 100000),
             'currency' => 'MYR',
-            'stripe_payment_intent_id' => 'pi_test_' . $this->faker->uuid(),
+            'stripe_payment_intent_id' => 'pi_test_'.$this->faker->uuid(),
             'metadata' => [],
             'stripe_metadata' => [],
         ];

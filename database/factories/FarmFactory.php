@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Enums\FarmStatus;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
-use Illuminate\Support\Facades\DB;
 
 /**
  * @extends \Illuminate\Database\Eloquent\Factories\Factory<\App\Models\Farm>
@@ -16,7 +15,7 @@ class FarmFactory extends Factory
     {
         return [
             'owner_id' => User::factory(),
-            'name' => fake()->company() . ' Farm',
+            'name' => fake()->company().' Farm',
             'description' => fake()->paragraphs(rand(2, 5), true),
             'address' => fake()->streetAddress(),
             'city' => fake()->city(),

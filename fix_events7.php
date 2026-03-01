@@ -6,7 +6,7 @@ $files = [
     'FruitCropDeleted' => 'FruitCrop',
     'TreeCreated' => 'Tree',
     'TreeUpdated' => 'Tree',
-    'TreeDeleted' => 'Tree'
+    'TreeDeleted' => 'Tree',
 ];
 
 foreach ($files as $class => $model) {

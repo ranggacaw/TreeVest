@@ -41,7 +41,7 @@ class FarmOwnerCropTest extends TestCase
         $farm = Farm::factory()->create(['owner_id' => $user->id]);
         $fruitType = FruitType::factory()->create();
         $crop = FruitCrop::factory()->create(['farm_id' => $farm->id, 'fruit_type_id' => $fruitType->id]);
-        
+
         $tree = Tree::factory()->create(['fruit_crop_id' => $crop->id]);
 
         $response = $this->actingAs($user)->from(route('farm-owner.crops.index'))
@@ -49,7 +49,7 @@ class FarmOwnerCropTest extends TestCase
 
         $response->assertRedirect(route('farm-owner.crops.index'));
         $response->assertSessionHas('error', 'Cannot delete fruit crop with existing trees.');
-        
+
         $this->assertDatabaseHas('fruit_crops', [
             'id' => $crop->id,
         ]);

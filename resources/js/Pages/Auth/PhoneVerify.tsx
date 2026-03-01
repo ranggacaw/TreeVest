@@ -25,11 +25,11 @@ export default function PhoneVerify() {
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
 
-        post(route('auth.phone.verify'));
+        post(route('phone.verify'));
     };
 
     const handleResendOtp = () => {
-        post(route('auth.phone.resend-otp'));
+        post(route('phone.resend-otp'));
     };
 
     const formatTime = (seconds: number) => {

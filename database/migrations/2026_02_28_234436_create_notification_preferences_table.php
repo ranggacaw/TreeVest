@@ -19,8 +19,8 @@ return new class extends Migration
             $table->boolean('enabled')->default(true);
             $table->timestamps();
 
-            $table->unique(['user_id', 'notification_type', 'channel']);
-            $table->index(['user_id', 'enabled']);
+            $table->unique(['user_id', 'notification_type', 'channel'], 'np_user_type_channel_unique');
+            $table->index(['user_id', 'enabled'], 'np_user_enabled_idx');
         });
     }
 

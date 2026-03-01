@@ -36,7 +36,7 @@ class FarmOwnerTreeTest extends TestCase
                 'age_coefficient' => 0.1,
                 'crop_premium' => 1.0,
                 'risk_multiplier' => 1.0,
-            ]
+            ],
         ]);
 
         $response->assertRedirect(route('farm-owner.trees.index'));
@@ -51,7 +51,7 @@ class FarmOwnerTreeTest extends TestCase
     {
         $user1 = User::factory()->create(['role' => 'farm_owner']);
         $user2 = User::factory()->create(['role' => 'farm_owner']);
-        
+
         $farm2 = Farm::factory()->create(['owner_id' => $user2->id]);
         $fruitType = FruitType::factory()->create();
         $crop2 = FruitCrop::factory()->create(['farm_id' => $farm2->id, 'fruit_type_id' => $fruitType->id]);
@@ -71,7 +71,7 @@ class FarmOwnerTreeTest extends TestCase
                 'age_coefficient' => 0.1,
                 'crop_premium' => 1.0,
                 'risk_multiplier' => 1.0,
-            ]
+            ],
         ]);
 
         $response->assertForbidden();
@@ -83,7 +83,7 @@ class FarmOwnerTreeTest extends TestCase
         $farm = Farm::factory()->create(['owner_id' => $user->id]);
         $fruitType = FruitType::factory()->create();
         $crop = FruitCrop::factory()->create(['farm_id' => $farm->id, 'fruit_type_id' => $fruitType->id]);
-        
+
         $tree = Tree::factory()->create([
             'fruit_crop_id' => $crop->id,
             'age_years' => 5,

@@ -21,7 +21,7 @@ class StoreFruitCropRequest extends FormRequest
             'farm_id' => 'required|exists:farms,id',
             'fruit_type_id' => 'required|exists:fruit_types,id',
             'variant' => 'required|max:100',
-            'harvest_cycle' => 'required|in:' . implode(',', array_column(HarvestCycle::cases(), 'value')),
+            'harvest_cycle' => 'required|in:'.implode(',', array_column(HarvestCycle::cases(), 'value')),
             'planted_date' => 'nullable|date',
             'description' => 'nullable|max:1000',
         ];

@@ -16,7 +16,7 @@ class TreeFilterService
 
         if (isset($filters['variant'])) {
             $query->whereHas('fruitCrop', function ($q) use ($filters) {
-                $q->where('variant', 'like', '%' . $filters['variant'] . '%');
+                $q->where('variant', 'like', '%'.$filters['variant'].'%');
             });
         }
 
@@ -33,7 +33,7 @@ class TreeFilterService
         }
 
         if (isset($filters['risk_rating']) && is_array($filters['risk_rating'])) {
-            $ratings = array_map(fn($r) => RiskRating::from($r), $filters['risk_rating']);
+            $ratings = array_map(fn ($r) => RiskRating::from($r), $filters['risk_rating']);
             $query->byRiskRating($ratings);
         }
 
@@ -44,7 +44,7 @@ class TreeFilterService
         }
 
         if (isset($filters['status']) && is_array($filters['status'])) {
-            $statuses = array_map(fn($s) => TreeLifecycleStage::from($s), $filters['status']);
+            $statuses = array_map(fn ($s) => TreeLifecycleStage::from($s), $filters['status']);
             $query->whereIn('status', $statuses);
         }
 

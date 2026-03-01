@@ -1,4 +1,5 @@
 <?php
+
 $events = [
     'FruitCropCreated' => ['FruitCrop', 'fruitCrop'],
     'FruitCropUpdated' => ['FruitCrop', 'fruitCrop'],
@@ -12,7 +13,7 @@ $events = [
 foreach ($events as $event => $models) {
     $modelName = $models[0];
     $varName = $models[1];
-    
+
     $content = <<<PHP
 <?php
 
@@ -74,6 +75,6 @@ class TreeStatusChanged
     }
 }
 PHP;
-file_put_contents("app/Events/TreeStatusChanged.php", $treeStatusContent);
+file_put_contents('app/Events/TreeStatusChanged.php', $treeStatusContent);
 
 echo "Fixed\n";

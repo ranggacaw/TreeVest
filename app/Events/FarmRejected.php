@@ -20,7 +20,7 @@ class FarmRejected
     public function broadcastOn(): array
     {
         return [
-            new PrivateChannel('farm.' . $this->farm->id),
+            new PrivateChannel('farm.'.$this->farm->id),
         ];
     }
 }

@@ -29,6 +29,10 @@ enum AuditEventType: string
     case SESSION_REVOKED = 'user.session.revoked';
     case ACCOUNT_DEACTIVATED = 'user.account.deactivated';
     case ACCOUNT_DELETION_REQUESTED = 'user.account.deletion_requested';
+    case INVESTMENT_INITIATED = 'investment.initiated';
+    case INVESTMENT_CONFIRMED = 'investment.confirmed';
+    case INVESTMENT_CANCELLED = 'investment.cancelled';
+    case INVESTMENT_TOP_UP = 'investment.top_up';
     case INVESTMENT_PURCHASED = 'investment_purchased';
     case PAYOUT_PROCESSED = 'payout_processed';
     case KYC_SUBMITTED = 'kyc_submitted';

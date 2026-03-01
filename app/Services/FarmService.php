@@ -5,9 +5,9 @@ namespace App\Services;
 use App\Enums\AuditEventType;
 use App\Enums\FarmStatus;
 use App\Events\FarmApproved;
+use App\Events\FarmReinstated;
 use App\Events\FarmRejected;
 use App\Events\FarmSuspended;
-use App\Events\FarmReinstated;
 use App\Http\Requests\StoreFarmRequest;
 use App\Http\Requests\UpdateFarmRequest;
 use App\Models\Farm;
@@ -225,7 +225,7 @@ class FarmService
     {
         foreach ($images as $index => $image) {
             if ($image->isValid()) {
-                $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$image->getClientOriginalExtension();
                 $path = $image->storeAs("farms/{$farm->id}", $filename, 'public');
 
                 FarmImage::create([
@@ -257,7 +257,7 @@ class FarmService
             ];
 
             if (isset($cert['file']) && $cert['file']->isValid()) {
-                $filename = Str::uuid() . '.' . $cert['file']->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$cert['file']->getClientOriginalExtension();
                 $path = $cert['file']->storeAs("farms/{$farm->id}/certifications", $filename, 'public');
                 $certData['file_path'] = $path;
             }

@@ -7,7 +7,6 @@ use App\Models\Article;
 use App\Models\Category;
 use App\Models\Tag;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
 use Inertia\Inertia;
 
 class ArticleController extends Controller
@@ -37,7 +36,7 @@ class ArticleController extends Controller
     public function store(Request $request)
     {
         $request->merge([
-            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title)
+            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title),
         ]);
 
         $validated = $request->validate([
@@ -92,7 +91,7 @@ class ArticleController extends Controller
     public function update(Request $request, Article $article)
     {
         $request->merge([
-            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title)
+            'slug' => $request->slug ?: \Illuminate\Support\Str::slug($request->title),
         ]);
 
         $validated = $request->validate([

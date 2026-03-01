@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class PaymentMethod extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'stripe_payment_method_id',
@@ -32,7 +33,7 @@ class PaymentMethod extends Model
     {
         static::creating(function ($paymentMethod) {
             $userHasPaymentMethods = $paymentMethod->user()->where('is_default', true)->exists();
-            if (!$userHasPaymentMethods) {
+            if (! $userHasPaymentMethods) {
                 $paymentMethod->is_default = true;
             }
         });

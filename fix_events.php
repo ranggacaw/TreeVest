@@ -1,4 +1,5 @@
 <?php
+
 $events = [
     'FruitCropCreated' => 'FruitCrop',
     'FruitCropUpdated' => 'FruitCrop',

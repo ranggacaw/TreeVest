@@ -12,9 +12,7 @@ class FruitCropDeleted
 {
     use Dispatchable, InteractsWithSockets, SerializesModels;
 
-    public function __construct(public FruitCrop $fruitCrop)
-    {
-    }
+    public function __construct(public FruitCrop $fruitCrop) {}
 
     public function broadcastOn(): array
     {

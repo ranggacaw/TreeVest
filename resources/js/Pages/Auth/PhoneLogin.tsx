@@ -22,7 +22,7 @@ export default function PhoneLogin() {
         e.preventDefault();
 
         if (usePhone) {
-            post(route('auth.phone.login'), {
+            post(route('phone.login'), {
                 onFinish: () => reset('phone'),
             });
         } else {
@@ -40,22 +40,20 @@ export default function PhoneLogin() {
                 <button
                     type="button"
                     onClick={() => setUsePhone(false)}
-                    className={`px-4 py-2 text-sm font-medium transition ${
-                        !usePhone
+                    className={`px-4 py-2 text-sm font-medium transition ${!usePhone
                             ? 'border-b-2 border-indigo-500 text-indigo-600'
                             : 'text-gray-600 hover:text-gray-900'
-                    }`}
+                        }`}
                 >
                     Email
                 </button>
                 <button
                     type="button"
                     onClick={() => setUsePhone(true)}
-                    className={`px-4 py-2 text-sm font-medium transition ${
-                        usePhone
+                    className={`px-4 py-2 text-sm font-medium transition ${usePhone
                             ? 'border-b-2 border-indigo-500 text-indigo-600'
                             : 'text-gray-600 hover:text-gray-900'
-                    }`}
+                        }`}
                 >
                     Phone
                 </button>

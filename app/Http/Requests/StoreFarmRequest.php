@@ -2,8 +2,6 @@
 
 namespace App\Http\Requests;
 
-use App\Enums\FarmStatus;
-
 class StoreFarmRequest extends BaseRequest
 {
     public function rules(): array

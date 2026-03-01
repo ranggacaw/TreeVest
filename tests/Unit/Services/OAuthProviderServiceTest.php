@@ -203,12 +203,18 @@ class OAuthProviderServiceTest extends TestCase
 
     protected function createSocialiteUser(string $id, string $email, string $name): SocialiteUser
     {
-        return new class ($id, $email, $name) implements \Laravel\Socialite\Contracts\User {
+        return new class($id, $email, $name) implements \Laravel\Socialite\Contracts\User
+        {
             public $token = 'access-token-123';
+
             public $refreshToken = 'refresh-token-456';
+
             public $expiresIn = 3600;
+
             protected $id;
+
             protected $email;
+
             protected $name;
 
             public function __construct(string $id, string $email, string $name)
