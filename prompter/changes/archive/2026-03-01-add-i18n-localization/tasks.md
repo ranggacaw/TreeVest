@@ -61,21 +61,21 @@
 
 ## 8. Tests
 
-- [ ] 8.1 Feature test `tests/Feature/LocaleMiddlewareTest.php`:
+- [x] 8.1 Feature test `tests/Feature/LocaleMiddlewareTest.php`:
   - Authenticated user with `locale = 'id'` gets Indonesian content-language header
   - Guest with `Accept-Language: id` gets Indonesian content-language header
   - Unsupported locale falls back to `en`
-- [ ] 8.2 Feature test `tests/Feature/ProfileLocaleTest.php`:
+- [x] 8.2 Feature test `tests/Feature/ProfileLocaleTest.php`:
   - Authenticated user can PATCH `/profile/locale` with a valid locale → DB updated
   - Submitting unsupported locale → validation error returned
   - Unauthenticated request → redirected to login
-- [ ] 8.3 Unit test `tests/Unit/SetLocaleMiddlewareTest.php`:
+- [x] 8.3 Unit test `tests/Unit/SetLocaleMiddlewareTest.php`:
   - Middleware resolves locale correctly for all three fallback layers (user pref → Accept-Language → default)
 
 ## 9. Project Conventions Update
 
-- [ ] 9.1 Update `prompter/project.md` — remove "Multi-language / multi-region expansion — deferred" from the Non-Goals section; add a note that i18n is active with `en` and `id` locales
+- [x] 9.1 Update `prompter/project.md` — remove "Multi-language / multi-region expansion — deferred" from the Non-Goals section; add a note that i18n is active with `en` and `id` locales
 
 ## Post-Implementation
 
-- [ ] Update `AGENTS.md` in the project root to reflect that `i18n-localization` capability is now in scope and `users.locale` column exists
+- [x] Update `AGENTS.md` in the project root to reflect that `i18n-localization` capability is now in scope and `users.locale` column exists

@@ -7,6 +7,39 @@
 
 ---
 
+## 0. 🌍 Internationalization (i18n) Capability
+
+**Status:** ✅ Implemented (English `en` and Bahasa Indonesia `id`)
+
+### Infrastructure
+- **Dual-system i18n:** Laravel `lang/` files for server-side strings, `react-i18next` for client-side React components
+- **Locale Storage:** `users.locale` column stores user's language preference (nullable, defaults to browser detection)
+- **Middleware:** `SetLocale` middleware handles locale resolution (user pref → Accept-Language → fallback)
+- **UI Components:** `LanguageSwitcher` component allows users to change locale preference
+- **Translation Files:**
+  - Server-side: `lang/en/` and `lang/id/` PHP files
+  - Client-side: `public/locales/en/translation.json` and `public/locales/id/translation.json`
+- **RTL Preparation:** HTML `dir` attribute and Tailwind `rtl:` variants prepared for future RTL languages
+
+### Supported Locales
+- **English (`en`)** - Default locale
+- **Bahasa Indonesia (`id`)** - Full translation support
+
+### Configuration
+Environment variables:
+- `APP_LOCALE=en` - Default locale
+- `APP_FALLBACK_LOCALE=en` - Fallback locale
+- `APP_AVAILABLE_LOCALES=en,id` - Comma-separated list of available locales
+
+### Features
+- Automatic browser locale detection for guests
+- Persistent user locale preference in database
+- Locale-aware date/time, number, and currency formatting using native `Intl` APIs
+- Server-side notification localization using Laravel's `__()` helper
+- Client-side UI component localization using `react-i18next`
+
+---
+
 ## 1. 📍 Project Summary
 
 **Business Purpose:** A digital investment platform that operates similarly to a stock exchange, allowing users to invest in individual fruit trees rather than traditional stocks or shares. Returns are generated based on actual agricultural harvest cycles.
@@ -433,7 +466,7 @@ Admin Approval → Listed on Marketplace
 
 | Entity | Key Attributes | Notes |
 |--------|---------------|-------|
-| **User** | id, email, phone, role, kyc_status, kyc_verified_at, kyc_expires_at, 2fa_enabled | Polymorphic: Investor, FarmOwner, Admin |
+| **User** | id, email, phone, role, kyc_status, kyc_verified_at, kyc_expires_at, 2fa_enabled, locale | Polymorphic: Investor, FarmOwner, Admin. `locale` stores user's language preference (e.g., 'en', 'id'). |
 | **Farm** | id, owner_id, name, description, address, city, state, country, postal_code, coordinates, size_hectares, capacity_trees, status, soil_type, climate, historical_performance, virtual_tour_url, rejection_reason, approved_at, approved_by | Geospatial data, images, virtual tours, status workflow |
 | **FarmImage** | id, farm_id, file_path, original_filename, mime_type, file_size, is_featured, sort_order | Farm gallery images |
 | **FarmCertification** | id, farm_id, name, issuer, certificate_number, issued_date, expiry_date, file_path, notes | Farm certifications and permits |

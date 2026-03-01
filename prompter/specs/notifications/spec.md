@@ -5,7 +5,7 @@ TBD - created by archiving change add-notification-system. Update Purpose after 
 ## Requirements
 ### Requirement: Multi-Channel Notification Dispatch
 
-The system SHALL support dispatching notifications through multiple channels: database (in-app), email, SMS, and broadcast (web push). Each notification type (investment, harvest, payment, market, system, **health**, **weather**) SHALL be deliverable via any channel based on user preferences.
+The system SHALL support dispatching notifications through multiple channels: database (in-app), email, SMS, and broadcast (web push). Each notification type (investment, harvest, payment, market, system, **health**, **weather**) SHALL be deliverable via any channel based on user preferences. Notification content SHALL be rendered in the recipient user's stored locale, falling back to `APP_LOCALE` when no preference is set.
 
 #### Scenario: Investment notification sent via email and database
 - **WHEN** an investment opportunity is created
@@ -38,7 +38,15 @@ The system SHALL support dispatching notifications through multiple channels: da
 - **THEN** the system sends SMS: "Treevest: Heavy rainfall alert for [Farm Name]. Risk of flooding. View: [short link]"
 - **AND** sends email with full details and action button
 
----
+#### Scenario: Notification content rendered in recipient's locale
+- **WHEN** a notification is dispatched to a user with `locale = 'id'`
+- **THEN** the notification subject line and body text are rendered using `lang/id/messages.php` strings via `__()` helper
+- **AND** the notification content is in Bahasa Indonesia
+
+#### Scenario: Notification falls back to English for users without locale preference
+- **WHEN** a notification is dispatched to a user with `locale = null`
+- **THEN** the notification content falls back to `APP_LOCALE` (English)
+- **AND** the notification subject and body text are rendered in English
 
 ### Requirement: Notification Type Classification
 
