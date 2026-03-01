@@ -12,6 +12,6 @@ enum ReportType: string
         return match ($this) {
             self::ProfitLoss => 'Profit & Loss',
             self::TaxSummary => 'Tax Summary',
-        ];
+        };
     }
 }

@@ -50,4 +50,5 @@ enum AuditEventType: string
     case FARM_SUSPENDED = 'farm.suspended';
     case FARM_REINSTATED = 'farm.reinstated';
     case UNAUTHORIZED_ACCESS_ATTEMPT = 'unauthorized_access_attempt';
+    case ADMIN_AUDIT_LOG_ACCESSED = 'admin_audit_log_accessed';
 }

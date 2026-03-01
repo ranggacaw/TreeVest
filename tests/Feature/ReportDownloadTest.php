@@ -2,8 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ReportType;
 use App\Enums\GeneratedReportStatus;
+use App\Enums\ReportType;
 use App\Models\GeneratedReport;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

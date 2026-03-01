@@ -2,10 +2,14 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FarmApprovalController;
+use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
+use App\Http\Controllers\Admin\KycReviewController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NotificationTemplateController as AdminNotificationTemplateController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ArticleController;
 use App\Http\Controllers\Auth\OAuthController;
 use App\Http\Controllers\Auth\TwoFactorController;
@@ -114,6 +118,20 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::post('articles/{article}/publish', [AdminArticleController::class, 'publish'])->name('articles.publish');
         Route::post('articles/{article}/unpublish', [AdminArticleController::class, 'unpublish'])->name('articles.unpublish');
 
+        Route::resource('users', UserController::class);
+        Route::patch('users/{user}/role', [UserController::class, 'update'])->name('users.update-role');
+        Route::post('users/{user}/suspend', [UserController::class, 'suspend'])->name('users.suspend');
+        Route::post('users/{user}/reactivate', [UserController::class, 'reactivate'])->name('users.reactivate');
+
+        Route::resource('kyc', KycReviewController::class);
+        Route::post('kyc/{verification}/approve', [KycReviewController::class, 'approve'])->name('kyc.approve');
+        Route::post('kyc/{verification}/reject', [KycReviewController::class, 'reject'])->name('kyc.reject');
+        Route::get('kyc/documents/{document}/preview', [KycReviewController::class, 'documentPreview'])->name('kyc.document-preview');
+
+        Route::resource('investments', AdminInvestmentController::class);
+
+        Route::resource('audit-logs', AuditLogController::class)->only(['index', 'show']);
+
         Route::resource('farms', FarmApprovalController::class);
         Route::post('farms/{farm}/approve', [FarmApprovalController::class, 'approve'])->name('farms.approve');
         Route::post('farms/{farm}/reject', [FarmApprovalController::class, 'reject'])->name('farms.reject');
@@ -195,7 +213,7 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::post('/pdf', [ReportController::class, 'requestPdf'])->name('pdf.request')->middleware('throttle:report-pdf');
         Route::get('/csv', [ReportController::class, 'exportCsv'])->name('csv');
         Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
-        Route::get('/tax', fn() => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
+        Route::get('/tax', fn () => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
         Route::get('/tax/{year}', [TaxReportController::class, 'show'])->name('tax.show');
         Route::post('/tax/{year}/pdf', [TaxReportController::class, 'requestPdf'])->name('tax.pdf.request')->middleware('throttle:report-pdf');
         Route::get('/tax/{year}/csv', [TaxReportController::class, 'exportCsv'])->name('tax.csv');

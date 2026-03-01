@@ -36,6 +36,8 @@ class User extends Authenticatable
         'kyc_status',
         'kyc_verified_at',
         'kyc_expires_at',
+        'suspended_at',
+        'suspended_reason',
     ];
 
     /**
@@ -60,6 +62,7 @@ class User extends Authenticatable
             'phone_verified_at' => 'datetime',
             'two_factor_enabled_at' => 'datetime',
             'last_login_at' => 'datetime',
+            'suspended_at' => 'datetime',
             'password' => 'hashed',
             'phone' => 'encrypted',
             'kyc_document_url' => 'encrypted',
@@ -115,6 +118,11 @@ class User extends Authenticatable
     public function isAdmin(): bool
     {
         return $this->role === 'admin';
+    }
+
+    public function isSuspended(): bool
+    {
+        return $this->suspended_at !== null;
     }
 
     public function hasRole(string $role): bool

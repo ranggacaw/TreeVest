@@ -13,7 +13,6 @@ use App\Models\GeneratedReport;
 use App\Models\Investment;
 use App\Services\CsvReportService;
 use App\Services\ReportDataService;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Storage;
 use Inertia\Inertia;

@@ -46,7 +46,7 @@ class PdfReportService
         $parameters = $report->parameters ?? [];
 
         if ($report->report_type === ReportType::ProfitLoss) {
-            $reportDataService = new ReportDataService();
+            $reportDataService = new ReportDataService;
             $profitLossData = $reportDataService->getProfitLossData($user, $parameters);
             $performanceData = $reportDataService->getPerformanceData($user, $parameters);
 
@@ -60,7 +60,7 @@ class PdfReportService
         }
 
         if ($report->report_type === ReportType::TaxSummary) {
-            $reportDataService = new ReportDataService();
+            $reportDataService = new ReportDataService;
             $year = $parameters['year'] ?? now()->year;
             $taxData = $reportDataService->getTaxSummaryData($user, $year);
 

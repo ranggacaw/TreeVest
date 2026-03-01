@@ -2,12 +2,11 @@
 
 namespace Tests\Feature;
 
-use App\Enums\ReportType;
 use App\Enums\GeneratedReportStatus;
+use App\Enums\ReportType;
 use App\Models\Farm;
 use App\Models\FruitCrop;
 use App\Models\FruitType;
-use App\Models\GeneratedReport;
 use App\Models\Investment;
 use App\Models\Payout;
 use App\Models\Tree;
@@ -73,10 +72,11 @@ class TaxReportControllerTest extends TestCase
             ->get(route('reports.tax.show', ['year' => 2024]));
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investor/Reports/Tax/Show')
-            ->where('year', 2024)
-            ->has('taxData')
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investor/Reports/Tax/Show')
+                ->where('year', 2024)
+                ->has('taxData')
         );
     }
 
@@ -108,11 +108,12 @@ class TaxReportControllerTest extends TestCase
             ->get(route('reports.tax.show', ['year' => 2024]));
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->where('year', 2024)
-            ->where('taxData.summary.totalIncomeCents', 500000)
-            ->where('taxData.summary.totalInvestedCents', 1000000)
-            ->where('taxData.summary.netCents', -500000)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->where('year', 2024)
+                ->where('taxData.summary.totalIncomeCents', 500000)
+                ->where('taxData.summary.totalInvestedCents', 1000000)
+                ->where('taxData.summary.netCents', -500000)
         );
     }
 
@@ -129,8 +130,9 @@ class TaxReportControllerTest extends TestCase
             ->actingAs($this->investor)
             ->get(route('reports.tax.show', ['year' => 2024]));
 
-        $response->assertInertia(fn ($page) => $page
-            ->where('taxData.summary.totalInvestedCents', 1000000)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->where('taxData.summary.totalInvestedCents', 1000000)
         );
     }
 
@@ -147,8 +149,9 @@ class TaxReportControllerTest extends TestCase
             ->actingAs($this->investor)
             ->get(route('reports.tax.show', ['year' => 2024]));
 
-        $response->assertInertia(fn ($page) => $page
-            ->where('taxData.summary.totalIncomeCents', 500000)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->where('taxData.summary.totalIncomeCents', 500000)
         );
     }
 

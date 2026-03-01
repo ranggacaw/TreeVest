@@ -1,10 +1,30 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link, useForm } from '@inertiajs/react';
-import { PageProps } from '@/types';
+import { Head, Link } from '@inertiajs/react';
 
-export default function Index({ auth, fruitTypes }: PageProps<{ fruitTypes: any }>) {
+interface FruitType {
+    id: number;
+    name: string;
+    slug: string;
+    description: string | null;
+    is_active: boolean;
+    fruit_crops_count: number;
+    created_at: string;
+}
+
+interface FruitTypesData {
+    data: FruitType[];
+    current_page: number;
+    last_page: number;
+    total: number;
+    per_page: number;
+}
+
+interface Filters {
+    is_active?: string;
+}
+
+export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesData; filters: Filters }) {
     return (
-        <AuthenticatedLayout header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Fruit Types</h2>}>
+        <>
             <Head title="Fruit Types" />
 
             <div className="py-12">
@@ -21,6 +41,24 @@ export default function Index({ auth, fruitTypes }: PageProps<{ fruitTypes: any 
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
+                            <form method="get" className="mb-6 flex gap-4">
+                                <select
+                                    name="is_active"
+                                    defaultValue={filters.is_active}
+                                    className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                >
+                                    <option value="">All Status</option>
+                                    <option value="1">Active</option>
+                                    <option value="0">Inactive</option>
+                                </select>
+                                <button
+                                    type="submit"
+                                    className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
+                                >
+                                    Filter
+                                </button>
+                            </form>
+
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
@@ -32,7 +70,7 @@ export default function Index({ auth, fruitTypes }: PageProps<{ fruitTypes: any 
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
-                                    {fruitTypes.data.map((type: any) => (
+                                    {fruitTypes.data.map((type) => (
                                         <tr key={type.id}>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{type.name}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{type.slug}</td>
@@ -57,10 +95,36 @@ export default function Index({ auth, fruitTypes }: PageProps<{ fruitTypes: any 
                                     )}
                                 </tbody>
                             </table>
+
+                            {fruitTypes.last_page > 1 && (
+                                <div className="mt-4 flex justify-center">
+                                    <div className="flex gap-2">
+                                        {fruitTypes.current_page > 1 && (
+                                            <Link
+                                                href={route('admin.fruit-types.index', { page: fruitTypes.current_page - 1, ...filters })}
+                                                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            >
+                                                Previous
+                                            </Link>
+                                        )}
+                                        <span className="px-3 py-1 text-gray-700">
+                                            Page {fruitTypes.current_page} of {fruitTypes.last_page}
+                                        </span>
+                                        {fruitTypes.current_page < fruitTypes.last_page && (
+                                            <Link
+                                                href={route('admin.fruit-types.index', { page: fruitTypes.current_page + 1, ...filters })}
+                                                className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
+                                            >
+                                                Next
+                                            </Link>
+                                        )}
+                                    </div>
+                                </div>
+                            )}
                         </div>
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </>
     );
 }

@@ -2,9 +2,8 @@
 
 namespace Tests\Feature;
 
-use App\Enums\InvestmentStatus;
-use App\Enums\ReportType;
 use App\Enums\GeneratedReportStatus;
+use App\Enums\ReportType;
 use App\Models\Farm;
 use App\Models\FruitCrop;
 use App\Models\FruitType;
@@ -76,11 +75,12 @@ class ReportControllerTest extends TestCase
             ->get(route('reports.index'));
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investor/Reports/Index')
-            ->has('profitLoss')
-            ->has('performance')
-            ->has('filterOptions')
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investor/Reports/Index')
+                ->has('profitLoss')
+                ->has('performance')
+                ->has('filterOptions')
         );
     }
 
@@ -108,11 +108,12 @@ class ReportControllerTest extends TestCase
             ->actingAs($this->investor)
             ->get(route('reports.index'));
 
-        $response->assertInertia(fn ($page) => $page
-            ->component('Investor/Reports/Index')
-            ->where('profitLoss.summary.totalInvestedCents', 1000000)
-            ->where('profitLoss.summary.totalPayoutsCents', 500000)
-            ->where('profitLoss.summary.netCents', -500000)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->component('Investor/Reports/Index')
+                ->where('profitLoss.summary.totalInvestedCents', 1000000)
+                ->where('profitLoss.summary.totalPayoutsCents', 500000)
+                ->where('profitLoss.summary.netCents', -500000)
         );
     }
 
@@ -133,8 +134,9 @@ class ReportControllerTest extends TestCase
             ]));
 
         $response->assertStatus(200);
-        $response->assertInertia(fn ($page) => $page
-            ->where('profitLoss.summary.totalInvestedCents', 1000000)
+        $response->assertInertia(
+            fn ($page) => $page
+                ->where('profitLoss.summary.totalInvestedCents', 1000000)
         );
     }
 

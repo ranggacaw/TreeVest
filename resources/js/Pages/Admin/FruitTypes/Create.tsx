@@ -48,7 +48,7 @@ export default function Create({ auth }: PageProps) {
                                         className="mt-1 block w-full"
                                         value={data.slug}
                                         onChange={e => setData('slug', e.target.value)}
-                                        required
+                                        placeholder="Auto-generated from name if left blank"
                                     />
                                     <InputError message={errors.slug} className="mt-2" />
                                 </div>

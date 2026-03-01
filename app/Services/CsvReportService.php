@@ -9,7 +9,7 @@ class CsvReportService
 {
     public function streamProfitLoss(User $user, array $filters = [])
     {
-        $reportDataService = new ReportDataService();
+        $reportDataService = new ReportDataService;
         $data = $reportDataService->getProfitLossData($user, $filters);
 
         $headers = [
@@ -61,7 +61,7 @@ class CsvReportService
 
     public function streamTaxSummary(User $user, int $year)
     {
-        $reportDataService = new ReportDataService();
+        $reportDataService = new ReportDataService;
         $data = $reportDataService->getTaxSummaryData($user, $year);
 
         $headers = [

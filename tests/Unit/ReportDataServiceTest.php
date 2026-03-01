@@ -2,7 +2,6 @@
 
 namespace Tests\Unit;
 
-use App\Enums\InvestmentStatus;
 use App\Enums\PayoutStatus;
 use App\Models\Farm;
 use App\Models\FruitCrop;
@@ -69,7 +68,7 @@ class ReportDataServiceTest extends TestCase
             'status' => PayoutStatus::Completed,
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor);
 
         $this->assertCount(1, $data['rows']);
@@ -98,7 +97,7 @@ class ReportDataServiceTest extends TestCase
             'purchase_date' => '2025-01-01',
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor, [
             'from' => '2024-01-01',
             'to' => '2024-12-31',
@@ -131,7 +130,7 @@ class ReportDataServiceTest extends TestCase
             'amount_cents' => 2000000,
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor, [
             'farm_id' => $this->farm->id,
         ]);
@@ -154,7 +153,7 @@ class ReportDataServiceTest extends TestCase
             'amount_cents' => 2000000,
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor, [
             'investment_id' => $investment1->id,
         ]);
@@ -171,7 +170,7 @@ class ReportDataServiceTest extends TestCase
             'amount_cents' => 1000000,
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor);
 
         $this->assertCount(1, $data['rows']);
@@ -196,7 +195,7 @@ class ReportDataServiceTest extends TestCase
             'amount_cents' => 2000000,
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getProfitLossData($this->investor);
 
         $this->assertCount(1, $data['rows']);
@@ -226,7 +225,7 @@ class ReportDataServiceTest extends TestCase
             'completed_at' => '2024-12-01',
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getTaxSummaryData($this->investor, 2024);
 
         $this->assertEquals(2024, $data['year']);
@@ -258,7 +257,7 @@ class ReportDataServiceTest extends TestCase
             'completed_at' => '2024-12-01',
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getTaxSummaryData($this->investor, 2024);
 
         $this->assertCount(1, $data['income']['rows']);
@@ -295,7 +294,7 @@ class ReportDataServiceTest extends TestCase
             'completed_at' => '2024-12-01',
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getTaxSummaryData($this->investor, 2024);
 
         $this->assertEquals(4500000, $data['summary']['totalInvestedCents']);
@@ -319,7 +318,7 @@ class ReportDataServiceTest extends TestCase
             'completed_at' => '2024-12-01',
         ]);
 
-        $service = new ReportDataService();
+        $service = new ReportDataService;
         $data = $service->getPerformanceData($this->investor);
 
         $this->assertIsArray($data);

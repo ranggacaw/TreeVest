@@ -55,6 +55,8 @@ class FarmApprovalController extends Controller
 
         $farm = $this->farmService->approveFarm($farm, auth()->user());
 
+        DashboardController::invalidateMetricsCache();
+
         return back()->with('success', 'Farm approved successfully.');
     }
 
@@ -68,6 +70,8 @@ class FarmApprovalController extends Controller
 
         $farm = $this->farmService->rejectFarm($farm, auth()->user(), $request->input('reason'));
 
+        DashboardController::invalidateMetricsCache();
+
         return back()->with('success', 'Farm rejected.');
     }
 
@@ -77,6 +81,8 @@ class FarmApprovalController extends Controller
 
         $farm = $this->farmService->suspendFarm($farm, auth()->user());
 
+        DashboardController::invalidateMetricsCache();
+
         return back()->with('success', 'Farm suspended successfully.');
     }
 
@@ -85,6 +91,8 @@ class FarmApprovalController extends Controller
         $this->authorize('reinstate farms');
 
         $farm = $this->farmService->reinstateFarm($farm, auth()->user());
+
+        DashboardController::invalidateMetricsCache();
 
         return back()->with('success', 'Farm reinstated successfully.');
     }

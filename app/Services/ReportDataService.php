@@ -2,11 +2,9 @@
 
 namespace App\Services;
 
-use App\Enums\InvestmentStatus;
 use App\Enums\PayoutStatus;
 use App\Models\Investment;
 use App\Models\User;
-use Illuminate\Support\Collection;
 
 class ReportDataService
 {

@@ -11,10 +11,8 @@ use App\Models\User;
 use App\Services\PdfReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
-use Mockery;
 use Tests\TestCase;
 
 class GeneratePdfReportJobTest extends TestCase
