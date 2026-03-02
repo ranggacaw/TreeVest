@@ -47,7 +47,7 @@ export default function Create({ auth, activeInvestments }: Props) {
                                         <option value="">-- Select an investment --</option>
                                         {activeInvestments.map((investment) => (
                                             <option key={investment.id} value={investment.id}>
-                                                Tree #{investment.tree.identifier} - {investment.tree.fruit_type.name} ({investment.tree.fruit_crop.variant}) - {investment.formatted_amount}
+                                                Tree #{investment.tree.identifier} - {investment.tree.fruit_type?.name} ({investment.tree.fruit_crop?.variant}) - {investment.formatted_amount}
                                             </option>
                                         ))}
                                     </select>
@@ -115,7 +115,7 @@ export default function Create({ auth, activeInvestments }: Props) {
                                 <div className="mb-6 p-4 bg-yellow-50 border border-yellow-200 rounded">
                                     <h3 className="text-sm font-semibold text-yellow-800 mb-2">Risk Disclosure</h3>
                                     <p className="text-xs text-yellow-700">
-                                        By listing this investment for sale, you acknowledge that the sale is subject to buyer availability and platform terms. 
+                                        By listing this investment for sale, you acknowledge that the sale is subject to buyer availability and platform terms.
                                         Harvest payouts will continue to accrue to the current owner of the investment.
                                     </p>
                                 </div>

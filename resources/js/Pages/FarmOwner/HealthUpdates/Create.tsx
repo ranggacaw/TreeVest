@@ -35,28 +35,10 @@ export default function Create({ farms }: Props) {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    
-    const formData = new FormData();
-    formData.append('fruit_crop_id', data.fruit_crop_id);
-    formData.append('severity', data.severity);
-    formData.append('update_type', data.update_type);
-    formData.append('title', data.title);
-    formData.append('description', data.description);
-    formData.append('visibility', data.visibility);
-
-    photos.forEach((photo) => {
-      formData.append('photos[]', photo);
-    });
-
     post(route('farm-owner.health-updates.store'), {
-      data: formData,
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
+      forceFormData: true,
     });
   };
-
-  const selectedFarmCrops = farms.flatMap(f => f.fruit_crops.map(c => ({ ...c, farmName: f.name })));
 
   return (
     <AuthenticatedLayout>
@@ -180,8 +162,8 @@ export default function Create({ farms }: Props) {
               onChange={setPhotos}
               maxPhotos={5}
             />
-            {errors.photos && (
-              <p className="mt-1 text-sm text-red-600">{errors.photos}</p>
+            {(errors as Record<string, string>).photos && (
+              <p className="mt-1 text-sm text-red-600">{(errors as Record<string, string>).photos}</p>
             )}
           </div>
 

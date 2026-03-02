@@ -34,7 +34,7 @@ interface Verification {
 }
 
 export default function Show() {
-    const { verification } = usePage<{ verification: Verification }>().props;
+    const { verification } = usePage().props as unknown as { verification: Verification };
     const { data, setData, post, errors } = useForm({
         reason: '',
     });

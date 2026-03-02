@@ -1,0 +1,18 @@
+resources/js/Pages/Admin/Harvests/Index.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/Admin/MarketPrices/Create.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/Admin/MarketPrices/Edit.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/Admin/MarketPrices/Index.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/FarmOwner/Harvests/Create.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/FarmOwner/Harvests/Index.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/FarmOwner/Harvests/Show.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/Investor/Payouts/Index.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+resources/js/Pages/Investor/Payouts/Show.tsx(6,16): error TS2322: Type '{ children: Element[]; title: string; }' is not assignable to type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.
+  Property 'title' does not exist on type 'IntrinsicAttributes & { header?: ReactNode; } & { children?: ReactNode; }'.

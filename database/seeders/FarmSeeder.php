@@ -13,6 +13,9 @@ class FarmSeeder extends Seeder
 {
     public function run(): void
     {
+        $admin = User::where('email', 'admin@treevest.com')->first();
+        $adminId = $admin ? $admin->id : null;
+
         $farmOwner = User::factory()->create([
             'name' => 'Ahmad Farm Owner',
             'email' => 'ahmad@farm.example.com',
@@ -37,7 +40,7 @@ class FarmSeeder extends Seeder
             'historical_performance' => 'Excellent - Average yield of 500 fruits per tree annually',
             'status' => FarmStatus::ACTIVE,
             'approved_at' => now(),
-            'approved_by' => 1,
+            'approved_by' => $adminId,
         ]);
 
         FarmCertification::create([
@@ -77,7 +80,7 @@ class FarmSeeder extends Seeder
             'historical_performance' => 'Good - Consistent yield of 300 fruits per tree annually',
             'status' => FarmStatus::ACTIVE,
             'approved_at' => now(),
-            'approved_by' => 1,
+            'approved_by' => $adminId,
         ]);
 
         FarmCertification::create([
@@ -152,7 +155,7 @@ class FarmSeeder extends Seeder
             'historical_performance' => 'Good - 2 harvests per year',
             'status' => FarmStatus::ACTIVE,
             'approved_at' => now(),
-            'approved_by' => 1,
+            'approved_by' => $adminId,
         ]);
 
         FarmCertification::create([

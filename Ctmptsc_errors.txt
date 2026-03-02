@@ -1,0 +1,22 @@
+resources/js/Pages/Admin/AuditLogs/Show.tsx(22,34): error TS2344: Type '{ auditLog: AuditLog; }' does not satisfy the constraint 'PageProps'.
+  Type '{ auditLog: AuditLog; }' is missing the following properties from type 'PageProps': locale, availableLocales, isRtl
+resources/js/Pages/Admin/Harvests/Index.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/Admin/Investments/Show.tsx(65,36): error TS2344: Type '{ investment: Investment; }' does not satisfy the constraint 'PageProps'.
+  Type '{ investment: Investment; }' is missing the following properties from type 'PageProps': locale, availableLocales, isRtl
+resources/js/Pages/Admin/Kyc/Show.tsx(37,38): error TS2344: Type '{ verification: Verification; }' does not satisfy the constraint 'PageProps'.
+  Type '{ verification: Verification; }' is missing the following properties from type 'PageProps': locale, availableLocales, isRtl
+resources/js/Pages/Admin/MarketPrices/Create.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/Admin/MarketPrices/Edit.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/Admin/MarketPrices/Index.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/Admin/Users/Show.tsx(36,27): error TS2344: Type '{ user: User & { kycVerifications: { id: number; status: string; created_at: string; }[]; }; } & { auditEvents: AuditLog[]; }' does not satisfy the constraint 'PageProps'.
+  Type '{ user: User & { kycVerifications: { id: number; status: string; created_at: string; }[]; }; } & { auditEvents: AuditLog[]; }' is missing the following properties from type 'PageProps': locale, availableLocales, isRtl
+resources/js/Pages/FarmOwner/Harvests/Create.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/FarmOwner/Harvests/Index.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/FarmOwner/Harvests/Show.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/FarmOwner/HealthUpdates/Create.tsx(52,7): error TS2353: Object literal may only specify known properties, and 'data' does not exist in type 'UseFormSubmitOptions'.
+resources/js/Pages/FarmOwner/HealthUpdates/Create.tsx(183,21): error TS2339: Property 'photos' does not exist on type 'FormDataErrors<{ fruit_crop_id: string; severity: string; update_type: string; title: string; description: string; visibility: string; }>'.
+resources/js/Pages/FarmOwner/HealthUpdates/Create.tsx(184,64): error TS2339: Property 'photos' does not exist on type 'FormDataErrors<{ fruit_crop_id: string; severity: string; update_type: string; title: string; description: string; visibility: string; }>'.
+resources/js/Pages/Investor/Payouts/Index.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/Investor/Payouts/Show.tsx(2,27): error TS2307: Cannot find module '@/Layouts' or its corresponding type declarations.
+resources/js/Pages/SecondaryMarket/Create.tsx(50,87): error TS18048: 'investment.tree.fruit_type' is possibly 'undefined'.
+resources/js/Pages/SecondaryMarket/Create.tsx(50,122): error TS18048: 'investment.tree.fruit_crop' is possibly 'undefined'.

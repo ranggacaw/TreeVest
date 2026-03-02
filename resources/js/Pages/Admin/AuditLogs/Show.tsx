@@ -1,4 +1,5 @@
 import { Head, Link, usePage } from '@inertiajs/react';
+import { PageProps } from '@/types';
 
 interface User {
     id: number;
@@ -19,7 +20,7 @@ interface AuditLog {
 }
 
 export default function Show() {
-    const { auditLog } = usePage<{ auditLog: AuditLog }>().props;
+    const { auditLog } = usePage().props as unknown as { auditLog: AuditLog };
 
     return (
         <>

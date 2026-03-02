@@ -33,7 +33,7 @@ interface Props {
 }
 
 export default function Show() {
-    const props = usePage<{ user: User & { kycVerifications: { id: number; status: string; created_at: string }[] } } & { auditEvents: AuditLog[] }>().props;
+    const props = usePage().props as unknown as { user: User & { kycVerifications: { id: number; status: string; created_at: string }[] }; auditEvents: AuditLog[] };
     const { user, auditEvents } = props;
     const { data, setData, post, errors } = useForm({
         role: user.role,

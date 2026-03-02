@@ -22,7 +22,7 @@ return [
     */
     'csp' => [
         'enabled' => true,
-        'policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com; connect-src 'self' ws://localhost:5173 http://localhost:5173 https://api.stripe.com https://maps.googleapis.com;",
+        'policy' => "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com https://maps.googleapis.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://fonts.bunny.net; font-src 'self' data: https://fonts.gstatic.com; img-src 'self' data: https://maps.gstatic.com https://maps.googleapis.com; connect-src 'self' ws://localhost:5173 http://localhost:5173 https://api.stripe.com https://maps.googleapis.com; frame-src 'self' https://js.stripe.com;",
     ],
 
 ];

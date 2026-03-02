@@ -62,7 +62,7 @@ interface Investment {
 }
 
 export default function Show() {
-    const { investment } = usePage<{ investment: Investment }>().props;
+    const { investment } = usePage().props as unknown as { investment: Investment };
 
     const getStatusBadge = (status: string) => {
         switch (status) {
