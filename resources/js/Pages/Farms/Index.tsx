@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { useForm, usePage } from '@inertiajs/react';
+import Navbar from '@/Components/Navbar';
 import FarmCard from '@/Components/FarmCard';
 import FarmMap from '@/Components/FarmMap';
 import { Farm } from '@/types';
@@ -29,6 +30,7 @@ export default function Index({ farms, filters, options }: Props) {
 
     return (
         <div className="min-h-screen bg-[#FDFBF7] font-sans pb-16">
+            <Navbar />
             {/* Hero Section */}
             <div className="bg-pine text-white py-16 relative overflow-hidden">
                 <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>

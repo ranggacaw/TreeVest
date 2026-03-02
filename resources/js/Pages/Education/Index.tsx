@@ -1,4 +1,5 @@
 import { Head } from '@inertiajs/react';
+import Navbar from '@/Components/Navbar';
 import { Link } from '@inertiajs/react';
 
 interface Article {
@@ -76,6 +77,7 @@ export default function EducationIndex({ articles, categories, filters }: Props)
             <Head title="Education Center" />
 
             <div className="min-h-screen bg-gray-50">
+                <Navbar />
                 <div className="bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                         <h1 className="text-3xl font-bold text-gray-900">Education Center</h1>
