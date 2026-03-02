@@ -46,7 +46,7 @@ Route::get('/', function () {
         'laravelVersion' => Application::VERSION,
         'phpVersion' => PHP_VERSION,
     ]);
-});
+})->name('home');
 
 Route::get('/dashboard', function () {
     return Inertia::render('Dashboard');
@@ -291,3 +291,14 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/market-listings')->name
     Route::get('/', [\App\Http\Controllers\Admin\MarketListingController::class, 'index'])->name('index');
     Route::delete('/{listing}', [\App\Http\Controllers\Admin\MarketListingController::class, 'destroy'])->name('destroy');
 });
+
+// Fallback for missing storage images
+Route::get('storage/{path}', function ($path) {
+    if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $path)) {
+        $filename = pathinfo($path, PATHINFO_FILENAME);
+        // Replace dashes and underscores with spaces for a better avatar letter
+        $name = str_replace(['-', '_'], ' ', $filename);
+        return redirect('https://placehold.co/600x400/png?text=' . urlencode($name));
+    }
+    abort(404);
+})->where('path', '.*');

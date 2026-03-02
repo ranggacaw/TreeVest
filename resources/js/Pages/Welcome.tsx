@@ -52,7 +52,7 @@ export default function Welcome({ auth }: PageProps) {
                 {/* Hero Section */}
                 <main className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 lg:px-12 max-w-7xl mx-auto overflow-hidden">
                     <div className="grid lg:grid-cols-2 gap-12 lg:gap-8 items-center">
-                        
+
                         {/* Left Column: Text */}
                         <div className="max-w-2xl relative z-10">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sage-100 text-pine-500 font-medium text-sm mb-6">
@@ -60,21 +60,21 @@ export default function Welcome({ auth }: PageProps) {
                                 Now open for Durian & Mango investments
                             </div>
                             <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-pine-800 leading-tight mb-6">
-                                Invest in roots. <br/>
+                                Invest in roots. <br />
                                 <span className="text-earth">Harvest returns.</span>
                             </h1>
                             <p className="text-lg lg:text-xl text-pine-500/80 mb-10 leading-relaxed">
                                 Back verified agricultural farms by investing in individual fruit trees. Track their growth, and earn returns based on actual harvests. A tangible asset for your portfolio.
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
-                                <Link 
-                                    href="/register" 
+                                <Link
+                                    href="/register"
                                     className="px-8 py-4 rounded-full bg-sun text-pine-900 font-bold text-center text-lg hover:bg-yellow-500 transition-all shadow-card transform hover:-translate-y-1"
                                 >
                                     View Available Trees
                                 </Link>
-                                <a 
-                                    href="#how-it-works" 
+                                <a
+                                    href="#how-it-works"
                                     className="px-8 py-4 rounded-full bg-sand-100 border border-pine-200 text-pine-800 font-semibold text-center text-lg hover:bg-sand-200 transition-all"
                                 >
                                     How it works
@@ -86,9 +86,9 @@ export default function Welcome({ auth }: PageProps) {
                         <div className="relative">
                             <div className="absolute inset-0 bg-sage-200 rounded-[3rem] transform rotate-3 scale-105 opacity-50"></div>
                             <div className="relative h-[500px] lg:h-[600px] w-full rounded-[2.5rem] overflow-hidden shadow-soft border-4 border-white z-10">
-                                <img 
-                                    src="https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?q=80&w=2000&auto=format&fit=crop" 
-                                    alt="Lush fruit tree orchard at golden hour" 
+                                <img
+                                    src="https://images.unsplash.com/photo-1661371134495-b0392006b52d?q=80&w=1470&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D"
+                                    alt="Lush fruit tree orchard at golden hour"
                                     className="w-full h-full object-cover"
                                 />
                                 {/* Floating stats card */}
@@ -155,7 +155,7 @@ export default function Welcome({ auth }: PageProps) {
                         </div>
                     </div>
                 </section>
-                
+
                 {/* Footer */}
                 <footer className="bg-pine-900 text-sand-200 py-12 px-6 lg:px-12 text-center">
                     <p className="mb-2">© 2026 Treevest. All rights reserved.</p>

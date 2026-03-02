@@ -15,7 +15,7 @@ class ArticleController extends Controller
         $tag = $request->get('tag');
         $search = $request->get('search');
 
-        $cacheKey = "articles:{$category}:{$tag}:".md5($search ?? '');
+        $cacheKey = "articles:{$category}:{$tag}:" . md5($search ?? '');
 
         $articles = cache()->remember($cacheKey, 300, function () use ($category, $tag, $search) {
             $query = Article::published()->with(['categories', 'tags', 'author']);
@@ -58,7 +58,7 @@ class ArticleController extends Controller
 
     public function show(Article $article)
     {
-        if (! $article->isPublished()) {
+        if (!$article->isPublished()) {
             abort(404);
         }
 
@@ -73,6 +73,7 @@ class ArticleController extends Controller
                 ->whereHas('categories', function ($q) use ($article) {
                     $q->whereIn('categories.id', $article->categories->pluck('id'));
                 })
+                ->with(['author'])
                 ->limit(4)
                 ->get();
         });
