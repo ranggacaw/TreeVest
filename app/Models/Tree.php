@@ -50,6 +50,18 @@ class Tree extends Model
         return $this->belongsTo(FruitCrop::class);
     }
 
+    public function fruitType(): \Illuminate\Database\Eloquent\Relations\HasOneThrough
+    {
+        return $this->hasOneThrough(
+            FruitType::class,
+            FruitCrop::class,
+            'id', // Foreign key on FruitCrop
+            'id', // Foreign key on FruitType
+            'fruit_crop_id', // Local key on Tree
+            'fruit_type_id' // Local key on FruitCrop
+        );
+    }
+
     public function harvests(): HasMany
     {
         return $this->hasMany(Harvest::class)->orderBy('scheduled_date', 'desc');
@@ -82,12 +94,12 @@ class Tree extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'RM '.number_format($this->price_cents / 100, 2);
+        return 'RM ' . number_format($this->price_cents / 100, 2);
     }
 
     public function getExpectedRoiFormattedAttribute(): string
     {
-        return $this->expected_roi_percent.'%';
+        return $this->expected_roi_percent . '%';
     }
 
     public function isInvestable(): bool

@@ -39,6 +39,50 @@ export default function Authenticated({
                                 >
                                     Dashboard
                                 </NavLink>
+
+                                {/* Investor Only Modules */}
+                                {user.role === 'investor' && (
+                                    <>
+                                        <NavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
+                                            Portfolio
+                                        </NavLink>
+                                        <NavLink href={route('farms.index')} active={route().current('farms.*')}>
+                                            Marketplace
+                                        </NavLink>
+                                        <NavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
+                                            Secondary Market
+                                        </NavLink>
+                                    </>
+                                )}
+
+                                {/* Farm Owner Only Modules */}
+                                {user.role === 'farm_owner' && (
+                                    <>
+                                        <NavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
+                                            Farm Dashboard
+                                        </NavLink>
+                                        <NavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
+                                            My Farms
+                                        </NavLink>
+                                    </>
+                                )}
+
+                                {/* Admin Only Modules */}
+                                {user.role === 'admin' && (
+                                    <>
+                                        <NavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
+                                            Admin Panel
+                                        </NavLink>
+                                    </>
+                                )}
+
+                                {/* Modules available to all authenticated users */}
+                                <NavLink href={route('education.index')} active={route().current('education.*')}>
+                                    Education
+                                </NavLink>
+                                <NavLink href={route('encyclopedia.index')} active={route().current('encyclopedia.*')}>
+                                    Encyclopedia
+                                </NavLink>
                             </div>
                         </div>
 
@@ -145,6 +189,50 @@ export default function Authenticated({
                             active={route().current('dashboard')}
                         >
                             Dashboard
+                        </ResponsiveNavLink>
+
+                        {/* Investor Only Modules */}
+                        {user.role === 'investor' && (
+                            <>
+                                <ResponsiveNavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
+                                    Portfolio
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('farms.index')} active={route().current('farms.*')}>
+                                    Marketplace
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
+                                    Secondary Market
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+
+                        {/* Farm Owner Only Modules */}
+                        {user.role === 'farm_owner' && (
+                            <>
+                                <ResponsiveNavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
+                                    Farm Dashboard
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
+                                    My Farms
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+
+                        {/* Admin Only Modules */}
+                        {user.role === 'admin' && (
+                            <>
+                                <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
+                                    Admin Panel
+                                </ResponsiveNavLink>
+                            </>
+                        )}
+
+                        {/* Modules available to all authenticated users */}
+                        <ResponsiveNavLink href={route('education.index')} active={route().current('education.*')}>
+                            Education
+                        </ResponsiveNavLink>
+                        <ResponsiveNavLink href={route('encyclopedia.index')} active={route().current('encyclopedia.*')}>
+                            Encyclopedia
                         </ResponsiveNavLink>
                     </div>
 

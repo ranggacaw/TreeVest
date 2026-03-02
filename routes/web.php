@@ -244,6 +244,7 @@ Route::middleware('auth')->group(function () {
         Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
         Route::get('/{investment}/confirmation', [InvestmentController::class, 'confirmation'])->name('confirmation');
         Route::post('/{investment}/cancel', [InvestmentController::class, 'cancel'])->name('cancel');
+        Route::get('/{investment}/top-up', [InvestmentController::class, 'topUpForm'])->name('top-up.form');
         Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up');
 
         Route::get('/health-feed', [InvestorHealthFeedController::class, 'index'])->name('health-feed.index');

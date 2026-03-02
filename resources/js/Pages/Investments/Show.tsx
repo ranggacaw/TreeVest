@@ -57,6 +57,7 @@ interface InvestmentData {
             harvest_cycle?: string;
         };
         farm: {
+            id: number;
             name: string;
             location?: string;
         };
@@ -220,10 +221,10 @@ export default function Show({ auth, investment }: Props) {
                                 </dl>
                                 <div className="mt-4">
                                     <Link
-                                        href={`/farms/${investment.tree.id}`}
+                                        href={`/farms/${investment.tree.farm.id}`}
                                         className="text-sm text-green-600 hover:text-green-700"
                                     >
-                                        View Full Tree Details →
+                                        View Full Farm Details →
                                     </Link>
                                 </div>
                             </div>
@@ -314,12 +315,11 @@ export default function Show({ auth, investment }: Props) {
                                                         <td className="px-4 py-3 text-sm text-gray-900">{payout.platform_fee_formatted}</td>
                                                         <td className="px-4 py-3 text-sm text-gray-900">{payout.net_amount_formatted}</td>
                                                         <td className="px-4 py-3 text-sm text-gray-900">
-                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${
-                                                                payout.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                                payout.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                                payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                                'bg-yellow-100 text-yellow-800'
-                                                            }`}>
+                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${payout.status === 'completed' ? 'bg-green-100 text-green-800' :
+                                                                    payout.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                                        payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                                                            'bg-yellow-100 text-yellow-800'
+                                                                }`}>
                                                                 {payout.status_label}
                                                             </span>
                                                         </td>

@@ -48,6 +48,11 @@ class Investment extends Model
         return $this->belongsTo(Transaction::class);
     }
 
+    public function payouts()
+    {
+        return $this->hasMany(Payout::class);
+    }
+
     public function listings()
     {
         return $this->hasMany(MarketListing::class);
@@ -100,12 +105,12 @@ class Investment extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return $this->currency.' '.number_format($this->amount_cents / 100, 2);
+        return $this->currency . ' ' . number_format($this->amount_cents / 100, 2);
     }
 
     public function transitionTo(InvestmentStatus $newStatus): bool
     {
-        if (! $this->status->canTransitionTo($newStatus)) {
+        if (!$this->status->canTransitionTo($newStatus)) {
             return false;
         }
 

@@ -3,8 +3,8 @@
 namespace App\Services;
 
 use App\Enums\InvestmentStatus;
+use App\Models\Harvest;
 use App\Models\Investment;
-use App\Models\TreeHarvest;
 use Illuminate\Support\Collection;
 
 class InvestmentPortfolioService
@@ -30,7 +30,7 @@ class InvestmentPortfolioService
 
         $treeCountByStatus = $investments->groupBy(function ($investment) {
             return $investment->tree?->status?->value ?? 'unknown';
-        })->map(fn ($group) => $group->count())->toArray();
+        })->map(fn($group) => $group->count())->toArray();
 
         $totalPayouts = $this->getTotalPayouts($userId);
 
@@ -69,23 +69,23 @@ class InvestmentPortfolioService
 
         $treeIds = $investments->pluck('tree_id')->filter()->unique();
 
-        return TreeHarvest::whereIn('tree_id', $treeIds)
-            ->where('harvest_date', '>=', now()->toDateString())
-            ->orderBy('harvest_date', 'asc')
+        return Harvest::whereIn('tree_id', $treeIds)
+            ->where('scheduled_date', '>=', now()->toDateString())
+            ->orderBy('scheduled_date', 'asc')
             ->limit($limit)
             ->with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType'])
             ->get()
             ->map(function ($harvest) {
                 return [
                     'id' => $harvest->id,
-                    'harvest_date' => $harvest->harvest_date->format('Y-m-d'),
+                    'harvest_date' => $harvest->scheduled_date->format('Y-m-d'),
                     'estimated_yield_kg' => $harvest->estimated_yield_kg,
                     'tree_id' => $harvest->tree_id,
                     'tree_identifier' => $harvest->tree?->tree_identifier,
                     'fruit_type' => $harvest->tree?->fruitCrop?->fruitType?->name,
                     'variant' => $harvest->tree?->fruitCrop?->variant,
                     'farm_name' => $harvest->tree?->fruitCrop?->farm?->name,
-                    'status' => $harvest->status ?? 'scheduled',
+                    'status' => $harvest->status?->value ?? 'scheduled',
                 ];
             });
     }
@@ -142,7 +142,7 @@ class InvestmentPortfolioService
             ->where('user_id', $userId)
             ->find($investmentId);
 
-        if (! $investment) {
+        if (!$investment) {
             return null;
         }
 
@@ -160,12 +160,12 @@ class InvestmentPortfolioService
             'actual_return_cents' => $actualReturn,
             'tree' => $this->formatTreeDetails($investment->tree),
             'farm' => $investment->tree?->fruitCrop?->farm ? $this->formatFarmDetails($investment->tree->fruitCrop->farm) : null,
-            'harvests' => $investment->tree?->harvests?->map(fn ($h) => [
+            'harvests' => $investment->tree?->harvests?->map(fn($h) => [
                 'id' => $h->id,
-                'harvest_date' => $h->harvest_date?->format('Y-m-d'),
+                'harvest_date' => $h->scheduled_date?->format('Y-m-d'),
                 'estimated_yield_kg' => $h->estimated_yield_kg,
                 'actual_yield_kg' => $h->actual_yield_kg,
-                'quality_grade' => $h->quality_grade,
+                'quality_grade' => $h->quality_grade?->value,
                 'notes' => $h->notes,
             ])->toArray() ?? [],
         ];
@@ -177,8 +177,8 @@ class InvestmentPortfolioService
             'tree.fruitCrop.farm',
             'tree.fruitCrop.fruitType',
             'tree.harvests' => function ($query) {
-                $query->where('harvest_date', '<=', now()->toDateString())
-                    ->orderBy('harvest_date', 'desc');
+                $query->where('scheduled_date', '<=', now()->toDateString())
+                    ->orderBy('scheduled_date', 'desc');
             },
         ])
             ->where('user_id', $userId)
@@ -198,8 +198,8 @@ class InvestmentPortfolioService
                     'status' => $investment->status->value,
                     'tree' => $this->formatTreeSummary($investment->tree),
                     'next_harvest' => $investment->tree?->harvests
-                        ->where('harvest_date', '>=', now()->toDateString())
-                        ->first()?->harvest_date?->format('Y-m-d'),
+                        ->where('scheduled_date', '>=', now()->toDateString())
+                        ->first()?->scheduled_date?->format('Y-m-d'),
                 ];
             })->toArray(),
             'current_page' => $investments->currentPage(),
@@ -212,21 +212,21 @@ class InvestmentPortfolioService
     public function getDiversificationData(int $userId): array
     {
         $byFruitType = $this->getInvestmentsByCategory($userId, 'fruit_type')
-            ->map(fn ($data, $category) => [
+            ->map(fn($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
             ])->values();
 
         $byFarm = $this->getInvestmentsByCategory($userId, 'farm')
-            ->map(fn ($data, $category) => [
+            ->map(fn($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
             ])->values();
 
         $byRisk = $this->getInvestmentsByCategory($userId, 'risk')
-            ->map(fn ($data, $category) => [
+            ->map(fn($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
@@ -256,7 +256,7 @@ class InvestmentPortfolioService
     {
         $completedHarvests = $investment->tree?->harvests
             ->whereNotNull('actual_yield_kg')
-            ->where('harvest_date', '<=', now()->toDateString()) ?? collect();
+            ->where('scheduled_date', '<=', now()->toDateString()) ?? collect();
 
         if ($completedHarvests->isEmpty()) {
             return 0;
@@ -275,7 +275,7 @@ class InvestmentPortfolioService
 
     private function formatTreeDetails(?\App\Models\Tree $tree): ?array
     {
-        if (! $tree) {
+        if (!$tree) {
             return null;
         }
 
@@ -295,7 +295,7 @@ class InvestmentPortfolioService
 
     private function formatTreeSummary(?\App\Models\Tree $tree): ?array
     {
-        if (! $tree) {
+        if (!$tree) {
             return null;
         }
 
