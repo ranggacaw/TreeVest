@@ -75,6 +75,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/auth/{provider}/link', [OAuthController::class, 'link'])->name('oauth.link');
     Route::delete('/profile/oauth/{provider}', [OAuthController::class, 'unlink'])->name('oauth.unlink');
 
+    Route::get('/profile/account-settings', [AccountController::class, 'settings'])->name('profile.account-settings');
     Route::post('/account/deactivate', [AccountController::class, 'deactivate'])->name('account.deactivate');
     Route::post('/account/delete-request', [AccountController::class, 'requestDeletion'])->name('account.delete-request');
 
@@ -100,7 +101,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';
 
 Route::controller(\App\Http\Controllers\LegalDocumentController::class)->group(function () {
     Route::get('/legal/privacy', 'privacyPolicy')->name('legal.privacy');
@@ -219,7 +220,7 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::post('/pdf', [ReportController::class, 'requestPdf'])->name('pdf.request')->middleware('throttle:report-pdf');
         Route::get('/csv', [ReportController::class, 'exportCsv'])->name('csv');
         Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
-        Route::get('/tax', fn () => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
+        Route::get('/tax', fn() => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
         Route::get('/tax/{year}', [TaxReportController::class, 'show'])->name('tax.show');
         Route::post('/tax/{year}/pdf', [TaxReportController::class, 'requestPdf'])->name('tax.pdf.request')->middleware('throttle:report-pdf');
         Route::get('/tax/{year}/csv', [TaxReportController::class, 'exportCsv'])->name('tax.csv');

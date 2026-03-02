@@ -23,7 +23,7 @@ export default function AccountSettings({
     });
 
     const handleDeactivate = () => {
-        post(route('profile.deactivate'), {
+        post(route('account.deactivate'), {
             onSuccess: () => {
                 setShowDeactivateConfirm(false);
                 window.location.href = route('login');
@@ -32,7 +32,7 @@ export default function AccountSettings({
     };
 
     const handleDeletionRequest = () => {
-        post(route('profile.delete-request'));
+        post(route('account.delete-request'));
         setShowDeletionRequest(false);
         setDeletionReason('');
     };

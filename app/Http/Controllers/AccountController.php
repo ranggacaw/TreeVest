@@ -6,8 +6,19 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
+use Inertia\Inertia;
+use Inertia\Response;
+
 class AccountController extends Controller
 {
+    public function settings(Request $request): Response
+    {
+        return Inertia::render('Profile/AccountSettings', [
+            'hasPendingInvestments' => false, // TODO: Implement logic if needed
+            'hasPendingPayouts' => false,     // TODO: Implement logic if needed
+        ]);
+    }
+
     public function deactivate(Request $request): RedirectResponse
     {
         $request->validate([
