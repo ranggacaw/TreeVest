@@ -14,6 +14,12 @@ class AppServiceProvider extends ServiceProvider
     {
         $this->app->bind(\App\Contracts\SmsServiceInterface::class, \App\Services\TwilioSmsProvider::class);
         $this->app->bind(\App\Contracts\KycProviderInterface::class, \App\Services\KycProviders\ManualKycProvider::class);
+        
+        // Bind the enhanced investment service
+        $this->app->bind(\App\Services\InvestmentService::class, \App\Services\InvestmentServiceEnhanced::class);
+        
+        // Register error tracking service as singleton
+        $this->app->singleton(\App\Services\ErrorTrackingService::class);
     }
 
     /**

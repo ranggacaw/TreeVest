@@ -4,11 +4,14 @@ namespace App\Http\Controllers;
 
 use App\Http\Requests\StoreInvestmentRequest;
 use App\Http\Requests\UpdateInvestmentAmountRequest;
+use App\Http\Resources\InvestmentResource;
+use App\Http\Resources\TreeResource;
 use App\Models\Investment;
 use App\Models\Tree;
 use App\Services\InvestmentService;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Inertia\Inertia;
 
 class InvestmentController extends Controller
@@ -21,23 +24,18 @@ class InvestmentController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $investments = $this->investmentService->getUserInvestments($user);
+        
+        // Optimized query with eager loading
+        $investments = Investment::forUser($user->id)
+            ->with(['tree:id,tree_identifier,price_cents,expected_roi_percent', 'transaction:id,status'])
+            ->select(['id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
+            ->orderBy('created_at', 'desc')
+            ->get();
+            
         $totalValue = $this->investmentService->getTotalInvestmentValue($user);
 
         return Inertia::render('Investments/Index', [
-            'investments' => $investments->map(fn($inv) => [
-                'id' => $inv->id,
-                'amount_cents' => $inv->amount_cents,
-                'formatted_amount' => $inv->formatted_amount,
-                'status' => $inv->status->value,
-                'purchase_date' => $inv->purchase_date->toIso8601String(),
-                'tree' => [
-                    'id' => $inv->tree->id,
-                    'identifier' => $inv->tree->tree_identifier,
-                    'price_formatted' => $inv->tree->price_formatted,
-                    'expected_roi' => $inv->tree->expected_roi_percent,
-                ],
-            ]),
+            'investments' => $investments->map(fn($inv) => InvestmentResource::basic($inv)),
             'total_value_cents' => $totalValue,
             'total_value_formatted' => 'Rp ' . number_format($totalValue / 100, 2),
         ]);
@@ -45,99 +43,81 @@ class InvestmentController extends Controller
 
     public function show(int $investment)
     {
-        $investment = Investment::with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'tree.harvests', 'transaction', 'payouts.harvest'])
-            ->findOrFail($investment);
+        // Optimized query with specific eager loading for detail view
+        $investment = Investment::with([
+            'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id',
+            'tree.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
+            'tree.fruitCrop.farm:id,name,city,state',
+            'tree.fruitCrop.fruitType:id,name',
+            'transaction:id,status,stripe_payment_intent_id',
+            'payouts:id,investment_id,gross_amount_cents,platform_fee_cents,net_amount_cents,status,currency,completed_at,failed_at,failed_reason,harvest_id',
+            'payouts.harvest:id,scheduled_date'
+        ])
+        ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
             abort(403);
         }
 
-        $completedHarvests = $investment->tree->harvests
+        // Optimize harvest queries using database instead of collection filtering
+        $completedHarvests = DB::table('harvests')
+            ->where('tree_id', $investment->tree_id)
             ->whereNotNull('actual_yield_kg')
-            ->where('scheduled_date', '<=', now()->toDateString());
+            ->where('scheduled_date', '<=', now()->toDateString())
+            ->select(['id', 'scheduled_date as harvest_date', 'estimated_yield_kg', 'actual_yield_kg', 'quality_grade', 'notes'])
+            ->get()
+            ->map(function ($harvest) {
+                return [
+                    'id' => $harvest->id,
+                    'harvest_date' => $harvest->harvest_date,
+                    'estimated_yield_kg' => $harvest->estimated_yield_kg,
+                    'actual_yield_kg' => $harvest->actual_yield_kg,
+                    'quality_grade' => $harvest->quality_grade,
+                    'notes' => $harvest->notes,
+                ];
+            })
+            ->toArray();
 
-        $upcomingHarvests = $investment->tree->harvests
+        $upcomingHarvests = DB::table('harvests')
+            ->where('tree_id', $investment->tree_id)
             ->where('scheduled_date', '>', now()->toDateString())
-            ->sortBy('scheduled_date');
+            ->select(['id', 'scheduled_date as harvest_date', 'estimated_yield_kg'])
+            ->orderBy('scheduled_date')
+            ->get()
+            ->map(function ($harvest) {
+                return [
+                    'id' => $harvest->id,
+                    'harvest_date' => $harvest->harvest_date,
+                    'estimated_yield_kg' => $harvest->estimated_yield_kg,
+                ];
+            })
+            ->toArray();
+
+        // Use Resource with optimized data structure
+        $investmentResource = new InvestmentResource($investment);
+        $investmentData = $investmentResource->toArray(request());
+        
+        // Add harvest data
+        $investmentData['harvests'] = [
+            'completed' => $completedHarvests,
+            'upcoming' => $upcomingHarvests,
+        ];
 
         return Inertia::render('Investments/Show', [
-            'investment' => [
-                'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
-                'formatted_amount' => $investment->formatted_amount,
-                'status' => $investment->status->value,
-                'status_label' => $investment->status->getLabel(),
-                'purchase_date' => $investment->purchase_date->toIso8601String(),
-                'created_at' => $investment->created_at->toIso8601String(),
-                'current_value_cents' => $investment->amount_cents,
-                'projected_return_cents' => (int) ($investment->amount_cents * ($investment->tree->expected_roi_percent ?? 0) / 100),
-                'tree' => [
-                    'id' => $investment->tree->id,
-                    'identifier' => $investment->tree->tree_identifier,
-                    'price_cents' => $investment->tree->price_cents,
-                    'price_formatted' => $investment->tree->price_formatted,
-                    'expected_roi' => $investment->tree->expected_roi_percent,
-                    'risk_rating' => $investment->tree->risk_rating->value,
-                    'age_years' => $investment->tree->age_years,
-                    'productive_lifespan_years' => $investment->tree->productive_lifespan_years,
-                    'status' => $investment->tree->status->value,
-                    'fruit_crop' => [
-                        'variant' => $investment->tree->fruitCrop->variant,
-                        'fruit_type' => $investment->tree->fruitCrop->fruitType->name,
-                        'harvest_cycle' => $investment->tree->fruitCrop->harvest_cycle->value,
-                    ],
-                    'farm' => [
-                        'id' => $investment->tree->fruitCrop->farm->id,
-                        'name' => $investment->tree->fruitCrop->farm->name,
-                        'location' => $investment->tree->fruitCrop->farm->city . ', ' . $investment->tree->fruitCrop->farm->state,
-                    ],
-                ],
-                'harvests' => [
-                    'completed' => $completedHarvests->map(fn($h) => [
-                        'id' => $h->id,
-                        'harvest_date' => $h->scheduled_date->toDateString(),
-                        'estimated_yield_kg' => $h->estimated_yield_kg,
-                        'actual_yield_kg' => $h->actual_yield_kg,
-                        'quality_grade' => $h->quality_grade?->value,
-                        'notes' => $h->notes,
-                    ])->toArray(),
-                    'upcoming' => $upcomingHarvests->map(fn($h) => [
-                        'id' => $h->id,
-                        'harvest_date' => $h->scheduled_date->toDateString(),
-                        'estimated_yield_kg' => $h->estimated_yield_kg,
-                    ])->toArray(),
-                ],
-                'payouts' => $investment->payouts->map(fn($p) => [
-                    'id' => $p->id,
-                    'gross_amount_cents' => $p->gross_amount_cents,
-                    'gross_amount_formatted' => $p->gross_amount_formatted,
-                    'platform_fee_cents' => $p->platform_fee_cents,
-                    'platform_fee_formatted' => $p->platform_fee_formatted,
-                    'net_amount_cents' => $p->net_amount_cents,
-                    'net_amount_formatted' => $p->net_amount_formatted,
-                    'status' => $p->status->value,
-                    'status_label' => $p->status->getLabel(),
-                    'currency' => $p->currency,
-                    'harvest' => $p->harvest ? [
-                        'id' => $p->harvest->id,
-                        'harvest_date' => $p->harvest->scheduled_date->toDateString(),
-                    ] : null,
-                    'completed_at' => $p->completed_at?->toIso8601String(),
-                    'failed_at' => $p->failed_at?->toIso8601String(),
-                    'failed_reason' => $p->failed_reason,
-                ])->toArray(),
-                'transaction' => $investment->transaction ? [
-                    'id' => $investment->transaction->id,
-                    'status' => $investment->transaction->status->value,
-                    'stripe_payment_intent_id' => $investment->transaction->stripe_payment_intent_id,
-                ] : null,
-            ],
+            'investment' => $investmentData,
         ]);
     }
 
     public function create(Request $request, int $treeId)
     {
-        $tree = Tree::with(['fruitCrop.farm', 'fruitCrop.fruitType'])->findOrFail($treeId);
+        // Optimized query with specific select for form data
+        $tree = Tree::with([
+            'fruitCrop:id,variant,farm_id,fruit_type_id',
+            'fruitCrop.farm:id,name,city,state',
+            'fruitCrop.fruitType:id,name'
+        ])
+        ->select(['id', 'tree_identifier', 'price_cents', 'expected_roi_percent', 'risk_rating', 'min_investment_cents', 'max_investment_cents', 'fruit_crop_id', 'status'])
+        ->findOrFail($treeId);
 
         if (!$tree->isInvestable()) {
             return redirect()->route('marketplace.trees')
@@ -151,28 +131,12 @@ class InvestmentController extends Controller
                 ->with('warning', 'You must complete KYC verification before investing.');
         }
 
+        // Use TreeResource for consistent data transformation
+        $treeResource = new TreeResource($tree);
+        $treeData = $treeResource->forPurchase();
+
         return Inertia::render('Investments/Purchase/Configure', [
-            'tree' => [
-                'id' => $tree->id,
-                'identifier' => $tree->tree_identifier,
-                'price_cents' => $tree->price_cents,
-                'price_formatted' => $tree->price_formatted,
-                'expected_roi' => $tree->expected_roi_percent,
-                'expected_roi_formatted' => $tree->expected_roi_formatted,
-                'risk_rating' => $tree->risk_rating->value,
-                'min_investment_cents' => $tree->min_investment_cents,
-                'max_investment_cents' => $tree->max_investment_cents,
-                'min_investment_formatted' => 'Rp ' . number_format($tree->min_investment_cents / 100, 2),
-                'max_investment_formatted' => 'Rp ' . number_format($tree->max_investment_cents / 100, 2),
-                'fruit_crop' => [
-                    'variant' => $tree->fruitCrop->variant,
-                    'fruit_type' => $tree->fruitCrop->fruitType->name,
-                ],
-                'farm' => [
-                    'name' => $tree->fruitCrop->farm->name,
-                    'location' => $tree->fruitCrop->farm->location,
-                ],
-            ],
+            'tree' => $treeData,
             'user' => [
                 'kyc_verified' => $user->isKycValid(),
             ],
@@ -218,39 +182,26 @@ class InvestmentController extends Controller
 
     public function confirmation(int $investment)
     {
-        $investment = Investment::with(['tree.fruitCrop.farm', 'transaction'])
-            ->findOrFail($investment);
+        // Optimized query with specific select for confirmation page
+        $investment = Investment::with([
+            'tree:id,tree_identifier,fruit_crop_id',
+            'tree.fruitCrop:id,variant,farm_id,fruit_type_id',
+            'tree.fruitCrop.farm:id,name',
+            'tree.fruitCrop.fruitType:id,name',
+            'transaction:id,status,stripe_payment_intent_id,metadata'
+        ])
+        ->select(['id', 'user_id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
+        ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
             abort(403);
         }
 
+        // Use InvestmentResource for consistent data transformation
+        $investmentResource = new InvestmentResource($investment);
+
         return Inertia::render('Investments/Purchase/Confirmation', [
-            'investment' => [
-                'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
-                'formatted_amount' => $investment->formatted_amount,
-                'status' => $investment->status->value,
-                'status_label' => $investment->status->getLabel(),
-                'purchase_date' => $investment->purchase_date->toIso8601String(),
-                'tree' => [
-                    'id' => $investment->tree->id,
-                    'identifier' => $investment->tree->tree_identifier,
-                    'fruit_crop' => [
-                        'variant' => $investment->tree->fruitCrop->variant,
-                        'fruit_type' => $investment->tree->fruitCrop->fruitType->name,
-                    ],
-                    'farm' => [
-                        'name' => $investment->tree->fruitCrop->farm->name,
-                    ],
-                ],
-                'transaction' => $investment->transaction ? [
-                    'id' => $investment->transaction->id,
-                    'client_secret' => $investment->transaction->stripe_payment_intent_id
-                        ? \App\Models\Transaction::where('stripe_payment_intent_id', $investment->transaction->stripe_payment_intent_id)->first()?->metadata['client_secret'] ?? null
-                        : null,
-                ] : null,
-            ],
+            'investment' => $investmentResource->forConfirmation(),
         ]);
     }
 
@@ -277,7 +228,13 @@ class InvestmentController extends Controller
 
     public function topUpForm(Request $request, int $investment)
     {
-        $investment = Investment::with(['tree.fruitCrop'])->findOrFail($investment);
+        // Optimized query for top-up form data
+        $investment = Investment::with([
+            'tree:id,tree_identifier,max_investment_cents,fruit_crop_id',
+            'tree.fruitCrop:id,variant'
+        ])
+        ->select(['id', 'user_id', 'amount_cents', 'currency', 'tree_id'])
+        ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
             abort(403);
@@ -285,16 +242,11 @@ class InvestmentController extends Controller
 
         $user = $request->user();
 
+        // Use InvestmentResource for consistent transformation
+        $investmentResource = new InvestmentResource($investment);
+
         return Inertia::render('Investments/TopUp', [
-            'investment' => [
-                'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
-                'formatted_amount' => $investment->formatted_amount,
-                'tree' => [
-                    'identifier' => $investment->tree->tree_identifier,
-                    'max_investment_cents' => $investment->tree->max_investment_cents,
-                ],
-            ],
+            'investment' => $investmentResource->forTopUp(),
             'payment_methods' => $user->paymentMethods->map(fn($pm) => [
                 'id' => $pm->id,
                 'type' => $pm->type,

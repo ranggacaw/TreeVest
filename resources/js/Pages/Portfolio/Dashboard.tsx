@@ -14,6 +14,7 @@ import DiversificationChart from '@/Components/Portfolio/DiversificationChart';
 import PerformanceChart from '@/Components/Portfolio/PerformanceChart';
 import InvestmentCard from '@/Components/Portfolio/InvestmentCard';
 import EmptyPortfolio from '@/Components/Portfolio/EmptyPortfolio';
+import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 
 interface Props extends PageProps {
     summary: PortfolioSummary;
@@ -53,54 +54,56 @@ export default function Dashboard({
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    {!hasInvestments ? (
-                        <EmptyPortfolio />
-                    ) : (
-                        <>
-                            <PortfolioSummaryCard summary={summary} formatCurrency={formatCurrency} />
+                    <FinancialErrorBoundary context="portfolio-dashboard">
+                        {!hasInvestments ? (
+                            <EmptyPortfolio />
+                        ) : (
+                            <>
+                                <PortfolioSummaryCard summary={summary} formatCurrency={formatCurrency} />
 
-                            <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                                <HarvestCalendar
-                                    harvests={upcomingHarvests}
-                                />
-                                <DiversificationChart
-                                    data={diversification}
-                                />
-                            </div>
-
-                            <div className="mt-6">
-                                <PerformanceChart
-                                    performance={performance}
-                                    formatCurrency={formatCurrency}
-                                />
-                            </div>
-
-                            <div className="mt-6">
-                                <div className="flex items-center justify-between mb-4">
-                                    <h3 className="text-lg font-semibold text-gray-900">
-                                        My Investments
-                                    </h3>
-                                    {investments.last_page > 1 && (
-                                        <Link
-                                            href="/investments"
-                                            className="text-sm text-green-600 hover:text-green-700"
-                                        >
-                                            View All ({investments.total})
-                                        </Link>
-                                    )}
+                                <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+                                    <HarvestCalendar
+                                        harvests={upcomingHarvests}
+                                    />
+                                    <DiversificationChart
+                                        data={diversification}
+                                    />
                                 </div>
-                                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                                    {investments.data.map((investment) => (
-                                        <InvestmentCard
-                                            key={investment.id}
-                                            investment={investment}
-                                            formatCurrency={formatCurrency}
-                                        />
-                                    ))}
+
+                                <div className="mt-6">
+                                    <PerformanceChart
+                                        performance={performance}
+                                        formatCurrency={formatCurrency}
+                                    />
                                 </div>
-                            </div>
-                        </>
-                    )}
+
+                                <div className="mt-6">
+                                    <div className="flex items-center justify-between mb-4">
+                                        <h3 className="text-lg font-semibold text-gray-900">
+                                            My Investments
+                                        </h3>
+                                        {investments.last_page > 1 && (
+                                            <Link
+                                                href="/investments"
+                                                className="text-sm text-green-600 hover:text-green-700"
+                                            >
+                                                View All ({investments.total})
+                                            </Link>
+                                        )}
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                                        {investments.data.map((investment) => (
+                                            <InvestmentCard
+                                                key={investment.id}
+                                                investment={investment}
+                                                formatCurrency={formatCurrency}
+                                            />
+                                        ))}
+                                    </div>
+                                </div>
+                            </>
+                        )}
+                    </FinancialErrorBoundary>
                 </div>
             </div>
         </AuthenticatedLayout>

@@ -2,6 +2,7 @@ import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps, InvestmentDetail } from '@/types';
 import { useEffect, useState } from 'react';
+import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 
 interface Props extends PageProps {
     investment: InvestmentDetail;
@@ -62,7 +63,8 @@ export default function Confirmation({ auth, investment }: Props) {
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                    <div className={`overflow-hidden bg-white shadow-sm sm:rounded-lg ${status.bgColor}`}>
+                    <FinancialErrorBoundary context="investment-purchase-confirmation">
+                        <div className={`overflow-hidden bg-white shadow-sm sm:rounded-lg ${status.bgColor}`}>
                         <div className="p-8 text-center">
                             <div className="mb-4">
                                 {paymentStatus === 'completed' ? (
@@ -154,7 +156,7 @@ export default function Confirmation({ auth, investment }: Props) {
                                 )}
                             </div>
                         </div>
-                    </div>
+                    </FinancialErrorBoundary>
                 </div>
             </div>
         </AuthenticatedLayout>

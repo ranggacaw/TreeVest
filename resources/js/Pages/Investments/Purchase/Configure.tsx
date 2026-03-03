@@ -2,6 +2,7 @@ import { useState } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { PageProps, Tree, PaymentMethod } from '@/types';
+import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 
 interface Props extends PageProps {
     tree: Tree;
@@ -61,17 +62,18 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                    {flash?.error && (
-                        <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
-                            <span className="block sm:inline">{flash.error}</span>
-                        </div>
-                    )}
+                    <FinancialErrorBoundary context="investment-purchase-configure">
+                        {flash?.error && (
+                            <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                                <span className="block sm:inline">{flash.error}</span>
+                            </div>
+                        )}
 
-                    {flash?.success && (
-                        <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
-                            <span className="block sm:inline">{flash.success}</span>
-                        </div>
-                    )}
+                        {flash?.success && (
+                            <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                                <span className="block sm:inline">{flash.success}</span>
+                            </div>
+                        )}
 
                     <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
@@ -256,6 +258,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                             </div>
                         </div>
                     </form>
+                    </FinancialErrorBoundary>
                 </div>
             </div>
 
