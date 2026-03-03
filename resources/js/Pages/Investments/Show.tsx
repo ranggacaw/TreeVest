@@ -53,13 +53,15 @@ interface InvestmentData {
         status?: string;
         fruit_crop: {
             variant: string;
-            fruit_type: string;
+            fruit_type: {
+                name: string;
+            };
             harvest_cycle?: string;
-        };
-        farm: {
-            id: number;
-            name: string;
-            location?: string;
+            farm: {
+                id: number;
+                name: string;
+                location?: string;
+            };
         };
     };
     harvests?: {
@@ -208,7 +210,7 @@ export default function Show({ auth, investment }: Props) {
                                     </div>
                                     <div>
                                         <dt className="text-sm text-gray-500">Fruit Type</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type}</dd>
+                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type.name}</dd>
                                     </div>
                                     <div>
                                         <dt className="text-sm text-gray-500">Variant</dt>
@@ -216,12 +218,12 @@ export default function Show({ auth, investment }: Props) {
                                     </div>
                                     <div>
                                         <dt className="text-sm text-gray-500">Farm</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.farm.name}</dd>
+                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.farm.name}</dd>
                                     </div>
                                 </dl>
                                 <div className="mt-4">
                                     <Link
-                                        href={`/farms/${investment.tree.farm.id}`}
+                                        href={`/farms/${investment.tree.fruit_crop.farm.id}`}
                                         className="text-sm text-green-600 hover:text-green-700"
                                     >
                                         View Full Farm Details →

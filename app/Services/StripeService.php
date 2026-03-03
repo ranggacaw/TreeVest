@@ -11,14 +11,11 @@ use Stripe\StripeClient;
 class StripeService
 {
     protected ?StripeClient $client = null;
+    protected ?string $secret = null;
 
     public function __construct()
     {
-        $secret = Config::get('services.stripe.secret');
-
-        if ($secret) {
-            $this->client = new StripeClient($secret);
-        }
+        $this->secret = Config::get('services.stripe.secret');
     }
 
     /**
@@ -29,9 +26,12 @@ class StripeService
     protected function getClient(): StripeClient
     {
         if (!$this->client) {
-            throw new AuthenticationException(
-                'Stripe API key is not configured. Please set STRIPE_SECRET in your .env file.'
-            );
+            if (!$this->secret) {
+                throw new AuthenticationException(
+                    'Stripe API key is not configured. Please set STRIPE_SECRET in your .env file.'
+                );
+            }
+            $this->client = new StripeClient($this->secret);
         }
 
         return $this->client;

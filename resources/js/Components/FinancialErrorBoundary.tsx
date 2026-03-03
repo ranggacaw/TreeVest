@@ -1,6 +1,12 @@
 import React from 'react';
 import ErrorBoundary from './ErrorBoundary';
 
+declare global {
+    interface Window {
+        Sentry?: any;
+    }
+}
+
 interface Props {
     children: React.ReactNode;
     context?: string;
@@ -36,7 +42,7 @@ const FinancialErrorBoundary: React.FC<Props> = ({ children, context = 'financia
                 body: JSON.stringify(errorData),
             }).catch(reportError => {
                 console.error('Failed to report error to server:', reportError);
-                
+
                 // Fallback to client-side reporting if available
                 if (window.Sentry) {
                     window.Sentry.captureException(error, {
@@ -85,7 +91,7 @@ const FinancialErrorBoundary: React.FC<Props> = ({ children, context = 'financia
                     <p className="mt-2 text-sm text-gray-600">
                         We encountered an error processing your payment. Your account has not been charged.
                     </p>
-                    
+
                     <div className="mt-6 space-y-3">
                         <button
                             onClick={() => window.location.reload()}
@@ -93,7 +99,7 @@ const FinancialErrorBoundary: React.FC<Props> = ({ children, context = 'financia
                         >
                             Try Again
                         </button>
-                        
+
                         <a
                             href="/investments"
                             className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"

@@ -24,6 +24,8 @@ class StoreFarmRequest extends BaseRequest
             'virtual_tour_url' => ['nullable', 'url', 'max:500'],
             'images' => ['nullable', 'array', 'max:10'],
             'images.*' => ['image', 'mimes:jpeg,png,jpg,webp', 'max:5120'],
+            'image_urls' => ['nullable', 'array', 'max:10'],
+            'image_urls.*' => ['nullable', 'url', 'max:1000'],
             'certifications' => ['nullable', 'array', 'max:20'],
             'certifications.*.name' => ['required', 'string', 'max:200'],
             'certifications.*.issuer' => ['nullable', 'string', 'max:200'],

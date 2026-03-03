@@ -38,11 +38,17 @@ class FarmImage extends Model
 
     public function getUrlAttribute(): string
     {
+        if (str_starts_with($this->file_path, 'http://') || str_starts_with($this->file_path, 'https://')) {
+            return $this->file_path;
+        }
         return Storage::disk('public')->url($this->file_path);
     }
 
     public function getTemporaryUrlAttribute(): string
     {
+        if (str_starts_with($this->file_path, 'http://') || str_starts_with($this->file_path, 'https://')) {
+            return $this->file_path;
+        }
         return Storage::disk('public')->temporaryUrl(
             $this->file_path,
             now()->addMinutes(60)

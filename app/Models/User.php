@@ -84,6 +84,11 @@ class User extends Authenticatable
         return $this->hasMany(Investment::class);
     }
 
+    public function farms()
+    {
+        return $this->hasMany(Farm::class, 'owner_id');
+    }
+
     public function twoFactorSecret()
     {
         return $this->hasOne(TwoFactorSecret::class);

@@ -37,9 +37,6 @@ class PayoutResource extends JsonResource
                     'harvest_date' => $this->harvest->scheduled_date->toDateString(),
                 ];
             }),
-            'investment' => $this->when($this->relationLoaded('investment'), function () {
-                return InvestmentResource::basic($this->investment);
-            }),
         ];
     }
 }

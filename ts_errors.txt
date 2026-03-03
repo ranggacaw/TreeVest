@@ -1,0 +1,1 @@
+resources/js/Pages/Investments/Purchase/Confirmation.tsx(67,26): error TS17008: JSX element 'div' has no corresponding closing tag.

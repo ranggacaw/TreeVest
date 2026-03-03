@@ -19,6 +19,12 @@ class InvestmentDataSeeder extends Seeder
 {
     public function run(): void
     {
+        // Guard: skip if investment data already exists
+        if (FruitCrop::count() > 0) {
+            $this->command->info('InvestmentDataSeeder: data already exists, skipping.');
+            return;
+        }
+
         // Get existing users
         $investor = User::where('email', 'investor@treevest.com')->first();
         $johnInvestor = User::where('email', 'john.investor@example.com')->first();

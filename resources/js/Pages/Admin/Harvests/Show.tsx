@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { PageProps, Harvest, Payout } from '@/types';
 
@@ -18,25 +18,6 @@ export default function Show({ harvest }: Props) {
         failed: 'bg-red-100 text-red-800',
     };
 
-    const handleStartHarvest = () => {
-        if (confirm('Are you sure you want to start this harvest?')) {
-            router.post(route('farm-owner.harvests.start', harvest.id));
-        }
-    };
-
-    const handleConfirm = () => {
-        if (confirm('Are you sure you want to confirm this harvest and calculate payouts?')) {
-            router.post(route('farm-owner.harvests.confirm', harvest.id));
-        }
-    };
-
-    const handleFail = () => {
-        const notes = prompt('Reason for harvest failure:');
-        if (notes) {
-            router.post(route('farm-owner.harvests.fail', harvest.id), { notes });
-        }
-    };
-
     return (
         <AppLayout title="Harvest Details">
             <Head title={`Harvest #${harvest.id}`} />
@@ -44,44 +25,16 @@ export default function Show({ harvest }: Props) {
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
                     {/* Header */}
-                    <div className="mb-6 flex items-center justify-between">
-                        <div>
-                            <Link
-                                href={route('farm-owner.harvests.index')}
-                                className="text-sm text-indigo-600 hover:underline"
-                            >
-                                &larr; Back to My Harvests
-                            </Link>
-                            <h2 className="mt-2 text-2xl font-bold text-gray-900">
-                                Harvest #{harvest.id}
-                            </h2>
-                        </div>
-                        <div className="flex gap-2">
-                            {harvest.status === 'scheduled' && (
-                                <button
-                                    onClick={handleStartHarvest}
-                                    className="px-4 py-2 rounded bg-yellow-600 text-white text-sm font-medium hover:bg-yellow-700"
-                                >
-                                    Start Harvest
-                                </button>
-                            )}
-                            {harvest.status === 'in_progress' && (
-                                <button
-                                    onClick={handleConfirm}
-                                    className="px-4 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700"
-                                >
-                                    Confirm Complete
-                                </button>
-                            )}
-                            {(harvest.status === 'scheduled' || harvest.status === 'in_progress') && (
-                                <button
-                                    onClick={handleFail}
-                                    className="px-4 py-2 rounded bg-red-600 text-white text-sm font-medium hover:bg-red-700"
-                                >
-                                    Mark as Failed
-                                </button>
-                            )}
-                        </div>
+                    <div className="mb-6">
+                        <Link
+                            href={route('admin.harvests.index')}
+                            className="text-sm text-indigo-600 hover:underline"
+                        >
+                            &larr; Back to All Harvests
+                        </Link>
+                        <h2 className="mt-2 text-2xl font-bold text-gray-900">
+                            Harvest #{harvest.id}
+                        </h2>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6">
@@ -208,6 +161,14 @@ export default function Show({ harvest }: Props) {
                                             {new Date(harvest.market_price.effective_date).toLocaleDateString('id-ID')}
                                         </dd>
                                     </div>
+                                    {harvest.market_price.created_by_user && (
+                                        <div>
+                                            <dt className="text-sm text-gray-500">Created By</dt>
+                                            <dd className="text-sm font-medium text-gray-900">
+                                                {harvest.market_price.created_by_user.name}
+                                            </dd>
+                                        </div>
+                                    )}
                                 </dl>
                             </div>
                         )}
@@ -247,7 +208,7 @@ export default function Show({ harvest }: Props) {
                         {harvest.payouts && harvest.payouts.length > 0 && (
                             <div className="rounded-lg bg-white p-6 shadow">
                                 <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                    Investor Payouts ({harvest.payouts.length})
+                                    Payouts ({harvest.payouts.length})
                                 </h3>
                                 <div className="overflow-x-auto">
                                     <table className="min-w-full divide-y divide-gray-200">

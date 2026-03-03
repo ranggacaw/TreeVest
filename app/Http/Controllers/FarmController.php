@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Http\Requests\StoreFarmRequest;
 use App\Http\Requests\UpdateFarmRequest;
 use App\Models\Farm;
+use App\Models\FarmImage;
 use App\Services\FarmService;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,7 +14,8 @@ class FarmController extends Controller
 {
     public function __construct(
         protected FarmService $farmService
-    ) {}
+    ) {
+    }
 
     public function index(Request $request)
     {
@@ -85,6 +87,23 @@ class FarmController extends Controller
 
         return redirect()->route('farms.manage.index')
             ->with('success', 'Farm deleted successfully.');
+    }
+
+    public function deleteImage(Farm $farm, FarmImage $image)
+    {
+        $this->authorizeFarmAccess($farm);
+
+        if ($image->farm_id !== $farm->id) {
+            abort(403, 'Image does not belong to this farm.');
+        }
+
+        if (!str_starts_with($image->file_path, 'http')) {
+            \Illuminate\Support\Facades\Storage::disk('public')->delete($image->file_path);
+        }
+
+        $image->delete();
+
+        return back()->with('success', 'Image deleted successfully.');
     }
 
     protected function authorizeFarmAccess(Farm $farm): void

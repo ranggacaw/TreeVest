@@ -200,6 +200,7 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
         Route::get('/{farm}/edit', [FarmController::class, 'edit'])->name('edit');
         Route::put('/{farm}', [FarmController::class, 'update'])->name('update');
         Route::delete('/{farm}', [FarmController::class, 'destroy'])->name('destroy');
+        Route::delete('/{farm}/images/{image}', [FarmController::class, 'deleteImage'])->name('images.destroy');
     });
 });
 

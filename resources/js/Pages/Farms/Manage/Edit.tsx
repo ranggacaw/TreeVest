@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
-import { useForm } from '@inertiajs/react';
+import { useForm, router } from '@inertiajs/react';
 import TextInput from '@/Components/TextInput';
 import InputLabel from '@/Components/InputLabel';
 import InputError from '@/Components/InputError';
 import PrimaryButton from '@/Components/PrimaryButton';
 import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import FarmImageGallery from '@/Components/FarmImageGallery';
-import { Farm } from '@/types';
+import { Farm, FarmImage } from '@/types';
 
 interface Props {
     farm: Farm;
@@ -21,7 +21,8 @@ interface Certification {
 }
 
 export default function Edit({ farm }: Props) {
-    const { data, setData, put, errors, processing } = useForm({
+    const { data, setData, post, errors, processing } = useForm({
+        _method: 'put',
         name: farm.name || '',
         description: farm.description || '',
         address: farm.address || '',
@@ -38,13 +39,31 @@ export default function Edit({ farm }: Props) {
         historical_performance: farm.historical_performance || '',
         virtual_tour_url: farm.virtual_tour_url || '',
         certifications: farm.certifications || [] as Certification[],
+        images: [] as File[],
+        image_urls: [] as string[],
     });
+
+    const [imageUrlInput, setImageUrlInput] = useState('');
+
+    const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        if (e.target.files) {
+            setData('images', Array.from(e.target.files));
+        }
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        put(`/farms/manage/${farm.id}`, {
+        post(`/farms/manage/${farm.id}`, {
             forceFormData: true,
         });
+    };
+
+    const handleDeleteImage = (image: FarmImage) => {
+        if (confirm('Are you sure you want to delete this image?')) {
+            router.delete(`/farms/manage/${farm.id}/images/${image.id}`, {
+                preserveScroll: true,
+            });
+        }
     };
 
     return (
@@ -75,9 +94,74 @@ export default function Edit({ farm }: Props) {
                         <h2 className="text-lg font-semibold text-gray-900 mb-4">
                             Current Images
                         </h2>
-                        <FarmImageGallery images={farm.images} />
+                        <FarmImageGallery images={farm.images} onDelete={handleDeleteImage} />
                     </div>
                 )}
+
+                <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+                    <h2 className="text-lg font-semibold text-gray-900 mb-4">
+                        Upload New Images / Add Image Link
+                    </h2>
+
+                    <div className="space-y-6">
+                        <div>
+                            <InputLabel htmlFor="images" value="Select new image files to upload (Max 10)" />
+                            <input
+                                type="file"
+                                id="images"
+                                multiple
+                                accept="image/*"
+                                onChange={handleImageChange}
+                                className="mt-1 block w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100"
+                            />
+                            {errors.images && <InputError message={errors.images} className="mt-2" />}
+                        </div>
+
+                        <div className="border-t border-gray-200 pt-4">
+                            <InputLabel htmlFor="image_url" value="Or add an image via URL Link" />
+                            <div className="flex gap-2 mt-1">
+                                <TextInput
+                                    id="image_url"
+                                    type="url"
+                                    value={imageUrlInput}
+                                    onChange={(e) => setImageUrlInput(e.target.value)}
+                                    className="block w-full"
+                                    placeholder="https://example.com/image.jpg"
+                                />
+                                <button
+                                    type="button"
+                                    onClick={() => {
+                                        if (imageUrlInput.trim() && !data.image_urls.includes(imageUrlInput.trim())) {
+                                            setData('image_urls', [...data.image_urls, imageUrlInput.trim()]);
+                                            setImageUrlInput('');
+                                        }
+                                    }}
+                                    className="px-4 py-2 bg-gray-100 text-gray-700 rounded-md hover:bg-gray-200"
+                                >
+                                    Add Link
+                                </button>
+                            </div>
+
+                            {data.image_urls.length > 0 && (
+                                <ul className="mt-3 space-y-2">
+                                    {data.image_urls.map((url, i) => (
+                                        <li key={i} className="flex justify-between items-center text-sm bg-gray-50 px-3 py-2 rounded-md">
+                                            <span className="truncate mr-4 text-gray-600">{url}</span>
+                                            <button
+                                                type="button"
+                                                onClick={() => setData('image_urls', data.image_urls.filter((_, idx) => idx !== i))}
+                                                className="text-red-500 hover:text-red-700 font-medium"
+                                            >
+                                                Remove
+                                            </button>
+                                        </li>
+                                    ))}
+                                </ul>
+                            )}
+                            {errors.image_urls && <InputError message={errors.image_urls} className="mt-2" />}
+                        </div>
+                    </div>
+                </div>
 
                 <form onSubmit={handleSubmit} className="space-y-8">
                     <div className="bg-white shadow-sm rounded-lg p-6">

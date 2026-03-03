@@ -10,7 +10,7 @@ class WeatherData extends Model
 {
     use HasFactory;
 
-    public $timestamps = false;
+    const UPDATED_AT = null;
 
     protected $fillable = [
         'farm_id',
@@ -21,7 +21,6 @@ class WeatherData extends Model
         'weather_condition',
         'alert_triggered',
         'fetched_at',
-        'created_at',
     ];
 
     protected function casts(): array
@@ -30,7 +29,6 @@ class WeatherData extends Model
             'alert_triggered' => 'boolean',
             'fetched_at' => 'datetime',
             'created_at' => 'datetime',
-            'updated_at' => 'datetime',
             'temperature_celsius' => 'float',
             'humidity_percent' => 'integer',
             'wind_speed_kmh' => 'float',

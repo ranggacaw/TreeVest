@@ -8,19 +8,33 @@ use App\Models\FarmCertification;
 use App\Models\FarmImage;
 use App\Models\User;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\Hash;
 
 class FarmSeeder extends Seeder
 {
     public function run(): void
     {
+        // Guard: skip if farms already exist
+        if (Farm::count() > 0) {
+            $this->command->info('FarmSeeder: data already exists, skipping.');
+            return;
+        }
+
         $admin = User::where('email', 'admin@treevest.com')->first();
         $adminId = $admin ? $admin->id : null;
 
-        $farmOwner = User::factory()->create([
-            'name' => 'Ahmad Farm Owner',
-            'email' => 'ahmad@farm.example.com',
-            'role' => 'farm_owner',
-        ]);
+        $farmOwner = User::firstOrCreate(
+            ['email' => 'ahmad@farm.example.com'],
+            [
+                'name' => 'Ahmad Farm Owner',
+                'password' => \Illuminate\Support\Facades\Hash::make('farm123'),
+                'role' => 'farm_owner',
+                'email_verified_at' => now(),
+                'kyc_status' => 'verified',
+                'kyc_verified_at' => now(),
+                'kyc_expires_at' => now()->addYears(2),
+            ]
+        );
 
         $farm1 = Farm::create([
             'owner_id' => $farmOwner->id,
@@ -102,11 +116,18 @@ class FarmSeeder extends Seeder
             'sort_order' => 0,
         ]);
 
-        $farmOwner2 = User::factory()->create([
-            'name' => 'Sarah Fruit Farmer',
-            'email' => 'sarah@farm.example.com',
-            'role' => 'farm_owner',
-        ]);
+        $farmOwner2 = User::firstOrCreate(
+            ['email' => 'sarah@farm.example.com'],
+            [
+                'name' => 'Sarah Fruit Farmer',
+                'password' => \Illuminate\Support\Facades\Hash::make('farm123'),
+                'role' => 'farm_owner',
+                'email_verified_at' => now(),
+                'kyc_status' => 'verified',
+                'kyc_verified_at' => now(),
+                'kyc_expires_at' => now()->addYears(2),
+            ]
+        );
 
         $farm3 = Farm::create([
             'owner_id' => $farmOwner2->id,

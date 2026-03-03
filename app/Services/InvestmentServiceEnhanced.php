@@ -22,13 +22,8 @@ use App\Support\TransactionHelper;
 use Illuminate\Support\Facades\Log;
 use Throwable;
 
-class InvestmentServiceEnhanced
+class InvestmentServiceEnhanced extends InvestmentService
 {
-    public function __construct(
-        protected PaymentService $paymentService,
-        protected AuditLogService $auditLogService,
-    ) {
-    }
 
     public function validateInvestmentEligibility(User $user, Tree $tree, int $amountCents): array
     {
@@ -187,7 +182,7 @@ class InvestmentServiceEnhanced
                 }
 
                 // Map Stripe errors to user-friendly messages
-                $message = match($e->getError()->code ?? '') {
+                $message = match ($e->getError()->code ?? '') {
                     'card_declined' => 'Your payment method was declined. Please try a different payment method.',
                     'insufficient_funds' => 'Insufficient funds available. Please check your account balance.',
                     'invalid_cvc' => 'Invalid security code. Please check your payment details.',

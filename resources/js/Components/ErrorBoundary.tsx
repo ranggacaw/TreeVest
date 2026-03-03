@@ -27,7 +27,7 @@ class ErrorBoundary extends Component<Props, State> {
     componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
         // Log the error to console and external service
         console.error('ErrorBoundary caught an error:', error, errorInfo);
-        
+
         // Call custom error handler if provided
         if (this.props.onError) {
             this.props.onError(error, errorInfo);
@@ -57,10 +57,10 @@ class ErrorBoundary extends Component<Props, State> {
                 body: JSON.stringify(errorData),
             }).catch(reportError => {
                 console.error('Failed to report error to server:', reportError);
-                
+
                 // Fallback to client-side reporting if available
-                if (window.Sentry) {
-                    window.Sentry.captureException(error, {
+                if ((window as any).Sentry) {
+                    (window as any).Sentry.captureException(error, {
                         contexts: {
                             react: {
                                 componentStack: errorInfo.componentStack,
@@ -110,7 +110,7 @@ class ErrorBoundary extends Component<Props, State> {
                             <p className="mt-2 text-sm text-gray-600">
                                 We encountered an unexpected error. Please try refreshing the page.
                             </p>
-                            
+
                             <div className="mt-6 space-y-3">
                                 <button
                                     onClick={() => window.location.reload()}
@@ -118,7 +118,7 @@ class ErrorBoundary extends Component<Props, State> {
                                 >
                                     Refresh Page
                                 </button>
-                                
+
                                 <button
                                     onClick={() => window.history.back()}
                                     className="group relative w-full flex justify-center py-2 px-4 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500"

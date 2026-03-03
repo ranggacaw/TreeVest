@@ -21,6 +21,7 @@ class DatabaseSeeder extends Seeder
 
             // Users with different roles
             UserSeeder::class,
+            KycSeeder::class,
 
             // Content (articles, categories, tags)
             CategorySeeder::class,
@@ -35,6 +36,31 @@ class DatabaseSeeder extends Seeder
             // Notification system
             NotificationTemplateSeeder::class,
             NotificationPreferenceSeeder::class,
+
+            // Weather and health monitoring
+            WeatherDataSeeder::class,
+            HealthUpdateSeeder::class,
+            HealthAlertSeeder::class,
+
+            // Market data
+            MarketPriceSeeder::class,
+
+            // Harvests and payouts
+            HarvestSeeder::class,
+            PayoutSeeder::class,
+
+            // Financial transactions
+            TransactionSeeder::class,
+            PaymentMethodSeeder::class,
+
+            // Reports
+            GeneratedReportSeeder::class,
+
+            // Notifications (in-app + delivery logs)
+            NotificationSeeder::class,
+
+            // Auth extras (OAuth providers, 2FA secrets for demo users)
+            AuthTablesSeeder::class,
         ]);
     }
 }

@@ -9,11 +9,11 @@ interface Props {
 
 export default function FarmCard({ farm }: Props) {
     const featuredImage = farm.images?.find((img) => img.is_featured);
-    
+
     // Use an organic Unsplash placeholder if no image exists
     const fallbackImage = 'https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?auto=format&fit=crop&q=80&w=800';
-    const imageUrl = featuredImage?.file_path 
-        ? `/storage/${featuredImage.file_path}`
+    const imageUrl = featuredImage?.file_path
+        ? (featuredImage.file_path.startsWith('http') ? featuredImage.file_path : `/storage/${featuredImage.file_path}`)
         : fallbackImage;
 
     return (

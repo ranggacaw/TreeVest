@@ -48,6 +48,9 @@ class FarmService
             ]);
 
             $this->processImages($farm, $request->file('images', []));
+            if ($request->has('image_urls')) {
+                $this->processImageUrls($farm, $request->input('image_urls', []), count($request->file('images', [])));
+            }
             $this->processCertifications($farm, $request->input('certifications', []));
 
             AuditLogService::log($owner, AuditEventType::FARM_CREATED, [
@@ -88,6 +91,10 @@ class FarmService
 
             if ($request->hasFile('images')) {
                 $this->processImages($farm, $request->file('images', []));
+            }
+
+            if ($request->has('image_urls')) {
+                $this->processImageUrls($farm, $request->input('image_urls', []), $farm->images()->count());
             }
 
             if ($request->has('certifications')) {
@@ -217,7 +224,7 @@ class FarmService
             ->get();
     }
 
-    protected function createPoint(float $lng, float $lat): string
+    protected function createPoint(float $lng, float $lat): \Illuminate\Contracts\Database\Query\Expression
     {
         return DB::raw("ST_GeomFromText('POINT($lng $lat)', 4326)");
     }
@@ -226,7 +233,7 @@ class FarmService
     {
         foreach ($images as $index => $image) {
             if ($image->isValid()) {
-                $filename = Str::uuid().'.'.$image->getClientOriginalExtension();
+                $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
                 $path = $image->storeAs("farms/{$farm->id}", $filename, 'public');
 
                 FarmImage::create([
@@ -237,6 +244,23 @@ class FarmService
                     'file_size' => $image->getSize(),
                     'is_featured' => $index === 0,
                     'sort_order' => $index,
+                ]);
+            }
+        }
+    }
+
+    protected function processImageUrls(Farm $farm, array $imageUrls, int $startIndex = 0): void
+    {
+        foreach ($imageUrls as $index => $url) {
+            if (filter_var($url, FILTER_VALIDATE_URL)) {
+                FarmImage::create([
+                    'farm_id' => $farm->id,
+                    'file_path' => $url,
+                    'original_filename' => basename(parse_url($url, PHP_URL_PATH)) ?: 'url_image',
+                    'mime_type' => 'image/jpeg',
+                    'file_size' => 0,
+                    'is_featured' => ($index + $startIndex) === 0,
+                    'sort_order' => $index + $startIndex,
                 ]);
             }
         }
@@ -258,7 +282,7 @@ class FarmService
             ];
 
             if (isset($cert['file']) && $cert['file']->isValid()) {
-                $filename = Str::uuid().'.'.$cert['file']->getClientOriginalExtension();
+                $filename = Str::uuid() . '.' . $cert['file']->getClientOriginalExtension();
                 $path = $cert['file']->storeAs("farms/{$farm->id}/certifications", $filename, 'public');
                 $certData['file_path'] = $path;
             }
