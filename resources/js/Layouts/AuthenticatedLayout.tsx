@@ -73,6 +73,9 @@ export default function Authenticated({
                                         <NavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
                                             Admin Panel
                                         </NavLink>
+                                        <NavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
+                                            Farm Management
+                                        </NavLink>
                                     </>
                                 )}
 
@@ -223,6 +226,9 @@ export default function Authenticated({
                             <>
                                 <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
                                     Admin Panel
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
+                                    Farm Management
                                 </ResponsiveNavLink>
                             </>
                         )}
