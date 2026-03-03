@@ -104,7 +104,7 @@ class Tree extends Model
 
     public function getExpectedRoiFormattedAttribute(): string
     {
-        return $this->expected_roi_percent . '%';
+        return rtrim(rtrim(number_format($this->expected_roi_percent, 2), '0'), '.') . '%';
     }
 
     public function isInvestable(): bool

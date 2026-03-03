@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use Illuminate\Support\Facades\Vite;
 use Illuminate\Support\ServiceProvider;
+use App\Contracts\ErrorTrackingServiceInterface;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -18,8 +19,23 @@ class AppServiceProvider extends ServiceProvider
         // Bind the enhanced investment service
         $this->app->bind(\App\Services\InvestmentService::class, \App\Services\InvestmentServiceEnhanced::class);
         
-        // Register error tracking service as singleton
-        $this->app->singleton(\App\Services\ErrorTrackingService::class);
+        // Register error tracking service with interface validation
+        $this->app->bind(ErrorTrackingServiceInterface::class, \App\Services\ErrorTrackingService::class);
+        $this->app->singleton(\App\Services\ErrorTrackingService::class, function ($app) {
+            $service = new \App\Services\ErrorTrackingService();
+            
+            // Validate that the service properly implements the interface
+            if (!$service instanceof ErrorTrackingServiceInterface) {
+                throw new \InvalidArgumentException(
+                    'ErrorTrackingService must implement ErrorTrackingServiceInterface'
+                );
+            }
+            
+            // Validate that all required methods exist with proper signatures
+            $this->validateErrorTrackingServiceInterface($service);
+            
+            return $service;
+        });
     }
 
     /**
@@ -110,5 +126,43 @@ class AppServiceProvider extends ServiceProvider
         \Illuminate\Support\Facades\RateLimiter::for('report-pdf', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)->by($request->user()?->id ?? $request->ip());
         });
+    }
+
+    /**
+     * Validate ErrorTrackingService implements interface correctly
+     *
+     * @param \App\Services\ErrorTrackingService $service
+     * @throws \InvalidArgumentException
+     */
+    private function validateErrorTrackingServiceInterface(\App\Services\ErrorTrackingService $service): void
+    {
+        $requiredMethods = [
+            'reportError' => [3, 'reportError(\Throwable $exception, array $context = [], ?string $user_id = null): void'],
+            'reportFinancialError' => [4, 'reportFinancialError(\Throwable $exception, string $operation, array $financial_context = [], ?string $user_id = null): void'],
+            'reportUIError' => [2, 'reportUIError(array $error_info, ?string $user_id = null): void'],
+            'isEnabled' => [0, 'isEnabled(): bool'],
+            'getConfig' => [0, 'getConfig(): array']
+        ];
+
+        foreach ($requiredMethods as $methodName => [$expectedParamCount, $signature]) {
+            if (!method_exists($service, $methodName)) {
+                throw new \InvalidArgumentException(
+                    "ErrorTrackingService missing required method: {$methodName}. Expected signature: {$signature}"
+                );
+            }
+
+            $reflection = new \ReflectionMethod($service, $methodName);
+            $actualParamCount = $reflection->getNumberOfParameters();
+            $requiredParamCount = $reflection->getNumberOfRequiredParameters();
+
+            // Check parameter count (accounting for optional parameters)
+            if ($actualParamCount < $requiredParamCount || $requiredParamCount > $expectedParamCount) {
+                throw new \InvalidArgumentException(
+                    "ErrorTrackingService method '{$methodName}' has incorrect parameter count. " .
+                    "Expected up to {$expectedParamCount} parameters, got {$actualParamCount} with {$requiredParamCount} required. " .
+                    "Expected signature: {$signature}"
+                );
+            }
+        }
     }
 }

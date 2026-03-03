@@ -11,8 +11,10 @@ use App\Models\User;
 use App\Services\PdfReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
+use Mockery;
 use Tests\TestCase;
 
 class GeneratePdfReportJobTest extends TestCase
@@ -39,8 +41,12 @@ class GeneratePdfReportJobTest extends TestCase
 
     public function test_job_calls_pdf_report_service_generate(): void
     {
+        $reportId = $this->report->id;
+        
         $service = $this->mock(PdfReportService::class);
-        $service->shouldReceive('generate')->once()->with($this->report);
+        $service->shouldReceive('generate')->once()->with(
+            Mockery::on(fn($report) => $report->id === $reportId)
+        );
 
         $job = new GeneratePdfReport($this->report);
         $job->handle($service);
@@ -178,10 +184,14 @@ class GeneratePdfReportJobTest extends TestCase
             'parameters' => ['year' => 2024],
         ]);
 
+        $reportId = $taxReport->id;
+
         Storage::put('private/reports/tax_summary_test.pdf', 'Tax PDF content');
 
         $service = $this->mock(PdfReportService::class);
-        $service->shouldReceive('generate')->once()->with($taxReport);
+        $service->shouldReceive('generate')->once()->with(
+            Mockery::on(fn($report) => $report->id === $reportId)
+        );
 
         $job = new GeneratePdfReport($taxReport);
         $job->handle($service);

@@ -41,4 +41,34 @@ class UserFactory extends Factory
             'email_verified_at' => null,
         ]);
     }
+
+    /**
+     * Set the user role to investor.
+     */
+    public function investor(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'investor',
+        ]);
+    }
+
+    /**
+     * Set the user role to farm_owner.
+     */
+    public function farmOwner(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'farm_owner',
+        ]);
+    }
+
+    /**
+     * Set the user role to admin.
+     */
+    public function admin(): static
+    {
+        return $this->state(fn (array $attributes) => [
+            'role' => 'admin',
+        ]);
+    }
 }

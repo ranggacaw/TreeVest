@@ -28,7 +28,7 @@ class GeneratePdfReport implements ShouldQueue
         try {
             $pdfReportService->generate($this->report->fresh());
 
-            event(new ReportReady($this->report->fresh()));
+            event(new ReportReady($this->report->fresh(), $this->report->user));
         } catch (Exception $e) {
             Log::error('Failed to generate PDF report', [
                 'report_id' => $this->report->id,

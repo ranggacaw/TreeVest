@@ -105,7 +105,12 @@ class Investment extends Model
 
     public function getFormattedAmountAttribute(): string
     {
-        return $this->currency . ' ' . number_format($this->amount_cents / 100, 2);
+        $currencySymbol = match ($this->currency) {
+            'IDR' => 'Rp',
+            default => $this->currency,
+        };
+        
+        return $currencySymbol . ' ' . number_format($this->amount_cents / 100, 2);
     }
 
     public function transitionTo(InvestmentStatus $newStatus): bool

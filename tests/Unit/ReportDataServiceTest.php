@@ -220,6 +220,7 @@ class ReportDataServiceTest extends TestCase
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
+            'investor_id' => $this->investor->id,
             'net_amount_cents' => 500000,
             'status' => PayoutStatus::Completed,
             'completed_at' => '2024-12-01',
@@ -245,6 +246,7 @@ class ReportDataServiceTest extends TestCase
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
+            'investor_id' => $this->investor->id,
             'net_amount_cents' => 500000,
             'status' => PayoutStatus::Completed,
             'completed_at' => '2024-12-01',
@@ -252,6 +254,7 @@ class ReportDataServiceTest extends TestCase
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
+            'investor_id' => $this->investor->id,
             'net_amount_cents' => 600000,
             'status' => PayoutStatus::Pending,
             'completed_at' => '2024-12-01',
@@ -289,6 +292,7 @@ class ReportDataServiceTest extends TestCase
 
         Payout::factory()->create([
             'investment_id' => $investment1->id,
+            'investor_id' => $this->investor->id,
             'net_amount_cents' => 750000,
             'status' => PayoutStatus::Completed,
             'completed_at' => '2024-12-01',
@@ -313,6 +317,7 @@ class ReportDataServiceTest extends TestCase
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
+            'investor_id' => $this->investor->id,
             'net_amount_cents' => 500000,
             'status' => PayoutStatus::Completed,
             'completed_at' => '2024-12-01',

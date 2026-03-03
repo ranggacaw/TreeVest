@@ -17,8 +17,8 @@ class WeatherServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->weatherService = app(WeatherService::class);
         config(['services.openweathermap.api_key' => 'test-api-key']);
+        $this->weatherService = app(WeatherService::class);
     }
 
     public function test_fetch_weather_for_farm_returns_weather_data()

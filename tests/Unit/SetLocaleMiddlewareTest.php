@@ -6,6 +6,7 @@ use App\Http\Middleware\SetLocale;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Testing\TestResponse;
 use Tests\TestCase;
 
 class SetLocaleMiddlewareTest extends TestCase
@@ -34,7 +35,7 @@ class SetLocaleMiddlewareTest extends TestCase
             return response('OK');
         };
         
-        $response = $middleware->handle($request, $next);
+        $response = TestResponse::fromBaseResponse($middleware->handle($request, $next));
         
         $this->assertEquals('id', app()->getLocale());
         $response->assertHeader('Content-Language', 'id');
@@ -50,7 +51,7 @@ class SetLocaleMiddlewareTest extends TestCase
             return response('OK');
         };
         
-        $response = $middleware->handle($request, $next);
+        $response = TestResponse::fromBaseResponse($middleware->handle($request, $next));
         
         $this->assertEquals('id', app()->getLocale());
         $response->assertHeader('Content-Language', 'id');
@@ -66,7 +67,7 @@ class SetLocaleMiddlewareTest extends TestCase
             return response('OK');
         };
         
-        $response = $middleware->handle($request, $next);
+        $response = TestResponse::fromBaseResponse($middleware->handle($request, $next));
         
         $this->assertEquals('en', app()->getLocale());
         $response->assertHeader('Content-Language', 'en');
@@ -85,7 +86,7 @@ class SetLocaleMiddlewareTest extends TestCase
             return response('OK');
         };
         
-        $response = $middleware->handle($request, $next);
+        $response = TestResponse::fromBaseResponse($middleware->handle($request, $next));
         
         $this->assertEquals('en', app()->getLocale());
         $response->assertHeader('Content-Language', 'en');
@@ -104,7 +105,7 @@ class SetLocaleMiddlewareTest extends TestCase
             return response('OK');
         };
         
-        $response = $middleware->handle($request, $next);
+        $response = TestResponse::fromBaseResponse($middleware->handle($request, $next));
         
         $this->assertEquals('id', app()->getLocale());
         $response->assertHeader('Content-Language', 'id');

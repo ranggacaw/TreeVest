@@ -1,0 +1,18 @@
+# Code Review Trigger File
+#
+# Purpose: This file triggers automated code review processes when staged in git
+# 
+# Usage:
+#   1. Stage this file: git add .review-trigger
+#   2. Run code review: Use OpenCode's Universal Code Review or CI/CD pipeline
+#   3. Review generated report in test-hunter/ directory
+#
+# Security: Only authorized developers should stage this file
+# Audit: All trigger activations are logged for compliance
+#
+# Project: Treevest AgriTech Investment Platform
+# Framework: Laravel 12 + React (Inertia.js)
+# Last Updated: 2026-03-03
+#
+# Note: This trigger mechanism may evolve to GitHub Actions in the future
+# for better integration with CI/CD workflows.

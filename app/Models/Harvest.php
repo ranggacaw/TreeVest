@@ -86,6 +86,19 @@ class Harvest extends Model
         ]);
     }
 
+    public function scopeCompleted($query)
+    {
+        return $query->where('status', HarvestStatus::Completed)
+            ->whereNotNull('actual_yield_kg')
+            ->where('scheduled_date', '<=', now()->toDateString());
+    }
+
+    public function scopeUpcoming($query)
+    {
+        return $query->where('status', HarvestStatus::Scheduled)
+            ->where('scheduled_date', '>', now()->toDateString());
+    }
+
     public function canTransitionTo(HarvestStatus $to): bool
     {
         return $this->status->canTransitionTo($to);

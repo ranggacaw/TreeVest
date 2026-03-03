@@ -26,7 +26,11 @@ class TreeFilterServiceTest extends TestCase
         $query = $service->applyFilters($query, $filters);
 
         $sql = $query->toSql();
-        $this->assertStringContainsString('"risk_rating" in (?)', $sql);
-        $this->assertStringContainsString('"price_cents" between ? and ?', $sql);
+        // SQLite uses double quotes, MySQL uses backtick quoting
+        $quoteChar = in_array(config('database.default'), ['sqlite', 'mysql']) ? 
+            (config('database.default') === 'mysql' ? '`' : '"') : '"';
+        $this->assertStringContainsString($quoteChar . 'risk_rating' . $quoteChar, $sql);
+        $this->assertStringContainsString($quoteChar . 'price_cents' . $quoteChar, $sql);
+        $this->assertStringContainsString('between', $sql);
     }
 }

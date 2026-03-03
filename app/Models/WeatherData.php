@@ -10,6 +10,8 @@ class WeatherData extends Model
 {
     use HasFactory;
 
+    public $timestamps = false;
+
     protected $fillable = [
         'farm_id',
         'temperature_celsius',
@@ -19,6 +21,7 @@ class WeatherData extends Model
         'weather_condition',
         'alert_triggered',
         'fetched_at',
+        'created_at',
     ];
 
     protected function casts(): array

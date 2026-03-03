@@ -22,7 +22,7 @@ class ArticleFactory extends Factory
             'title' => $title,
             'slug' => \Illuminate\Support\Str::slug($title),
             'content' => fake()->paragraphs(rand(5, 15), true),
-            'excerpt' => fake()->sentence(rand(20, 50)),
+            'excerpt' => fake()->text(200),
             'featured_image' => fake()->imageUrl(1200, 630),
             'status' => fake()->randomElement(['draft', 'published']),
             'published_at' => fake()->optional(0.7)->dateTimeBetween('-1 year', 'now'),

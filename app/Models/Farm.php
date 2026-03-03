@@ -117,6 +117,16 @@ class Farm extends Model
         return implode(', ', $parts);
     }
 
+    public function getLocationAttribute(): ?string
+    {
+        $parts = array_filter([
+            $this->city,
+            $this->state,
+        ]);
+
+        return !empty($parts) ? implode(', ', $parts) : null;
+    }
+
     public function scopeActive($query)
     {
         $query->where('status', FarmStatus::ACTIVE);

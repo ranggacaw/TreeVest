@@ -143,7 +143,8 @@ class FarmModelTest extends TestCase
 
     public function test_farm_approve_sets_status_and_timestamp(): void
     {
-        $adminId = 1;
+        $admin = User::factory()->create();
+        $adminId = $admin->id;
         $farm = Farm::factory()->create(['status' => FarmStatus::PENDING_APPROVAL]);
 
         $farm->approve($adminId);
@@ -155,9 +156,10 @@ class FarmModelTest extends TestCase
 
     public function test_farm_reject_sets_status_and_reason(): void
     {
+        $admin = User::factory()->create();
         $farm = Farm::factory()->create(['status' => FarmStatus::PENDING_APPROVAL]);
 
-        $farm->reject(1, 'Not compliant');
+        $farm->reject($admin->id, 'Not compliant');
 
         $this->assertEquals(FarmStatus::DEACTIVATED, $farm->fresh()->status);
         $this->assertEquals('Not compliant', $farm->fresh()->rejection_reason);

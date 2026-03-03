@@ -9,13 +9,16 @@ use App\Http\Resources\TreeResource;
 use App\Models\Investment;
 use App\Models\Tree;
 use App\Services\InvestmentService;
+use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Log;
 use Inertia\Inertia;
 
 class InvestmentController extends Controller
 {
+    use AuthorizesRequests;
     public function __construct(
         protected InvestmentService $investmentService,
     ) {
@@ -43,7 +46,7 @@ class InvestmentController extends Controller
 
     public function show(int $investment)
     {
-        // Optimized query with specific eager loading for detail view
+        // Find the investment and authorize access using policy
         $investment = Investment::with([
             'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id',
             'tree.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
@@ -55,21 +58,21 @@ class InvestmentController extends Controller
         ])
         ->findOrFail($investment);
 
-        if ($investment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Use policy for authorization instead of manual check
+        $this->authorize('viewDetails', $investment);
 
-        // Optimize harvest queries using database instead of collection filtering
-        $completedHarvests = DB::table('harvests')
-            ->where('tree_id', $investment->tree_id)
-            ->whereNotNull('actual_yield_kg')
-            ->where('scheduled_date', '<=', now()->toDateString())
-            ->select(['id', 'scheduled_date as harvest_date', 'estimated_yield_kg', 'actual_yield_kg', 'quality_grade', 'notes'])
+        // Get authorized harvest data using Eloquent relationships instead of raw queries
+        $tree = $investment->tree;
+        
+        // Use Eloquent relationships with proper scopes for authorization
+        $completedHarvests = $tree->harvests()
+            ->completed()
+            ->select(['id', 'scheduled_date', 'estimated_yield_kg', 'actual_yield_kg', 'quality_grade', 'notes'])
             ->get()
             ->map(function ($harvest) {
                 return [
                     'id' => $harvest->id,
-                    'harvest_date' => $harvest->harvest_date,
+                    'harvest_date' => $harvest->scheduled_date,
                     'estimated_yield_kg' => $harvest->estimated_yield_kg,
                     'actual_yield_kg' => $harvest->actual_yield_kg,
                     'quality_grade' => $harvest->quality_grade,
@@ -78,16 +81,15 @@ class InvestmentController extends Controller
             })
             ->toArray();
 
-        $upcomingHarvests = DB::table('harvests')
-            ->where('tree_id', $investment->tree_id)
-            ->where('scheduled_date', '>', now()->toDateString())
-            ->select(['id', 'scheduled_date as harvest_date', 'estimated_yield_kg'])
+        $upcomingHarvests = $tree->harvests()
+            ->upcoming()
+            ->select(['id', 'scheduled_date', 'estimated_yield_kg'])
             ->orderBy('scheduled_date')
             ->get()
             ->map(function ($harvest) {
                 return [
                     'id' => $harvest->id,
-                    'harvest_date' => $harvest->harvest_date,
+                    'harvest_date' => $harvest->scheduled_date,
                     'estimated_yield_kg' => $harvest->estimated_yield_kg,
                 ];
             })
@@ -157,26 +159,87 @@ class InvestmentController extends Controller
         $user = $request->user();
 
         try {
-            $investment = $this->investmentService->initiateInvestment(
-                $user,
-                $tree,
-                $request->input('amount_cents'),
-                $request->input('payment_method_id')
-            );
+            $investment = DB::transaction(function () use ($user, $tree, $request) {
+                // Additional server-side validation for financial amounts
+                $amountCents = (int) $request->input('amount_cents');
+                if ($amountCents < $tree->min_investment_cents || $amountCents > $tree->max_investment_cents) {
+                    throw new \App\Exceptions\InvalidInvestmentAmountException(
+                        $amountCents, 
+                        $tree->min_investment_cents
+                    );
+                }
+
+                return $this->investmentService->initiateInvestment(
+                    $user,
+                    $tree,
+                    $amountCents,
+                    $request->input('payment_method_id')
+                );
+            });
+
+            // Log successful investment initiation for audit trail
+            Log::info('Investment initiated successfully', [
+                'user_id' => $user->id,
+                'investment_id' => $investment->id,
+                'tree_id' => $tree->id,
+                'amount_cents' => $request->input('amount_cents'),
+                'ip_address' => $request->ip(),
+                'user_agent' => $request->userAgent()
+            ]);
 
             return redirect()->route('investments.confirmation', $investment->id)
                 ->with('success', 'Investment initiated successfully. Please complete payment.');
         } catch (\App\Exceptions\KycNotVerifiedException $e) {
+            Log::warning('Investment attempt with unverified KYC', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'ip_address' => $request->ip()
+            ]);
             return redirect()->route('kyc.verify')
                 ->with('warning', 'You must complete KYC verification before investing.');
         } catch (\App\Exceptions\TreeNotInvestableException $e) {
+            Log::warning('Investment attempt on non-investable tree', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage());
         } catch (\App\Exceptions\PaymentConfigurationException $e) {
+            Log::error('Payment configuration error during investment', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\InvestmentLimitExceededException $e) {
+            Log::warning('Investment limit exceeded', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'amount_cents' => $request->input('amount_cents'),
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\InvalidInvestmentAmountException $e) {
+            Log::warning('Invalid investment amount', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'amount_cents' => $request->input('amount_cents'),
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage())->withInput();
+        } catch (\Throwable $e) {
+            Log::error('Unexpected error during investment creation', [
+                'user_id' => $user->id,
+                'tree_id' => $tree->id,
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString(),
+                'ip_address' => $request->ip()
+            ]);
+            return back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
         }
     }
 
@@ -193,9 +256,8 @@ class InvestmentController extends Controller
         ->select(['id', 'user_id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
         ->findOrFail($investment);
 
-        if ($investment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Use policy for authorization
+        $this->authorize('view', $investment);
 
         // Use InvestmentResource for consistent data transformation
         $investmentResource = new InvestmentResource($investment);
@@ -209,9 +271,8 @@ class InvestmentController extends Controller
     {
         $investment = Investment::findOrFail($investment);
 
-        if ($investment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Use policy for authorization
+        $this->authorize('delete', $investment);
 
         try {
             $this->investmentService->cancelInvestment(
@@ -219,9 +280,23 @@ class InvestmentController extends Controller
                 $request->input('reason', 'User cancelled')
             );
 
+            // Log cancellation for audit trail
+            Log::info('Investment cancelled', [
+                'user_id' => $request->user()->id,
+                'investment_id' => $investment->id,
+                'reason' => $request->input('reason', 'User cancelled'),
+                'ip_address' => $request->ip()
+            ]);
+
             return redirect()->route('investments.index')
                 ->with('success', 'Investment cancelled successfully.');
         } catch (\App\Exceptions\InvestmentNotCancellableException $e) {
+            Log::warning('Investment cancellation attempt failed', [
+                'user_id' => $request->user()->id,
+                'investment_id' => $investment->id,
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage());
         }
     }
@@ -236,9 +311,8 @@ class InvestmentController extends Controller
         ->select(['id', 'user_id', 'amount_cents', 'currency', 'tree_id'])
         ->findOrFail($investment);
 
-        if ($investment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Use policy for authorization
+        $this->authorize('topUp', $investment);
 
         $user = $request->user();
 
@@ -259,21 +333,43 @@ class InvestmentController extends Controller
     {
         $investment = Investment::findOrFail($investment);
 
-        if ($investment->user_id !== Auth::id()) {
-            abort(403);
-        }
+        // Use policy for authorization
+        $this->authorize('topUp', $investment);
 
         try {
-            $this->investmentService->topUpInvestment(
-                $investment->id,
-                $request->input('top_up_cents'),
-                $request->input('payment_method_id')
-            );
+            $result = DB::transaction(function () use ($investment, $request) {
+                return $this->investmentService->topUpInvestment(
+                    $investment->id,
+                    $request->input('top_up_cents'),
+                    $request->input('payment_method_id')
+                );
+            });
+
+            // Log successful top-up for audit trail
+            Log::info('Investment topped up successfully', [
+                'user_id' => $request->user()->id,
+                'investment_id' => $investment->id,
+                'top_up_cents' => $request->input('top_up_cents'),
+                'ip_address' => $request->ip()
+            ]);
 
             return back()->with('success', 'Investment topped up successfully.');
         } catch (\App\Exceptions\PaymentConfigurationException $e) {
+            Log::error('Payment configuration error during top-up', [
+                'user_id' => $request->user()->id,
+                'investment_id' => $investment->id,
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage());
         } catch (\App\Exceptions\InvestmentLimitExceededException $e) {
+            Log::warning('Investment limit exceeded during top-up', [
+                'user_id' => $request->user()->id,
+                'investment_id' => $investment->id,
+                'top_up_cents' => $request->input('top_up_cents'),
+                'error' => $e->getMessage(),
+                'ip_address' => $request->ip()
+            ]);
             return back()->with('error', $e->getMessage());
         }
     }

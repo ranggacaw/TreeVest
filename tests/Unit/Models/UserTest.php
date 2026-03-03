@@ -161,7 +161,7 @@ class UserTest extends TestCase
 
     public function test_has_contact_returns_false_when_neither_exists()
     {
-        $user = User::factory()->create([
+        $user = User::factory()->make([
             'email' => null,
             'phone' => null,
         ]);

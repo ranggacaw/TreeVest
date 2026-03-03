@@ -108,6 +108,7 @@ class WeatherService
             'weather_condition' => $weather['main'] ?? 'Unknown',
             'alert_triggered' => false,
             'fetched_at' => now(),
+            'created_at' => now(),
         ]);
     }
 

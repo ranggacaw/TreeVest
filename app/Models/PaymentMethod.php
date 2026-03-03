@@ -32,7 +32,9 @@ class PaymentMethod extends Model
     protected static function booted()
     {
         static::creating(function ($paymentMethod) {
-            $userHasPaymentMethods = $paymentMethod->user()->where('is_default', true)->exists();
+            $userHasPaymentMethods = static::where('user_id', $paymentMethod->user_id)
+                ->where('is_default', true)
+                ->exists();
             if (! $userHasPaymentMethods) {
                 $paymentMethod->is_default = true;
             }

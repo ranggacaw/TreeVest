@@ -463,6 +463,30 @@ See AGENTS.md Section 7 for the full glossary. Critical terms for code:
 
 ## Architecture Patterns
 
+## Architecture Patterns
+
+### Workflow Triggers
+
+#### Review Trigger System
+
+The project uses a simple file-based trigger mechanism for automated code reviews:
+
+**Trigger File:** `.review-trigger`
+- **Purpose:** Activates code review processes when staged in git
+- **Usage Pattern:** `git add .review-trigger` → triggers review workflow
+- **Security:** File contains documentation header explaining usage and security considerations
+- **Audit Trail:** All trigger activations should be logged for compliance (financial platform requirement)
+
+**Workflow Integration:**
+- Compatible with CI/CD pipelines (GitHub Actions, Laravel-specific runners)
+- Can be extended to trigger other automated processes (testing, deployment, analysis)
+- Maintains audit trail for regulatory compliance in investment platform context
+
+**Future Evolution:** 
+- Consider migration to GitHub Actions workflow triggers for better scalability
+- Evaluate Laravel-native scheduling/queue features as team grows
+- Plan integration with financial platform audit requirements
+
 ### Validation & Sanitization
 - All incoming HTTP requests must be validated via FormRequest classes.
 - BaseRequest (App\Http\Requests\BaseRequest) should be used as the parent class for all FormRequests to ensure common sanitization rules are applied.

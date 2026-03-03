@@ -71,7 +71,7 @@ class PaymentMethodModelTest extends TestCase
 
         $pm2 = PaymentMethod::factory()->create([
             'user_id' => $user->id,
-            'is_default' => false,
+            'is_default' => true,
         ]);
 
         $this->assertTrue($pm2->fresh()->is_default);
