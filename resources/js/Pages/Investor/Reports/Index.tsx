@@ -62,7 +62,7 @@ export default function Index({
     recentReports,
 }: Props) {
     const formatCurrency = (cents: number) => {
-        return `RM ${(cents / 100).toFixed(2)}`;
+        return `Rp ${(cents / 100).toFixed(2)}`;
     };
 
     const { post: requestPdf, processing: pdfGenerating } = useForm(filters);
@@ -131,11 +131,10 @@ export default function Index({
                                         Net Return
                                     </dt>
                                     <dd
-                                        className={`mt-1 text-2xl font-semibold ${
-                                            profitLoss.summary.netCents >= 0
+                                        className={`mt-1 text-2xl font-semibold ${profitLoss.summary.netCents >= 0
                                                 ? 'text-green-600'
                                                 : 'text-red-600'
-                                        }`}
+                                            }`}
                                     >
                                         {formatCurrency(profitLoss.summary.netCents)}
                                     </dd>
@@ -145,11 +144,10 @@ export default function Index({
                                         Overall ROI
                                     </dt>
                                     <dd
-                                        className={`mt-1 text-2xl font-semibold ${
-                                            profitLoss.summary.overallRoiPercent >= 0
+                                        className={`mt-1 text-2xl font-semibold ${profitLoss.summary.overallRoiPercent >= 0
                                                 ? 'text-green-600'
                                                 : 'text-red-600'
-                                        }`}
+                                            }`}
                                     >
                                         {profitLoss.summary.overallRoiPercent.toFixed(2)}%
                                     </dd>

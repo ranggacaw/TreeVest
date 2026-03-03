@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::create('investments', function (Blueprint $table) {
@@ -13,7 +12,7 @@ return new class extends Migration
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('tree_id')->constrained('trees')->onDelete('cascade');
             $table->unsignedBigInteger('amount_cents');
-            $table->string('currency', 3)->default('MYR');
+            $table->string('currency', 3)->default('IDR');
             $table->date('purchase_date');
             $table->string('status', 50);
             $table->foreignId('transaction_id')->nullable()->constrained('transactions')->onDelete('set null');

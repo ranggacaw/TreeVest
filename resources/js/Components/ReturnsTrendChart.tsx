@@ -23,7 +23,7 @@ interface ReturnsTrendChartProps {
 
 export default function ReturnsTrendChart({ data, height = 300 }: ReturnsTrendChartProps) {
     const formatCurrency = (cents: number) => {
-        return `RM ${(cents / 100).toFixed(2)}`;
+        return `Rp ${(cents / 100).toFixed(2)}`;
     };
 
     return (

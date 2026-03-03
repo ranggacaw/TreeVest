@@ -24,7 +24,7 @@ interface ProfitLossTableProps {
 
 export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps) {
     const formatCurrency = (cents: number) => {
-        return `RM ${(cents / 100).toFixed(2)}`;
+        return `Rp ${(cents / 100).toFixed(2)}`;
     };
 
     const formatPercent = (value: number) => {
@@ -91,20 +91,18 @@ export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps)
                                 {formatCurrency(row.totalPayoutsCents)}
                             </td>
                             <td
-                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${
-                                    row.netCents >= 0
+                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${row.netCents >= 0
                                         ? 'text-green-600'
                                         : 'text-red-600'
-                                }`}
+                                    }`}
                             >
                                 {formatCurrency(row.netCents)}
                             </td>
                             <td
-                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${
-                                    row.actualRoiPercent >= 0
+                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${row.actualRoiPercent >= 0
                                         ? 'text-green-600'
                                         : 'text-red-600'
-                                }`}
+                                    }`}
                             >
                                 {formatPercent(row.actualRoiPercent)}
                             </td>
@@ -132,20 +130,18 @@ export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps)
                             {formatCurrency(summary.totalPayoutsCents)}
                         </td>
                         <td
-                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${
-                                summary.netCents >= 0
+                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${summary.netCents >= 0
                                     ? 'text-green-600'
                                     : 'text-red-600'
-                            }`}
+                                }`}
                         >
                             {formatCurrency(summary.netCents)}
                         </td>
                         <td
-                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${
-                                summary.overallRoiPercent >= 0
+                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${summary.overallRoiPercent >= 0
                                     ? 'text-green-600'
                                     : 'text-red-600'
-                            }`}
+                                }`}
                         >
                             {formatPercent(summary.overallRoiPercent)}
                         </td>

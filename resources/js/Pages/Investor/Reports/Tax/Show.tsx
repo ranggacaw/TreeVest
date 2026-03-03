@@ -44,7 +44,7 @@ interface Props {
 
 export default function Show({ taxData, year, recentReports }: Props) {
     const formatCurrency = (cents: number) => {
-        return `RM ${(cents / 100).toFixed(2)}`;
+        return `Rp ${(cents / 100).toFixed(2)}`;
     };
 
     const { post: requestPdf, processing: pdfGenerating } = useForm({ year });
@@ -143,11 +143,10 @@ export default function Show({ taxData, year, recentReports }: Props) {
                                         Net
                                     </dt>
                                     <dd
-                                        className={`mt-1 text-2xl font-semibold ${
-                                            taxData.summary.netCents >= 0
+                                        className={`mt-1 text-2xl font-semibold ${taxData.summary.netCents >= 0
                                                 ? 'text-green-600'
                                                 : 'text-red-600'
-                                        }`}
+                                            }`}
                                     >
                                         {formatCurrency(taxData.summary.netCents)}
                                     </dd>

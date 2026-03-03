@@ -35,7 +35,7 @@ export default function PerformanceChart({ performance, formatCurrency }: Props)
                                 <BarChart data={chartData}>
                                     <CartesianGrid strokeDasharray="3 3" />
                                     <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                                    <YAxis tickFormatter={(value) => `RM ${value}`} tick={{ fontSize: 12 }} />
+                                    <YAxis tickFormatter={(value) => `Rp ${value}`} tick={{ fontSize: 12 }} />
                                     <Tooltip
                                         formatter={(value) => [formatCurrency(Number(value) * 100), '']}
                                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}

@@ -28,7 +28,7 @@ class FraudDetectionServiceTest extends TestCase
             'type' => \App\Enums\TransactionType::InvestmentPurchase,
             'status' => \App\Enums\TransactionStatus::Completed,
             'amount' => 100,
-            'currency' => 'MYR',
+            'currency' => 'IDR',
             'created_at' => now(),
             'updated_at' => now(),
         ]);
@@ -37,7 +37,7 @@ class FraudDetectionServiceTest extends TestCase
             'type' => \App\Enums\TransactionType::InvestmentPurchase,
             'status' => \App\Enums\TransactionStatus::Completed,
             'amount' => 100,
-            'currency' => 'MYR',
+            'currency' => 'IDR',
             'created_at' => now(),
             'updated_at' => now(),
         ]);

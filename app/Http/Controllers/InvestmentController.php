@@ -39,7 +39,7 @@ class InvestmentController extends Controller
                 ],
             ]),
             'total_value_cents' => $totalValue,
-            'total_value_formatted' => 'RM ' . number_format($totalValue / 100, 2),
+            'total_value_formatted' => 'Rp ' . number_format($totalValue / 100, 2),
         ]);
     }
 
@@ -162,8 +162,8 @@ class InvestmentController extends Controller
                 'risk_rating' => $tree->risk_rating->value,
                 'min_investment_cents' => $tree->min_investment_cents,
                 'max_investment_cents' => $tree->max_investment_cents,
-                'min_investment_formatted' => 'RM ' . number_format($tree->min_investment_cents / 100, 2),
-                'max_investment_formatted' => 'RM ' . number_format($tree->max_investment_cents / 100, 2),
+                'min_investment_formatted' => 'Rp ' . number_format($tree->min_investment_cents / 100, 2),
+                'max_investment_formatted' => 'Rp ' . number_format($tree->max_investment_cents / 100, 2),
                 'fruit_crop' => [
                     'variant' => $tree->fruitCrop->variant,
                     'fruit_type' => $tree->fruitCrop->fruitType->name,
@@ -207,6 +207,8 @@ class InvestmentController extends Controller
                 ->with('warning', 'You must complete KYC verification before investing.');
         } catch (\App\Exceptions\TreeNotInvestableException $e) {
             return back()->with('error', $e->getMessage());
+        } catch (\App\Exceptions\PaymentConfigurationException $e) {
+            return back()->with('error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\InvestmentLimitExceededException $e) {
             return back()->with('error', $e->getMessage())->withInput();
         } catch (\App\Exceptions\InvalidInvestmentAmountException $e) {
@@ -317,6 +319,8 @@ class InvestmentController extends Controller
             );
 
             return back()->with('success', 'Investment topped up successfully.');
+        } catch (\App\Exceptions\PaymentConfigurationException $e) {
+            return back()->with('error', $e->getMessage());
         } catch (\App\Exceptions\InvestmentLimitExceededException $e) {
             return back()->with('error', $e->getMessage());
         }

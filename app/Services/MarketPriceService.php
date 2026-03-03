@@ -13,7 +13,7 @@ class MarketPriceService
         return MarketPrice::create([
             'fruit_type_id' => $data['fruit_type_id'],
             'price_per_kg_cents' => $data['price_per_kg_cents'],
-            'currency' => $data['currency'] ?? 'MYR',
+            'currency' => $data['currency'] ?? 'IDR',
             'effective_date' => Carbon::parse($data['effective_date']),
             'created_by' => $admin->id,
             'notes' => $data['notes'] ?? null,

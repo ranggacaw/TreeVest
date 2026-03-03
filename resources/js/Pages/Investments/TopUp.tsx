@@ -26,7 +26,7 @@ interface Props extends PageProps {
 }
 
 export default function TopUp({ auth, investment, payment_methods }: Props) {
-    const minTopUp = 100; // 1 RM
+    const minTopUp = 100; // 1 Rp
     const maxTopUp = investment.tree.max_investment_cents - investment.amount_cents;
 
     const { data, setData, post, processing, errors } = useForm({
@@ -40,7 +40,7 @@ export default function TopUp({ auth, investment, payment_methods }: Props) {
     };
 
     const formatCurrency = (cents: number) => {
-        return 'RM ' + (cents / 100).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     return (
@@ -68,7 +68,7 @@ export default function TopUp({ auth, investment, payment_methods }: Props) {
 
                             <form onSubmit={handleSubmit} className="space-y-6">
                                 <div>
-                                    <InputLabel htmlFor="amount" value="Top Up Amount (RM)" />
+                                    <InputLabel htmlFor="amount" value="Top Up Amount (Rp)" />
                                     <TextInput
                                         id="amount"
                                         type="number"

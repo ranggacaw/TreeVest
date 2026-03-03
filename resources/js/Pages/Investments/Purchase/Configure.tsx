@@ -12,6 +12,9 @@ interface Props extends PageProps {
 }
 
 export default function Configure({ auth, tree, user, payment_methods }: Props) {
+    const { props } = usePage<any>();
+    const { flash } = props;
+
     const { data, setData, post, processing, errors } = useForm({
         tree_id: tree.id,
         amount_cents: tree.min_investment_cents,
@@ -23,12 +26,17 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
     const [showRiskModal, setShowRiskModal] = useState(false);
 
     const amountInDollars = data.amount_cents / 100;
-    const isValidAmount = data.amount_cents >= tree.min_investment_cents && 
-                          data.amount_cents <= tree.max_investment_cents;
+    const isValidAmount = data.amount_cents >= tree.min_investment_cents &&
+        data.amount_cents <= tree.max_investment_cents;
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        
+
+        if (!isValidAmount) {
+            alert('Please enter a valid investment amount.');
+            return;
+        }
+
         if (!data.acceptance_risk_disclosure || !data.acceptance_terms) {
             alert('Please accept the risk disclosure and terms and conditions.');
             return;
@@ -38,7 +46,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
     };
 
     const formatCurrency = (cents: number) => {
-        return 'RM ' + (cents / 100).toFixed(2);
+        return 'Rp ' + (cents / 100).toFixed(2);
     };
 
     return (
@@ -53,6 +61,18 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                    {flash?.error && (
+                        <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
+                            <span className="block sm:inline">{flash.error}</span>
+                        </div>
+                    )}
+
+                    {flash?.success && (
+                        <div className="mb-6 bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative" role="alert">
+                            <span className="block sm:inline">{flash.success}</span>
+                        </div>
+                    )}
+
                     <form onSubmit={handleSubmit}>
                         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                             <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
@@ -60,7 +80,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                     <h3 className="text-lg font-semibold text-gray-900 mb-4">
                                         Tree Details
                                     </h3>
-                                    
+
                                     <dl className="space-y-4">
                                         <div>
                                             <dt className="text-sm text-gray-500">Tree ID</dt>
@@ -206,6 +226,17 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                         </div>
                                     )}
 
+                                    {Object.keys(errors).length > 0 && (
+                                        <div className="bg-red-50 p-4 rounded-lg mt-6">
+                                            <p className="text-sm font-semibold text-red-800 mb-2">There were some problems with your submission:</p>
+                                            <ul className="list-disc pl-5 text-sm text-red-700">
+                                                {Object.entries(errors).map(([field, msg]) => (
+                                                    <li key={field}>{msg}</li>
+                                                ))}
+                                            </ul>
+                                        </div>
+                                    )}
+
                                     <div className="mt-6 flex gap-4">
                                         <Link
                                             href="/farms"
@@ -215,7 +246,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                         </Link>
                                         <button
                                             type="submit"
-                                            disabled={processing || !isValidAmount || !data.acceptance_risk_disclosure || !data.acceptance_terms}
+                                            disabled={processing}
                                             className="flex-1 px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700 disabled:opacity-50 disabled:cursor-not-allowed"
                                         >
                                             {processing ? 'Processing...' : 'Proceed to Payment'}

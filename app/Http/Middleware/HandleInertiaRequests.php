@@ -61,6 +61,12 @@ class HandleInertiaRequests extends Middleware
             'stripe' => [
                 'publishable_key' => config('services.stripe.key'),
             ],
+            'flash' => [
+                'success' => $request->session()->get('success'),
+                'error' => $request->session()->get('error'),
+                'warning' => $request->session()->get('warning'),
+                'info' => $request->session()->get('info'),
+            ],
         ];
     }
 }

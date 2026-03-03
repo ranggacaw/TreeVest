@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -15,7 +14,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('fruit_type_id')->constrained('fruit_types')->onDelete('cascade');
             $table->unsignedBigInteger('price_per_kg_cents');
-            $table->char('currency', 3)->default('MYR');
+            $table->char('currency', 3)->default('IDR');
             $table->date('effective_date');
             $table->foreignId('created_by')->constrained('users')->onDelete('cascade');
             $table->text('notes')->nullable();

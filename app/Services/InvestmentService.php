@@ -23,26 +23,27 @@ class InvestmentService
     public function __construct(
         protected PaymentService $paymentService,
         protected AuditLogService $auditLogService,
-    ) {}
+    ) {
+    }
 
     public function validateInvestmentEligibility(User $user, Tree $tree, int $amountCents): array
     {
         $errors = [];
 
-        if (! $user->isKycValid()) {
+        if (!$user->isKycValid()) {
             $errors['kyc'] = 'KYC verification is required before investing.';
         }
 
-        if (! $tree->isInvestable()) {
+        if (!$tree->isInvestable()) {
             $errors['tree'] = 'This tree is not currently available for investment.';
         }
 
         if ($amountCents < $tree->min_investment_cents) {
-            $errors['amount_min'] = 'Minimum investment is '.number_format($tree->min_investment_cents / 100, 2);
+            $errors['amount_min'] = 'Minimum investment is ' . number_format($tree->min_investment_cents / 100, 2);
         }
 
         if ($amountCents > $tree->max_investment_cents) {
-            $errors['amount_max'] = 'Maximum investment is '.number_format($tree->max_investment_cents / 100, 2);
+            $errors['amount_max'] = 'Maximum investment is ' . number_format($tree->max_investment_cents / 100, 2);
         }
 
         return [
@@ -59,7 +60,7 @@ class InvestmentService
     ): Investment {
         $eligibility = $this->validateInvestmentEligibility($user, $tree, $amountCents);
 
-        if (! $eligibility['eligible']) {
+        if (!$eligibility['eligible']) {
             $firstError = array_values($eligibility['errors'])[0] ?? 'Investment eligibility check failed';
 
             if (isset($eligibility['errors']['kyc'])) {
@@ -85,7 +86,7 @@ class InvestmentService
             $transaction = $this->paymentService->initiatePayment(
                 $user->id,
                 $amountCents,
-                'MYR',
+                'IDR',
                 TransactionType::InvestmentPurchase,
                 $paymentMethodId
             );
@@ -94,7 +95,7 @@ class InvestmentService
                 'user_id' => $user->id,
                 'tree_id' => $tree->id,
                 'amount_cents' => $amountCents,
-                'currency' => 'MYR',
+                'currency' => 'IDR',
                 'purchase_date' => now()->toDateString(),
                 'status' => InvestmentStatus::PendingPayment,
                 'transaction_id' => $transaction->id,
@@ -120,7 +121,7 @@ class InvestmentService
             // Dispatch notification
             $user->notify(new InvestmentPurchasedNotification([
                 'tree_identifier' => $tree->tree_identifier,
-                'formatted_amount' => 'RM '.number_format($amountCents / 100, 2),
+                'formatted_amount' => 'Rp ' . number_format($amountCents / 100, 2),
                 'investment_url' => route('investments.confirmation', $investment->id),
             ]));
 
@@ -164,7 +165,7 @@ class InvestmentService
     {
         $investment = Investment::findOrFail($investmentId);
 
-        if (! $investment->canBeCancelled()) {
+        if (!$investment->canBeCancelled()) {
             throw new InvestmentNotCancellableException($investmentId);
         }
 
@@ -204,7 +205,7 @@ class InvestmentService
     ): Investment {
         $investment = Investment::findOrFail($investmentId);
 
-        if (! $investment->isActive()) {
+        if (!$investment->isActive()) {
             throw new \InvalidArgumentException('Only active investments can be topped up.');
         }
 
@@ -221,7 +222,7 @@ class InvestmentService
             $transaction = $this->paymentService->initiatePayment(
                 $investment->user_id,
                 $topUpAmountCents,
-                'MYR',
+                'IDR',
                 TransactionType::TopUp,
                 $paymentMethodId
             );

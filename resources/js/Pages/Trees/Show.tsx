@@ -5,8 +5,8 @@ import HarvestCycleIcon from '@/Components/HarvestCycleIcon';
 import HealthStatusIndicator from '@/Components/HealthStatusIndicator';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 
-export default function Show({ tree, auth, healthStatus, recentUpdates, currentWeather }: PageProps<{ 
-    tree: any; 
+export default function Show({ tree, auth, healthStatus, recentUpdates, currentWeather }: PageProps<{
+    tree: any;
     healthStatus?: any;
     recentUpdates?: any[];
     currentWeather?: any;
@@ -70,7 +70,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 {fruitType?.name} - {crop?.variant}
                             </div>
                             <h1 className="text-3xl font-bold text-gray-900 mb-4">Tree Investment</h1>
-                            
+
                             <div className="grid grid-cols-2 gap-6 mb-6">
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <div className="text-sm text-gray-500 mb-1">Expected ROI</div>
@@ -78,7 +78,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 </div>
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <div className="text-sm text-gray-500 mb-1">Current Price</div>
-                                    <div className="text-2xl font-bold text-gray-900">RM {price}</div>
+                                    <div className="text-2xl font-bold text-gray-900">Rp {price}</div>
                                 </div>
                             </div>
 
@@ -107,8 +107,8 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                             <div className="mt-8 border-t border-gray-200 pt-6">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">Investment Limits</h3>
                                 <div className="flex justify-between text-sm text-gray-600">
-                                    <span>Minimum: <strong className="text-gray-900">RM {minInv}</strong></span>
-                                    <span>Maximum: <strong className="text-gray-900">RM {maxInv}</strong></span>
+                                    <span>Minimum: <strong className="text-gray-900">Rp {minInv}</strong></span>
+                                    <span>Maximum: <strong className="text-gray-900">Rp {maxInv}</strong></span>
                                 </div>
                             </div>
 
@@ -148,13 +148,13 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 <h2 className="text-xl font-bold text-gray-900">Health Status</h2>
                                 <HealthStatusIndicator status={healthStatus.overall_status} size="md" />
                             </div>
-                            
+
                             <div className="space-y-3">
                                 <div className="flex justify-between items-center text-sm">
                                     <span className="text-gray-600">Last Updated:</span>
                                     <span className="text-gray-900 font-medium">
-                                        {healthStatus.last_update_date ? 
-                                            new Date(healthStatus.last_update_date).toLocaleDateString() : 
+                                        {healthStatus.last_update_date ?
+                                            new Date(healthStatus.last_update_date).toLocaleDateString() :
                                             'No updates yet'
                                         }
                                     </span>
@@ -170,8 +170,8 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                     <h3 className="text-sm font-semibold text-gray-700 mb-3">Recent Updates</h3>
                                     <div className="space-y-3">
                                         {recentUpdates.slice(0, 3).map((update: any) => (
-                                            <Link 
-                                                key={update.id} 
+                                            <Link
+                                                key={update.id}
                                                 href={route('investments.health-feed.show', update.id)}
                                                 className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
                                             >
@@ -187,7 +187,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                             </Link>
                                         ))}
                                     </div>
-                                    <Link 
+                                    <Link
                                         href={route('investments.health-feed')}
                                         className="mt-3 inline-block text-sm text-emerald-600 hover:text-emerald-700 font-medium"
                                     >
@@ -202,7 +202,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                     {currentWeather && (
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h2 className="text-xl font-bold text-gray-900 mb-4">Current Weather</h2>
-                            
+
                             <div className="flex items-center justify-between mb-6">
                                 <div>
                                     <div className="text-4xl font-bold text-gray-900">
@@ -213,9 +213,9 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                     </div>
                                 </div>
                                 <div className="text-6xl">
-                                    {currentWeather.weather_condition?.includes('rain') ? '🌧️' : 
-                                     currentWeather.weather_condition?.includes('cloud') ? '☁️' : 
-                                     '☀️'}
+                                    {currentWeather.weather_condition?.includes('rain') ? '🌧️' :
+                                        currentWeather.weather_condition?.includes('cloud') ? '☁️' :
+                                            '☀️'}
                                 </div>
                             </div>
 
@@ -241,9 +241,9 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 <div className="bg-gray-50 p-3 rounded-lg">
                                     <div className="text-xs text-gray-500 mb-1">Updated</div>
                                     <div className="text-sm font-semibold text-gray-900">
-                                        {new Date(currentWeather.recorded_at).toLocaleTimeString([], { 
-                                            hour: '2-digit', 
-                                            minute: '2-digit' 
+                                        {new Date(currentWeather.recorded_at).toLocaleTimeString([], {
+                                            hour: '2-digit',
+                                            minute: '2-digit'
                                         })}
                                     </div>
                                 </div>

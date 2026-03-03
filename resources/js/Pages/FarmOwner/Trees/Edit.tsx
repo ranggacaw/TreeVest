@@ -211,7 +211,7 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                         </div>
                                     </div>
                                     <p className="mt-4 text-sm text-gray-600">
-                                        Estimated Price: RM {((data.pricing_config.base_price * (1 + data.pricing_config.age_coefficient * data.age_years) * data.pricing_config.crop_premium * data.pricing_config.risk_multiplier) / 100).toFixed(2)}
+                                        Estimated Price: Rp {((data.pricing_config.base_price * (1 + data.pricing_config.age_coefficient * data.age_years) * data.pricing_config.crop_premium * data.pricing_config.risk_multiplier) / 100).toFixed(2)}
                                     </p>
                                 </div>
 

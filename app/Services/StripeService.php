@@ -3,32 +3,69 @@
 namespace App\Services;
 
 use Illuminate\Support\Facades\Config;
+use Stripe\Exception\AuthenticationException;
 use Stripe\PaymentIntent;
 use Stripe\PaymentMethod;
-use Stripe\Stripe as StripeClient;
+use Stripe\StripeClient;
 
 class StripeService
 {
+    protected ?StripeClient $client = null;
+
     public function __construct()
     {
-        StripeClient::setApiKey(Config::get('services.stripe.secret'));
+        $secret = Config::get('services.stripe.secret');
+
+        if ($secret) {
+            $this->client = new StripeClient($secret);
+        }
+    }
+
+    /**
+     * Get the StripeClient instance or throw an AuthenticationException if not configured.
+     * 
+     * @throws AuthenticationException
+     */
+    protected function getClient(): StripeClient
+    {
+        if (!$this->client) {
+            throw new AuthenticationException(
+                'Stripe API key is not configured. Please set STRIPE_SECRET in your .env file.'
+            );
+        }
+
+        return $this->client;
     }
 
     public function createPaymentIntent(int $amount, string $currency, array $metadata = []): PaymentIntent
     {
-        return PaymentIntent::create([
-            'amount' => $amount,
-            'currency' => $currency,
-            'metadata' => $metadata,
-            'automatic_payment_methods' => [
-                'enabled' => true,
-            ],
-        ]);
+        try {
+            return $this->getClient()->paymentIntents->create([
+                'amount' => $amount,
+                'currency' => $currency,
+                'metadata' => $metadata,
+                'automatic_payment_methods' => [
+                    'enabled' => true,
+                ],
+            ]);
+        } catch (AuthenticationException $e) {
+            $secret = Config::get('services.stripe.secret');
+            $message = 'Stripe authentication failed. Please check your STRIPE_SECRET in .env.';
+
+            if (str_starts_with((string) $secret, 'sk_test_4eC39')) {
+                $message = 'You are using an expired or placeholder Stripe test key. Please update STRIPE_SECRET in your .env file with a valid key from your Stripe Dashboard.';
+            }
+
+            throw new \App\Exceptions\PaymentConfigurationException($message);
+        } catch (\Stripe\Exception\ApiErrorException $e) {
+            throw new \App\Exceptions\PaymentConfigurationException('Stripe API error: ' . $e->getMessage());
+        }
     }
+
 
     public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
     {
-        return PaymentIntent::retrieve($paymentIntentId);
+        return $this->getClient()->paymentIntents->retrieve($paymentIntentId);
     }
 
     public function createPaymentMethod(string $stripePaymentMethodId, int $userId): \App\Models\PaymentMethod
@@ -48,16 +85,16 @@ class StripeService
 
     public function attachPaymentMethod(string $paymentMethodId, string $customerId): void
     {
-        PaymentMethod::retrieve($paymentMethodId)->attach(['customer' => $customerId]);
+        $this->getClient()->paymentMethods->attach($paymentMethodId, ['customer' => $customerId]);
     }
 
     public function detachPaymentMethod(string $paymentMethodId): void
     {
-        PaymentMethod::retrieve($paymentMethodId)->detach();
+        $this->getClient()->paymentMethods->detach($paymentMethodId);
     }
 
     public function retrievePaymentMethod(string $paymentMethodId): PaymentMethod
     {
-        return PaymentMethod::retrieve($paymentMethodId);
+        return $this->getClient()->paymentMethods->retrieve($paymentMethodId);
     }
 }

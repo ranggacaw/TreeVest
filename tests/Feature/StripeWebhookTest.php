@@ -49,13 +49,13 @@ class StripeWebhookTest extends TestCase
                     'id' => 'pi_test_456',
                     'status' => 'succeeded',
                     'amount' => 10000,
-                    'currency' => 'myr',
+                    'currency' => 'idr',
                 ],
             ],
         ]);
 
         $timestamp = time();
-        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
+        $signature = hash_hmac('sha256', $timestamp . '.' . $payload, 'whsec_test_secret');
 
         $response = $this->call('POST', '/stripe/webhook', [], [], [], [
             'CONTENT_TYPE' => 'application/json',
@@ -88,7 +88,7 @@ class StripeWebhookTest extends TestCase
         ]);
 
         $timestamp = time();
-        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
+        $signature = hash_hmac('sha256', $timestamp . '.' . $payload, 'whsec_test_secret');
 
         $this->call('POST', '/stripe/webhook', [], [], [], [
             'CONTENT_TYPE' => 'application/json',
@@ -121,7 +121,7 @@ class StripeWebhookTest extends TestCase
         ]);
 
         $timestamp = time();
-        $signature = hash_hmac('sha256', $timestamp.'.'.$payload, 'whsec_test_secret');
+        $signature = hash_hmac('sha256', $timestamp . '.' . $payload, 'whsec_test_secret');
 
         $this->call('POST', '/stripe/webhook', [], [], [], [
             'CONTENT_TYPE' => 'application/json',

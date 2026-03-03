@@ -64,6 +64,8 @@ class User extends Authenticatable
             'two_factor_enabled_at' => 'datetime',
             'last_login_at' => 'datetime',
             'suspended_at' => 'datetime',
+            'kyc_verified_at' => 'datetime',
+            'kyc_expires_at' => 'datetime',
             'password' => 'hashed',
             'phone' => 'encrypted',
             'kyc_document_url' => 'encrypted',
@@ -75,6 +77,11 @@ class User extends Authenticatable
     public function oauthProviders()
     {
         return $this->hasMany(OAuthProvider::class);
+    }
+
+    public function investments()
+    {
+        return $this->hasMany(Investment::class);
     }
 
     public function twoFactorSecret()
@@ -149,7 +156,7 @@ class User extends Authenticatable
 
     public function needsKycReverification(): bool
     {
-        if (! $this->hasVerifiedKyc()) {
+        if (!$this->hasVerifiedKyc()) {
             return false;
         }
 
@@ -158,12 +165,12 @@ class User extends Authenticatable
 
     public function canInvest(): bool
     {
-        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
+        return $this->hasVerifiedKyc() && !$this->needsKycReverification();
     }
 
     public function isKycValid(): bool
     {
-        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
+        return $this->hasVerifiedKyc() && !$this->needsKycReverification();
     }
 
     public function notificationPreferences()

@@ -17,7 +17,7 @@ class PaymentFlowTest extends TestCase
     {
         parent::setUp();
 
-        if (! config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
+        if (!config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
             $this->markTestSkipped('Stripe API keys not configured');
         }
     }
@@ -29,7 +29,7 @@ class PaymentFlowTest extends TestCase
         $this->actingAs($user)
             ->post('/api/payment-intents', [
                 'amount' => 10000,
-                'currency' => 'MYR',
+                'currency' => 'IDR',
                 'type' => 'investment_purchase',
             ])
             ->assertStatus(200)
@@ -51,7 +51,7 @@ class PaymentFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post('/api/payment-intents', [
                 'amount' => 10000,
-                'currency' => 'MYR',
+                'currency' => 'IDR',
                 'type' => 'investment_purchase',
             ]);
 
@@ -67,7 +67,7 @@ class PaymentFlowTest extends TestCase
         $this->actingAs($user)
             ->post('/api/payment-intents', [
                 'amount' => 10000,
-                'currency' => 'MYR',
+                'currency' => 'IDR',
                 'type' => 'investment_purchase',
             ]);
 

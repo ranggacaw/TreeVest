@@ -40,7 +40,7 @@ export default function TreeCard({ tree }: { tree: any }) {
                     <div className="flex justify-between items-end">
                         <div>
                             <div className="text-xs text-gray-500">Price</div>
-                            <div className="text-xl font-bold text-gray-900">RM {price}</div>
+                            <div className="text-xl font-bold text-gray-900">Rp {price}</div>
                         </div>
                         <Link
                             href={route('trees.show', tree.id)}

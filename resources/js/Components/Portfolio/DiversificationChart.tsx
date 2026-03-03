@@ -53,7 +53,7 @@ export default function DiversificationChart({ data }: Props) {
     const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
     const formatCurrency = (cents: number) => {
-        return 'RM ' + (cents / 100).toLocaleString('en-MY', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+        return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     };
 
     return (
@@ -68,11 +68,10 @@ export default function DiversificationChart({ data }: Props) {
                             <button
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
-                                className={`px-3 py-1 text-xs rounded-full transition-colors ${
-                                    activeTab === tab
+                                className={`px-3 py-1 text-xs rounded-full transition-colors ${activeTab === tab
                                         ? 'bg-green-600 text-white'
                                         : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                                }`}
+                                    }`}
                             >
                                 {tab === 'fruit_type' ? 'Fruit Type' : tab === 'farm' ? 'Farm' : 'Risk'}
                             </button>

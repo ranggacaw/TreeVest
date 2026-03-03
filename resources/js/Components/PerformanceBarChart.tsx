@@ -26,7 +26,7 @@ export default function PerformanceBarChart({
     height = 300,
 }: PerformanceBarChartProps) {
     const formatCurrency = (cents: number) => {
-        return `RM ${(cents / 100).toFixed(2)}`;
+        return `Rp ${(cents / 100).toFixed(2)}`;
     };
 
     return (

@@ -67,6 +67,11 @@ class Tree extends Model
         return $this->hasMany(Harvest::class)->orderBy('scheduled_date', 'desc');
     }
 
+    public function investments(): HasMany
+    {
+        return $this->hasMany(Investment::class);
+    }
+
     public function scopeInvestable($query)
     {
         return $query->whereIn('status', [
@@ -94,7 +99,7 @@ class Tree extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'RM ' . number_format($this->price_cents / 100, 2);
+        return 'Rp ' . number_format($this->price_cents / 100, 2);
     }
 
     public function getExpectedRoiFormattedAttribute(): string

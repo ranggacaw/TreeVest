@@ -19,7 +19,7 @@ class MarketListingFactory extends Factory
             'investment_id' => Investment::factory(),
             'seller_id' => User::factory(),
             'ask_price_cents' => $askPriceCents,
-            'currency' => 'MYR',
+            'currency' => 'IDR',
             'platform_fee_rate' => $feeRate,
             'platform_fee_cents' => $platformFeeCents,
             'net_proceeds_cents' => $askPriceCents - $platformFeeCents,
@@ -35,14 +35,14 @@ class MarketListingFactory extends Factory
 
     public function active(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => ListingStatus::Active,
         ]);
     }
 
     public function sold(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => ListingStatus::Sold,
             'buyer_id' => User::factory(),
             'purchased_at' => now(),
@@ -51,7 +51,7 @@ class MarketListingFactory extends Factory
 
     public function cancelled(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => ListingStatus::Cancelled,
             'cancelled_at' => now(),
         ]);
@@ -59,7 +59,7 @@ class MarketListingFactory extends Factory
 
     public function expired(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'expires_at' => now()->subDay(),
         ]);
     }

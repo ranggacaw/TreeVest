@@ -28,7 +28,7 @@ interface Props extends PageProps {
 }
 
 function formatCurrency(cents: number): string {
-    return 'RM ' + (cents / 100).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 }
 
 export default function Dashboard({

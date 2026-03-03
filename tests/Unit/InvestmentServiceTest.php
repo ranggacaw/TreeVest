@@ -271,7 +271,7 @@ class InvestmentServiceTest extends TestCase
             ->with(
                 $user->id,
                 50000,
-                'MYR',
+                'IDR',
                 TransactionType::InvestmentPurchase,
                 null
             )
@@ -285,8 +285,8 @@ class InvestmentServiceTest extends TestCase
                 $user->id,
                 Mockery::on(function ($eventData) {
                     return isset($eventData['investment_id']) &&
-                           isset($eventData['tree_id']) &&
-                           $eventData['event'] === 'investment_initiated';
+                        isset($eventData['tree_id']) &&
+                        $eventData['event'] === 'investment_initiated';
                 })
             );
 
@@ -296,7 +296,7 @@ class InvestmentServiceTest extends TestCase
         $this->assertEquals($user->id, $investment->user_id);
         $this->assertEquals($tree->id, $investment->tree_id);
         $this->assertEquals(50000, $investment->amount_cents);
-        $this->assertEquals('MYR', $investment->currency);
+        $this->assertEquals('IDR', $investment->currency);
         $this->assertEquals(InvestmentStatus::PendingPayment, $investment->status);
         $this->assertEquals($transaction->id, $investment->transaction_id);
         $this->assertDatabaseHas('investments', [
@@ -426,8 +426,8 @@ class InvestmentServiceTest extends TestCase
                 $investment->user_id,
                 Mockery::on(function ($eventData) use ($investment) {
                     return isset($eventData['investment_id']) &&
-                           $eventData['investment_id'] === $investment->id &&
-                           $eventData['event'] === 'investment_confirmed';
+                        $eventData['investment_id'] === $investment->id &&
+                        $eventData['event'] === 'investment_confirmed';
                 })
             );
 
@@ -470,8 +470,8 @@ class InvestmentServiceTest extends TestCase
                 $investment->user_id,
                 Mockery::on(function ($eventData) use ($investment) {
                     return isset($eventData['investment_id']) &&
-                           $eventData['investment_id'] === $investment->id &&
-                           $eventData['event'] === 'investment_cancelled';
+                        $eventData['investment_id'] === $investment->id &&
+                        $eventData['event'] === 'investment_cancelled';
                 })
             );
 
@@ -546,7 +546,7 @@ class InvestmentServiceTest extends TestCase
                 $investment->user_id,
                 Mockery::on(function ($eventData) {
                     return isset($eventData['reason']) &&
-                           $eventData['reason'] === 'Changed my mind';
+                        $eventData['reason'] === 'Changed my mind';
                 })
             );
 
@@ -578,7 +578,7 @@ class InvestmentServiceTest extends TestCase
             ->with(
                 $investment->user_id,
                 20000,
-                'MYR',
+                'IDR',
                 TransactionType::TopUp,
                 null
             )
@@ -592,11 +592,11 @@ class InvestmentServiceTest extends TestCase
                 $investment->user_id,
                 Mockery::on(function ($eventData) use ($investment) {
                     return isset($eventData['investment_id']) &&
-                           $eventData['investment_id'] === $investment->id &&
-                           $eventData['event'] === 'investment_top_up' &&
-                           $eventData['original_amount'] === 50000 &&
-                           $eventData['top_up_amount'] === 20000 &&
-                           $eventData['new_total'] === 70000;
+                        $eventData['investment_id'] === $investment->id &&
+                        $eventData['event'] === 'investment_top_up' &&
+                        $eventData['original_amount'] === 50000 &&
+                        $eventData['top_up_amount'] === 20000 &&
+                        $eventData['new_total'] === 70000;
                 })
             );
 

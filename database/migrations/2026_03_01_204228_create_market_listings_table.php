@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     /**
      * Run the migrations.
      */
@@ -16,7 +15,7 @@ return new class extends Migration
             $table->foreignId('investment_id')->constrained()->onDelete('cascade');
             $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
             $table->unsignedBigInteger('ask_price_cents');
-            $table->char('currency', 3)->default('MYR');
+            $table->char('currency', 3)->default('IDR');
             $table->decimal('platform_fee_rate', 5, 4);
             $table->unsignedBigInteger('platform_fee_cents');
             $table->unsignedBigInteger('net_proceeds_cents');

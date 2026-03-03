@@ -49,22 +49,22 @@ class ReportDataServiceTest extends TestCase
         $investment = Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 1000000, // RM 10,000
+            'amount_cents' => 1000000, // Rp 10,000
         ]);
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
-            'gross_amount_cents' => 500000, // RM 5,000
-            'platform_fee_cents' => 50000, // RM 500
-            'net_amount_cents' => 450000, // RM 4,500
+            'gross_amount_cents' => 500000, // Rp 5,000
+            'platform_fee_cents' => 50000, // Rp 500
+            'net_amount_cents' => 450000, // Rp 4,500
             'status' => PayoutStatus::Completed,
         ]);
 
         Payout::factory()->create([
             'investment_id' => $investment->id,
-            'gross_amount_cents' => 600000, // RM 6,000
-            'platform_fee_cents' => 60000, // RM 600
-            'net_amount_cents' => 540000, // RM 5,400
+            'gross_amount_cents' => 600000, // Rp 6,000
+            'platform_fee_cents' => 60000, // Rp 600
+            'net_amount_cents' => 540000, // Rp 5,400
             'status' => PayoutStatus::Completed,
         ]);
 

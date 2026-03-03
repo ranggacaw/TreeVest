@@ -16,7 +16,7 @@ class InvestmentFactory extends Factory
             'user_id' => User::factory(),
             'tree_id' => Tree::factory(),
             'amount_cents' => $this->faker->numberBetween(1000, 100000),
-            'currency' => 'MYR',
+            'currency' => 'IDR',
             'purchase_date' => now()->toDateString(),
             'status' => InvestmentStatus::PendingPayment,
             'transaction_id' => null,
@@ -28,21 +28,21 @@ class InvestmentFactory extends Factory
 
     public function active(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => InvestmentStatus::Active,
         ]);
     }
 
     public function cancelled(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => InvestmentStatus::Cancelled,
         ]);
     }
 
     public function matured(): static
     {
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'status' => InvestmentStatus::Matured,
         ]);
     }
@@ -51,7 +51,7 @@ class InvestmentFactory extends Factory
     {
         $id = $transactionId instanceof Transaction ? $transactionId->id : $transactionId;
 
-        return $this->state(fn (array $attributes) => [
+        return $this->state(fn(array $attributes) => [
             'transaction_id' => $id,
         ]);
     }

@@ -4,8 +4,7 @@ use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
 
-return new class extends Migration
-{
+return new class extends Migration {
     public function up(): void
     {
         Schema::dropIfExists('transactions');
@@ -16,7 +15,7 @@ return new class extends Migration
             $table->enum('type', ['investment_purchase', 'payout', 'refund', 'top_up', 'withdrawal']);
             $table->enum('status', ['pending', 'processing', 'completed', 'failed', 'cancelled']);
             $table->unsignedBigInteger('amount');
-            $table->char('currency', 3)->default('MYR');
+            $table->char('currency', 3)->default('IDR');
             $table->string('stripe_payment_intent_id')->nullable()->unique();
             $table->foreignId('payment_method_id')->nullable()->constrained('payment_methods')->nullOnDelete();
             $table->foreignId('related_investment_id')->nullable();

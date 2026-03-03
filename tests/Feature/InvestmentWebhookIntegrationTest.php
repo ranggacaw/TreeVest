@@ -78,14 +78,14 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $paymentService->setInvestmentService($investmentService);
 
         $paymentService->handleWebhookEvent(
-            'evt_test_success_'.uniqid(),
+            'evt_test_success_' . uniqid(),
             'payment_intent.succeeded',
             [
                 'object' => [
                     'id' => $transaction->stripe_payment_intent_id,
                     'status' => 'succeeded',
                     'amount' => 50000,
-                    'currency' => 'myr',
+                    'currency' => 'idr',
                     'metadata' => [
                         'investment_id' => (string) $investment->id,
                     ],
@@ -136,7 +136,7 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $paymentService->setInvestmentService($investmentService);
 
         $paymentService->handleWebhookEvent(
-            'evt_test_fail_'.uniqid(),
+            'evt_test_fail_' . uniqid(),
             'payment_intent.payment_failed',
             [
                 'object' => [
@@ -185,13 +185,13 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $investmentService = app(InvestmentService::class);
         $paymentService->setInvestmentService($investmentService);
 
-        $eventId = 'evt_test_idempotent_'.uniqid();
+        $eventId = 'evt_test_idempotent_' . uniqid();
         $eventData = [
             'object' => [
                 'id' => $transaction->stripe_payment_intent_id,
                 'status' => 'succeeded',
                 'amount' => 50000,
-                'currency' => 'myr',
+                'currency' => 'idr',
                 'metadata' => [
                     'investment_id' => (string) $investment->id,
                 ],

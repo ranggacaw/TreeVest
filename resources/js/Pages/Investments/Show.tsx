@@ -97,7 +97,7 @@ export default function Show({ auth, investment }: Props) {
     };
 
     const formatCurrency = (cents: number) => {
-        return 'RM ' + (cents / 100).toLocaleString('en-MY', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+        return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
     };
 
     return (
@@ -173,7 +173,7 @@ export default function Show({ auth, investment }: Props) {
                                     <div>
                                         <dt className="text-sm text-gray-500">Purchased</dt>
                                         <dd className="text-xl font-bold text-gray-900">
-                                            {new Date(investment.purchase_date).toLocaleDateString('en-MY')}
+                                            {new Date(investment.purchase_date).toLocaleDateString('id-ID')}
                                         </dd>
                                     </div>
                                 </div>
@@ -248,7 +248,7 @@ export default function Show({ auth, investment }: Props) {
                                                         {investment.harvests.completed.map((harvest) => (
                                                             <tr key={harvest.id}>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString('en-MY')}
+                                                                    {new Date(harvest.harvest_date).toLocaleDateString('id-ID')}
                                                                 </td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.actual_yield_kg ?? '-'}</td>
@@ -276,7 +276,7 @@ export default function Show({ auth, investment }: Props) {
                                                         {investment.harvests.upcoming.map((harvest) => (
                                                             <tr key={harvest.id}>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString('en-MY')}
+                                                                    {new Date(harvest.harvest_date).toLocaleDateString('id-ID')}
                                                                 </td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
                                                             </tr>
@@ -308,7 +308,7 @@ export default function Show({ auth, investment }: Props) {
                                                     <tr key={payout.id}>
                                                         <td className="px-4 py-3 text-sm text-gray-900">
                                                             {payout.harvest
-                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString('en-MY')
+                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString('id-ID')
                                                                 : '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-gray-900">{payout.gross_amount_formatted}</td>
@@ -316,9 +316,9 @@ export default function Show({ auth, investment }: Props) {
                                                         <td className="px-4 py-3 text-sm text-gray-900">{payout.net_amount_formatted}</td>
                                                         <td className="px-4 py-3 text-sm text-gray-900">
                                                             <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${payout.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                                    payout.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                                        payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                                            'bg-yellow-100 text-yellow-800'
+                                                                payout.status === 'failed' ? 'bg-red-100 text-red-800' :
+                                                                    payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
+                                                                        'bg-yellow-100 text-yellow-800'
                                                                 }`}>
                                                                 {payout.status_label}
                                                             </span>

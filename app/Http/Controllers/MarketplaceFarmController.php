@@ -11,7 +11,8 @@ class MarketplaceFarmController extends Controller
 {
     public function __construct(
         protected FarmService $farmService
-    ) {}
+    ) {
+    }
 
     public function index(Request $request)
     {
@@ -43,11 +44,21 @@ class MarketplaceFarmController extends Controller
 
     public function show(Farm $farm)
     {
-        if (! $farm->isActive()) {
+        if (!$farm->isActive()) {
             abort(404);
         }
 
-        $farm->load(['images', 'certifications', 'owner']);
+        $farm->load([
+            'images',
+            'certifications',
+            'owner',
+            'fruitCrops.fruitType',
+            'fruitCrops.trees' => function ($query) {
+                $query->investable()->whereDoesntHave('investments', function ($q) {
+                    $q->whereIn('status', ['active', 'pending_payment']);
+                });
+            }
+        ]);
 
         return Inertia::render('Farms/Show', [
             'farm' => $farm,
