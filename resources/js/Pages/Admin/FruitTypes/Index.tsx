@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 
 interface FruitType {
@@ -24,7 +25,7 @@ interface Filters {
 
 export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesData; filters: Filters }) {
     return (
-        <>
+        <AppLayout title="Fruit Types">
             <Head title="Fruit Types" />
 
             <div className="py-12">
@@ -125,6 +126,6 @@ export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesD
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

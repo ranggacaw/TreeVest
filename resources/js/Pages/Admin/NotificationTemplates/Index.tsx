@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, router } from '@inertiajs/react'
 
 interface Template {
@@ -16,7 +17,7 @@ interface Props {
 
 export default function Index({ templates }: Props) {
     return (
-        <>
+        <AppLayout title="Notification Templates">
             <Head title="Notification Templates" />
 
             <div className="min-h-screen bg-gray-50">
@@ -114,6 +115,6 @@ export default function Index({ templates }: Props) {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     )
 }

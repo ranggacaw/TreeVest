@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import InputError from '@/Components/InputError';
@@ -21,7 +21,7 @@ export default function Create({ auth }: PageProps) {
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Add Fruit Type</h2>}>
+        <AppLayout title="Add Fruit Type">
             <Head title="Add Fruit Type" />
 
             <div className="py-12">
@@ -86,6 +86,6 @@ export default function Create({ auth }: PageProps) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, useForm } from '@inertiajs/react'
 
 interface Preference {
@@ -35,7 +36,7 @@ export default function Edit({ template, types, channels }: Props) {
     }
 
     return (
-        <>
+        <AppLayout title="Edit Notification Template">
             <Head title="Edit Notification Template" />
 
             <div className="min-h-screen bg-gray-50">
@@ -178,6 +179,6 @@ export default function Edit({ template, types, channels }: Props) {
                     </form>
                 </div>
             </div>
-        </>
+        </AppLayout>
     )
 }

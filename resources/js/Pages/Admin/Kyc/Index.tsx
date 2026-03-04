@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 
 interface User {
@@ -45,7 +46,7 @@ export default function Index({ verifications, filters }: { verifications: Verif
     const pendingCount = verifications.data.filter(v => v.status === 'submitted').length;
 
     return (
-        <>
+        <AppLayout title="KYC Review">
             <Head title="KYC Review" />
 
             <div className="py-12">
@@ -153,6 +154,6 @@ export default function Index({ verifications, filters }: { verifications: Verif
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

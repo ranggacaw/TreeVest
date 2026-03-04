@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 import RichTextEditor from '@/Components/RichTextEditor';
@@ -59,7 +60,7 @@ export default function AdminArticlesEdit({ article, categories, tags }: Props) 
     };
 
     return (
-        <>
+        <AppLayout title="Admin Content">
             <Head title={`Edit: ${article.title}`} />
 
             <div className="min-h-screen bg-gray-50">
@@ -392,6 +393,6 @@ export default function AdminArticlesEdit({ article, categories, tags }: Props) 
                     </form>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

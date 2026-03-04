@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 
@@ -43,7 +44,7 @@ interface Props {
 
 export default function AdminArticlesIndex({ articles }: Props) {
     return (
-        <>
+        <AppLayout title="Manage Articles">
             <Head title="Manage Articles" />
 
             <div className="min-h-screen bg-gray-50">
@@ -224,6 +225,6 @@ export default function AdminArticlesIndex({ articles }: Props) {
                     )}
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

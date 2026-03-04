@@ -23,22 +23,24 @@ class FarmApprovalController extends Controller
 
         $query = Farm::with(['owner', 'images']);
 
-        if ($status) {
+        if ($status && $status !== 'all') {
             $query->where('status', $status);
-        } else {
-            $query->whereIn('status', [
-                FarmStatus::PENDING_APPROVAL->value,
-                FarmStatus::SUSPENDED->value,
-            ]);
         }
 
         $farms = $query->orderBy('created_at', 'desc')->paginate(20);
+
+        $stats = [
+            'total' => Farm::count(),
+            'pending' => Farm::where('status', FarmStatus::PENDING_APPROVAL->value)->count(),
+            'active' => Farm::where('status', FarmStatus::ACTIVE->value)->count(),
+        ];
 
         return Inertia::render('Admin/Farms/Index', [
             'farms' => $farms,
             'filters' => [
                 'status' => $status,
             ],
+            'stats' => $stats,
         ]);
     }
 

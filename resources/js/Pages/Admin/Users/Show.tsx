@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 interface User {
@@ -88,7 +89,7 @@ export default function Show() {
     };
 
     return (
-        <>
+        <AppLayout title="User Details">
             <Head title="User Details" />
 
             <div className="py-12">
@@ -277,6 +278,6 @@ export default function Show() {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

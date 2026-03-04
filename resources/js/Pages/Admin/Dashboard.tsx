@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
 
@@ -20,39 +21,43 @@ interface Props {
 
 export default function Dashboard({ popularArticles, staleArticles, totalArticles, publishedArticles, draftArticles }: Props) {
     return (
-        <>
-            <Head title="Admin Dashboard" />
-
-            <div className="min-h-screen bg-gray-100">
-                <div className="bg-white shadow">
-                    <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
+        <AppLayout
+            title="Admin Dashboard"
+            header={
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
+                            Admin Dashboard
+                        </h2>
+                        <p className="text-sm text-pine-500 mt-1">Platform overview and content management.</p>
                     </div>
                 </div>
-
-                <div className="mx-auto max-w-7xl px-4 py-6 sm:px-6 lg:px-8">
-                    <div className="mb-8 grid grid-cols-1 gap-6 md:grid-cols-3">
-                        <div className="rounded-lg bg-white p-6 shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Total Articles</h3>
-                            <p className="mt-2 text-3xl font-semibold text-gray-900">{totalArticles}</p>
+            }
+        >
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Total Articles</h3>
+                            <p className="mt-2 text-3xl font-bold text-pine-800">{totalArticles}</p>
                         </div>
-                        <div className="rounded-lg bg-white p-6 shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Published</h3>
-                            <p className="mt-2 text-3xl font-semibold text-green-600">{publishedArticles}</p>
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Published</h3>
+                            <p className="mt-2 text-3xl font-bold text-green-600">{publishedArticles}</p>
                         </div>
-                        <div className="rounded-lg bg-white p-6 shadow">
-                            <h3 className="text-sm font-medium text-gray-500">Drafts</h3>
-                            <p className="mt-2 text-3xl font-semibold text-yellow-600">{draftArticles}</p>
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Drafts</h3>
+                            <p className="mt-2 text-3xl font-bold text-yellow-600">{draftArticles}</p>
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                        <div className="rounded-lg bg-white p-6 shadow">
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
-                                <h2 className="text-lg font-semibold text-gray-900">Popular Articles</h2>
+                                <h2 className="text-lg font-bold text-pine-800">Popular Articles</h2>
                                 <Link
                                     href={route('admin.articles.index')}
-                                    className="text-sm text-indigo-600 hover:text-indigo-800"
+                                    className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors"
                                 >
                                     View All
                                 </Link>
@@ -106,9 +111,9 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
                             )}
                         </div>
 
-                        <div className="rounded-lg bg-white p-6 shadow">
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
-                                <h2 className="text-lg font-semibold text-gray-900">
+                                <h2 className="text-lg font-bold text-pine-800">
                                     <span className="text-yellow-600">⚠️</span> Stale Content
                                 </h2>
                             </div>
@@ -148,13 +153,13 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
                         </div>
                     </div>
 
-                    <div className="mt-8 grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
                         <Link
                             href={route('admin.articles.create')}
-                            className="rounded-lg bg-indigo-600 p-6 text-center text-white shadow hover:bg-indigo-700"
+                            className="bg-pine text-sand rounded-xl p-6 text-center shadow-soft hover:bg-pine-800 transition-colors flex flex-col items-center justify-center font-bold"
                         >
                             <svg
-                                className="mx-auto h-8 w-8"
+                                className="h-8 w-8 mb-2"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -166,15 +171,15 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
                                     d="M12 4v16m8-8H4"
                                 />
                             </svg>
-                            <p className="mt-2 font-semibold">Create New Article</p>
+                            Create New Article
                         </Link>
                         <Link
                             href={route('education.index')}
                             target="_blank"
-                            className="rounded-lg bg-gray-600 p-6 text-center text-white shadow hover:bg-gray-700"
+                            className="bg-sand text-pine-800 border border-pine-200 rounded-xl p-6 text-center shadow-soft hover:bg-sand-100 transition-colors flex flex-col items-center justify-center font-bold"
                         >
                             <svg
-                                className="mx-auto h-8 w-8"
+                                className="h-8 w-8 mb-2"
                                 fill="none"
                                 viewBox="0 0 24 24"
                                 stroke="currentColor"
@@ -186,11 +191,11 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
                                     d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
                                 />
                             </svg>
-                            <p className="mt-2 font-semibold">View Education Center</p>
+                            View Education Center
                         </Link>
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

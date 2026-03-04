@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, useForm } from '@inertiajs/react'
 import { useState } from 'react'
 
@@ -26,7 +27,7 @@ export default function Create({ types, channels }: Props) {
     }
 
     return (
-        <>
+        <AppLayout title="Create Notification Template">
             <Head title="Create Notification Template" />
 
             <div className="min-h-screen bg-gray-50">
@@ -169,6 +170,6 @@ export default function Create({ types, channels }: Props) {
                     </form>
                 </div>
             </div>
-        </>
+        </AppLayout>
     )
 }

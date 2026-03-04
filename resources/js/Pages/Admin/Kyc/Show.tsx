@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 
 interface User {
@@ -75,7 +76,7 @@ export default function Show() {
     };
 
     return (
-        <>
+        <AppLayout title="KYC Verification Details">
             <Head title="KYC Verification Details" />
 
             <div className="py-12">
@@ -230,6 +231,6 @@ export default function Show() {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

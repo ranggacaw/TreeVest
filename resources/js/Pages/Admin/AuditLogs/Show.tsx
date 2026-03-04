@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
@@ -23,7 +24,7 @@ export default function Show() {
     const { auditLog } = usePage().props as unknown as { auditLog: AuditLog };
 
     return (
-        <>
+        <AppLayout title="Audit Log Details">
             <Head title="Audit Log Details" />
 
             <div className="py-12">
@@ -109,6 +110,6 @@ export default function Show() {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 
 interface User {
@@ -61,7 +62,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
     };
 
     return (
-        <>
+        <AppLayout title="User Management">
             <Head title="User Management" />
 
             <div className="py-12">
@@ -196,6 +197,6 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

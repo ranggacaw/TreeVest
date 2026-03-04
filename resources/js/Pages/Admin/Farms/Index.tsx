@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { Farm, PageProps } from '@/types';
 
@@ -12,6 +12,11 @@ interface Props extends PageProps {
     filters: {
         status?: string;
     };
+    stats: {
+        total: number;
+        pending: number;
+        active: number;
+    };
 }
 
 const statusColors: Record<string, string> = {
@@ -21,7 +26,7 @@ const statusColors: Record<string, string> = {
     deactivated: 'bg-gray-100 text-gray-800',
 };
 
-export default function Index({ farms, filters }: Props) {
+export default function Index({ farms, filters, stats }: Props) {
     const statuses = ['', 'pending_approval', 'active', 'suspended', 'deactivated'];
 
     const handleStatusFilter = (status: string) => {
@@ -29,14 +34,39 @@ export default function Index({ farms, filters }: Props) {
     };
 
     return (
-        <AppLayout title="Farm Management">
-            <Head title="Farm Management" />
+        <AppLayout
+            title="Farm Management"
+            header={
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
+                            Farm Management
+                        </h2>
+                        <p className="text-sm text-pine-500 mt-1">Manage and review all platform farms.</p>
+                    </div>
+                    <div>
+                        <span className="text-sm font-medium text-pine-600 bg-pine-50 px-3 py-1 rounded-full border border-pine-100">{stats.total} farms total</span>
+                    </div>
+                </div>
+            }
+        >
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-6 flex items-center justify-between">
-                        <h2 className="text-2xl font-bold text-gray-900">Farm Management</h2>
-                        <span className="text-sm text-gray-500">{farms.total} farms total</span>
+                    {/* Dashboard Stats */}
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Total Farms</h3>
+                            <p className="mt-2 text-3xl font-bold text-pine-800">{stats.total}</p>
+                        </div>
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Active Farms</h3>
+                            <p className="mt-2 text-3xl font-bold text-green-600">{stats.active}</p>
+                        </div>
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                            <h3 className="text-sm font-medium text-pine-500">Pending Approval</h3>
+                            <p className="mt-2 text-3xl font-bold text-yellow-600">{stats.pending}</p>
+                        </div>
                     </div>
 
                     {/* Filters */}
@@ -45,53 +75,57 @@ export default function Index({ farms, filters }: Props) {
                             <button
                                 key={s || 'all'}
                                 onClick={() => handleStatusFilter(s)}
-                                className={`px-3 py-1 rounded-full text-sm font-medium border transition-colors ${
-                                    (filters.status ?? '') === s
-                                        ? 'bg-indigo-600 text-white border-indigo-600'
-                                        : 'bg-white text-gray-700 border-gray-300 hover:bg-gray-50'
-                                }`}
+                                className={`px-4 py-2 rounded-xl text-sm font-bold border transition-colors ${(filters.status ?? '') === s
+                                    ? 'bg-pine text-sand border-pine'
+                                    : 'bg-white text-pine-600 border-sand-200 hover:bg-sand-50'
+                                    }`}
                             >
                                 {s ? s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'All'}
                             </button>
                         ))}
                     </div>
 
-                    <div className="overflow-hidden rounded-lg bg-white shadow">
+                    <div className="bg-white rounded-3xl shadow-card border border-sand-200 overflow-hidden">
                         {farms.data.length === 0 ? (
-                            <div className="p-8 text-center text-gray-500">No farms found.</div>
+                            <div className="p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
+                                <h3 className="text-2xl font-bold text-pine-800 mb-2">No farms found</h3>
+                                <p className="text-pine-500 max-w-md mx-auto mb-8">
+                                    There are no farms matching the current filters.
+                                </p>
+                            </div>
                         ) : (
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
+                            <table className="min-w-full divide-y divide-sand-200">
+                                <thead className="bg-sand-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Farm</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Owner</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Location</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">Status</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">Actions</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-pine-500">Farm</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-pine-500">Owner</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-pine-500">Location</th>
+                                        <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-pine-500">Status</th>
+                                        <th className="px-6 py-4 text-right text-xs font-bold uppercase tracking-wider text-pine-500">Actions</th>
                                     </tr>
                                 </thead>
-                                <tbody className="divide-y divide-gray-200 bg-white">
+                                <tbody className="divide-y divide-sand-200 bg-white">
                                     {farms.data.map((farm) => (
-                                        <tr key={farm.id} className="hover:bg-gray-50">
+                                        <tr key={farm.id} className="hover:bg-sand-50 transition-colors">
                                             <td className="px-6 py-4">
-                                                <div className="font-medium text-gray-900">{farm.name}</div>
-                                                <div className="text-sm text-gray-500">{farm.size_hectares} ha</div>
+                                                <div className="font-bold text-pine-800">{farm.name}</div>
+                                                <div className="text-sm text-pine-500">{farm.size_hectares} ha</div>
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                            <td className="px-6 py-4 text-sm text-pine-800 font-medium">
                                                 {farm.owner?.name ?? 'N/A'}
                                             </td>
-                                            <td className="px-6 py-4 text-sm text-gray-700">
+                                            <td className="px-6 py-4 text-sm text-pine-600">
                                                 {[farm.city, farm.state, farm.country].filter(Boolean).join(', ')}
                                             </td>
                                             <td className="px-6 py-4">
-                                                <span className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${statusColors[farm.status] ?? 'bg-gray-100 text-gray-700'}`}>
+                                                <span className={`inline-flex rounded-full px-3 py-1 text-xs font-bold ${statusColors[farm.status] ?? 'bg-sand-100 text-pine-700'}`}>
                                                     {farm.status.replace('_', ' ')}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 text-right">
                                                 <Link
                                                     href={route('admin.farms.show', farm.id)}
-                                                    className="text-sm font-medium text-indigo-600 hover:text-indigo-900"
+                                                    className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors bg-sand-100 px-4 py-2 rounded-xl hover:bg-sand-200"
                                                 >
                                                     Review
                                                 </Link>
@@ -110,9 +144,8 @@ export default function Index({ farms, filters }: Props) {
                                 <Link
                                     key={i}
                                     href={`?page=${i + 1}${filters.status ? `&status=${filters.status}` : ''}`}
-                                    className={`px-3 py-1 rounded text-sm ${
-                                        farms.current_page === i + 1 ? 'bg-indigo-600 text-white' : 'bg-white text-gray-700 border border-gray-300'
-                                    }`}
+                                    className={`px-4 py-2 rounded-xl text-sm font-bold transition-colors ${farms.current_page === i + 1 ? 'bg-pine text-sand' : 'bg-white text-pine-600 border border-sand-200 hover:bg-sand-50'
+                                        }`}
                                 >
                                     {i + 1}
                                 </Link>

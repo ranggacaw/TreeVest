@@ -1,4 +1,4 @@
-import { Head, Link, router } from '@inertiajs/react';
+import { Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { Farm, PageProps } from '@/types';
 
@@ -33,81 +33,94 @@ export default function Show({ farm }: Props) {
     };
 
     return (
-        <AppLayout title="Farm Review">
-            <Head title={`Farm: ${farm.name}`} />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
-                    <div className="mb-6 flex items-center justify-between">
-                        <div>
-                            <Link href={route('admin.farms.index')} className="text-sm text-indigo-600 hover:underline">
-                                &larr; Back to Farms
-                            </Link>
-                            <h2 className="mt-2 text-2xl font-bold text-gray-900">{farm.name}</h2>
-                        </div>
-                        <div className="flex gap-2">
-                            {farm.status === 'pending_approval' && (
-                                <>
-                                    <button onClick={handleApprove} className="px-4 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700">
-                                        Approve
-                                    </button>
-                                    <button onClick={handleReject} className="px-4 py-2 rounded bg-red-600 text-white text-sm font-medium hover:bg-red-700">
-                                        Reject
-                                    </button>
-                                </>
-                            )}
-                            {farm.status === 'active' && (
-                                <button onClick={handleSuspend} className="px-4 py-2 rounded bg-yellow-600 text-white text-sm font-medium hover:bg-yellow-700">
-                                    Suspend
-                                </button>
-                            )}
-                            {farm.status === 'suspended' && (
-                                <button onClick={handleReinstate} className="px-4 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700">
-                                    Reinstate
-                                </button>
-                            )}
-                        </div>
+        <AppLayout
+            title="Farm Review"
+            header={
+                <div className="flex items-center justify-between">
+                    <div>
+                        <Link href={route('admin.farms.index')} className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors flex items-center mb-1">
+                            <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                            </svg>
+                            Back to Farms
+                        </Link>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
+                            {farm.name}
+                        </h2>
                     </div>
-
+                    <div className="flex gap-2">
+                        {farm.status === 'pending_approval' && (
+                            <>
+                                <button onClick={handleApprove} className="px-4 py-2 rounded-xl bg-pine text-sand text-sm font-bold hover:bg-pine-800 transition-colors shadow-soft">
+                                    Approve
+                                </button>
+                                <button onClick={handleReject} className="px-4 py-2 rounded-xl bg-red-600 text-white text-sm font-bold hover:bg-red-700 transition-colors shadow-soft">
+                                    Reject
+                                </button>
+                            </>
+                        )}
+                        {farm.status === 'active' && (
+                            <button onClick={handleSuspend} className="px-4 py-2 rounded-xl bg-sun text-pine-900 text-sm font-bold hover:bg-yellow-500 transition-colors shadow-soft">
+                                Suspend
+                            </button>
+                        )}
+                        {farm.status === 'suspended' && (
+                            <button onClick={handleReinstate} className="px-4 py-2 rounded-xl bg-sage-500 text-white text-sm font-bold hover:bg-sage-600 transition-colors shadow-soft">
+                                Reinstate
+                            </button>
+                        )}
+                    </div>
+                </div>
+            }
+        >
+            <div className="py-8">
+                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8 space-y-6">
                     <div className="grid grid-cols-1 gap-6">
                         {/* Farm Details */}
-                        <div className="rounded-lg bg-white p-6 shadow">
+                        <div className="bg-white rounded-3xl p-6 md:p-8 shadow-card border border-sand-200">
+                            <h3 className="text-xl font-bold text-pine-800 mb-6 flex items-center">
+                                <svg className="w-5 h-5 mr-2 text-pine-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                </svg>
+                                Farm Details
+                            </h3>
                             <h3 className="text-lg font-semibold text-gray-900 mb-4">Farm Details</h3>
-                            <dl className="grid grid-cols-2 gap-4">
+                            <dl className="grid grid-cols-2 gap-y-6 gap-x-4">
                                 <div>
-                                    <dt className="text-sm text-gray-500">Owner</dt>
-                                    <dd className="text-sm font-medium text-gray-900">{farm.owner?.name ?? 'N/A'} ({farm.owner?.email})</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Owner</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">{farm.owner?.name ?? 'N/A'}</dd>
+                                    <dd className="text-sm text-pine-500">{farm.owner?.email}</dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Status</dt>
-                                    <dd className="text-sm font-medium text-gray-900 capitalize">{farm.status.replace('_', ' ')}</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Status</dt>
+                                    <dd className="font-bold text-pine-800 capitalize mt-1 border inline-block px-3 py-1 rounded-lg text-sm bg-sand-50">{farm.status.replace('_', ' ')}</dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Location</dt>
-                                    <dd className="text-sm font-medium text-gray-900">
+                                    <dt className="text-sm font-medium text-pine-500">Location</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">
                                         {[farm.address, farm.city, farm.state, farm.country].filter(Boolean).join(', ')}
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Size</dt>
-                                    <dd className="text-sm font-medium text-gray-900">{farm.size_hectares} hectares</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Size</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">{farm.size_hectares} hectares</dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Capacity</dt>
-                                    <dd className="text-sm font-medium text-gray-900">{farm.capacity_trees} trees</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Capacity</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">{farm.capacity_trees} trees</dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Soil Type</dt>
-                                    <dd className="text-sm font-medium text-gray-900">{farm.soil_type ?? 'N/A'}</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Soil Type</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">{farm.soil_type ?? 'N/A'}</dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Climate</dt>
-                                    <dd className="text-sm font-medium text-gray-900">{farm.climate ?? 'N/A'}</dd>
+                                    <dt className="text-sm font-medium text-pine-500">Climate</dt>
+                                    <dd className="font-bold text-pine-800 mt-1">{farm.climate ?? 'N/A'}</dd>
                                 </div>
                                 {farm.rejection_reason && (
-                                    <div className="col-span-2">
-                                        <dt className="text-sm text-gray-500">Rejection Reason</dt>
-                                        <dd className="text-sm font-medium text-red-700">{farm.rejection_reason}</dd>
+                                    <div className="col-span-2 mt-4 p-4 bg-red-50 rounded-xl border border-red-100">
+                                        <dt className="text-sm font-bold text-red-800">Rejection Reason</dt>
+                                        <dd className="text-sm text-red-700 mt-1">{farm.rejection_reason}</dd>
                                     </div>
                                 )}
                             </dl>
@@ -115,24 +128,25 @@ export default function Show({ farm }: Props) {
 
                         {/* Description */}
                         {farm.description && (
-                            <div className="rounded-lg bg-white p-6 shadow">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                                <p className="text-sm text-gray-700">{farm.description}</p>
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-card border border-sand-200">
+                                <h3 className="text-xl font-bold text-pine-800 mb-4">Description</h3>
+                                <p className="text-pine-600 leading-relaxed whitespace-pre-wrap">{farm.description}</p>
                             </div>
                         )}
 
                         {/* Images */}
                         {farm.images && farm.images.length > 0 && (
-                            <div className="rounded-lg bg-white p-6 shadow">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Farm Images ({farm.images.length})</h3>
-                                <div className="grid grid-cols-3 gap-4">
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-card border border-sand-200">
+                                <h3 className="text-xl font-bold text-pine-800 mb-6">Farm Images ({farm.images.length})</h3>
+                                <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     {farm.images.map((img) => (
-                                        <img
-                                            key={img.id}
-                                            src={img.file_path.startsWith('http') ? img.file_path : `/storage/${img.file_path}`}
-                                            alt="Farm image"
-                                            className="rounded-lg object-cover h-40 w-full"
-                                        />
+                                        <div key={img.id} className="relative aspect-video rounded-2xl overflow-hidden bg-sand-100">
+                                            <img
+                                                src={img.file_path.startsWith('http') ? img.file_path : `/storage/${img.file_path}`}
+                                                alt="Farm image"
+                                                className="object-cover w-full h-full hover:scale-105 transition-transform duration-300"
+                                            />
+                                        </div>
                                     ))}
                                 </div>
                             </div>
@@ -140,23 +154,26 @@ export default function Show({ farm }: Props) {
 
                         {/* Certifications */}
                         {farm.certifications && farm.certifications.length > 0 && (
-                            <div className="rounded-lg bg-white p-6 shadow">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Certifications</h3>
-                                <ul className="divide-y divide-gray-200">
+                            <div className="bg-white rounded-3xl p-6 md:p-8 shadow-card border border-sand-200">
+                                <h3 className="text-xl font-bold text-pine-800 mb-6">Certifications</h3>
+                                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {farm.certifications.map((cert) => (
-                                        <li key={cert.id} className="py-3">
-                                            <div className="flex items-center justify-between">
+                                        <div key={cert.id} className="bg-sand-50 rounded-2xl border border-sand-200 p-4">
+                                            <div className="flex items-start justify-between">
                                                 <div>
-                                                    <p className="text-sm font-medium text-gray-900">{cert.name}</p>
-                                                    <p className="text-xs text-gray-500">{cert.issuer} — #{cert.certificate_number}</p>
+                                                    <p className="font-bold text-pine-800">{cert.name}</p>
+                                                    <p className="text-sm text-pine-600 mt-1">{cert.issuer}</p>
+                                                    <p className="text-xs text-pine-400 font-mono mt-1">#{cert.certificate_number}</p>
                                                 </div>
-                                                <div className="text-xs text-gray-500">
-                                                    {cert.expiry_date && `Expires: ${cert.expiry_date}`}
-                                                </div>
+                                                {cert.expiry_date && (
+                                                    <span className="inline-flex bg-white px-2 py-1 rounded-lg text-xs font-bold text-pine-500 border border-sand-200">
+                                                        Exp: {cert.expiry_date}
+                                                    </span>
+                                                )}
                                             </div>
-                                        </li>
+                                        </div>
                                     ))}
-                                </ul>
+                                </div>
                             </div>
                         )}
                     </div>

@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 
 interface User {
@@ -33,7 +34,7 @@ interface Filters {
 
 export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData; filters: Filters }) {
     return (
-        <>
+        <AppLayout title="Audit Logs">
             <Head title="Audit Logs" />
 
             <div className="py-12">
@@ -180,6 +181,6 @@ export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

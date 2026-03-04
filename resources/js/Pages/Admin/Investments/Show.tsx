@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link, usePage } from '@inertiajs/react';
 
 interface User {
@@ -96,7 +97,7 @@ export default function Show() {
     const totalPayouts = investment.payouts.reduce((sum, payout) => sum + payout.net_amount_cents, 0);
 
     return (
-        <>
+        <AppLayout title="Investment Details">
             <Head title="Investment Details" />
 
             <div className="py-12">
@@ -297,6 +298,6 @@ export default function Show() {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }

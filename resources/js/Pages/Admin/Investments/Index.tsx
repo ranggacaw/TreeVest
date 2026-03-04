@@ -1,3 +1,4 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 
 interface User {
@@ -73,7 +74,7 @@ export default function Index({ investments, farms, filters }: Props) {
     };
 
     return (
-        <>
+        <AppLayout title="Investment Oversight">
             <Head title="Investment Oversight" />
 
             <div className="py-12">
@@ -202,6 +203,6 @@ export default function Index({ investments, farms, filters }: Props) {
                     </div>
                 </div>
             </div>
-        </>
+        </AppLayout>
     );
 }
