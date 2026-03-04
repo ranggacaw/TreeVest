@@ -1,15 +1,16 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
 
 export default function Index({ auth, crops }: PageProps<{ crops: any }>) {
     return (
-        <AuthenticatedLayout
+        <AppLayout
+            title="Manage Crops"
             header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Manage Crops</h2>}
         >
             <Head title="Manage Crops" />
 
-            <div className="py-12">
+            <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center mb-6">
                         <h3 className="text-lg font-medium text-gray-900">Your Crops</h3>
@@ -59,6 +60,6 @@ export default function Index({ auth, crops }: PageProps<{ crops: any }>) {
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

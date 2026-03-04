@@ -1,0 +1,10 @@
+{
+    "farmOwner": {
+        "healthUpdates": {
+            "title": "Health Updates",
+            "create": "+ New Update",
+            "noUpdates": "No health updates yet.",
+            "createFirst": "Create your first health update"
+        }
+    }
+}

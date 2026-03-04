@@ -1,0 +1,10 @@
+{
+    "farmOwner": {
+        "healthUpdates": {
+            "title": "Pembaruan Kesehatan",
+            "create": "+ Update Baru",
+            "noUpdates": "Belum ada pembaruan kesehatan.",
+            "createFirst": "Buat pembaruan kesehatan pertama Anda"
+        }
+    }
+}

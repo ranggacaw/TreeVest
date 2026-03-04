@@ -1,7 +1,7 @@
-import { useForm, router } from '@inertiajs/react';
+import { useForm, router, Head } from '@inertiajs/react';
 import { useState } from 'react';
 import { Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import HealthUpdateForm from '@/Components/HealthUpdateForm';
 
 interface Farm {
@@ -67,7 +67,8 @@ export default function Edit({ healthUpdate, farms }: Props) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AppLayout title="Edit Health Update">
+      <Head title="Edit Health Update" />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Link
@@ -110,6 +111,6 @@ export default function Edit({ healthUpdate, farms }: Props) {
           </div>
         </form>
       </div>
-    </AuthenticatedLayout>
+    </AppLayout>
   );
 }

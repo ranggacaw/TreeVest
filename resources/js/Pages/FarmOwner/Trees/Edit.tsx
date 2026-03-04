@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import InputError from '@/Components/InputError';
@@ -31,7 +31,7 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Edit Tree</h2>}>
+        <AppLayout title="Edit Tree">
             <Head title="Edit Tree" />
 
             <div className="py-12">
@@ -223,6 +223,6 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

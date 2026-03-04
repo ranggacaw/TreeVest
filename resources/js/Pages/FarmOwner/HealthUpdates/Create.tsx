@@ -1,7 +1,7 @@
 import { useForm } from '@inertiajs/react';
 import { useState } from 'react';
-import { Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { Link, Head } from '@inertiajs/react';
+import { AppLayout } from '@/Layouts';
 import ImageUploader from '@/Components/ImageUploader';
 
 interface Farm {
@@ -24,14 +24,20 @@ export default function Create({ farms }: Props) {
   const [selectedCrop, setSelectedCrop] = useState<number | null>(null);
   const [photos, setPhotos] = useState<File[]>([]);
 
-  const { data, setData, post, processing, errors } = useForm({
+  const { data, setData, post, processing, errors, transform } = useForm({
     fruit_crop_id: '',
     severity: 'low',
     update_type: 'routine',
     title: '',
     description: '',
     visibility: 'investors_only',
+    photos: [] as File[],
   });
+
+  const handlePhotosChange = (newPhotos: File[]) => {
+    setPhotos(newPhotos);
+    setData('photos', newPhotos);
+  };
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -41,7 +47,8 @@ export default function Create({ farms }: Props) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AppLayout title="Create Health Update">
+      <Head title="Create Health Update" />
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Link
@@ -159,7 +166,7 @@ export default function Create({ farms }: Props) {
             </label>
             <ImageUploader
               photos={photos}
-              onChange={setPhotos}
+              onChange={handlePhotosChange}
               maxPhotos={5}
             />
             {(errors as Record<string, string>).photos && (
@@ -214,6 +221,6 @@ export default function Create({ farms }: Props) {
           </div>
         </form>
       </div>
-    </AuthenticatedLayout>
+    </AppLayout>
   );
 }

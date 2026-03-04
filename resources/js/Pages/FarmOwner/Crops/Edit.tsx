@@ -1,4 +1,4 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import { Head, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import InputError from '@/Components/InputError';
@@ -23,7 +23,7 @@ export default function Edit({ auth, fruitCrop, farms, fruitTypes }: PageProps<{
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="font-semibold text-xl text-gray-800 leading-tight">Edit Crop</h2>}>
+        <AppLayout title="Edit Crop">
             <Head title="Edit Crop" />
 
             <div className="py-12">
@@ -125,6 +125,6 @@ export default function Edit({ auth, fruitCrop, farms, fruitTypes }: PageProps<{
                     </div>
                 </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

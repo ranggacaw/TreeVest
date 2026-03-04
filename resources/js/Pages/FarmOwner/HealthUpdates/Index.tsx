@@ -1,6 +1,6 @@
-import { Link } from '@inertiajs/react';
+import { Head, Link } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { AppLayout } from '@/Layouts';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 
 interface HealthUpdate {
@@ -70,7 +70,8 @@ export default function Index({ healthUpdates, farms }: Props) {
   };
 
   return (
-    <AuthenticatedLayout>
+    <AppLayout title="Health Updates">
+      <Head title="Health Updates" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">
@@ -123,11 +124,11 @@ export default function Index({ healthUpdates, farms }: Props) {
                 <div className="flex items-center justify-between">
                   <div className="flex items-center gap-4">
                     <span className="text-sm text-emerald-600">
-                      {update.fruit_crop.farm.name}
+                      {update.fruit_crop?.farm?.name}
                     </span>
                     <span className="text-gray-300">|</span>
                     <span className="text-sm text-gray-500">
-                      {update.fruit_crop.fruit_type.name}
+                      {update.fruit_crop?.fruit_type?.name}
                     </span>
                   </div>
 
@@ -164,11 +165,10 @@ export default function Index({ healthUpdates, farms }: Props) {
                 <Link
                   key={page}
                   href={`?page=${page}`}
-                  className={`px-4 py-2 rounded-lg ${
-                    page === healthUpdates.current_page
+                  className={`px-4 py-2 rounded-lg ${page === healthUpdates.current_page
                       ? 'bg-emerald-600 text-white'
                       : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                  }`}
+                    }`}
                 >
                   {page}
                 </Link>
@@ -177,6 +177,6 @@ export default function Index({ healthUpdates, farms }: Props) {
           </div>
         )}
       </div>
-    </AuthenticatedLayout>
+    </AppLayout>
   );
 }
