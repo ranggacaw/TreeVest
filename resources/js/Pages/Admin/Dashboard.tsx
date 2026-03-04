@@ -1,6 +1,10 @@
 import { AppLayout } from '@/Layouts';
-import { Head } from '@inertiajs/react';
-import { Link } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
+import { AdminDashboardProps } from '@/types';
+import StatCard from '@/Components/Dashboard/StatCard';
+import ActivityFeed from '@/Components/Dashboard/ActivityFeed';
+import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
+import { Users, FileCheck, Landmark, DollarSign, Clock, Leaf, Sprout, HandCoins, FileText } from 'lucide-react';
 
 interface Article {
     id: number;
@@ -11,7 +15,7 @@ interface Article {
     updated_at: string;
 }
 
-interface Props {
+interface Props extends AdminDashboardProps {
     popularArticles: Article[];
     staleArticles: Article[];
     totalArticles: number;
@@ -19,16 +23,50 @@ interface Props {
     draftArticles: number;
 }
 
-export default function Dashboard({ popularArticles, staleArticles, totalArticles, publishedArticles, draftArticles }: Props) {
+export default function Dashboard({
+    metrics,
+    recentActivity,
+    date_from,
+    date_to,
+    popularArticles,
+    staleArticles,
+    totalArticles,
+    publishedArticles,
+    draftArticles,
+}: Props) {
+    const { data, setData, get } = useForm({
+        date_from: date_from || '',
+        date_to: date_to || '',
+    });
+
+    const submitFilter = (e: React.FormEvent) => {
+        e.preventDefault();
+        get(route('admin.dashboard'));
+    };
+
+    const resetFilter = () => {
+        setData({ date_from: '', date_to: '' });
+        get(route('admin.dashboard'));
+    };
+
+    const quickActions = [
+        { label: 'Manage Users', href: route('admin.dashboard'), icon: <Users /> },
+        { label: 'Review KYC', href: route('admin.dashboard'), icon: <FileCheck /> },
+        { label: 'Approve Farms', href: route('admin.dashboard'), icon: <Leaf /> },
+        { label: 'Create Article', href: route('admin.articles.create'), icon: <FileText /> },
+    ];
+
+    const formatCurrency = (cents: number) => {
+        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
     return (
         <AppLayout
             title="Admin Dashboard"
             header={
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
-                            Admin Dashboard
-                        </h2>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">Admin Dashboard</h2>
                         <p className="text-sm text-pine-500 mt-1">Platform overview and content management.</p>
                     </div>
                 </div>
@@ -36,22 +74,73 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
         >
             <div className="py-8">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Total Articles</h3>
-                            <p className="mt-2 text-3xl font-bold text-pine-800">{totalArticles}</p>
+
+                    {/* Quick Actions */}
+                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                        <QuickActionGrid actions={quickActions} />
+                    </div>
+
+                    {/* Metrics and Date Filter */}
+                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                        <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+                            <h2 className="text-lg font-bold text-pine-800">Platform KPIs</h2>
+
+                            <form onSubmit={submitFilter} className="flex flex-wrap items-center gap-2">
+                                <input
+                                    type="date"
+                                    value={data.date_from}
+                                    onChange={e => setData('date_from', e.target.value)}
+                                    className="rounded-lg border-sand-300 text-sm focus:border-pine-500 focus:ring-pine-500"
+                                />
+                                <span className="text-sand-500 text-sm">to</span>
+                                <input
+                                    type="date"
+                                    value={data.date_to}
+                                    onChange={e => setData('date_to', e.target.value)}
+                                    className="rounded-lg border-sand-300 text-sm focus:border-pine-500 focus:ring-pine-500"
+                                />
+                                <button type="submit" className="px-3 py-2 bg-pine-600 text-white rounded-lg text-sm font-medium hover:bg-pine-700 transition">
+                                    Filter
+                                </button>
+                                {(data.date_from || data.date_to) && (
+                                    <button type="button" onClick={resetFilter} className="px-3 py-2 bg-sand-200 text-sand-700 rounded-lg text-sm font-medium hover:bg-sand-300 transition">
+                                        Reset
+                                    </button>
+                                )}
+                            </form>
                         </div>
-                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Published</h3>
-                            <p className="mt-2 text-3xl font-bold text-green-600">{publishedArticles}</p>
-                        </div>
-                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Drafts</h3>
-                            <p className="mt-2 text-3xl font-bold text-yellow-600">{draftArticles}</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                            <StatCard label="Total Users" value={metrics.total_users} icon={<Users />} />
+                            <StatCard label="KYC Verified" value={metrics.kyc_verified} icon={<FileCheck />} />
+                            <StatCard label="Active Investments" value={metrics.active_investments} icon={<Sprout />} />
+                            <StatCard label="Investment Volume" value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
+
+                            <StatCard
+                                label="Pending KYC"
+                                value={metrics.pending_kyc}
+                                icon={<Clock />}
+                                accent={metrics.pending_kyc > 0 ? 'amber' : 'none'}
+                            />
+                            <StatCard
+                                label="Pending Farms"
+                                value={metrics.pending_farms}
+                                icon={<Clock />}
+                                accent={metrics.pending_farms > 0 ? 'amber' : 'none'}
+                            />
+                            <StatCard label="Completed Harvests" value={metrics.completed_harvests} icon={<Leaf />} />
+                            <StatCard label="Total Payouts" value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
                         </div>
                     </div>
 
-                    <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        {/* Recent Activity */}
+                        <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200 lg:row-span-2">
+                            <h2 className="text-lg font-bold text-pine-800 mb-6">Recent Activity</h2>
+                            <ActivityFeed activities={recentActivity} />
+                        </div>
+
+                        {/* Article Sections (Popular/Stale) */}
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="text-lg font-bold text-pine-800">Popular Articles</h2>
@@ -151,48 +240,6 @@ export default function Dashboard({ popularArticles, staleArticles, totalArticle
                                 <p className="text-sm text-gray-500">All content is up to date.</p>
                             )}
                         </div>
-                    </div>
-
-                    <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
-                        <Link
-                            href={route('admin.articles.create')}
-                            className="bg-pine text-sand rounded-xl p-6 text-center shadow-soft hover:bg-pine-800 transition-colors flex flex-col items-center justify-center font-bold"
-                        >
-                            <svg
-                                className="h-8 w-8 mb-2"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M12 4v16m8-8H4"
-                                />
-                            </svg>
-                            Create New Article
-                        </Link>
-                        <Link
-                            href={route('education.index')}
-                            target="_blank"
-                            className="bg-sand text-pine-800 border border-pine-200 rounded-xl p-6 text-center shadow-soft hover:bg-sand-100 transition-colors flex flex-col items-center justify-center font-bold"
-                        >
-                            <svg
-                                className="h-8 w-8 mb-2"
-                                fill="none"
-                                viewBox="0 0 24 24"
-                                stroke="currentColor"
-                            >
-                                <path
-                                    strokeLinecap="round"
-                                    strokeLinejoin="round"
-                                    strokeWidth={2}
-                                    d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14"
-                                />
-                            </svg>
-                            View Education Center
-                        </Link>
                     </div>
                 </div>
             </div>

@@ -1,197 +1,176 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { InvestorDashboardProps } from '@/types';
+import StatCard from '@/Components/Dashboard/StatCard';
+import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
+import { Leaf, Calendar, Stethoscope, HandCoins, DollarSign, Sprout, ShieldAlert, FileText, Pickaxe, LineChart } from 'lucide-react';
 
-interface Props {}
+export default function Dashboard({
+    metrics,
+    kyc_status,
+    upcoming_harvests,
+    recent_payouts,
+    recent_investments,
+}: InvestorDashboardProps) {
+    const quickActions = [
+        { label: 'Browse Farms', href: route('farms.index'), icon: <Leaf />, color: 'pine' as const },
+        { label: 'View Portfolio', href: route('portfolio.dashboard'), icon: <Sprout />, color: 'pine' as const },
+        { label: 'Download Reports', href: route('reports.index'), icon: <FileText />, color: 'pine' as const },
+        { label: 'KYC Verification', href: route('kyc.index'), icon: <ShieldAlert />, color: 'pine' as const },
+    ];
 
-export default function Dashboard() {
+    const formatCurrency = (cents: number) => {
+        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
     return (
-        <AuthenticatedLayout
+        <AppLayout
+            title="Investor Dashboard"
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Investor Dashboard
-                </h2>
-            }
-        >
-            <Head title="Dashboard" />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-8">
-                        {/* My Portfolio */}
-                        <Link
-                            href={route('portfolio.dashboard')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-indigo-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">My Portfolio</h3>
-                                    <p className="text-sm text-gray-500">View your investments</p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Browse Investments */}
-                        <Link
-                            href={route('investments.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-emerald-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Browse Trees</h3>
-                                    <p className="text-sm text-gray-500">Discover new investments</p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Health Feed */}
-                        <Link
-                            href={route('investments.health-feed.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-blue-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Health Feed</h3>
-                                    <p className="text-sm text-gray-500">Track tree health updates</p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Payouts */}
-                        <Link
-                            href={route('investments.payouts.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-yellow-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Payouts</h3>
-                                    <p className="text-sm text-gray-500">View your returns</p>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-
-                    {/* Welcome Section */}
-                    <div className="bg-white rounded-lg shadow p-6 mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Welcome to Your Dashboard</h3>
-                        <p className="text-gray-600 mb-4">
-                            Manage your fruit tree investments, track your portfolio performance, and stay updated with the latest health information from your farms.
-                        </p>
-                        <div className="flex gap-3">
-                            <Link
-                                href={route('investments.index')}
-                                className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium"
-                            >
-                                Browse Investment Opportunities
-                            </Link>
-                            <Link
-                                href={route('portfolio.dashboard')}
-                                className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 text-sm font-medium"
-                            >
-                                View My Portfolio
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="bg-white rounded-lg shadow p-6 mb-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <Link
-                                href={route('investments.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-emerald-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-                                </svg>
-                                Find Trees to Invest In
-                            </Link>
-                            <Link
-                                href={route('portfolio.dashboard')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-indigo-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
-                                </svg>
-                                View Portfolio Summary
-                            </Link>
-                            <Link
-                                href={route('investments.reports.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                </svg>
-                                Download Reports
-                            </Link>
-                            <Link
-                                href={route('kyc.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-purple-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z" />
-                                </svg>
-                                KYC Verification
-                            </Link>
-                        </div>
-                    </div>
-
-                    {/* Education & Resources */}
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Education & Resources</h3>
-                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                            <Link
-                                href={route('education.index')}
-                                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
-                            >
-                                <div className="p-2 bg-green-100 rounded-lg">
-                                    <svg className="h-5 w-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p className="font-medium text-gray-900">Investment Guides</p>
-                                    <p className="text-sm text-gray-500">Learn about fruit crop investing</p>
-                                </div>
-                            </Link>
-
-                            <Link
-                                href={route('encyclopedia.index')}
-                                className="flex items-center gap-3 p-4 border border-gray-200 rounded-lg hover:bg-gray-50"
-                            >
-                                <div className="p-2 bg-orange-100 rounded-lg">
-                                    <svg className="h-5 w-5 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <p className="font-medium text-gray-900">Fruit Encyclopedia</p>
-                                    <p className="text-sm text-gray-500">Explore fruit varieties and farms</p>
-                                </div>
-                            </Link>
-                        </div>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">Investor Hub</h2>
+                        <p className="text-sm text-pine-500 mt-1">Track your portfolio, payouts, and upcoming harvests.</p>
                     </div>
                 </div>
+            }
+        >
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
+                    {kyc_status !== 'verified' && (
+                        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div className="flex gap-3">
+                                <ShieldAlert className="text-amber-500 h-6 w-6 shrink-0" />
+                                <div>
+                                    <h4 className="text-sm font-bold text-amber-900">KYC Verification Required</h4>
+                                    <p className="text-sm text-amber-700">You must complete KYC before investing or receiving payouts.</p>
+                                </div>
+                            </div>
+                            <Link href={route('kyc.index')} className="shrink-0 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
+                                Complete KYC Now
+                            </Link>
+                        </div>
+                    )}
+
+                    {metrics.total_investments_count === 0 ? (
+                        <div className="bg-pine-50 rounded-3xl p-12 text-center border border-pine-200 shadow-sm">
+                            <Sprout className="mx-auto h-12 w-12 text-pine-400 mb-4" />
+                            <h3 className="text-xl font-bold text-pine-900 mb-2">Ready to grow your wealth?</h3>
+                            <p className="text-pine-600 mb-6 max-w-md mx-auto">
+                                You haven't made any investments yet. Browse our tokenized farms to start earning returns.
+                            </p>
+                            <Link
+                                href={route('farms.index')}
+                                className="inline-flex items-center px-6 py-3 bg-pine-600 border border-transparent rounded-xl font-semibold text-white hover:bg-pine-700 transition"
+                            >
+                                Browse Farms
+                            </Link>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Quick Actions */}
+                            <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                <QuickActionGrid actions={quickActions} />
+                            </div>
+
+                            {/* KPIs */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                                <StatCard label="Total Invested" value={formatCurrency(metrics.total_invested_cents)} icon={<DollarSign />} accent="pine" />
+                                <StatCard label="Active Trees" value={metrics.active_trees} icon={<Sprout />} accent="pine" />
+                                <StatCard label="Total Payouts" value={formatCurrency(metrics.total_payouts_cents)} icon={<HandCoins />} accent="amber" />
+                                <StatCard label="Portfolio ROI %" value={`${metrics.portfolio_roi_percent.toFixed(2)}%`} icon={<LineChart />} accent="sun" />
+                                <StatCard label="Investments" value={metrics.total_investments_count} icon={<Leaf />} accent="pine" />
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Upcoming Harvests */}
+                                <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-lg font-bold text-earth-900">Upcoming Harvests</h3>
+                                    </div>
+                                    {upcoming_harvests.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {upcoming_harvests.map(harvest => (
+                                                <div key={harvest.id} className="flex gap-4 p-4 rounded-2xl bg-sand-50 border border-sand-100 items-center justify-between">
+                                                    <div>
+                                                        <p className="font-semibold text-earth-900">{harvest.fruit_type}</p>
+                                                        <p className="text-sm text-earth-600">{harvest.farm_name}</p>
+                                                    </div>
+                                                    <div className="text-right">
+                                                        <p className="font-medium text-pine-700">{new Date(harvest.harvest_date).toLocaleDateString()}</p>
+                                                        <p className="text-xs text-earth-500 uppercase font-semibold mt-1">
+                                                            {harvest.estimated_yield_kg} kg avg
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sand-500 text-sm py-4">No upcoming harvests for your trees.</p>
+                                    )}
+                                </div>
+
+                                {/* Recent Payouts & Investments */}
+                                <div className="space-y-8">
+                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-lg font-bold text-earth-900">Recent Payouts</h3>
+                                            <Link href={route('investor.payouts.index')} className="text-sm font-medium text-pine-600 hover:text-pine-800">
+                                                View All
+                                            </Link>
+                                        </div>
+                                        {recent_payouts.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {recent_payouts.map(payout => (
+                                                    <div key={payout.id} className="p-4 rounded-xl border border-sand-100 flex justify-between items-center">
+                                                        <div>
+                                                            <p className="font-semibold text-sm text-earth-800">{payout.farm_name}</p>
+                                                            <p className="text-xs text-sand-500">{new Date(payout.date).toLocaleDateString()}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-bold text-amber-600">{formatCurrency(payout.amount_cents)}</p>
+                                                            <p className="text-[10px] uppercase font-bold text-sand-400">{payout.status}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-sand-500 text-sm py-4">No recent payouts.</p>
+                                        )}
+                                    </div>
+
+                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-lg font-bold text-earth-900">Recent Investments</h3>
+                                            <Link href={route('investments.index')} className="text-sm font-medium text-pine-600 hover:text-pine-800">
+                                                View All
+                                            </Link>
+                                        </div>
+                                        {recent_investments.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {recent_investments.map(inv => (
+                                                    <div key={inv.id} className="p-4 rounded-xl border border-sand-100 flex justify-between items-center">
+                                                        <div>
+                                                            <p className="font-semibold text-sm text-earth-800">{inv.farm_name}</p>
+                                                            <p className="text-xs text-sand-500">{new Date(inv.date).toLocaleDateString()}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-bold text-pine-700">{formatCurrency(inv.amount_cents)}</p>
+                                                            <p className="text-[10px] uppercase font-bold text-sand-400">{inv.status}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-sand-500 text-sm py-4">No recent investments.</p>
+                                        )}
+                                    </div>
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

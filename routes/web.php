@@ -3,6 +3,8 @@
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\DashboardController;
+use App\Http\Controllers\FarmOwner\DashboardController as FarmOwnerDashboardController;
+use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
 use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
 use App\Http\Controllers\Admin\KycReviewController;
 use App\Http\Controllers\Admin\UserController;
@@ -167,9 +169,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
 
 Route::middleware(['auth', 'role:farm_owner'])->group(function () {
     Route::prefix('farm-owner')->name('farm-owner.')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('FarmOwner/Dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [FarmOwnerDashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('health-updates')->name('health-updates.')->group(function () {
             Route::get('/', [FarmOwnerHealthUpdateController::class, 'index'])->name('index');
@@ -206,9 +206,7 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
 
 Route::middleware(['auth', 'role:investor'])->group(function () {
     Route::prefix('investor')->name('investor.')->group(function () {
-        Route::get('/dashboard', function () {
-            return Inertia::render('Investor/Dashboard');
-        })->name('dashboard');
+        Route::get('/dashboard', [InvestorDashboardController::class, 'index'])->name('dashboard');
 
         Route::prefix('payouts')->name('payouts.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Investor\PayoutController::class, 'index'])->name('index');

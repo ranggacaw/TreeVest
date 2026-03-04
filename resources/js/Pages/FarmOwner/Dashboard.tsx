@@ -1,147 +1,146 @@
+import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import { FarmOwnerDashboardProps } from '@/types';
+import StatCard from '@/Components/Dashboard/StatCard';
+import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
+import FarmStatusBadge from '@/Components/FarmStatusBadge';
+import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
+import { Leaf, Calendar, Stethoscope, LineChart, HandCoins, Users, Sprout } from 'lucide-react';
 
-interface Props { }
+export default function Dashboard({
+    metrics,
+    farms,
+    upcoming_harvests,
+    recent_health_updates,
+}: FarmOwnerDashboardProps) {
+    const quickActions = [
+        { label: 'Create Farm', href: route('farms.manage.create'), icon: <Leaf />, color: 'sage' as const },
+        { label: 'Schedule Harvest', href: route('farm-owner.harvests.create'), icon: <Calendar />, color: 'sage' as const },
+        { label: 'Post Health Update', href: route('farm-owner.health-updates.create'), icon: <Stethoscope />, color: 'sage' as const },
+        { label: 'View Analytics', href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
+    ];
 
-export default function Dashboard() {
+    const formatCurrency = (cents: number) => {
+        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    };
+
     return (
-        <AuthenticatedLayout
+        <AppLayout
+            title="Farm Owner Dashboard"
             header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Farm Owner Dashboard
-                </h2>
-            }
-        >
-            <Head title="Dashboard" />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
-                        {/* My Farms */}
-                        <Link
-                            href={route('farms.manage.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-emerald-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">My Farms</h3>
-                                    <p className="text-sm text-gray-500">Manage your farms</p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Harvests */}
-                        <Link
-                            href={route('farm-owner.harvests.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-yellow-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2m0-2v2m0 16V5m0 16H9m3 0h3" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Harvests</h3>
-                                    <p className="text-sm text-gray-500">Track and manage harvests</p>
-                                </div>
-                            </div>
-                        </Link>
-
-                        {/* Health Updates */}
-                        <Link
-                            href={route('farm-owner.health-updates.index')}
-                            className="bg-white rounded-lg shadow p-6 hover:shadow-lg transition-shadow"
-                        >
-                            <div className="flex items-center gap-3">
-                                <div className="p-3 bg-blue-100 rounded-lg">
-                                    <svg className="h-6 w-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                                    </svg>
-                                </div>
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">Health Updates</h3>
-                                    <p className="text-sm text-gray-500">Post crop health updates</p>
-                                </div>
-                            </div>
-                        </Link>
-                    </div>
-
-                    {/* Welcome Section */}
-                    <div className="bg-white rounded-lg shadow p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Welcome to Your Dashboard</h3>
-                        <p className="text-gray-600 mb-4">
-                            Manage your farms, track harvests, and keep investors informed with health updates.
-                        </p>
-                        <div className="flex gap-3">
-                            {route().has('farms.manage.create') && (
-                                <Link
-                                    href={route('farms.manage.create')}
-                                    className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700 text-sm font-medium"
-                                >
-                                    Create New Farm
-                                </Link>
-                            )}
-                            {route().has('farm-owner.health-updates.create') && (
-                                <Link
-                                    href={route('farm-owner.health-updates.create')}
-                                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 text-sm font-medium"
-                                >
-                                    Post Health Update
-                                </Link>
-                            )}
-                        </div>
-                    </div>
-
-                    {/* Quick Actions */}
-                    <div className="mt-6 bg-white rounded-lg shadow p-6">
-                        <h3 className="text-lg font-semibold text-gray-900 mb-4">Quick Actions</h3>
-                        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                            <Link
-                                href={route('farms.manage.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-emerald-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Add New Farm
-                            </Link>
-                            <Link
-                                href={route('farm-owner.harvests.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-yellow-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
-                                </svg>
-                                Schedule Harvest
-                            </Link>
-                            <Link
-                                href={route('farm-owner.health-updates.index')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-blue-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                                </svg>
-                                Write Update
-                            </Link>
-                            <Link
-                                href={route('profile.edit')}
-                                className="flex items-center gap-2 text-sm text-gray-700 hover:text-indigo-600"
-                            >
-                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                                </svg>
-                                Profile Settings
-                            </Link>
-                        </div>
+                <div className="flex justify-between items-center">
+                    <div>
+                        <h2 className="text-2xl font-bold leading-tight text-sage-800 tracking-tight">Farm Owner Hub</h2>
+                        <p className="text-sm text-sage-600 mt-1">Manage your farms, harvests, and health updates.</p>
                     </div>
                 </div>
+            }
+        >
+            <div className="py-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
+                    {metrics.total_farms === 0 ? (
+                        <div className="bg-sage-50 rounded-3xl p-12 text-center border border-sage-200 shadow-sm">
+                            <Sprout className="mx-auto h-12 w-12 text-sage-400 mb-4" />
+                            <h3 className="text-xl font-bold text-sage-900 mb-2">Welcome to TreeVest</h3>
+                            <p className="text-sage-600 mb-6 max-w-md mx-auto">
+                                You don't have any farms yet. Create your first farm to start tokenizing trees and receiving investments.
+                            </p>
+                            <Link
+                                href={route('farms.manage.create')}
+                                className="inline-flex items-center px-6 py-3 bg-sage-600 border border-transparent rounded-xl font-semibold text-white hover:bg-sage-700 transition"
+                            >
+                                Create First Farm
+                            </Link>
+                        </div>
+                    ) : (
+                        <>
+                            {/* Quick Actions */}
+                            <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                <QuickActionGrid actions={quickActions} />
+                            </div>
+
+                            {/* KPIs */}
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
+                                <StatCard label="Total Farms" value={metrics.total_farms} icon={<Leaf />} accent="sage" />
+                                <StatCard label="Active Farms" value={metrics.active_farms} icon={<Leaf />} accent="sage" />
+                                <StatCard label="Total Trees" value={metrics.total_trees} icon={<Sprout />} accent="sage" />
+                                <StatCard label="Total Investors" value={metrics.total_investors} icon={<Users />} accent="sage" />
+                                <StatCard label="Total Earnings" value={formatCurrency(metrics.total_earnings_cents)} icon={<HandCoins />} accent="amber" />
+                            </div>
+
+                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                                {/* Farm Overview */}
+                                <div className="lg:col-span-2 space-y-8">
+                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                        <div className="flex justify-between items-center mb-6">
+                                            <h3 className="text-lg font-bold text-earth-900">Farm Status Overview</h3>
+                                            <Link href={route('farms.manage.index')} className="text-sm font-medium text-sage-600 hover:text-sage-800">
+                                                View All
+                                            </Link>
+                                        </div>
+                                        <ul className="divide-y divide-sand-100">
+                                            {farms.map(farm => (
+                                                <li key={farm.id} className="py-4 flex justify-between items-center">
+                                                    <span className="font-medium text-earth-800">{farm.name}</span>
+                                                    <FarmStatusBadge status={farm.status as any} />
+                                                </li>
+                                            ))}
+                                        </ul>
+                                    </div>
+
+                                    {/* Harvest Timeline */}
+                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
+                                        <h3 className="text-lg font-bold text-earth-900 mb-6">Upcoming Harvests</h3>
+                                        {upcoming_harvests.length > 0 ? (
+                                            <div className="space-y-4">
+                                                {upcoming_harvests.map(harvest => (
+                                                    <div key={harvest.id} className="flex gap-4 p-4 rounded-2xl bg-sand-50 border border-sand-100 items-center justify-between">
+                                                        <div>
+                                                            <p className="font-semibold text-earth-900">{harvest.fruit_type}</p>
+                                                            <p className="text-sm text-earth-600">{harvest.farm_name}</p>
+                                                        </div>
+                                                        <div className="text-right">
+                                                            <p className="font-medium text-sage-700">{new Date(harvest.harvest_date).toLocaleDateString()}</p>
+                                                            <p className="text-xs text-earth-500 uppercase font-semibold mt-1">{harvest.status}</p>
+                                                        </div>
+                                                    </div>
+                                                ))}
+                                            </div>
+                                        ) : (
+                                            <p className="text-sand-500 text-sm py-4">No upcoming harvests scheduled.</p>
+                                        )}
+                                    </div>
+                                </div>
+
+                                {/* Health Updates */}
+                                <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200 h-fit">
+                                    <div className="flex justify-between items-center mb-6">
+                                        <h3 className="text-lg font-bold text-earth-900">Recent Health Updates</h3>
+                                    </div>
+                                    {recent_health_updates.length > 0 ? (
+                                        <div className="space-y-4">
+                                            {recent_health_updates.map(update => (
+                                                <div key={update.id} className="p-4 rounded-xl border border-sand-100 space-y-2">
+                                                    <div className="flex justify-between items-start">
+                                                        <span className="font-semibold text-sm text-earth-800 truncate pr-2">{update.farm_name}</span>
+                                                        <HealthSeverityBadge severity={update.severity as any} />
+                                                    </div>
+                                                    <p className="text-sm text-earth-600 line-clamp-2">{update.description}</p>
+                                                    <p className="text-xs text-sand-400">
+                                                        {new Date(update.date).toLocaleDateString()}
+                                                    </p>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    ) : (
+                                        <p className="text-sand-500 text-sm py-4">No health updates posted recently.</p>
+                                    )}
+                                </div>
+                            </div>
+                        </>
+                    )}
+                </div>
             </div>
-        </AuthenticatedLayout>
+        </AppLayout>
     );
 }

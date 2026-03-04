@@ -617,3 +617,85 @@ export interface InvestmentTransfer {
         status: string;
     };
 }
+
+export interface AdminDashboardProps {
+    metrics: {
+        total_users: number;
+        kyc_verified: number;
+        active_investments: number;
+        investment_volume: number;
+        pending_kyc: number;
+        pending_farms: number;
+        completed_harvests: number;
+        total_payouts: number;
+    };
+    recentActivity: Array<{
+        type: string;
+        description: string;
+        actor_name: string;
+        created_at: string;
+    }>;
+    date_from?: string;
+    date_to?: string;
+}
+
+export interface FarmOwnerDashboardProps {
+    metrics: {
+        total_farms: number;
+        active_farms: number;
+        total_trees: number;
+        total_investors: number;
+        total_earnings_cents: number;
+    };
+    farms: Array<{
+        id: number;
+        name: string;
+        status: FarmStatus;
+    }>;
+    upcoming_harvests: Array<{
+        id: number;
+        harvest_date: string;
+        farm_name: string;
+        fruit_type: string;
+        status: string;
+    }>;
+    recent_health_updates: Array<{
+        id: number;
+        date: string;
+        farm_name: string;
+        severity: string;
+        description: string;
+    }>;
+}
+
+export interface InvestorDashboardProps {
+    metrics: {
+        total_invested_cents: number;
+        active_trees: number;
+        total_payouts_cents: number;
+        portfolio_roi_percent: number;
+        total_investments_count: number;
+    };
+    kyc_status: string;
+    upcoming_harvests: Array<{
+        id: number;
+        harvest_date: string;
+        farm_name: string;
+        fruit_type: string;
+        estimated_yield_kg: number;
+    }>;
+    recent_payouts: Array<{
+        id: number;
+        date: string;
+        amount_cents: number;
+        farm_name: string;
+        status: string;
+    }>;
+    recent_investments: Array<{
+        id: number;
+        date: string;
+        amount_cents: number;
+        farm_name: string;
+        status: string;
+    }>;
+}

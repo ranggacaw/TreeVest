@@ -19,9 +19,13 @@ use Inertia\Inertia;
 
 class DashboardController extends Controller
 {
-    public function index()
+    public function index(\Illuminate\Http\Request $request, \App\Services\AdminDashboardService $adminDashboardService)
     {
-        $metrics = $this->getMetrics();
+        $dateFrom = $request->input('date_from');
+        $dateTo = $request->input('date_to');
+
+        $metrics = $adminDashboardService->getMetrics($dateFrom, $dateTo);
+        $recentActivity = $adminDashboardService->getRecentActivity();
 
         $popularArticles = Article::popular(5)->get();
         $staleArticles = Article::stale(6)->limit(5)->get();
@@ -31,28 +35,15 @@ class DashboardController extends Controller
 
         return Inertia::render('Admin/Dashboard', [
             'metrics' => $metrics,
+            'recentActivity' => $recentActivity,
+            'date_from' => $dateFrom,
+            'date_to' => $dateTo,
             'popularArticles' => $popularArticles,
             'staleArticles' => $staleArticles,
             'totalArticles' => $totalArticles,
             'publishedArticles' => $publishedArticles,
             'draftArticles' => $draftArticles,
         ]);
-    }
-
-    protected function getMetrics(): array
-    {
-        return Cache::remember('admin.dashboard.metrics', 300, function () {
-            return [
-                'total_users' => User::count(),
-                'kyc_verified_users' => User::where('kyc_status', KycStatus::VERIFIED)->count(),
-                'active_investments_count' => Investment::where('status', InvestmentStatus::Active)->count(),
-                'total_investment_volume_cents' => Investment::where('status', InvestmentStatus::Active)->sum('amount_cents'),
-                'pending_kyc_review_count' => KycVerification::where('status', KycStatus::SUBMITTED)->count(),
-                'pending_farm_approval_count' => Farm::where('status', FarmStatus::PENDING_APPROVAL)->count(),
-                'completed_harvests_count' => Harvest::where('status', HarvestStatus::Completed)->count(),
-                'total_payouts_distributed_cents' => Payout::where('status', \App\Enums\PayoutStatus::Completed)->sum('net_amount_cents'),
-            ];
-        });
     }
 
     public static function invalidateMetricsCache(): void
