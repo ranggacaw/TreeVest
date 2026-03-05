@@ -401,6 +401,51 @@ export interface Harvest {
     payouts?: Payout[];
 }
 
+export interface FruitCropRelation {
+    id: number;
+    variant: string;
+    fruit_type_id: number;
+    fruit_type: {
+        id: number;
+        name: string;
+    };
+    farm: {
+        id: number;
+        name: string;
+        owner?: {
+            id: number;
+            name: string;
+        };
+    };
+}
+
+export interface HarvestWithRelations extends Harvest {
+    tree: {
+        id: number;
+        tree_identifier: string;
+        price_cents: number;
+        expected_roi_percent: number;
+        risk_rating: string;
+        fruit_crop?: {
+            farm?: {
+                name: string;
+                owner?: { name: string };
+            };
+        };
+    };
+    fruit_crop: FruitCropRelation;
+}
+
+export interface PaginatedHarvests {
+    data: HarvestWithRelations[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    from: number | null;
+    to: number | null;
+}
+
 export interface MarketPrice {
     id: number;
     fruit_type_id: number;

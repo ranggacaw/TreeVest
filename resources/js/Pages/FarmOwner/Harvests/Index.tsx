@@ -1,94 +1,11 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
-import { PageProps, Harvest, HarvestStatus } from '@/types';
-
-interface FruitCrop {
-  id: number;
-  variant: string;
-  fruit_type_id: number;
-  fruit_type: {
-    id: number;
-    name: string;
-  };
-  farm: {
-    id: number;
-    name: string;
-  };
-}
-
-interface HarvestWithRelations extends Harvest {
-  tree: {
-    id: number;
-    tree_identifier: string;
-    price_cents: number;
-    expected_roi_percent: number;
-    risk_rating: string;
-  };
-  fruit_crop: FruitCrop;
-}
-
-interface PaginatedHarvests {
-  data: HarvestWithRelations[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number | null;
-  to: number | null;
-}
+import { PageProps, PaginatedHarvests } from '@/types';
+import HarvestStatusBadge from '@/Components/HarvestStatusBadge';
+import { formatDate } from '@/utils/date';
 
 interface Props extends PageProps {
   harvests: PaginatedHarvests;
-}
-
-const STATUS_CONFIG: Record<
-  HarvestStatus,
-  { label: string; className: string; dot: string }
-> = {
-  scheduled: {
-    label: 'Scheduled',
-    className: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-    dot: 'bg-blue-500',
-  },
-  in_progress: {
-    label: 'In Progress',
-    className: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-    dot: 'bg-amber-500',
-  },
-  completed: {
-    label: 'Completed',
-    className: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-    dot: 'bg-emerald-500',
-  },
-  failed: {
-    label: 'Failed',
-    className: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-    dot: 'bg-red-500',
-  },
-};
-
-function StatusBadge({ status }: { status: HarvestStatus }) {
-  const cfg = STATUS_CONFIG[status] ?? {
-    label: status,
-    className: 'bg-gray-100 text-gray-600 ring-1 ring-gray-200',
-    dot: 'bg-gray-400',
-  };
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.className}`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-      {cfg.label}
-    </span>
-  );
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 function EmptyState() {
@@ -238,7 +155,7 @@ export default function Index({ harvests, flash }: Props) {
                     {formatDate(harvest.scheduled_date)}
                   </p>
                   <div className="mt-1">
-                    <StatusBadge
+                    <HarvestStatusBadge
                       status={harvest.status}
                     />
                   </div>

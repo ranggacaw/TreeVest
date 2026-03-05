@@ -1,115 +1,14 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
-import { PageProps, Harvest, HarvestStatus } from '@/types';
-
-interface FruitCrop {
-  id: number;
-  variant: string;
-  fruit_type_id: number;
-  fruit_type: {
-    id: number;
-    name: string;
-  };
-  farm: {
-    id: number;
-    name: string;
-    owner?: {
-      id: number;
-      name: string;
-    };
-  };
-}
-
-interface HarvestWithRelations extends Harvest {
-  tree: {
-    id: number;
-    tree_identifier: string;
-    price_cents: number;
-    expected_roi_percent: number;
-    risk_rating: string;
-    fruit_crop?: {
-      farm?: {
-        name: string;
-        owner?: { name: string };
-      };
-    };
-  };
-  fruit_crop: FruitCrop;
-}
-
-interface PaginatedHarvests {
-  data: HarvestWithRelations[];
-  current_page: number;
-  last_page: number;
-  per_page: number;
-  total: number;
-  from: number | null;
-  to: number | null;
-}
+import { PageProps, HarvestStatus, PaginatedHarvests } from '@/types';
+import HarvestStatusBadge, { ALL_STATUSES, STATUS_CONFIG } from '@/Components/HarvestStatusBadge';
+import { formatDate } from '@/utils/date';
 
 interface Props extends PageProps {
   harvests: PaginatedHarvests;
   filters: {
     status?: HarvestStatus;
   };
-}
-
-const STATUS_CONFIG: Record<
-  HarvestStatus,
-  { label: string; badge: string; dot: string }
-> = {
-  scheduled: {
-    label: 'Scheduled',
-    badge: 'bg-blue-50 text-blue-700 ring-1 ring-blue-200',
-    dot: 'bg-blue-500',
-  },
-  in_progress: {
-    label: 'In Progress',
-    badge: 'bg-amber-50 text-amber-700 ring-1 ring-amber-200',
-    dot: 'bg-amber-500',
-  },
-  completed: {
-    label: 'Completed',
-    badge: 'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-200',
-    dot: 'bg-emerald-500',
-  },
-  failed: {
-    label: 'Failed',
-    badge: 'bg-red-50 text-red-700 ring-1 ring-red-200',
-    dot: 'bg-red-500',
-  },
-};
-
-const ALL_STATUSES: Array<{ value: HarvestStatus | ''; label: string }> = [
-  { value: '', label: 'All' },
-  { value: 'scheduled', label: 'Scheduled' },
-  { value: 'in_progress', label: 'In Progress' },
-  { value: 'completed', label: 'Completed' },
-  { value: 'failed', label: 'Failed' },
-];
-
-function StatusBadge({ status }: { status: HarvestStatus }) {
-  const cfg = STATUS_CONFIG[status] ?? {
-    label: status,
-    badge: 'bg-gray-100 text-gray-600 ring-1 ring-gray-200',
-    dot: 'bg-gray-400',
-  };
-  return (
-    <span
-      className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.badge}`}
-    >
-      <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-      {cfg.label}
-    </span>
-  );
-}
-
-function formatDate(dateString: string): string {
-  return new Date(dateString).toLocaleDateString('en-US', {
-    year: 'numeric',
-    month: 'short',
-    day: 'numeric',
-  });
 }
 
 export default function Index({ harvests, filters }: Props) {
@@ -326,7 +225,7 @@ export default function Index({ harvests, filters }: Props) {
 
                       {/* Status */}
                       <td className="px-5 py-4">
-                        <StatusBadge
+                        <HarvestStatusBadge
                           status={harvest.status}
                         />
                       </td>
