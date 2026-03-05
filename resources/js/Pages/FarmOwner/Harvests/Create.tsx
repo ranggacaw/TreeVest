@@ -60,24 +60,16 @@ export default function Create({ trees }: Props) {
   };
 
   return (
-    <AppLayout title="Schedule Harvest">
+    <AppLayout title="Schedule Harvest" subtitle="Add a new schedule an upcoming harvest for one of your trees.">
       <Head title="Schedule Harvest" />
 
-      <div className="mx-auto max-w-2xl px-4 py-10 sm:px-6 lg:px-8">
-        {/* Back link */}
-        <div className="mb-6">
-          <Link
-            href={route('farm-owner.harvests.index')}
-            className="inline-flex items-center gap-1 text-sm text-emerald-600 hover:text-emerald-700"
-          >
-            ← Back to Harvests
-          </Link>
+      <div className="mx-auto max-w-7xl px-4 py-10 sm:px-6 lg:px-8">
+        <div className="mb-8">
+          <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+            Back to Harvests
+          </button>
         </div>
-
-        <h1 className="mb-2 text-2xl font-bold text-gray-900">Schedule Harvest</h1>
-        <p className="mb-8 text-sm text-gray-500">
-          Schedule an upcoming harvest for one of your trees.
-        </p>
 
         <form
           onSubmit={handleSubmit}
@@ -96,8 +88,8 @@ export default function Create({ trees }: Props) {
               value={data.tree_id}
               onChange={(e) => setData('tree_id', e.target.value)}
               className={`w-full rounded-lg border px-3 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.tree_id
-                  ? 'border-red-400 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                ? 'border-red-400 bg-red-50'
+                : 'border-gray-300 bg-white'
                 }`}
               required
             >
@@ -160,8 +152,8 @@ export default function Create({ trees }: Props) {
               min={new Date().toISOString().split('T')[0]}
               onChange={(e) => setData('scheduled_date', e.target.value)}
               className={`w-full rounded-lg border px-3 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.scheduled_date
-                  ? 'border-red-400 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                ? 'border-red-400 bg-red-50'
+                : 'border-gray-300 bg-white'
                 }`}
               required
             />
@@ -189,8 +181,8 @@ export default function Create({ trees }: Props) {
                 onChange={(e) => setData('estimated_yield_kg', e.target.value)}
                 placeholder="e.g. 250"
                 className={`w-full rounded-lg border py-2.5 pl-3 pr-12 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.estimated_yield_kg
-                    ? 'border-red-400 bg-red-50'
-                    : 'border-gray-300 bg-white'
+                  ? 'border-red-400 bg-red-50'
+                  : 'border-gray-300 bg-white'
                   }`}
               />
               <span className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-sm text-gray-400">
@@ -218,8 +210,8 @@ export default function Create({ trees }: Props) {
               rows={4}
               placeholder="Any special instructions or observations for this harvest…"
               className={`w-full rounded-lg border px-3 py-2.5 text-sm shadow-sm focus:outline-none focus:ring-2 focus:ring-emerald-500 ${errors.notes
-                  ? 'border-red-400 bg-red-50'
-                  : 'border-gray-300 bg-white'
+                ? 'border-red-400 bg-red-50'
+                : 'border-gray-300 bg-white'
                 }`}
             />
             {errors.notes && (

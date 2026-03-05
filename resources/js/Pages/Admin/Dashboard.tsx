@@ -50,9 +50,9 @@ export default function Dashboard({
     };
 
     const quickActions = [
-        { label: 'Manage Users', href: route('admin.dashboard'), icon: <Users /> },
-        { label: 'Review KYC', href: route('admin.dashboard'), icon: <FileCheck /> },
-        { label: 'Approve Farms', href: route('admin.dashboard'), icon: <Leaf /> },
+        { label: 'Manage Users', href: route('admin.users.index'), icon: <Users /> },
+        { label: 'Review KYC', href: route('admin.kyc.index'), icon: <FileCheck /> },
+        { label: 'Approve Farms', href: route('admin.farms.index'), icon: <Leaf /> },
         { label: 'Create Article', href: route('admin.articles.create'), icon: <FileText /> },
     ];
 

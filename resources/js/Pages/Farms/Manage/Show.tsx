@@ -15,23 +15,18 @@ const statusColors: Record<string, string> = {
 
 export default function Show({ farm }: Props) {
     return (
-        <AppLayout title="Farm Details">
-            <Head title={farm.name} />
-
+        <AppLayout title="Farm Details" subtitle={farm.name} >
             <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 flex items-center justify-between">
                         <div>
-                            <Link
-                                href={route('farms.manage.index')}
-                                className="text-sm text-indigo-600 hover:underline"
-                            >
-                                &larr; Back to My Farms
-                            </Link>
                             <h2 className="mt-2 text-2xl font-bold text-gray-900">{farm.name}</h2>
                         </div>
                         <div className="flex gap-2">
+                            <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                                Back
+                            </button>
                             <Link
                                 href={route('farms.manage.edit', farm.id)}
                                 className="px-4 py-2 rounded bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
@@ -90,16 +85,15 @@ export default function Show({ farm }: Props) {
                                         <dd className="text-sm font-medium text-red-700">{farm.rejection_reason}</dd>
                                     </div>
                                 )}
+                                {/* Description */}
+                                {farm.description && (
+                                    <div className="col-span-2">
+                                        <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
+                                        <p className="text-sm text-gray-700">{farm.description}</p>
+                                    </div>
+                                )}
                             </dl>
                         </div>
-
-                        {/* Description */}
-                        {farm.description && (
-                            <div className="rounded-lg bg-white p-6 shadow">
-                                <h3 className="text-lg font-semibold text-gray-900 mb-2">Description</h3>
-                                <p className="text-sm text-gray-700">{farm.description}</p>
-                            </div>
-                        )}
 
                         {/* Images */}
                         {farm.images && farm.images.length > 0 && (

@@ -36,7 +36,7 @@ class UserController extends Controller
             $query->where('kyc_status', $request->kyc_status);
         }
 
-        $users = $query->orderBy('created_at', 'desc')->paginate(20);
+        $users = $query->orderBy('created_at', 'desc')->paginate(10);
 
         return Inertia::render('Admin/Users/Index', [
             'users' => $users,
@@ -50,9 +50,12 @@ class UserController extends Controller
 
     public function show(User $user)
     {
-        $user->load(['kycVerifications' => function ($query) {
-            $query->orderBy('created_at', 'desc')->limit(10);
-        }, 'latestKycVerification.documents']);
+        $user->load([
+            'kycVerifications' => function ($query) {
+                $query->orderBy('created_at', 'desc')->limit(10);
+            },
+            'latestKycVerification.documents'
+        ]);
 
         $auditEvents = AuditLog::where('user_id', $user->id)
             ->orderBy('created_at', 'desc')
@@ -111,7 +114,7 @@ class UserController extends Controller
 
     public function reactivate(User $user)
     {
-        if (! $user->isSuspended()) {
+        if (!$user->isSuspended()) {
             return back()->with('error', 'User is not suspended.');
         }
 

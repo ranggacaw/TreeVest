@@ -16,17 +16,11 @@ interface Props {
 
 export default function Index({ farms }: Props) {
     return (
-        <AppLayout title="My Farms">
+        <AppLayout title="My Farms" subtitle='Manage your farm listings and status'>
             <Head title="My Farms" />
             <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                 {/* Page header */}
                 <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
-                    <div>
-                        <h1 className="text-2xl font-bold text-gray-900">My Farms</h1>
-                        <p className="mt-1 text-sm text-gray-500">
-                            Manage your farm listings and status
-                        </p>
-                    </div>
                     <Link
                         href="/farms/manage/create"
                         className="inline-flex items-center gap-2 self-start rounded-lg bg-emerald-600 px-4 py-2 text-sm font-semibold text-white shadow-sm hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2 sm:self-auto"

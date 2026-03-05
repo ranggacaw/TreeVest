@@ -38,12 +38,6 @@ export default function Show({ farm }: Props) {
             header={
                 <div className="flex items-center justify-between">
                     <div>
-                        <Link href={route('admin.farms.index')} className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors flex items-center mb-1">
-                            <svg className="w-4 h-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                            </svg>
-                            Back to Farms
-                        </Link>
                         <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
                             {farm.name}
                         </h2>
@@ -74,7 +68,13 @@ export default function Show({ farm }: Props) {
             }
         >
             <div className="py-8">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8 space-y-6">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
+                    <div className="mb-6">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back
+                        </button>
+                    </div>
                     <div className="grid grid-cols-1 gap-6">
                         {/* Farm Details */}
                         <div className="bg-white rounded-3xl p-6 md:p-8 shadow-card border border-sand-200">
