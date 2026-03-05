@@ -51,6 +51,17 @@ Route::get('/', function () {
 })->name('home');
 
 Route::get('/dashboard', function () {
+    $user = auth()->user();
+    if ($user->hasRole('admin')) {
+        return redirect()->route('admin.dashboard');
+    }
+    if ($user->hasRole('farm_owner')) {
+        return redirect()->route('farm-owner.dashboard');
+    }
+    if ($user->hasRole('investor')) {
+        return redirect()->route('investor.dashboard');
+    }
+    // Fallback: no specific role assigned yet
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
