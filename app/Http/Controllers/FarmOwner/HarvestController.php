@@ -17,7 +17,8 @@ class HarvestController extends Controller
 {
     public function __construct(
         private HarvestService $harvestService
-    ) {}
+    ) {
+    }
 
     public function index(): Response
     {
@@ -33,7 +34,8 @@ class HarvestController extends Controller
 
     public function create(): Response
     {
-        $trees = Tree::whereRelation('fruitCrop.farm', 'owner_id', auth()->id())
+        $trees = Tree::with(['fruitCrop.fruitType', 'fruitCrop.farm'])
+            ->whereRelation('fruitCrop.farm', 'owner_id', auth()->id())
             ->investable()
             ->get();
 
