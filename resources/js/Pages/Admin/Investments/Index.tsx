@@ -1,5 +1,6 @@
 import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface User {
     id: number;
@@ -52,6 +53,7 @@ interface Props {
 }
 
 export default function Index({ investments, farms, filters }: Props) {
+    const { t } = useTranslation();
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'active':
@@ -160,7 +162,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                                 {new Date(investment.purchase_date).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link href={route('admin.investments.show', investment.id)} className="text-indigo-600 hover:text-indigo-900">View</Link>
+                                                <Link href={route('admin.investments.show', investment.id)} className="text-indigo-600 hover:text-indigo-900">{t('common.view')}</Link>
                                             </td>
                                         </tr>
                                     ))}

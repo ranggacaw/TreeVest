@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface Article {
     id: number;
@@ -55,6 +56,7 @@ interface Props {
 }
 
 export default function EducationIndex({ articles, categories, filters }: Props) {
+    const { t } = useTranslation();
     const handleFilterChange = (filterType: string, value: string) => {
         const url = new URL(window.location.href);
         if (value) {
@@ -91,7 +93,7 @@ export default function EducationIndex({ articles, categories, filters }: Props)
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         <aside className="lg:col-span-1">
                             <div className="bg-white p-6 shadow-sm sm:rounded-lg">
-                                <h2 className="text-lg font-semibold text-gray-900">Search</h2>
+                                <h2 className="text-lg font-semibold text-gray-900">{t(\'common.search\')}</h2>
                                 <form onSubmit={handleSearch} className="mt-4">
                                     <input
                                         type="text"

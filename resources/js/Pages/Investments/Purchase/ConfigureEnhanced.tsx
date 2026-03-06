@@ -4,6 +4,7 @@ import { PageProps, Tree, PaymentMethod } from '@/types';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 import { usePaymentError } from '@/hooks/useAsyncError';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     tree: Tree;
@@ -18,9 +19,10 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
     const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number | null>(
         payment_methods.length > 0 ? payment_methods[0].id : null
     );
-    
+
     const { error, clearError, handleAsyncError } = usePaymentError();
     const [isProcessing, setIsProcessing] = useState(false);
+    const { t } = useTranslation('investments');
 
     const { data, setData, post, processing, errors: formErrors } = useForm({
         tree_id: tree.id,
@@ -42,11 +44,11 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
-        
+
         if (!user.kyc_verified) {
             handleAsyncError({
                 code: 'kyc_not_verified',
-                message: 'Please complete KYC verification before investing.',
+                message: t('kyc_not_verified'),
             });
             return;
         }
@@ -54,7 +56,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
         if (selectedAmount < tree.min_investment_cents || selectedAmount > tree.max_investment_cents) {
             handleAsyncError({
                 code: 'investment_limit_exceeded',
-                message: `Investment must be between ${tree.min_investment_formatted} and ${tree.max_investment_formatted}`,
+                message: t('investment_limit_exceeded', { min: tree.min_investment_formatted, max: tree.max_investment_formatted }),
             });
             return;
         }
@@ -62,7 +64,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
         if (!selectedPaymentMethod) {
             handleAsyncError({
                 code: 'payment_method_required',
-                message: 'Please select a payment method.',
+                message: t('payment_method_required'),
             });
             return;
         }
@@ -80,7 +82,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                     setIsProcessing(false);
                     // Handle validation errors or other server errors
                     handleAsyncError({
-                        response: { data: { errors, message: 'Validation failed' } }
+                        response: { data: { errors, message: t('validation_failed') } }
                     });
                 },
             });
@@ -104,11 +106,11 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
             <AuthenticatedLayout
                 header={
                     <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        Configure Investment
+                        {t('configure_investment')}
                     </h2>
                 }
             >
-                <Head title={`Invest in ${tree.identifier}`} />
+                <Head title={t('invest_in_tree', { identifier: tree.identifier })} />
 
                 <div className="py-12">
                     <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
@@ -120,10 +122,10 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                         {tree.fruit_crop.fruit_type} - {tree.fruit_crop.variant}
                                     </h3>
                                     <p className="text-sm text-gray-600">
-                                        Tree ID: {tree.identifier} • {tree.farm.name}
+                                        {t('tree_id')}: {tree.identifier} • {tree.farm.name}
                                     </p>
                                     <p className="text-sm text-gray-600">
-                                        Expected ROI: {tree.expected_roi}% • Risk: {tree.risk_rating}
+                                        {t('expected_roi', { roi: '' }).replace('%', '').trim()}: {tree.expected_roi}% • {t('risk_rating')}: {tree.risk_rating}
                                     </p>
                                 </div>
 
@@ -147,7 +149,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                             </div>
                                             <div className="ml-3">
                                                 <h3 className="text-sm font-medium text-red-800">
-                                                    Payment Error
+                                                    {t('payment_error')}
                                                 </h3>
                                                 <div className="mt-2 text-sm text-red-700">
                                                     <p>{error.message}</p>
@@ -158,7 +160,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                                         className="text-sm text-red-600 hover:text-red-500 font-medium"
                                                         onClick={clearError}
                                                     >
-                                                        Dismiss
+                                                        {t('dismiss')}
                                                     </button>
                                                 </div>
                                             </div>
@@ -170,11 +172,11 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                     {/* Investment Amount */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Investment Amount
+                                            {t('investment_amount')}
                                         </label>
                                         <div className="space-y-3">
                                             <div className="flex items-center justify-between p-3 border border-gray-300 rounded-md">
-                                                <span className="text-sm text-gray-600">Range:</span>
+                                                <span className="text-sm text-gray-600">{t('range_label')}</span>
                                                 <span className="text-sm font-medium">
                                                     {tree.min_investment_formatted} - {tree.max_investment_formatted}
                                                 </span>
@@ -184,12 +186,12 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                                 min={tree.min_investment_cents}
                                                 max={tree.max_investment_cents}
                                                 value={selectedAmount}
-                                                onChange={(e) => handleAmountChange(parseInt(e.target.value))}
+                                                onChange={(e) => handleAmountChange(parseInt(e.target.value) || 0)}
                                                 className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                                placeholder="Enter amount in cents"
+                                                placeholder={t('amount_in_cents_placeholder')}
                                             />
                                             <div className="text-sm text-gray-600">
-                                                Amount: {formatCurrency(selectedAmount)}
+                                                {t('amount_label_simple')} {formatCurrency(selectedAmount)}
                                             </div>
                                         </div>
                                     </div>
@@ -197,17 +199,17 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                     {/* Projected Returns */}
                                     <div className="bg-green-50 p-4 rounded-md">
                                         <h4 className="text-sm font-medium text-green-800 mb-2">
-                                            Projected Returns
+                                            {t('projected_returns')}
                                         </h4>
                                         <div className="grid grid-cols-2 gap-4 text-sm">
                                             <div>
-                                                <span className="text-green-600">Expected Return:</span>
+                                                <span className="text-green-600">{t('expected_return')}</span>
                                                 <div className="font-semibold text-green-800">
                                                     {formatCurrency(projectedReturn)}
                                                 </div>
                                             </div>
                                             <div>
-                                                <span className="text-green-600">ROI:</span>
+                                                <span className="text-green-600">{t('roi_label')}</span>
                                                 <div className="font-semibold text-green-800">
                                                     {tree.expected_roi}%
                                                 </div>
@@ -218,18 +220,17 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                     {/* Payment Method */}
                                     <div>
                                         <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            Payment Method
+                                            {t('payment_method_label')}
                                         </label>
                                         {payment_methods.length > 0 ? (
                                             <div className="space-y-2">
                                                 {payment_methods.map((method) => (
                                                     <div
                                                         key={method.id}
-                                                        className={`p-3 border rounded-md cursor-pointer transition-colors ${
-                                                            selectedPaymentMethod === method.id
+                                                        className={`p-3 border rounded-md cursor-pointer transition-colors ${selectedPaymentMethod === method.id
                                                                 ? 'border-green-500 bg-green-50'
                                                                 : 'border-gray-300 hover:border-gray-400'
-                                                        }`}
+                                                            }`}
                                                         onClick={() => handlePaymentMethodChange(method.id)}
                                                     >
                                                         <div className="flex items-center justify-between">
@@ -250,12 +251,12 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                             </div>
                                         ) : (
                                             <div className="text-center py-6 text-gray-500">
-                                                <p>No payment methods available.</p>
+                                                <p>{t('no_payment_methods')}</p>
                                                 <a
                                                     href="/payment-methods"
                                                     className="text-green-600 hover:text-green-700 font-medium"
                                                 >
-                                                    Add a payment method
+                                                    {t('add_payment_method')}
                                                 </a>
                                             </div>
                                         )}
@@ -290,10 +291,10 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                                             d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                                                         ></path>
                                                     </svg>
-                                                    Processing...
+                                                    {t('processing_button')}
                                                 </div>
                                             ) : (
-                                                'Confirm Investment'
+                                                t('confirm_investment')
                                             )}
                                         </button>
                                     </div>
@@ -301,14 +302,13 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                     {/* Disclaimer */}
                                     <div className="text-xs text-gray-500 pt-4 border-t">
                                         <p>
-                                            By proceeding, you acknowledge that investments carry risk and
-                                            returns are not guaranteed. Please read our{' '}
+                                            {t('disclaimer_text')}{' '}
                                             <a href="/terms" className="text-green-600 hover:text-green-700">
-                                                Terms of Service
+                                                {t('terms_of_service')}
                                             </a>{' '}
-                                            and{' '}
+                                            {t('and')}{' '}
                                             <a href="/risk-disclosure" className="text-green-600 hover:text-green-700">
-                                                Risk Disclosure
+                                                {t('risk_disclosure_link')}
                                             </a>
                                             .
                                         </p>

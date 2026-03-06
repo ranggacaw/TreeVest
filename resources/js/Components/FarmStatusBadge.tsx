@@ -1,4 +1,5 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 import { FarmStatus } from '@/types';
 
 interface Props {
@@ -6,6 +7,8 @@ interface Props {
 }
 
 export default function FarmStatusBadge({ status }: Props) {
+    const { t } = useTranslation();
+
     const styles: Record<FarmStatus, string> = {
         pending_approval: 'bg-sun-100 text-sun-800 border border-sun-200',
         active: 'bg-sage-100 text-sage-800 border border-sage-200',
@@ -14,10 +17,10 @@ export default function FarmStatusBadge({ status }: Props) {
     };
 
     const labels: Record<FarmStatus, string> = {
-        pending_approval: 'Pending Approval',
-        active: 'Active',
-        suspended: 'Suspended',
-        deactivated: 'Deactivated',
+        pending_approval: t('status.pending_approval', 'Pending Approval'),
+        active: t('status.active', 'Active'),
+        suspended: t('status.suspended', 'Suspended'),
+        deactivated: t('status.deactivated', 'Deactivated'),
     };
 
     return (

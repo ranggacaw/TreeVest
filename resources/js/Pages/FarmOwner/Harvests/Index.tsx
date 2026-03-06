@@ -3,12 +3,13 @@ import { AppLayout } from '@/Layouts';
 import { PageProps, PaginatedHarvests } from '@/types';
 import HarvestStatusBadge from '@/Components/HarvestStatusBadge';
 import { formatDate } from '@/utils/date';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
   harvests: PaginatedHarvests;
 }
 
-function EmptyState() {
+function EmptyState({ t }: { t: (key: string) => string }) {
   return (
     <div className="flex flex-col items-center justify-center rounded-2xl border border-dashed border-gray-200 bg-gray-50 px-6 py-16 text-center">
       <div className="mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-emerald-100">
@@ -27,11 +28,10 @@ function EmptyState() {
         </svg>
       </div>
       <h3 className="mb-1 text-base font-semibold text-gray-900">
-        No harvests yet
+        {t('no_harvests')}
       </h3>
       <p className="mb-6 max-w-xs text-sm text-gray-500">
-        Schedule your first harvest to track yield, notify investors,
-        and distribute payouts.
+        {t('no_harvests_desc')}
       </p>
       <Link
         href={route('farm-owner.harvests.create')}
@@ -50,31 +50,32 @@ function EmptyState() {
             d="M12 4.5v15m7.5-7.5h-15"
           />
         </svg>
-        Schedule a Harvest
+        {t('schedule_first_harvest')}
       </Link>
     </div>
   );
 }
 
 export default function Index({ harvests, flash }: Props) {
+  const { t } = useTranslation('harvests');
+
   const goToPage = (page: number) => {
     router.get(route('farm-owner.harvests.index'), { page }, { preserveState: true });
   };
 
   return (
-    <AppLayout title="My Harvests">
-      <Head title="My Harvests" />
+    <AppLayout title={t('my_harvests')}>
+      <Head title={t('my_harvests')} />
 
       <div className="mx-auto max-w-6xl px-4 py-8 sm:px-6 lg:px-8">
         {/* Page header */}
         <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
           <div>
             <h1 className="text-2xl font-bold text-gray-900">
-              My Harvests
+              {t('my_harvests')}
             </h1>
             <p className="mt-1 text-sm text-gray-500">
-              Manage and track upcoming and past harvest schedules
-              for your trees.
+              {t('my_harvests_subtitle')}
             </p>
           </div>
           <Link
@@ -94,7 +95,7 @@ export default function Index({ harvests, flash }: Props) {
                 d="M12 4.5v15m7.5-7.5h-15"
               />
             </svg>
-            Schedule Harvest
+            {t('schedule_harvest')}
           </Link>
         </div>
 
@@ -120,21 +121,13 @@ export default function Index({ harvests, flash }: Props) {
 
         {harvests.total > 0 && (
           <p className="mb-4 text-sm text-gray-500">
-            Showing{' '}
-            <span className="font-medium text-gray-700">
-              {harvests.from}–{harvests.to}
-            </span>{' '}
-            of{' '}
-            <span className="font-medium text-gray-700">
-              {harvests.total}
-            </span>{' '}
-            harvests
+            {t('showing_results', { from: harvests.from, to: harvests.to, total: harvests.total })}
           </p>
         )}
 
         {/* Harvest list */}
         {harvests.data.length === 0 ? (
-          <EmptyState />
+          <EmptyState t={t} />
         ) : (
           <div className="space-y-3">
             {harvests.data.map((harvest) => (
@@ -149,7 +142,7 @@ export default function Index({ harvests, flash }: Props) {
                 {/* Left: dates + status */}
                 <div className="flex min-w-[10rem] flex-col gap-1">
                   <p className="text-xs font-medium uppercase tracking-wide text-gray-400">
-                    Scheduled Date
+                    {t('scheduled_date')}
                   </p>
                   <p className="text-base font-semibold text-gray-900">
                     {formatDate(harvest.scheduled_date)}
@@ -217,7 +210,7 @@ export default function Index({ harvests, flash }: Props) {
                   <div className="flex gap-6">
                     <div className="text-right">
                       <p className="text-xs text-gray-400">
-                        Est. Yield
+                        {t('estimated_yield')}
                       </p>
                       <p className="text-sm font-semibold text-gray-900">
                         {harvest.estimated_yield_kg != null
@@ -228,7 +221,7 @@ export default function Index({ harvests, flash }: Props) {
                     {harvest.actual_yield_kg != null && (
                       <div className="text-right">
                         <p className="text-xs text-gray-400">
-                          Actual Yield
+                          {t('actual_yield')}
                         </p>
                         <p className="text-sm font-semibold text-emerald-700">
                           {Number(

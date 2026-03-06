@@ -2,65 +2,65 @@
 
 ## Phase 1: Translation File Infrastructure (Namespace Expansion)
 
-- [ ] 1.1 Create `public/locales/en/admin.json` with all admin panel translation keys organized by page (dashboard, users, farms, investments, kyc, harvests, reports, articles, audit-logs, fraud-alerts)
-- [ ] 1.2 Create `public/locales/id/admin.json` with Bahasa Indonesia translations for all keys in `en/admin.json`
-- [ ] 1.3 Create `public/locales/en/farms.json` with farm listing, management, creation, and farm-owner dashboard translation keys
-- [ ] 1.4 Create `public/locales/id/farms.json` with Bahasa Indonesia translations for all keys in `en/farms.json`
-- [ ] 1.5 Create `public/locales/en/investments.json` with investment purchase, portfolio, payout, and marketplace translation keys
-- [ ] 1.6 Create `public/locales/id/investments.json` with Bahasa Indonesia translations for all keys in `en/investments.json`
-- [ ] 1.7 Create `public/locales/en/harvests.json` with harvest scheduling, yield recording, and harvest management translation keys
-- [ ] 1.8 Create `public/locales/id/harvests.json` with Bahasa Indonesia translations for all keys in `en/harvests.json`
-- [ ] 1.9 Create `public/locales/en/education.json` with education center and article page translation keys
-- [ ] 1.10 Create `public/locales/id/education.json` with Bahasa Indonesia translations for all keys in `en/education.json`
-- [ ] 1.11 Create `public/locales/en/auth.json` with auth page translation keys (login, register, forgot-password, reset-password, confirm-password, verify-email, 2FA)
-- [ ] 1.12 Create `public/locales/id/auth.json` with Bahasa Indonesia translations for all keys in `en/auth.json`
-- [ ] 1.13 Update `resources/js/i18n.ts` to register all 8 namespaces: `['translation', 'health', 'admin', 'farms', 'investments', 'harvests', 'education', 'auth']`
+- [x] 1.1 Create `public/locales/en/admin.json` with all admin panel translation keys organized by page (dashboard, users, farms, investments, kyc, harvests, reports, articles, audit-logs, fraud-alerts)
+- [x] 1.2 Create `public/locales/id/admin.json` with Bahasa Indonesia translations for all keys in `en/admin.json`
+- [x] 1.3 Create `public/locales/en/farms.json` with farm listing, management, creation, and farm-owner dashboard translation keys
+- [x] 1.4 Create `public/locales/id/farms.json` with Bahasa Indonesia translations for all keys in `en/farms.json`
+- [x] 1.5 Create `public/locales/en/investments.json` with investment purchase, portfolio, payout, and marketplace translation keys
+- [x] 1.6 Create `public/locales/id/investments.json` with Bahasa Indonesia translations for all keys in `en/investments.json`
+- [x] 1.7 Create `public/locales/en/harvests.json` with harvest scheduling, yield recording, and harvest management translation keys
+- [x] 1.8 Create `public/locales/id/harvests.json` with Bahasa Indonesia translations for all keys in `en/harvests.json`
+- [x] 1.9 Create `public/locales/en/education.json` with education center and article page translation keys
+- [x] 1.10 Create `public/locales/id/education.json` with Bahasa Indonesia translations for all keys in `en/education.json`
+- [x] 1.11 Create `public/locales/en/auth.json` with auth page translation keys (login, register, forgot-password, reset-password, confirm-password, verify-email, 2FA)
+- [x] 1.12 Create `public/locales/id/auth.json` with Bahasa Indonesia translations for all keys in `en/auth.json`
+- [x] 1.13 Update `resources/js/i18n.ts` to register all 8 namespaces: `['translation', 'health', 'admin', 'farms', 'investments', 'harvests', 'education', 'auth']`
     - **Validate:** Namespace files load on demand when a page using them is visited
 
 ## Phase 2: Shared Component & Layout Translation
 
-- [ ] 2.1 Add `useTranslation()` to `Navbar.tsx` and replace all 6 hardcoded menu labels (Home, Farms, Education, Dashboard, Log in, Start Investing) with `t()` calls
+- [x] 2.1 Add `useTranslation()` to `Navbar.tsx` and replace all 6 hardcoded menu labels (Home, Farms, Education, Dashboard, Log in, Start Investing) with `t()` calls
     - **Validate:** Switch to `id` locale → all Navbar labels render in Bahasa Indonesia
-- [ ] 2.2 Add `useTranslation()` to `AuthenticatedLayout.tsx` and translate any user-visible strings (nav items, dropdown labels, profile links)
-- [ ] 2.3 Add `useTranslation()` to `GuestLayout.tsx` and translate any user-visible strings
-- [ ] 2.4 Translate status badge components — map all enum status values to translation keys (InvestmentStatus, HarvestStatus, KycStatus, FarmStatus, PayoutStatus, TreeLifecycleStage)
-- [ ] 2.5 Translate pagination components — "Previous", "Next", "Page X of Y", "Showing X to Y of Z results"
-- [ ] 2.6 Translate modal/dialog components — confirmation prompts, delete confirmations
-- [ ] 2.7 Translate search bar and filter dropdown placeholder text
+- [x] 2.2 Add `useTranslation()` to `AuthenticatedLayout.tsx` and translate any user-visible strings (nav items, dropdown labels, profile links)
+- [x] 2.3 Add `useTranslation()` to `GuestLayout.tsx` and translate any user-visible strings
+- [x] 2.4 Translate status badge components — map all enum status values to translation keys (InvestmentStatus, HarvestStatus, KycStatus, FarmStatus, PayoutStatus, TreeLifecycleStage)
+- [x] 2.5 Translate pagination components — "Previous", "Next", "Page X of Y", "Showing X to Y of Z results"
+- [x] 2.6 Translate modal/dialog components — confirmation prompts, delete confirmations
+- [x] 2.7 Translate search bar and filter dropdown placeholder text
     - **Validate:** Navigate through pages with ID locale — all shared components display Bahasa Indonesia text
 
 ## Phase 3: Page Component Translation — Auth Pages
 
-- [ ] 3.1 Translate `Auth/Login.tsx` — form labels, buttons, links, remember-me checkbox
-- [ ] 3.2 Translate `Auth/Register.tsx` — all registration form fields and CTAs
-- [ ] 3.3 Translate `Auth/ForgotPassword.tsx` — instructions and form
-- [ ] 3.4 Translate `Auth/ResetPassword.tsx` — form labels and buttons
-- [ ] 3.5 Translate `Auth/ConfirmPassword.tsx` — prompt text and form
-- [ ] 3.6 Translate `Auth/VerifyEmail.tsx` — verification message and resend button
-- [ ] 3.7 Translate `Auth/TwoFactorAuthentication.tsx` — 2FA setup and verification strings
+- [x] 3.1 Translate `Auth/Login.tsx` — form labels, buttons, links, remember-me checkbox
+- [x] 3.2 Translate `Auth/Register.tsx` — all registration form fields and CTAs
+- [x] 3.3 Translate `Auth/ForgotPassword.tsx` — instructions and form
+- [x] 3.4 Translate `Auth/ResetPassword.tsx` — form labels and buttons
+- [x] 3.5 Translate `Auth/ConfirmPassword.tsx` — prompt text and form
+- [x] 3.6 Translate `Auth/VerifyEmail.tsx` — verification message and resend button
+- [x] 3.7 Translate `Auth/TwoFactorAuthentication.tsx` — 2FA setup and verification strings
     - **Validate:** Complete login/register flow in `id` locale — zero English strings visible
 
 ## Phase 4: Page Component Translation — Investor Pages
 
-- [ ] 4.1 Translate `Dashboard.tsx` (investor) — all dashboard widgets and labels
-- [ ] 4.2 Translate `Investments/Index.tsx` — marketplace listing page
-- [ ] 4.3 Translate `Investments/Show.tsx` — investment detail page
-- [ ] 4.4 Translate `Investments/Portfolio.tsx` — portfolio summary and holdings
-- [ ] 4.5 Translate `Investments/Purchase.tsx` — purchase flow
-- [ ] 4.6 Translate `Trees/Index.tsx` and `Trees/Show.tsx` — tree marketplace
-- [ ] 4.7 Translate `Farms/Index.tsx` and `Farms/Show.tsx` — farm listing and detail (public)
-- [ ] 4.8 Translate `Welcome.tsx` — landing page hero, features, CTAs
-- [ ] 4.9 Translate `Search/Index.tsx` — search results page
-- [ ] 4.10 Translate `Settings/Notifications.tsx` and profile pages
+- [x] 4.1 Translate `Dashboard.tsx` (investor) — all dashboard widgets and labels
+- [x] 4.2 Translate `Investments/Index.tsx` — marketplace listing page
+- [x] 4.3 Translate `Investments/Show.tsx` — investment detail page
+- [x] 4.4 Translate `Investments/Portfolio.tsx` — portfolio summary and holdings
+- [x] 4.5 Translate `Investments/Purchase.tsx` — purchase flow
+- [x] 4.6 Translate `Trees/Index.tsx` and `Trees/Show.tsx` — tree marketplace
+- [x] 4.7 Translate `Farms/Index.tsx` and `Farms/Show.tsx` — farm listing and detail (public)
+- [x] 4.8 Translate `Welcome.tsx` — landing page hero, features, CTAs
+- [x] 4.9 Translate `Search/Index.tsx` — search results page
+- [x] 4.10 Translate `Settings/Notifications.tsx` and profile pages
     - **Validate:** Complete investor flow (browse → purchase → portfolio) in `id` locale
 
 ## Phase 5: Page Component Translation — Farm Owner Pages
 
-- [ ] 5.1 Translate `FarmOwner/Dashboard.tsx` — farm owner dashboard
-- [ ] 5.2 Translate `FarmOwner/Farms/` pages — farm CRUD, crop management
-- [ ] 5.3 Translate `FarmOwner/Harvests/` pages — harvest scheduling, yield recording
-- [ ] 5.4 Translate `FarmOwner/HealthUpdates/Index.tsx` — verify existing translations, expand coverage
-- [ ] 5.5 Translate `FarmOwner/Trees/` pages — tree management
+- [x] 5.1 Translate `FarmOwner/Dashboard.tsx` — farm owner dashboard
+- [x] 5.2 Translate `FarmOwner/Farms/` pages — farm CRUD, crop management
+- [x] 5.3 Translate `FarmOwner/Harvests/` pages — harvest scheduling, yield recording
+- [x] 5.4 Translate `FarmOwner/HealthUpdates/Index.tsx` — verify existing translations, expand coverage
+- [x] 5.5 Translate `FarmOwner/Trees/` pages — tree management
     - **Validate:** Complete farm owner flow (dashboard → manage farm → schedule harvest) in `id` locale
 
 ## Phase 6: Page Component Translation — Admin Pages

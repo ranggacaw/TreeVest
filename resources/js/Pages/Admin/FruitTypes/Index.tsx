@@ -1,5 +1,6 @@
 import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface FruitType {
     id: number;
@@ -24,6 +25,7 @@ interface Filters {
 }
 
 export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesData; filters: Filters }) {
+    const { t } = useTranslation();
     return (
         <AppLayout title="Fruit Types">
             <Head title="Fruit Types" />
@@ -82,8 +84,8 @@ export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesD
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link href={route('admin.fruit-types.edit', type.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</Link>
-                                                <Link href={route('admin.fruit-types.destroy', type.id)} method="delete" as="button" className="text-red-600 hover:text-red-900">Delete</Link>
+                                                <Link href={route('admin.fruit-types.edit', type.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">{t('common.edit')}</Link>
+                                                <Link href={route('admin.fruit-types.destroy', type.id)} method="delete" as="button" className="text-red-600 hover:text-red-900">{t('common.delete')}</Link>
                                             </td>
                                         </tr>
                                     ))}

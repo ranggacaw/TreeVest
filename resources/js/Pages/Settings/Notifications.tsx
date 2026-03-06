@@ -1,5 +1,6 @@
 import { Head, router } from '@inertiajs/react'
 import { useState } from 'react'
+import { useTranslation } from 'react-i18next'
 
 interface Preference {
     value: string
@@ -13,6 +14,7 @@ interface Props {
 }
 
 export default function Notifications({ preferences, types, channels }: Props) {
+    const { t } = useTranslation('settings')
     const [saving, setSaving] = useState(false)
     const [localPreferences, setLocalPreferences] = useState(preferences)
 
@@ -35,16 +37,16 @@ export default function Notifications({ preferences, types, channels }: Props) {
 
     return (
         <>
-            <Head title="Notification Settings" />
+            <Head title={t('notification_settings')} />
 
             <div className="min-h-screen bg-gray-50">
                 <div className="max-w-5xl mx-auto px-4 py-8">
                     <div className="mb-6">
                         <h1 className="text-3xl font-bold text-gray-900">
-                            Notification Settings
+                            {t('notification_settings')}
                         </h1>
                         <p className="mt-1 text-sm text-gray-600">
-                            Manage which notifications you receive and how
+                            {t('manage_notifications')}
                         </p>
                     </div>
 
@@ -54,7 +56,7 @@ export default function Notifications({ preferences, types, channels }: Props) {
                                 <thead>
                                     <tr>
                                         <th className="px-6 py-3 bg-gray-50 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            Type
+                                            {t('type')}
                                         </th>
                                         {channels.map((channel) => (
                                             <th
@@ -81,18 +83,16 @@ export default function Notifications({ preferences, types, channels }: Props) {
                                                         onClick={() =>
                                                             handleToggle(type.value, channel.value)
                                                         }
-                                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${
-                                                            localPreferences[type.value]?.[channel.value]
+                                                        className={`relative inline-flex h-6 w-11 flex-shrink-0 cursor-pointer rounded-full border-2 border-transparent transition-colors duration-200 ease-in-out focus:outline-none ${localPreferences[type.value]?.[channel.value]
                                                                 ? 'bg-blue-600'
                                                                 : 'bg-gray-200'
-                                                        }`}
+                                                            }`}
                                                     >
                                                         <span
-                                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${
-                                                                localPreferences[type.value]?.[channel.value]
+                                                            className={`pointer-events-none inline-block h-5 w-5 transform rounded-full bg-white shadow ring-0 transition duration-200 ease-in-out ${localPreferences[type.value]?.[channel.value]
                                                                     ? 'translate-x-5'
                                                                     : 'translate-x-0'
-                                                            }`}
+                                                                }`}
                                                         />
                                                     </button>
                                                 </td>
@@ -109,7 +109,7 @@ export default function Notifications({ preferences, types, channels }: Props) {
                                 disabled={saving}
                                 className="px-4 py-2 text-sm font-medium text-white bg-blue-600 rounded-lg hover:bg-blue-700 disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {saving ? 'Saving...' : 'Save Preferences'}
+                                {saving ? t('saving') : t('save_preferences')}
                             </button>
                         </div>
                     </div>

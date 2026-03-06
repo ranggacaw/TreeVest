@@ -1,3 +1,4 @@
+import { useTranslation } from 'react-i18next';
 import { HarvestStatus } from '@/types';
 
 export const STATUS_CONFIG: Record<
@@ -39,6 +40,7 @@ export const ALL_STATUSES: Array<{ value: HarvestStatus | ''; label: string }> =
 ];
 
 export default function HarvestStatusBadge({ status }: { status: HarvestStatus }) {
+    const { t } = useTranslation();
     const cfg = STATUS_CONFIG[status] ?? {
         label: status,
         badge: 'bg-gray-100 text-gray-600 ring-1 ring-gray-200',
@@ -50,7 +52,7 @@ export default function HarvestStatusBadge({ status }: { status: HarvestStatus }
             className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-0.5 text-xs font-medium ${cfg.badge || cfg.className}`}
         >
             <span className={`h-1.5 w-1.5 rounded-full ${cfg.dot}`} />
-            {cfg.label}
+            {t(`status.${status}`, cfg.label)}
         </span>
     );
 }

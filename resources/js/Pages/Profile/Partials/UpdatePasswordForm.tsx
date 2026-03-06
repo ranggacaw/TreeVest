@@ -5,12 +5,14 @@ import TextInput from '@/Components/TextInput';
 import { Transition } from '@headlessui/react';
 import { useForm } from '@inertiajs/react';
 import { FormEventHandler, useRef } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function UpdatePasswordForm({
     className = '',
 }: {
     className?: string;
 }) {
+    const { t } = useTranslation();
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 
@@ -126,7 +128,7 @@ export default function UpdatePasswordForm({
                 </div>
 
                 <div className="flex items-center gap-4">
-                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                    <PrimaryButton disabled={processing}>{t('common.save')}</PrimaryButton>
 
                     <Transition
                         show={recentlySuccessful}

@@ -1,0 +1,14 @@
+{
+    "search_title": "Pencarian: {{query}}",
+    "search_results": "Hasil Pencarian",
+    "no_results_found": "Tidak ada hasil yang ditemukan",
+    "found_results": "Ditemukan {{count}} hasil",
+    "found_results_plural": "Ditemukan {{count}} hasil",
+    "searching_for": "Mencari untuk:",
+    "in_category": "dalam kategori:",
+    "with_tag": "dengan tag:",
+    "clear_filters": "Hapus Filter",
+    "views": "tayangan",
+    "no_articles_found": "Kami tidak dapat menemukan artikel yang sesuai dengan pencarian Anda. Coba sesuaikan istilah atau filter pencarian Anda.",
+    "browse_all_articles": "Jelajahi Semua Artikel"
+}

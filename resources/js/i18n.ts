@@ -23,7 +23,16 @@ export const initI18n = async (locale: string = "en") => {
             lng: locale,
             fallbackLng: "en",
             defaultNS: "translation",
-            ns: ["translation", "health"],
+            ns: [
+                "translation",
+                "health",
+                "admin",
+                "farms",
+                "investments",
+                "harvests",
+                "education",
+                "auth",
+            ],
             interpolation: {
                 escapeValue: false,
             },

@@ -1,0 +1,51 @@
+{
+    "my_harvests": "My Harvests",
+    "my_harvests_subtitle": "Manage and track upcoming and past harvest schedules for your trees.",
+    "schedule_harvest": "Schedule Harvest",
+    "no_harvests": "No harvests yet",
+    "no_harvests_desc": "Schedule your first harvest to track yield, notify investors, and distribute payouts.",
+    "schedule_first_harvest": "Schedule a Harvest",
+    "showing_results": "Showing {{from}}–{{to}} of {{total}} harvests",
+    "scheduled_date": "Scheduled Date",
+    "estimated_yield": "Est. Yield",
+    "actual_yield": "Actual Yield",
+    "harvest": "Harvest",
+    "harvest_id": "Harvest #{{id}}",
+    "details": {
+        "harvest_details": "Harvest Details",
+        "scheduled_date": "Scheduled Date",
+        "estimated_yield": "Estimated Yield",
+        "actual_yield": "Actual Yield",
+        "status": "Status",
+        "notes": "Notes",
+        "fruit_crop": "Fruit Crop",
+        "farm": "Farm",
+        "tree": "Tree",
+        "variant": "Variant",
+        "yield_recorded": "Yield Recorded",
+        "harvest_completed": "Harvest Completed",
+        "mark_as_completed": "Mark as Completed",
+        "record_yield": "Record Yield",
+        "cancel_harvest": "Cancel Harvest"
+    },
+    "create": {
+        "title": "Schedule Harvest",
+        "subtitle": "Schedule a new harvest for your trees.",
+        "select_tree": "Select Tree",
+        "select_tree_placeholder": "Choose a tree",
+        "scheduled_date": "Scheduled Date",
+        "estimated_yield_kg": "Estimated Yield (kg)",
+        "estimated_yield_placeholder": "Enter estimated yield in kilograms",
+        "notes": "Notes (Optional)",
+        "notesAdd any notes about_placeholder": " this harvest...",
+        "submit": "Schedule Harvest",
+        "cancel": "Cancel"
+    },
+    "status": {
+        "scheduled": "Scheduled",
+        "in_progress": "In Progress",
+        "completed": "Completed",
+        "failed": "Failed",
+        "cancelled": "Cancelled"
+    }
+}

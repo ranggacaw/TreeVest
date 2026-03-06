@@ -1,10 +1,12 @@
 import React from 'react';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     status: 'pending' | 'submitted' | 'verified' | 'rejected';
 }
 
 export default function KycStatusBadge({ status }: Props) {
+    const { t } = useTranslation();
     const styles = {
         pending: 'bg-yellow-100 text-yellow-800',
         submitted: 'bg-blue-100 text-blue-800',
@@ -13,10 +15,10 @@ export default function KycStatusBadge({ status }: Props) {
     };
 
     const labels = {
-        pending: 'Pending',
-        submitted: 'Submitted',
-        verified: 'Verified',
-        rejected: 'Rejected',
+        pending: t('status.pending', 'Pending'),
+        submitted: t('status.submitted', 'Submitted'),
+        verified: t('status.verified', 'Verified'),
+        rejected: t('status.rejected', 'Rejected'),
     };
 
     return (

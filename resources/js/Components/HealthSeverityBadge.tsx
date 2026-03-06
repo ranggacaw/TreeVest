@@ -1,9 +1,13 @@
+import { useTranslation } from 'react-i18next';
+
 interface Props {
   severity: string;
   size?: 'sm' | 'md' | 'lg';
 }
 
 export default function HealthSeverityBadge({ severity, size = 'md' }: Props) {
+  const { t } = useTranslation();
+
   const getSeverityStyles = () => {
     switch (severity) {
       case 'critical':
@@ -33,13 +37,13 @@ export default function HealthSeverityBadge({ severity, size = 'md' }: Props) {
   const getSeverityLabel = () => {
     switch (severity) {
       case 'critical':
-        return 'Critical';
+        return t('status.critical', 'Critical');
       case 'high':
-        return 'High';
+        return t('status.high', 'High');
       case 'medium':
-        return 'Medium';
+        return t('status.medium', 'Medium');
       case 'low':
-        return 'Low';
+        return t('status.low', 'Low');
       default:
         return severity;
     }

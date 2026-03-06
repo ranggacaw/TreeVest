@@ -3,12 +3,14 @@ import { Head, Link } from '@inertiajs/react';
 import { PageProps, InvestmentDetail } from '@/types';
 import { useEffect, useState } from 'react';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     investment: InvestmentDetail;
 }
 
 export default function Confirmation({ auth, investment }: Props) {
+    const { t } = useTranslation(['investments', 'translation']);
     const [paymentStatus, setPaymentStatus] = useState<'pending' | 'processing' | 'completed' | 'failed'>('pending');
 
     useEffect(() => {
@@ -24,26 +26,26 @@ export default function Confirmation({ auth, investment }: Props) {
 
     const statusMessages = {
         pending: {
-            title: 'Awaiting Payment',
-            description: 'Please complete your payment to confirm your investment.',
+            title: t('awaiting_payment_title'),
+            description: t('awaiting_payment_desc'),
             color: 'text-yellow-600',
             bgColor: 'bg-yellow-50',
         },
         processing: {
-            title: 'Processing Payment',
-            description: 'We are processing your payment. This may take a moment.',
+            title: t('processing_payment_title'),
+            description: t('processing_payment_desc'),
             color: 'text-blue-600',
             bgColor: 'bg-blue-50',
         },
         completed: {
-            title: 'Investment Confirmed!',
-            description: 'Your investment has been successfully processed.',
+            title: t('investment_confirmed_title'),
+            description: t('investment_confirmed_desc'),
             color: 'text-green-600',
             bgColor: 'bg-green-50',
         },
         failed: {
-            title: 'Payment Failed',
-            description: 'There was an issue processing your payment. Please try again.',
+            title: t('payment_failed_title'),
+            description: t('payment_failed_desc'),
             color: 'text-red-600',
             bgColor: 'bg-red-50',
         },
@@ -55,11 +57,11 @@ export default function Confirmation({ auth, investment }: Props) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Investment Confirmation
+                    {t('investment_confirmation')}
                 </h2>
             }
         >
-            <Head title="Investment Confirmation" />
+            <Head title={t('investment_confirmation')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
@@ -91,32 +93,32 @@ export default function Confirmation({ auth, investment }: Props) {
                                 </p>
 
                                 <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                                    <h4 className="text-sm font-medium text-gray-500 mb-4">Investment Details</h4>
+                                    <h4 className="text-sm font-medium text-gray-500 mb-4">{t('investment_details')}</h4>
                                     <dl className="space-y-3">
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Investment ID</dt>
+                                            <dt className="text-gray-500">{t('investment_id')}</dt>
                                             <dd className="font-medium text-gray-900">#{investment.id}</dd>
                                         </div>
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Amount</dt>
+                                            <dt className="text-gray-500">{t('amount')}</dt>
                                             <dd className="font-medium text-gray-900">{investment.formatted_amount}</dd>
                                         </div>
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Tree</dt>
+                                            <dt className="text-gray-500">{t('tree')}</dt>
                                             <dd className="font-medium text-gray-900">#{investment.tree.identifier}</dd>
                                         </div>
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Fruit Type</dt>
+                                            <dt className="text-gray-500">{t('fruit_type')}</dt>
                                             <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type}</dd>
                                         </div>
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Farm</dt>
+                                            <dt className="text-gray-500">{t('farm')}</dt>
                                             <dd className="font-medium text-gray-900">{investment.tree.farm.name}</dd>
                                         </div>
                                         <div className="flex justify-between">
-                                            <dt className="text-gray-500">Date</dt>
+                                            <dt className="text-gray-500">{t('date')}</dt>
                                             <dd className="font-medium text-gray-900">
-                                                {new Date(investment.purchase_date).toLocaleDateString()}
+                                                {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
                                             </dd>
                                         </div>
                                     </dl>
@@ -129,13 +131,13 @@ export default function Confirmation({ auth, investment }: Props) {
                                                 href="/investments"
                                                 className="px-6 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700"
                                             >
-                                                View My Investments
+                                                {t('view_my_investments')}
                                             </Link>
                                             <Link
                                                 href="/farms"
                                                 className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50"
                                             >
-                                                Continue Investing
+                                                {t('continue_investing')}
                                             </Link>
                                         </>
                                     ) : (
@@ -144,13 +146,13 @@ export default function Confirmation({ auth, investment }: Props) {
                                                 href="/payment-methods"
                                                 className="px-6 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700"
                                             >
-                                                Add Payment Method
+                                                {t('add_payment_method')}
                                             </Link>
                                             <Link
                                                 href="/investments"
                                                 className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50"
                                             >
-                                                View All Investments
+                                                {t('view_all_investments')}
                                             </Link>
                                         </>
                                     )}

@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface HarvestData {
     id: number;
@@ -81,10 +82,11 @@ interface Props extends PageProps {
 }
 
 export default function Show({ auth, investment }: Props) {
+    const { t } = useTranslation(['investments', 'translation']);
     const { delete: destroy, processing } = useForm();
 
     const handleCancel = () => {
-        if (confirm('Are you sure you want to cancel this investment?')) {
+        if (confirm(t('confirm_cancel_investment'))) {
             destroy(`/investments/${investment.id}/cancel`);
         }
     };
@@ -106,11 +108,11 @@ export default function Show({ auth, investment }: Props) {
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Investment Details
+                    {t('investment_details')}
                 </h2>
             }
         >
-            <Head title={`Investment #${investment.id}`} />
+            <Head title={t('investment_number', { id: investment.id })} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
@@ -118,7 +120,7 @@ export default function Show({ auth, investment }: Props) {
                         <ol className="flex items-center space-x-2">
                             <li>
                                 <Link href="/portfolio" className="text-sm text-gray-500 hover:text-gray-700">
-                                    Portfolio
+                                    {t('navigation.portfolio')}
                                 </Link>
                             </li>
                             <li>
@@ -126,14 +128,14 @@ export default function Show({ auth, investment }: Props) {
                             </li>
                             <li>
                                 <span className="text-sm text-gray-900 font-medium">
-                                    Tree #{investment.tree.identifier}
+                                    {t('tree_number', { identifier: investment.tree.identifier })}
                                 </span>
                             </li>
                             <li>
                                 <span className="text-gray-400">/</span>
                             </li>
                             <li>
-                                <span className="text-sm text-gray-500">Investment Details</span>
+                                <span className="text-sm text-gray-500">{t('investment_details')}</span>
                             </li>
                         </ol>
                     </nav>
@@ -143,7 +145,7 @@ export default function Show({ auth, investment }: Props) {
                             <div className="flex items-center justify-between mb-6">
                                 <div>
                                     <h3 className="text-lg font-semibold text-gray-900">
-                                        Investment #{investment.id}
+                                        {t('investment_number', { id: investment.id })}
                                     </h3>
                                     <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[investment.status]}`}>
                                         {investment.status_label}
@@ -153,71 +155,71 @@ export default function Show({ auth, investment }: Props) {
                                     href="/portfolio"
                                     className="text-sm text-gray-600 hover:text-gray-900"
                                 >
-                                    ← Back to Portfolio
+                                    {t('back_to_portfolio')}
                                 </Link>
                             </div>
 
                             <div className="border-t border-gray-200 pt-6">
-                                <h4 className="text-sm font-medium text-gray-500 mb-4">Investment Summary</h4>
+                                <h4 className="text-sm font-medium text-gray-500 mb-4">{t('investment_summary')}</h4>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                                     <div>
-                                        <dt className="text-sm text-gray-500">Amount Invested</dt>
+                                        <dt className="text-sm text-gray-500">{t('amount_invested')}</dt>
                                         <dd className="text-xl font-bold text-gray-900">{investment.formatted_amount}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Current Value</dt>
+                                        <dt className="text-sm text-gray-500">{t('current_value')}</dt>
                                         <dd className="text-xl font-bold text-gray-900">{formatCurrency(investment.current_value_cents)}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Projected Return</dt>
+                                        <dt className="text-sm text-gray-500">{t('projected_return')}</dt>
                                         <dd className="text-xl font-bold text-gray-900">{formatCurrency(investment.projected_return_cents)}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Purchased</dt>
+                                        <dt className="text-sm text-gray-500">{t('purchased')}</dt>
                                         <dd className="text-xl font-bold text-gray-900">
-                                            {new Date(investment.purchase_date).toLocaleDateString('id-ID')}
+                                            {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
                                         </dd>
                                     </div>
                                 </div>
                             </div>
 
                             <div className="border-t border-gray-200 mt-6 pt-6">
-                                <h4 className="text-sm font-medium text-gray-500 mb-4">Tree Details</h4>
+                                <h4 className="text-sm font-medium text-gray-500 mb-4">{t('tree_details')}</h4>
                                 <dl className="grid grid-cols-2 md:grid-cols-3 gap-4">
                                     <div>
-                                        <dt className="text-sm text-gray-500">Tree ID</dt>
+                                        <dt className="text-sm text-gray-500">{t('tree_id')}</dt>
                                         <dd className="font-medium text-gray-900">#{investment.tree.identifier}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Status</dt>
+                                        <dt className="text-sm text-gray-500">{t('tree_status')}</dt>
                                         <dd className="font-medium text-gray-900 capitalize">{investment.tree.status}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Age</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.age_years} years</dd>
+                                        <dt className="text-sm text-gray-500">{t('age')}</dt>
+                                        <dd className="font-medium text-gray-900">{investment.tree.age_years} {t('years')}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Expected ROI</dt>
+                                        <dt className="text-sm text-gray-500">{t('expected_roi', { roi: '' }).replace('%', '').trim()}</dt>
                                         <dd className="font-medium text-gray-900">{investment.tree.expected_roi}%</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Risk Rating</dt>
+                                        <dt className="text-sm text-gray-500">{t('risk_rating')}</dt>
                                         <dd className="font-medium text-gray-900 capitalize">{investment.tree.risk_rating}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Harvest Cycle</dt>
+                                        <dt className="text-sm text-gray-500">{t('harvest_cycle')}</dt>
                                         <dd className="font-medium text-gray-900 capitalize">{investment.tree.fruit_crop.harvest_cycle}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Fruit Type</dt>
+                                        <dt className="text-sm text-gray-500">{t('fruit_type')}</dt>
                                         <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type.name}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Variant</dt>
+                                        <dt className="text-sm text-gray-500">{t('variant')}</dt>
                                         <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.variant}</dd>
                                     </div>
                                     <div>
-                                        <dt className="text-sm text-gray-500">Farm</dt>
+                                        <dt className="text-sm text-gray-500">{t('farm')}</dt>
                                         <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.farm.name}</dd>
                                     </div>
                                 </dl>
@@ -226,7 +228,7 @@ export default function Show({ auth, investment }: Props) {
                                         href={`/farms/${investment.tree.fruit_crop.farm.id}`}
                                         className="text-sm text-green-600 hover:text-green-700"
                                     >
-                                        View Full Farm Details →
+                                        {t('view_full_farm_details')}
                                     </Link>
                                 </div>
                             </div>
@@ -235,22 +237,22 @@ export default function Show({ auth, investment }: Props) {
                                 <>
                                     {investment.harvests.completed.length > 0 && (
                                         <div className="border-t border-gray-200 mt-6 pt-6">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-4">Harvest History</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-4">{t('harvest_history')}</h4>
                                             <div className="overflow-x-auto">
                                                 <table className="min-w-full divide-y divide-gray-200">
                                                     <thead className="bg-gray-50">
                                                         <tr>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Est. Yield (kg)</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Actual Yield (kg)</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Quality</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('date')}</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('est_yield')}</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('actual_yield')}</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('quality')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="bg-white divide-y divide-gray-200">
                                                         {investment.harvests.completed.map((harvest) => (
                                                             <tr key={harvest.id}>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString('id-ID')}
+                                                                    {new Date(harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
                                                                 </td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.actual_yield_kg ?? '-'}</td>
@@ -265,20 +267,20 @@ export default function Show({ auth, investment }: Props) {
 
                                     {investment.harvests.upcoming.length > 0 && (
                                         <div className="border-t border-gray-200 mt-6 pt-6">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-4">Upcoming Harvests</h4>
+                                            <h4 className="text-sm font-medium text-gray-500 mb-4">{t('upcoming_harvests')}</h4>
                                             <div className="overflow-x-auto">
                                                 <table className="min-w-full divide-y divide-gray-200">
                                                     <thead className="bg-gray-50">
                                                         <tr>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Date</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Est. Yield (kg)</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('date')}</th>
+                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('est_yield')}</th>
                                                         </tr>
                                                     </thead>
                                                     <tbody className="bg-white divide-y divide-gray-200">
                                                         {investment.harvests.upcoming.map((harvest) => (
                                                             <tr key={harvest.id}>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString('id-ID')}
+                                                                    {new Date(harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
                                                                 </td>
                                                                 <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
                                                             </tr>
@@ -293,16 +295,16 @@ export default function Show({ auth, investment }: Props) {
 
                             {investment.payouts && investment.payouts.length > 0 && (
                                 <div className="border-t border-gray-200 mt-6 pt-6">
-                                    <h4 className="text-sm font-medium text-gray-500 mb-4">Payout History</h4>
+                                    <h4 className="text-sm font-medium text-gray-500 mb-4">{t('payout_history')}</h4>
                                     <div className="overflow-x-auto">
                                         <table className="min-w-full divide-y divide-gray-200">
                                             <thead className="bg-gray-50">
                                                 <tr>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Harvest Date</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Gross Amount</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Platform Fee</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Net Amount</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">Status</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('harvest_date')}</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('gross_amount')}</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('platform_fee')}</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('net_amount')}</th>
+                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('tree_status')}</th>
                                                 </tr>
                                             </thead>
                                             <tbody className="bg-white divide-y divide-gray-200">
@@ -310,7 +312,7 @@ export default function Show({ auth, investment }: Props) {
                                                     <tr key={payout.id}>
                                                         <td className="px-4 py-3 text-sm text-gray-900">
                                                             {payout.harvest
-                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString('id-ID')
+                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))
                                                                 : '-'}
                                                         </td>
                                                         <td className="px-4 py-3 text-sm text-gray-900">{payout.gross_amount_formatted}</td>
@@ -340,7 +342,7 @@ export default function Show({ auth, investment }: Props) {
                                         disabled={processing}
                                         className="w-full sm:w-auto px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 disabled:opacity-50"
                                     >
-                                        {processing ? 'Cancelling...' : 'Cancel Investment'}
+                                        {processing ? t('cancelling') : t('cancel_investment')}
                                     </button>
                                 </div>
                             )}
@@ -352,13 +354,13 @@ export default function Show({ auth, investment }: Props) {
                                             href={`/investments/${investment.id}/top-up`}
                                             className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700"
                                         >
-                                            Top Up Investment
+                                            {t('top_up_investment')}
                                         </Link>
                                         <Link
                                             href={`/secondary-market/create?investment_id=${investment.id}`}
                                             className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700"
                                         >
-                                            List for Sale
+                                            {t('list_for_sale')}
                                         </Link>
                                     </div>
                                 </div>
@@ -368,14 +370,14 @@ export default function Show({ auth, investment }: Props) {
                                 <div className="border-t border-gray-200 mt-6 pt-6">
                                     <div className="p-4 bg-blue-50 border border-blue-200 rounded mb-4">
                                         <p className="text-sm text-blue-800">
-                                            This investment is currently listed for sale on the secondary market.
+                                            {t('listed_for_sale_message')}
                                         </p>
                                     </div>
                                     <Link
                                         href="/secondary-market"
                                         className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
                                     >
-                                        View Listings
+                                        {t('view_listings')}
                                     </Link>
                                 </div>
                             )}

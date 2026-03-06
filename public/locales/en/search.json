@@ -1,0 +1,14 @@
+{
+    "search_title": "Search: {{query}}",
+    "search_results": "Search Results",
+    "no_results_found": "No results found",
+    "found_results": "Found {{count}} result",
+    "found_results_plural": "Found {{count}} results",
+    "searching_for": "Searching for:",
+    "in_category": "in category:",
+    "with_tag": "with tag:",
+    "clear_filters": "Clear Filters",
+    "views": "views",
+    "no_articles_found": "We couldn't find any articles matching your search. Try adjusting your search terms or filters.",
+    "browse_all_articles": "Browse All Articles"
+}

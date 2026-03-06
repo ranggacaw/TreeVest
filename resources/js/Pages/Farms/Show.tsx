@@ -5,12 +5,14 @@ import FarmImageGallery from '@/Components/FarmImageGallery';
 import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import FarmMap from '@/Components/FarmMap';
 import { Farm } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface Props {
     farm: Farm;
 }
 
 export default function Show({ farm }: Props) {
+    const { t } = useTranslation('farms');
     const [expandedCrops, setExpandedCrops] = useState<Record<number, boolean>>({});
 
     const toggleCrop = (cropId: number) => {
@@ -29,7 +31,7 @@ export default function Show({ farm }: Props) {
                         href="/farms"
                         className="text-green-600 hover:text-green-700 flex items-center gap-2"
                     >
-                        ← Back to Farms
+                        {t('back_to_farms')}
                     </a>
                 </div>
 
@@ -39,7 +41,7 @@ export default function Show({ farm }: Props) {
                             <FarmImageGallery images={farm.images} />
                         ) : (
                             <div className="bg-gray-200 rounded-lg h-64 flex items-center justify-center">
-                                <span className="text-gray-500">No images available</span>
+                                <span className="text-gray-500">{t('no_images_available')}</span>
                             </div>
                         )}
 
@@ -58,7 +60,7 @@ export default function Show({ farm }: Props) {
                         {farm.description && (
                             <div className="mt-6">
                                 <h2 className="text-xl font-semibold text-gray-900">
-                                    About This Farm
+                                    {t('about_this_farm')}
                                 </h2>
                                 <p className="mt-2 text-gray-600 whitespace-pre-wrap">
                                     {farm.description}
@@ -69,7 +71,7 @@ export default function Show({ farm }: Props) {
                         {farm.historical_performance && (
                             <div className="mt-6">
                                 <h2 className="text-xl font-semibold text-gray-900">
-                                    Historical Performance
+                                    {t('historical_performance')}
                                 </h2>
                                 <p className="mt-2 text-gray-600">
                                     {farm.historical_performance}
@@ -80,7 +82,7 @@ export default function Show({ farm }: Props) {
                         {farm.certifications && farm.certifications.length > 0 && (
                             <div className="mt-6">
                                 <h2 className="text-xl font-semibold text-gray-900">
-                                    Certifications
+                                    {t('certifications')}
                                 </h2>
                                 <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-4">
                                     {farm.certifications.map((cert) => (
@@ -93,17 +95,17 @@ export default function Show({ farm }: Props) {
                                             </h3>
                                             {cert.issuer && (
                                                 <p className="text-sm text-gray-600">
-                                                    Issuer: {cert.issuer}
+                                                    {t('issuer')} {cert.issuer}
                                                 </p>
                                             )}
                                             {cert.certificate_number && (
                                                 <p className="text-sm text-gray-600">
-                                                    Certificate #: {cert.certificate_number}
+                                                    {t('certificate_no')} {cert.certificate_number}
                                                 </p>
                                             )}
                                             {cert.expiry_date && (
                                                 <p className="text-sm text-gray-600">
-                                                    Expires: {cert.expiry_date}
+                                                    {t('expires')} {cert.expiry_date}
                                                 </p>
                                             )}
                                         </div>
@@ -117,24 +119,24 @@ export default function Show({ farm }: Props) {
                     <div className="space-y-6">
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h2 className="text-lg font-semibold text-gray-900">
-                                Farm Details
+                                {t('farm_details')}
                             </h2>
                             <dl className="mt-4 space-y-4">
                                 <div>
-                                    <dt className="text-sm text-gray-500">Size</dt>
+                                    <dt className="text-sm text-gray-500">{t('size')}</dt>
                                     <dd className="text-lg font-medium text-gray-900">
-                                        {farm.size_hectares} hectares
+                                        {farm.size_hectares} {t('hectares')}
                                     </dd>
                                 </div>
                                 <div>
-                                    <dt className="text-sm text-gray-500">Capacity</dt>
+                                    <dt className="text-sm text-gray-500">{t('capacity')}</dt>
                                     <dd className="text-lg font-medium text-gray-900">
-                                        {farm.capacity_trees?.toLocaleString()} trees
+                                        {farm.capacity_trees?.toLocaleString()} {t('trees')}
                                     </dd>
                                 </div>
                                 {farm.soil_type && (
                                     <div>
-                                        <dt className="text-sm text-gray-500">Soil Type</dt>
+                                        <dt className="text-sm text-gray-500">{t('soil_type')}</dt>
                                         <dd className="text-lg font-medium text-gray-900">
                                             {farm.soil_type}
                                         </dd>
@@ -142,7 +144,7 @@ export default function Show({ farm }: Props) {
                                 )}
                                 {farm.climate && (
                                     <div>
-                                        <dt className="text-sm text-gray-500">Climate</dt>
+                                        <dt className="text-sm text-gray-500">{t('climate')}</dt>
                                         <dd className="text-lg font-medium text-gray-900">
                                             {farm.climate}
                                         </dd>
@@ -153,13 +155,13 @@ export default function Show({ farm }: Props) {
 
                         <div className="bg-white rounded-lg shadow-sm p-6">
                             <h2 className="text-lg font-semibold text-gray-900">
-                                Location
+                                {t('location')}
                             </h2>
                             <div className="mt-4">
                                 {farm.latitude && farm.longitude ? (
                                     <FarmMap farms={[farm]} zoom={15} />
                                 ) : (
-                                    <p className="text-gray-500">Location not available</p>
+                                    <p className="text-gray-500">{t('location_not_available')}</p>
                                 )}
                             </div>
                             <p className="mt-4 text-sm text-gray-600">
@@ -172,7 +174,7 @@ export default function Show({ farm }: Props) {
                         {farm.virtual_tour_url && (
                             <div className="bg-white rounded-lg shadow-sm p-6">
                                 <h2 className="text-lg font-semibold text-gray-900">
-                                    Virtual Tour
+                                    {t('virtual_tour')}
                                 </h2>
                                 <a
                                     href={farm.virtual_tour_url}
@@ -180,7 +182,7 @@ export default function Show({ farm }: Props) {
                                     rel="noopener noreferrer"
                                     className="mt-4 block w-full text-center px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700"
                                 >
-                                    View Virtual Tour
+                                    {t('view_virtual_tour')}
                                 </a>
                             </div>
                         )}
@@ -190,7 +192,7 @@ export default function Show({ farm }: Props) {
                 <div className="grid grid-cols-1">
                     {farm.fruit_crops && farm.fruit_crops.length > 0 && (
                         <div className="mt-8">
-                            <h2 className="text-2xl font-bold text-gray-900 mb-6">Investment Opportunities</h2>
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('investment_opportunities')}</h2>
                             <div className="space-y-8">
                                 {farm.fruit_crops.map((crop) => (
                                     <div key={crop.id} className="bg-white rounded-xl shadow-sm border border-gray-100 p-6">
@@ -206,14 +208,14 @@ export default function Show({ farm }: Props) {
                                             </div>
                                             <div className="flex flex-col items-end gap-2">
                                                 <div className="bg-gray-50 px-3 py-1 rounded text-sm text-gray-600 whitespace-nowrap">
-                                                    Cycle: <span className="font-medium capitalize">{crop.harvest_cycle}</span>
+                                                    {t('cycle')} <span className="font-medium capitalize">{crop.harvest_cycle}</span>
                                                 </div>
                                                 {crop.trees && crop.trees.length > 1 && (
                                                     <button
                                                         onClick={() => toggleCrop(crop.id)}
                                                         className="text-sm font-medium text-green-600 hover:text-green-700 focus:outline-none flex items-center gap-1"
                                                     >
-                                                        {expandedCrops[crop.id] ? 'Hide Options' : `View ${crop.trees.length} Options`}
+                                                        {expandedCrops[crop.id] ? t('hide_options') : t('view_options', { count: crop.trees.length })}
                                                     </button>
                                                 )}
                                             </div>
@@ -231,7 +233,7 @@ export default function Show({ farm }: Props) {
                                                                 {tree.tree_identifier || tree.identifier}
                                                             </span>
                                                             <span className="bg-green-100 text-green-800 text-xs font-bold px-2 py-1 rounded">
-                                                                ROI {tree.expected_roi_percent}%
+                                                                {t('roi')} {tree.expected_roi_percent}%
                                                             </span>
                                                         </div>
                                                         <div className="mb-4">
@@ -244,10 +246,10 @@ export default function Show({ farm }: Props) {
                                                             </div>
                                                             <div className="text-sm text-gray-500 mt-1 flex justify-between">
                                                                 <span>
-                                                                    Min: Rp {(tree.min_investment_cents / 100).toLocaleString('id-ID')}
+                                                                    {t('min')} Rp {(tree.min_investment_cents / 100).toLocaleString('id-ID')}
                                                                 </span>
                                                                 <span>
-                                                                    Max: Rp {(tree.max_investment_cents / 100).toLocaleString('id-ID')}
+                                                                    {t('max')} Rp {(tree.max_investment_cents / 100).toLocaleString('id-ID')}
                                                                 </span>
                                                             </div>
                                                         </div>
@@ -255,14 +257,14 @@ export default function Show({ farm }: Props) {
                                                             href={`/investments/create/${tree.id}`}
                                                             className="block w-full text-center bg-green-600 hover:bg-green-700 text-white py-2 rounded-lg font-medium transition-colors"
                                                         >
-                                                            Invest Now
+                                                            {t('invest_now')}
                                                         </a>
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
                                             <div className="mt-4 p-4 bg-gray-50 rounded-lg text-center text-gray-500">
-                                                No trees currently available for investment in this crop.
+                                                {t('no_trees_available')}
                                             </div>
                                         )}
                                     </div>

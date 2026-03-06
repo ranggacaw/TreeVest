@@ -1,5 +1,6 @@
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface Article {
     id: number;
@@ -46,18 +47,21 @@ interface Props {
 }
 
 export default function SearchIndex({ articles, query, filters }: Props) {
+    const { t } = useTranslation('search');
     return (
         <>
-            <Head title={`Search: ${query}`} />
+            <Head title={t('search_title', { query })} />
 
             <div className="min-h-screen bg-gray-50">
                 <div className="bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Search Results</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('search_results')}</h1>
                         <p className="mt-2 text-gray-600">
                             {articles.total === 0
-                                ? 'No results found'
-                                : `Found ${articles.total} result${articles.total !== 1 ? 's' : ''}`}
+                                ? t('no_results_found')
+                                : articles.total === 1
+                                    ? t('found_results', { count: articles.total })
+                                    : t('found_results_plural', { count: articles.total })}
                         </p>
                     </div>
                 </div>
@@ -67,13 +71,13 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                         <div className="flex items-center justify-between">
                             <div>
                                 <span className="text-sm font-semibold text-indigo-900">
-                                    Searching for:
+                                    {t('searching_for')}
                                 </span>
                                 <span className="ml-2 text-indigo-800">&quot;{query}&quot;</span>
                                 {filters.category && (
                                     <>
                                         <span className="ml-4 text-sm font-semibold text-indigo-900">
-                                            in category:
+                                            {t('in_category')}
                                         </span>
                                         <span className="ml-2 text-indigo-800">
                                             {filters.category}
@@ -83,7 +87,7 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                                 {filters.tag && (
                                     <>
                                         <span className="ml-4 text-sm font-semibold text-indigo-900">
-                                            with tag:
+                                            {t('with_tag')}
                                         </span>
                                         <span className="ml-2 text-indigo-800">
                                             {filters.tag}
@@ -95,7 +99,7 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                                 href={route('education.index')}
                                 className="text-sm font-semibold text-indigo-600 hover:text-indigo-800"
                             >
-                                Clear Filters
+                                {t('clear_filters')}
                             </Link>
                         </div>
                     </div>
@@ -138,7 +142,7 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                                         </p>
                                         <div className="flex items-center justify-between text-sm text-gray-500">
                                             <span>{article.author.name}</span>
-                                            <span>{article.view_count} views</span>
+                                            <span>{article.view_count} {t('views')}</span>
                                         </div>
                                     </div>
                                 </article>
@@ -160,17 +164,16 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                                 />
                             </svg>
                             <h3 className="mt-4 text-lg font-semibold text-gray-900">
-                                No results found
+                                {t('no_results_found')}
                             </h3>
                             <p className="mt-2 text-gray-600">
-                                We couldn't find any articles matching your search. Try
-                                adjusting your search terms or filters.
+                                {t('no_articles_found')}
                             </p>
                             <Link
                                 href={route('education.index')}
                                 className="mt-6 inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700"
                             >
-                                Browse All Articles
+                                {t('browse_all_articles')}
                             </Link>
                         </div>
                     )}
@@ -183,11 +186,10 @@ export default function SearchIndex({ articles, query, filters }: Props) {
                                         key={index}
                                         href={link.url || '#'}
                                         dangerouslySetInnerHTML={{ __html: link.label }}
-                                        className={`rounded px-3 py-2 ${
-                                            link.active
+                                        className={`rounded px-3 py-2 ${link.active
                                                 ? 'bg-indigo-600 text-white'
                                                 : 'bg-white text-gray-700 hover:bg-gray-50'
-                                        } ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
+                                            } ${!link.url ? 'pointer-events-none opacity-50' : ''}`}
                                     />
                                 ))}
                             </nav>

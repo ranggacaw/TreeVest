@@ -1,4 +1,7 @@
+import { useTranslation } from 'react-i18next';
+
 export default function RiskBadge({ rating, className = '' }: { rating: string, className?: string }) {
+    const { t } = useTranslation();
     let colorClass = 'bg-gray-100 text-gray-800';
     if (rating === 'low') {
         colorClass = 'bg-green-100 text-green-800';
@@ -10,7 +13,7 @@ export default function RiskBadge({ rating, className = '' }: { rating: string, 
 
     return (
         <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium capitalize ${colorClass} ${className}`}>
-            {rating} Risk
+            {t(`status.risk_${rating}`, `${rating} Risk`)}
         </span>
     );
 }

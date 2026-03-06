@@ -57,6 +57,9 @@
         "proceed": "Lanjutkan"
     },
     "navigation": {
+        "home": "Beranda",
+        "education": "Edukasi",
+        "start_investing": "Mulai Investasi",
         "dashboard": "Dasbor",
         "profile": "Profil",
         "settings": "Pengaturan",

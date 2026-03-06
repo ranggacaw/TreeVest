@@ -1,0 +1,14 @@
+{
+    "profile": "Profil",
+    "phone_number": "Nomor Telepon",
+    "phone_desc": "Tambahkan nomor telepon untuk mengaktifkan login berbasis telepon dan autentikasi dua faktor.",
+    "verified": "Terverifikasi",
+    "not_verified": "Belum Terverifikasi",
+    "update_phone": "Perbarui Nomor Telepon",
+    "add_phone": "Tambahkan Nomor Telepon",
+    "account_security": "Keamanan Akun",
+    "security_desc": "Kelola pengaturan keamanan akun Anda termasuk autentikasi dua faktor dan sesi aktif.",
+    "two_factor_auth": "Autentikasi Dua Faktor",
+    "manage_sessions": "Kelola Sesi Peramban",
+    "account_settings_link": "Pengaturan Akun (Nonaktifkan/Hapus)"
+}

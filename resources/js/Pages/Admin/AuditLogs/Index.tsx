@@ -1,5 +1,6 @@
 import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface User {
     id: number;
@@ -33,6 +34,7 @@ interface Filters {
 }
 
 export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData; filters: Filters }) {
+    const { t } = useTranslation();
     return (
         <AppLayout title="Audit Logs">
             <Head title="Audit Logs" />
@@ -138,7 +140,7 @@ export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData
                                                 {new Date(log.created_at).toLocaleString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link href={route('admin.audit-logs.show', log.id)} className="text-indigo-600 hover:text-indigo-900">View</Link>
+                                                <Link href={route('admin.audit-logs.show', log.id)} className="text-indigo-600 hover:text-indigo-900">{t('common.view')}</Link>
                                             </td>
                                         </tr>
                                     ))}

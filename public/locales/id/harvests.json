@@ -1,0 +1,51 @@
+{
+    "my_harvests": "Panen Saya",
+    "my_harvests_subtitle": "Kelola dan lacak jadwal panen yang akan datang dan yang telah lalu untuk pohon Anda.",
+    "schedule_harvest": "Jadwalkan Panen",
+    "no_harvests": "Belum ada panen",
+    "no_harvests_desc": "Jadwalkan panen pertama Anda untuk melacak hasil, memberi tahu investor, dan distribusi pembayaran.",
+    "schedule_first_harvest": "Jadwalkan Panen",
+    "showing_results": "Menampilkan {{from}}–{{to}} dari {{total}} panen",
+    "scheduled_date": "Tanggal Dijadwalkan",
+    "estimated_yield": "Est. Hasil",
+    "actual_yield": "Hasil Aktual",
+    "harvest": "Panen",
+    "harvest_id": "Panen #{{id}}",
+    "details": {
+        "harvest_details": "Detail Panen",
+        "scheduled_date": "Tanggal Dijadwalkan",
+        "estimated_yield": "Estimasi Hasil",
+        "actual_yield": "Hasil Aktual",
+        "status": "Status",
+        "notes": "Catatan",
+        "fruit_crop": "Tanaman Buah",
+        "farm": "Kebun",
+        "tree": "Pohon",
+        "variant": "Varian",
+        "yield_recorded": "Hasil Telah Dicatat",
+        "harvest_completed": "Panen Selesai",
+        "mark_as_completed": "Tandai sebagai Selesai",
+        "record_yield": "Catat Hasil",
+        "cancel_harvest": "Batalkan Panen"
+    },
+    "create": {
+        "title": "Jadwalkan Panen",
+        "subtitle": "Jadwalkan panen baru untuk pohon Anda.",
+        "select_tree": "Pilih Pohon",
+        "select_tree_placeholder": "Pilih pohon",
+        "scheduled_date": "Tanggal Dijadwalkan",
+        "estimated_yield_kg": "Estimasi Hasil (kg)",
+        "estimated_yield_placeholder": "Masukkan estimasi hasil dalam kilogram",
+        "notes": "Catatan (Opsional)",
+        "notesAdd any notes about_placeholder": "Tambahkan catatan tentang panen ini...",
+        "submit": "Jadwalkan Panen",
+        "cancel": "Batal"
+    },
+    "status": {
+        "scheduled": "Dijadwalkan",
+        "in_progress": "Sedang Berlangsung",
+        "completed": "Selesai",
+        "failed": "Gagal",
+        "cancelled": "Dibatalkan"
+    }
+}

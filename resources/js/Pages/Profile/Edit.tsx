@@ -7,12 +7,14 @@ import UpdateProfileInformationForm from './Partials/UpdateProfileInformationFor
 import AvatarUpload from '@/Components/Profile/AvatarUpload';
 import PhoneInput from '@/Components/Auth/PhoneInput';
 import { useForm } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Edit({
     mustVerifyEmail,
     status,
     auth,
 }: PageProps<{ mustVerifyEmail: boolean; status?: string; auth: { user: any } }>) {
+    const { t } = useTranslation('profile');
     const user = auth.user as any;
 
     const { data, setData, patch, processing, errors } = useForm({
@@ -36,11 +38,11 @@ export default function Edit({
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    Profile
+                    {t('profile')}
                 </h2>
             }
         >
-            <Head title="Profile" />
+            <Head title={t('profile')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
@@ -62,18 +64,17 @@ export default function Edit({
 
                     <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                         <header>
-                            <h2 className="text-lg font-medium text-gray-900">Phone Number</h2>
+                            <h2 className="text-lg font-medium text-gray-900">{t('phone_number')}</h2>
 
                             <p className="mt-1 text-sm text-gray-600">
-                                Add a phone number to enable phone-based login and two-factor
-                                authentication.
+                                {t('phone_desc')}
                             </p>
                         </header>
 
                         <div className="mt-6 space-y-6">
                             <PhoneInput
                                 id="phone"
-                                label="Phone Number"
+                                label={t('phone_number')}
                                 value={data.phone}
                                 onChange={(value) => {
                                     setData('phone', value || '');
@@ -85,11 +86,11 @@ export default function Edit({
                                 <div className="flex items-center gap-2">
                                     {user.phone_verified_at ? (
                                         <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                            Verified
+                                            {t('verified')}
                                         </span>
                                     ) : (
                                         <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
-                                            Not Verified
+                                            {t('not_verified')}
                                         </span>
                                     )}
                                 </div>
@@ -100,7 +101,7 @@ export default function Edit({
                                 disabled={processing}
                                 className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
                             >
-                                {user.phone ? 'Update Phone Number' : 'Add Phone Number'}
+                                {user.phone ? t('update_phone') : t('add_phone')}
                             </button>
                         </div>
                     </div>
@@ -108,12 +109,11 @@ export default function Edit({
                     <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
                         <header>
                             <h2 className="text-lg font-medium text-gray-900">
-                                Account Security
+                                {t('account_security')}
                             </h2>
 
                             <p className="mt-1 text-sm text-gray-600">
-                                Manage your account security settings including two-factor
-                                authentication and active sessions.
+                                {t('security_desc')}
                             </p>
                         </header>
 
@@ -122,21 +122,21 @@ export default function Edit({
                                 href={route('profile.2fa')}
                                 className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-indigo-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Two-Factor Authentication
+                                {t('two_factor_auth')}
                             </Link>
 
                             <Link
                                 href={route('profile.sessions')}
                                 className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-indigo-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
                             >
-                                Manage Browser Sessions
+                                {t('manage_sessions')}
                             </Link>
 
                             <Link
                                 href={route('profile.account-settings')}
                                 className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-red-700 transition hover:border-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
                             >
-                                Account Settings (Deactivate/Delete)
+                                {t('account_settings_link')}
                             </Link>
                         </div>
                     </div>

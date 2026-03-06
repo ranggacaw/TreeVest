@@ -1,10 +1,12 @@
 import { PageProps } from '@/types';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 export default function Welcome({ auth }: PageProps) {
+    const { t } = useTranslation('welcome');
     return (
         <>
-            <Head title="Invest in Nature's Growth | Treevest" />
+            <Head title={t('title')} />
             <div className="min-h-screen bg-sand font-sans text-pine-800 selection:bg-sun selection:text-pine-900">
                 {/* Navigation */}
                 <nav className="absolute top-0 left-0 right-0 z-10 px-6 py-6 lg:px-12 flex justify-between items-center">
@@ -21,14 +23,14 @@ export default function Welcome({ auth }: PageProps) {
 
                     <div className="flex items-center gap-6">
                         <Link href="/farms" className="hidden md:block font-medium text-pine-800 hover:text-sun transition-colors">
-                            Explore Farms
+                            {t('explore_farms')}
                         </Link>
                         {auth.user ? (
                             <Link
                                 href={route('dashboard')}
                                 className="px-5 py-2.5 rounded-full bg-pine text-sand font-semibold hover:bg-pine-800 transition-all shadow-card"
                             >
-                                Dashboard
+                                {t('dashboard')}
                             </Link>
                         ) : (
                             <>
@@ -36,13 +38,13 @@ export default function Welcome({ auth }: PageProps) {
                                     href={route('login')}
                                     className="hidden md:block font-medium text-pine-800 hover:text-sun transition-colors"
                                 >
-                                    Log in
+                                    {t('log_in')}
                                 </Link>
                                 <Link
                                     href={route('register')}
                                     className="px-5 py-2.5 rounded-full bg-pine text-sand font-semibold hover:bg-pine-800 transition-all shadow-card"
                                 >
-                                    Start Investing
+                                    {t('start_investing')}
                                 </Link>
                             </>
                         )}
@@ -57,27 +59,27 @@ export default function Welcome({ auth }: PageProps) {
                         <div className="max-w-2xl relative z-10">
                             <div className="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sage-100 text-pine-500 font-medium text-sm mb-6">
                                 <span className="w-2 h-2 rounded-full bg-sun"></span>
-                                Now open for Durian & Mango investments
+                                {t('hero_badge')}
                             </div>
                             <h1 className="text-5xl lg:text-7xl font-bold tracking-tight text-pine-800 leading-tight mb-6">
-                                Invest in roots. <br />
-                                <span className="text-earth">Harvest returns.</span>
+                                {t('hero_title')} <br />
+                                <span className="text-earth">{t('hero_title_highlight')}</span>
                             </h1>
                             <p className="text-lg lg:text-xl text-pine-500/80 mb-10 leading-relaxed">
-                                Back verified agricultural farms by investing in individual fruit trees. Track their growth, and earn returns based on actual harvests. A tangible asset for your portfolio.
+                                {t('hero_desc')}
                             </p>
                             <div className="flex flex-col sm:flex-row gap-4">
                                 <Link
                                     href="/register"
                                     className="px-8 py-4 rounded-full bg-sun text-pine-900 font-bold text-center text-lg hover:bg-yellow-500 transition-all shadow-card transform hover:-translate-y-1"
                                 >
-                                    View Available Trees
+                                    {t('view_available_trees')}
                                 </Link>
                                 <a
                                     href="#how-it-works"
                                     className="px-8 py-4 rounded-full bg-sand-100 border border-pine-200 text-pine-800 font-semibold text-center text-lg hover:bg-sand-200 transition-all"
                                 >
-                                    How it works
+                                    {t('how_it_works')}
                                 </a>
                             </div>
                         </div>
@@ -95,13 +97,13 @@ export default function Welcome({ auth }: PageProps) {
                                 <div className="absolute bottom-6 left-6 right-6 bg-white/90 backdrop-blur-md p-6 rounded-2xl shadow-card border border-white/50">
                                     <div className="flex justify-between items-center">
                                         <div>
-                                            <p className="text-sm font-medium text-pine-500 mb-1">Expected ROI</p>
-                                            <p className="text-2xl font-bold text-pine-800">12% - 18% <span className="text-sm font-normal text-pine-500">/ yr</span></p>
+                                            <p className="text-sm font-medium text-pine-500 mb-1">{t('expected_roi')}</p>
+                                            <p className="text-2xl font-bold text-pine-800">{t('expected_roi_val')} <span className="text-sm font-normal text-pine-500">{t('expected_roi_unit')}</span></p>
                                         </div>
                                         <div className="h-10 w-[1px] bg-pine-200"></div>
                                         <div>
-                                            <p className="text-sm font-medium text-pine-500 mb-1">Backed by</p>
-                                            <p className="text-2xl font-bold text-pine-800">Real Assets</p>
+                                            <p className="text-sm font-medium text-pine-500 mb-1">{t('backed_by')}</p>
+                                            <p className="text-2xl font-bold text-pine-800">{t('real_assets')}</p>
                                         </div>
                                     </div>
                                 </div>
@@ -115,8 +117,8 @@ export default function Welcome({ auth }: PageProps) {
                 <section id="how-it-works" className="bg-white py-24 px-6 lg:px-12">
                     <div className="max-w-7xl mx-auto">
                         <div className="text-center mb-16">
-                            <h2 className="text-3xl lg:text-4xl font-bold text-pine-800 mb-4">Cultivating wealth, naturally.</h2>
-                            <p className="text-lg text-pine-500 max-w-2xl mx-auto">Unlike traditional stocks, your investment grows in the soil. We connect you directly with verified farm partners.</p>
+                            <h2 className="text-3xl lg:text-4xl font-bold text-pine-800 mb-4">{t('features_title')}</h2>
+                            <p className="text-lg text-pine-500 max-w-2xl mx-auto">{t('features_desc')}</p>
                         </div>
 
                         <div className="grid md:grid-cols-3 gap-8">
@@ -127,8 +129,8 @@ export default function Welcome({ auth }: PageProps) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-pine-800 mb-3">Verified Farms</h3>
-                                <p className="text-pine-500">Every partner farm undergoes strict KYC and site inspections before listing their crops.</p>
+                                <h3 className="text-xl font-bold text-pine-800 mb-3">{t('f1_title')}</h3>
+                                <p className="text-pine-500">{t('f1_desc')}</p>
                             </div>
 
                             {/* Feature 2 */}
@@ -138,8 +140,8 @@ export default function Welcome({ auth }: PageProps) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-pine-800 mb-3">Track Growth</h3>
-                                <p className="text-pine-500">Get regular health updates, photos, and weather reports right on your dashboard.</p>
+                                <h3 className="text-xl font-bold text-pine-800 mb-3">{t('f2_title')}</h3>
+                                <p className="text-pine-500">{t('f2_desc')}</p>
                             </div>
 
                             {/* Feature 3 */}
@@ -149,8 +151,8 @@ export default function Welcome({ auth }: PageProps) {
                                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                     </svg>
                                 </div>
-                                <h3 className="text-xl font-bold text-pine-800 mb-3">Earn Dividends</h3>
-                                <p className="text-pine-500">When the trees are harvested and fruits are sold, you receive your share of the profits.</p>
+                                <h3 className="text-xl font-bold text-pine-800 mb-3">{t('f3_title')}</h3>
+                                <p className="text-pine-500">{t('f3_desc')}</p>
                             </div>
                         </div>
                     </div>
@@ -158,8 +160,8 @@ export default function Welcome({ auth }: PageProps) {
 
                 {/* Footer */}
                 <footer className="bg-pine-900 text-sand-200 py-12 px-6 lg:px-12 text-center">
-                    <p className="mb-2">© 2026 Treevest. All rights reserved.</p>
-                    <p className="text-sm text-pine-500">Agricultural investments carry inherent risks. Please read our risk disclosure.</p>
+                    <p className="mb-2">{t('footer_copyright')}</p>
+                    <p className="text-sm text-pine-500">{t('footer_disclaimer')}</p>
                 </footer>
             </div>
         </>

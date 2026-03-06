@@ -1,5 +1,6 @@
 import { AppLayout } from '@/Layouts';
 import { Head, Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface User {
     id: number;
@@ -27,6 +28,7 @@ interface Filters {
 }
 
 export default function Index({ users, filters }: { users: UsersData; filters: Filters }) {
+    const { t } = useTranslation();
     const getKycStatusBadge = (status: string) => {
         switch (status) {
             case 'verified':
@@ -154,7 +156,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                                 {new Date(user.created_at).toLocaleDateString()}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link href={route('admin.users.show', user.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">View</Link>
+                                                <Link href={route('admin.users.show', user.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">{t('common.view')}</Link>
                                             </td>
                                         </tr>
                                     ))}

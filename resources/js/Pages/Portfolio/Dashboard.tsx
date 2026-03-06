@@ -15,6 +15,7 @@ import PerformanceChart from '@/Components/Portfolio/PerformanceChart';
 import InvestmentCard from '@/Components/Portfolio/InvestmentCard';
 import EmptyPortfolio from '@/Components/Portfolio/EmptyPortfolio';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     summary: PortfolioSummary;
@@ -40,24 +41,25 @@ export default function Dashboard({
     upcomingHarvests,
     investments,
 }: Props) {
+    const { t } = useTranslation('investments');
     const hasInvestments = summary.tree_count > 0;
 
     return (
         <AuthenticatedLayout
             header={
                 <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    My Portfolio
+                    {t('my_portfolio')}
                 </h2>
             }
         >
-            <Head title="My Portfolio" />
+            <Head title={t('my_portfolio')} />
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <div className="mb-5">
                         <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Back to Dashboard
+                            {t('back_to_dashboard')}
                         </button>
                     </div>
                     <FinancialErrorBoundary context="portfolio-dashboard">
@@ -86,14 +88,14 @@ export default function Dashboard({
                                 <div className="mt-6">
                                     <div className="flex items-center justify-between mb-4">
                                         <h3 className="text-lg font-semibold text-gray-900">
-                                            My Investments
+                                            {t('my_investments')}
                                         </h3>
                                         {investments.last_page > 1 && (
                                             <Link
                                                 href="/investments"
                                                 className="text-sm text-green-600 hover:text-green-700"
                                             >
-                                                View All ({investments.total})
+                                                {t('view_all', { count: investments.total })}
                                             </Link>
                                         )}
                                     </div>

@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link } from '@inertiajs/react';
 import { KycStatus, PageProps, User } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     auth: {
@@ -9,6 +10,7 @@ interface Props extends PageProps {
 }
 
 export default function Dashboard({ auth }: Props) {
+    const { t } = useTranslation('investments');
     const needsKyc = auth.user.kyc_status !== 'verified';
 
     return (
@@ -17,9 +19,9 @@ export default function Dashboard({ auth }: Props) {
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
-                            Portfolio Dashboard
+                            {t('dashboard_title')}
                         </h2>
-                        <p className="text-sm text-pine-500 mt-1">Welcome back, track your growing investments.</p>
+                        <p className="text-sm text-pine-500 mt-1">{t('dashboard_subtitle')}</p>
                     </div>
                     {!needsKyc && (
                         <Link
@@ -29,13 +31,13 @@ export default function Dashboard({ auth }: Props) {
                             <svg className="w-4 h-4 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
                             </svg>
-                            New Investment
+                            {t('new_investment')}
                         </Link>
                     )}
                 </div>
             }
         >
-            <Head title="Dashboard | Treevest" />
+            <Head title={t('page_title')} />
 
             <div className="py-8">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-6">
@@ -44,7 +46,7 @@ export default function Dashboard({ auth }: Props) {
                         <div className="bg-sun-50 border border-sun-100 rounded-3xl p-6 md:p-8 shadow-card relative overflow-hidden">
                             {/* Decorative background circle */}
                             <div className="absolute -top-12 -right-12 w-40 h-40 bg-sun-100 rounded-full opacity-50"></div>
-                            
+
                             <div className="flex flex-col md:flex-row items-start md:items-center gap-6 relative z-10">
                                 <div className="flex-shrink-0 w-16 h-16 bg-white rounded-2xl flex items-center justify-center shadow-sm">
                                     <svg className="h-8 w-8 text-sun-500" viewBox="0 0 24 24" fill="none" stroke="currentColor">
@@ -53,11 +55,10 @@ export default function Dashboard({ auth }: Props) {
                                 </div>
                                 <div className="flex-1">
                                     <h3 className="text-xl font-bold text-pine-800">
-                                        Complete Your Identity Verification
+                                        {t('complete_kyc')}
                                     </h3>
                                     <p className="mt-2 text-pine-500/90 leading-relaxed max-w-3xl">
-                                        Before you can start investing in fruit trees, we need to verify your identity. 
-                                        This KYC (Know Your Customer) process takes just a few minutes and ensures a secure, compliant platform for everyone.
+                                        {t('kyc_description')}
                                     </p>
                                 </div>
                                 <div className="flex-shrink-0 mt-4 md:mt-0">
@@ -65,7 +66,7 @@ export default function Dashboard({ auth }: Props) {
                                         href="/profile/kyc"
                                         className="inline-flex items-center px-6 py-3 bg-sun text-pine-900 rounded-xl font-bold hover:bg-yellow-500 transition-colors shadow-soft whitespace-nowrap"
                                     >
-                                        Verify Identity Now
+                                        {t('verify_identity_now')}
                                         <svg className="ml-2 w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M14 5l7 7m0 0l-7 7m7-7H3" />
                                         </svg>
@@ -80,7 +81,7 @@ export default function Dashboard({ auth }: Props) {
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-sm font-medium text-pine-500">Total Investment</p>
+                                    <p className="text-sm font-medium text-pine-500">{t('total_investment')}</p>
                                     <h4 className="text-3xl font-bold text-pine-800 mt-2">$0.00</h4>
                                 </div>
                                 <div className="w-10 h-10 rounded-xl bg-sage-100 flex items-center justify-center text-sage-800">
@@ -90,11 +91,11 @@ export default function Dashboard({ auth }: Props) {
                                 </div>
                             </div>
                         </div>
-                        
+
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-sm font-medium text-pine-500">Active Trees</p>
+                                    <p className="text-sm font-medium text-pine-500">{t('active_trees')}</p>
                                     <h4 className="text-3xl font-bold text-pine-800 mt-2">0</h4>
                                 </div>
                                 <div className="w-10 h-10 rounded-xl bg-earth-100 flex items-center justify-center text-earth">
@@ -109,7 +110,7 @@ export default function Dashboard({ auth }: Props) {
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <p className="text-sm font-medium text-pine-500">Total Payouts</p>
+                                    <p className="text-sm font-medium text-pine-500">{t('total_payouts')}</p>
                                     <h4 className="text-3xl font-bold text-pine-800 mt-2">$0.00</h4>
                                 </div>
                                 <div className="w-10 h-10 rounded-xl bg-sun-50 flex items-center justify-center text-sun-500">
@@ -129,15 +130,15 @@ export default function Dashboard({ auth }: Props) {
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </div>
-                            <h3 className="text-2xl font-bold text-pine-800 mb-2">No investments yet</h3>
+                            <h3 className="text-2xl font-bold text-pine-800 mb-2">{t('no_investments_yet')}</h3>
                             <p className="text-pine-500 max-w-md mx-auto mb-8">
-                                Your portfolio is currently empty. Explore our verified partner farms and start building your agricultural investment portfolio today.
+                                {t('no_investments_description')}
                             </p>
                             <Link
                                 href="/farms"
                                 className="px-8 py-3.5 bg-pine text-sand rounded-xl font-bold hover:bg-pine-800 transition-colors shadow-soft"
                             >
-                                Browse Farms
+                                {t('browse_farms')}
                             </Link>
                         </div>
                     </div>

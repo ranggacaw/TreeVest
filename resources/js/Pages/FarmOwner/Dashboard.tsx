@@ -6,6 +6,7 @@ import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
 import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 import { Leaf, Calendar, Stethoscope, LineChart, HandCoins, Users, Sprout } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
 
 export default function Dashboard({
     metrics,
@@ -13,11 +14,14 @@ export default function Dashboard({
     upcoming_harvests,
     recent_health_updates,
 }: FarmOwnerDashboardProps) {
+    const { t } = useTranslation('farms');
+    const { t: tHarvest } = useTranslation('harvests');
+
     const quickActions = [
-        { label: 'Create Farm', href: route('farms.manage.create'), icon: <Leaf />, color: 'sage' as const },
-        { label: 'Schedule Harvest', href: route('farm-owner.harvests.create'), icon: <Calendar />, color: 'sage' as const },
-        { label: 'Post Health Update', href: route('farm-owner.health-updates.create'), icon: <Stethoscope />, color: 'sage' as const },
-        { label: 'View Analytics', href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.create_farm'), href: route('farms.manage.create'), icon: <Leaf />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.schedule_harvest'), href: route('farm-owner.harvests.create'), icon: <Calendar />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.post_health_update'), href: route('farm-owner.health-updates.create'), icon: <Stethoscope />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.view_analytics'), href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
     ];
 
     const formatCurrency = (cents: number) => {
@@ -26,12 +30,12 @@ export default function Dashboard({
 
     return (
         <AppLayout
-            title="Farm Owner Dashboard"
+            title={t('farm_owner.dashboard.title')}
             header={
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold leading-tight text-sage-800 tracking-tight">Farm Owner Hub</h2>
-                        <p className="text-sm text-sage-600 mt-1">Manage your farms, harvests, and health updates.</p>
+                        <h2 className="text-2xl font-bold leading-tight text-sage-800 tracking-tight">{t('farm_owner.dashboard.hub')}</h2>
+                        <p className="text-sm text-sage-600 mt-1">{t('farm_owner.dashboard.manage_farms')}</p>
                     </div>
                 </div>
             }
@@ -41,15 +45,15 @@ export default function Dashboard({
                     {metrics.total_farms === 0 ? (
                         <div className="bg-sage-50 rounded-3xl p-12 text-center border border-sage-200 shadow-sm">
                             <Sprout className="mx-auto h-12 w-12 text-sage-400 mb-4" />
-                            <h3 className="text-xl font-bold text-sage-900 mb-2">Welcome to TreeVest</h3>
+                            <h3 className="text-xl font-bold text-sage-900 mb-2">{t('farm_owner.dashboard.welcome_title')}</h3>
                             <p className="text-sage-600 mb-6 max-w-md mx-auto">
-                                You don't have any farms yet. Create your first farm to start tokenizing trees and receiving investments.
+                                {t('farm_owner.dashboard.no_farms')}
                             </p>
                             <Link
                                 href={route('farms.manage.create')}
                                 className="inline-flex items-center px-6 py-3 bg-sage-600 border border-transparent rounded-xl font-semibold text-white hover:bg-sage-700 transition"
                             >
-                                Create First Farm
+                                {t('farm_owner.dashboard.create_first_farm')}
                             </Link>
                         </div>
                     ) : (
@@ -61,11 +65,11 @@ export default function Dashboard({
 
                             {/* KPIs */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                                <StatCard label="Total Farms" value={metrics.total_farms} icon={<Leaf />} accent="sage" />
-                                <StatCard label="Active Farms" value={metrics.active_farms} icon={<Leaf />} accent="sage" />
-                                <StatCard label="Total Trees" value={metrics.total_trees} icon={<Sprout />} accent="sage" />
-                                <StatCard label="Total Investors" value={metrics.total_investors} icon={<Users />} accent="sage" />
-                                <StatCard label="Total Earnings" value={formatCurrency(metrics.total_earnings_cents)} icon={<HandCoins />} accent="amber" />
+                                <StatCard label={t('farm_owner.dashboard.total_farms')} value={metrics.total_farms} icon={<Leaf />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.active_farms')} value={metrics.active_farms} icon={<Leaf />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_trees')} value={metrics.total_trees} icon={<Sprout />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_investors')} value={metrics.total_investors} icon={<Users />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_earnings')} value={formatCurrency(metrics.total_earnings_cents)} icon={<HandCoins />} accent="amber" />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
@@ -73,9 +77,9 @@ export default function Dashboard({
                                 <div className="lg:col-span-2 space-y-8">
                                     <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                                         <div className="flex justify-between items-center mb-6">
-                                            <h3 className="text-lg font-bold text-earth-900">Farm Status Overview</h3>
+                                            <h3 className="text-lg font-bold text-earth-900">{t('farm_owner.dashboard.farm_status_overview')}</h3>
                                             <Link href={route('farms.manage.index')} className="text-sm font-medium text-sage-600 hover:text-sage-800">
-                                                View All
+                                                {t('farm_owner.dashboard.view_all')}
                                             </Link>
                                         </div>
                                         <ul className="divide-y divide-sand-100">
@@ -90,7 +94,7 @@ export default function Dashboard({
 
                                     {/* Harvest Timeline */}
                                     <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                                        <h3 className="text-lg font-bold text-earth-900 mb-6">Upcoming Harvests</h3>
+                                        <h3 className="text-lg font-bold text-earth-900 mb-6">{t('farm_owner.dashboard.upcoming_harvests')}</h3>
                                         {upcoming_harvests.length > 0 ? (
                                             <div className="space-y-4">
                                                 {upcoming_harvests.map(harvest => (
@@ -101,13 +105,13 @@ export default function Dashboard({
                                                         </div>
                                                         <div className="text-right">
                                                             <p className="font-medium text-sage-700">{new Date(harvest.harvest_date).toLocaleDateString()}</p>
-                                                            <p className="text-xs text-earth-500 uppercase font-semibold mt-1">{harvest.status}</p>
+                                                            <p className="text-xs text-earth-500 uppercase font-semibold mt-1">{tHarvest(`status.${harvest.status}`)}</p>
                                                         </div>
                                                     </div>
                                                 ))}
                                             </div>
                                         ) : (
-                                            <p className="text-sand-500 text-sm py-4">No upcoming harvests scheduled.</p>
+                                            <p className="text-sand-500 text-sm py-4">{t('farm_owner.dashboard.no_upcoming_harvests')}</p>
                                         )}
                                     </div>
                                 </div>
@@ -115,7 +119,7 @@ export default function Dashboard({
                                 {/* Health Updates */}
                                 <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200 h-fit">
                                     <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-lg font-bold text-earth-900">Recent Health Updates</h3>
+                                        <h3 className="text-lg font-bold text-earth-900">{t('farm_owner.dashboard.recent_health_updates')}</h3>
                                     </div>
                                     {recent_health_updates.length > 0 ? (
                                         <div className="space-y-4">
@@ -133,7 +137,7 @@ export default function Dashboard({
                                             ))}
                                         </div>
                                     ) : (
-                                        <p className="text-sand-500 text-sm py-4">No health updates posted recently.</p>
+                                        <p className="text-sand-500 text-sm py-4">{t('farm_owner.dashboard.no_health_updates')}</p>
                                     )}
                                 </div>
                             </div>

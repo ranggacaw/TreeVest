@@ -6,8 +6,10 @@ import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { FormEventHandler } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
+    const { t } = useTranslation();
     const { data, setData, post, processing, errors } = useForm({
         fruit_crop_id: '',
         tree_identifier: '',
@@ -216,7 +218,7 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}>Save</PrimaryButton>
+                                    <PrimaryButton disabled={processing}>{t(\'common.save\')}</PrimaryButton>
                                 </div>
                             </form>
                         </div>

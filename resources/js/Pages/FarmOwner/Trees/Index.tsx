@@ -1,25 +1,27 @@
 import { AppLayout } from '@/Layouts';
 import { Head, Link, router } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 export default function Index({ auth, trees }: PageProps<{ trees: any }>) {
+    const { t } = useTranslation('farms');
     const updateStatus = (id: number, status: string) => {
         router.patch(route('farm-owner.trees.update-status', id), { status });
     };
 
     return (
-        <AppLayout title="Manage Trees">
-            <Head title="Manage Trees" />
+        <AppLayout title={t('farm_owner.trees.title')}>
+            <Head title={t('farm_owner.trees.title')} />
 
             <div className="py-8">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="flex justify-between items-center mb-6">
-                        <h3 className="text-lg font-medium text-gray-900">Your Trees</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('farm_owner.trees.your_trees')}</h3>
                         <Link
                             href={route('farm-owner.trees.create')}
                             className="inline-flex items-center px-4 py-2 bg-indigo-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-indigo-700"
                         >
-                            Add Tree
+                            {t('farm_owner.trees.add_tree')}
                         </Link>
                     </div>
 
@@ -28,11 +30,11 @@ export default function Index({ auth, trees }: PageProps<{ trees: any }>) {
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tree ID</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Crop (Farm)</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('farm_owner.trees.tree_id')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('farm_owner.trees.crop_farm')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('farm_owner.trees.price')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('farm_owner.trees.status')}</th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('farm_owner.trees.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -51,23 +53,23 @@ export default function Index({ auth, trees }: PageProps<{ trees: any }>) {
                                                     onChange={e => updateStatus(tree.id, e.target.value)}
                                                     className="border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm text-sm"
                                                 >
-                                                    <option value="seedling">Seedling</option>
-                                                    <option value="growing">Growing</option>
-                                                    <option value="productive">Productive</option>
-                                                    <option value="declining">Declining</option>
-                                                    <option value="retired">Retired</option>
+                                                    <option value="seedling">{t('farm_owner.trees.statuses.seedling')}</option>
+                                                    <option value="growing">{t('farm_owner.trees.statuses.growing')}</option>
+                                                    <option value="productive">{t('farm_owner.trees.statuses.productive')}</option>
+                                                    <option value="declining">{t('farm_owner.trees.statuses.declining')}</option>
+                                                    <option value="retired">{t('farm_owner.trees.statuses.retired')}</option>
                                                 </select>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
-                                                <Link href={route('farm-owner.trees.edit', tree.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">Edit</Link>
-                                                <Link href={route('farm-owner.trees.destroy', tree.id)} method="delete" as="button" className="text-red-600 hover:text-red-900">Delete</Link>
+                                                <Link href={route('farm-owner.trees.edit', tree.id)} className="text-indigo-600 hover:text-indigo-900 mr-4">{t('common.edit')}</Link>
+                                                <Link href={route('farm-owner.trees.destroy', tree.id)} method="delete" as="button" className="text-red-600 hover:text-red-900">{t('common.delete')}</Link>
                                             </td>
                                         </tr>
                                     ))}
                                     {trees.data.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                No trees found.
+                                                {t('farm_owner.trees.no_trees')}
                                             </td>
                                         </tr>
                                     )}
