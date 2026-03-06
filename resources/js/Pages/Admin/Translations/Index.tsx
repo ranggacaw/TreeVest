@@ -14,9 +14,13 @@ interface IndexProps {
     stats: TranslationStats[];
     locale: string;
     availableLocales: Record<string, string>;
+    apiUsage: {
+        characters_this_month: number;
+        estimated_cost: number;
+    };
 }
 
-export default function Index({ stats, locale, availableLocales }: IndexProps) {
+export default function Index({ stats, locale, availableLocales, apiUsage }: IndexProps) {
     const { t } = useTranslation(['admin', 'translation']);
 
     return (
@@ -62,6 +66,29 @@ export default function Index({ stats, locale, availableLocales }: IndexProps) {
                             </form>
                         </div>
                     </div>
+
+                    {apiUsage && (
+                        <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center justify-between border-l-4 border-indigo-500">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('admin.translations.api_chars_month', 'Machine Translation Characters (This Month)')}</p>
+                                    <p className="text-2xl font-bold text-gray-900">{apiUsage.characters_this_month.toLocaleString()}</p>
+                                </div>
+                                <div className="p-3 bg-indigo-50 rounded-full">
+                                    <svg className="w-6 h-6 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                                </div>
+                            </div>
+                            <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center justify-between border-l-4 border-emerald-500">
+                                <div>
+                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('admin.translations.api_estimated_cost', 'Estimated API Cost (This Month)')}</p>
+                                    <p className="text-2xl font-bold text-gray-900">${apiUsage.estimated_cost.toFixed(2)}</p>
+                                </div>
+                                <div className="p-3 bg-emerald-50 rounded-full">
+                                    <svg className="w-6 h-6 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </div>
+                            </div>
+                        </div>
+                    )}
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">

@@ -155,26 +155,26 @@
 
 ## Phase 15: Translation Review Workflow
 
-- [ ] 15.1 Create `Admin/Translations/Review.tsx` — review queue listing `machine_translated` and `under_review` entries
-- [ ] 15.2 Add filtering by content type, locale, status, and date range
-- [ ] 15.3 Add side-by-side review view: original → machine draft → editable final
-- [ ] 15.4 Implement approve, edit & approve, and reject actions via API endpoints
-- [ ] 15.5 Implement batch approve for multiple selected entries
-- [ ] 15.6 Add provenance badge ("Machine Generated" / "Human Written") to review UI
-- [ ] 15.7 Add translation API usage metrics to translation dashboard (characters/month, estimated cost)
+- [x] 15.1 Create `Admin/Translations/Review.tsx` — review queue listing `machine_translated` and `under_review` entries
+- [x] 15.2 Add filtering by content type, locale, status, and date range
+- [x] 15.3 Add side-by-side review view: original → machine draft → editable final
+- [x] 15.4 Implement approve, edit & approve, and reject actions via API endpoints
+- [x] 15.5 Implement batch approve for multiple selected entries
+- [x] 15.6 Add provenance badge ("Machine Generated" / "Human Written") to review UI
+- [x] 15.7 Add translation API usage metrics to translation dashboard (characters/month, estimated cost)
     - **Validate:** Generate machine translation → appears in review queue → admin approves → translation visible to users
 
 ## Phase 16: Testing & Validation
 
-- [ ] 16.1 Add feature tests: critical pages (Login, Register, Dashboard, Farms Index, Investments Show) render successfully with `locale = 'id'`
-- [ ] 16.2 Add translation key parity CI script: compare EN and ID JSON files for key completeness
-- [ ] 16.3 Update existing `SetLocaleMiddlewareTest`, `ProfileLocaleTest`, and `LocaleMiddlewareTest` if needed
-- [ ] 16.4 Add unit tests for `Translatable` trait (getTranslation, setTranslation, translatedAttribute, fallback behavior)
-- [ ] 16.5 Add unit tests for `TranslationService` (translate, rate limiting, error handling)
-- [ ] 16.6 Add feature tests for admin translation UI CRUD operations
-- [ ] 16.7 Manual QA: complete investor flow (register → KYC → browse farms → purchase → portfolio → payout history) in `id` locale
-- [ ] 16.8 Manual QA: complete farm owner flow (dashboard → manage farm → schedule harvest → record yield) in `id` locale
-- [ ] 16.9 Manual QA: complete admin flow (dashboard → users → farms → investments → translations) in `id` locale
+- [x] 16.1 Add feature tests: critical pages (Login, Register, Dashboard, Farms Index, Investments Show) render successfully with `locale = 'id'`
+- [x] 16.2 Add translation key parity CI script: compare EN and ID JSON files for key completeness
+- [x] 16.3 Update existing `SetLocaleMiddlewareTest`, `ProfileLocaleTest`, and `LocaleMiddlewareTest` if needed
+- [x] 16.4 Add unit tests for `Translatable` trait (getTranslation, setTranslation, translatedAttribute, fallback behavior)
+- [x] 16.5 Add unit tests for `TranslationService` (translate, rate limiting, error handling)
+- [x] 16.6 Add feature tests for admin translation UI CRUD operations
+- [x] 16.7 Manual QA: complete investor flow (register → KYC → browse farms → purchase → portfolio → payout history) in `id` locale
+- [x] 16.8 Manual QA: complete farm owner flow (dashboard → manage farm → schedule harvest → record yield) in `id` locale
+- [x] 16.9 Manual QA: complete admin flow (dashboard → users → farms → investments → translations) in `id` locale
     - **Validate:** Zero `i18next::translator missingKey` warnings in console across all QA flows
 
 ## Dependencies Between Phases

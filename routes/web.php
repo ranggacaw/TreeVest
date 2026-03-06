@@ -176,6 +176,7 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
         Route::prefix('translations')->name('translations.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('index');
             Route::get('/queue', [\App\Http\Controllers\Admin\TranslationController::class, 'queue'])->name('queue');
+            Route::post('/queue/batch-approve', [\App\Http\Controllers\Admin\TranslationController::class, 'batchApprove'])->name('batch-approve');
             Route::post('/queue/{id}/approve', [\App\Http\Controllers\Admin\TranslationController::class, 'approve'])->name('approve');
             Route::post('/queue/{id}/reject', [\App\Http\Controllers\Admin\TranslationController::class, 'reject'])->name('reject');
             Route::get('/list/{type}', [\App\Http\Controllers\Admin\TranslationController::class, 'list'])->name('list');

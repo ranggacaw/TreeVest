@@ -58,10 +58,25 @@ class TranslationController extends Controller
             $localesList[$code] = $data['name'] . ' ' . $data['flag'];
         }
 
+        $machineTranslations = ContentTranslation::where('source', 'machine')
+            ->whereYear('created_at', now()->year)
+            ->whereMonth('created_at', now()->month)
+            ->get();
+
+        $charactersThisMonth = $machineTranslations->sum(function ($t) {
+            return mb_strlen($t->value ?? ''); });
+        $estimatedCost = ($charactersThisMonth / 1000000) * 20; // $20 per 1M characters
+
+        $apiUsage = [
+            'characters_this_month' => $charactersThisMonth,
+            'estimated_cost' => round($estimatedCost, 2),
+        ];
+
         return Inertia::render('Admin/Translations/Index', [
             'stats' => $stats,
             'locale' => $locale,
             'availableLocales' => $localesList,
+            'apiUsage' => $apiUsage,
         ]);
     }
 
@@ -224,11 +239,34 @@ class TranslationController extends Controller
     {
         $locale = $request->get('locale', 'id');
 
-        $translations = ContentTranslation::with('translatable')
+        $type = $request->get('type');
+        $status = $request->get('status');
+        $dateStart = $request->get('date_start');
+        $dateEnd = $request->get('date_end');
+
+        $query = ContentTranslation::with('translatable')
             ->where('locale', $locale)
-            ->whereIn('status', ['under_review', 'machine_translated'])
-            ->orderBy('updated_at', 'desc')
-            ->paginate(15);
+            ->orderBy('updated_at', 'desc');
+
+        if ($type && isset($this->translatableModels[$type])) {
+            $query->where('translatable_type', $this->translatableModels[$type]);
+        }
+
+        if ($status) {
+            $query->where('status', $status);
+        } else {
+            $query->whereIn('status', ['under_review', 'machine_translated']);
+        }
+
+        if ($dateStart) {
+            $query->whereDate('updated_at', '>=', $dateStart);
+        }
+
+        if ($dateEnd) {
+            $query->whereDate('updated_at', '<=', $dateEnd);
+        }
+
+        $translations = $query->paginate(15)->withQueryString();
 
         // We map to add the "original_text"
         $mapped = $translations->through(function ($trans) {
@@ -258,10 +296,19 @@ class TranslationController extends Controller
             $localesList[$code] = $data['name'] . ' ' . $data['flag'];
         }
 
+        $filters = [
+            'type' => $type,
+            'status' => $status,
+            'date_start' => $dateStart,
+            'date_end' => $dateEnd,
+        ];
+
         return Inertia::render('Admin/Translations/Queue', [
             'translations' => $mapped,
             'locale' => $locale,
             'availableLocales' => $localesList,
+            'filters' => $filters,
+            'contentTypes' => array_keys($this->translatableModels),
         ]);
     }
 
@@ -294,5 +341,21 @@ class TranslationController extends Controller
         $translation->delete();
 
         return redirect()->back()->with('success', 'Translation rejected and deleted.');
+    }
+
+    public function batchApprove(Request $request)
+    {
+        $request->validate([
+            'ids' => 'required|array',
+            'ids.*' => 'exists:content_translations,id'
+        ]);
+
+        ContentTranslation::whereIn('id', $request->ids)->update([
+            'status' => 'approved',
+            'reviewer_id' => auth()->id(),
+            'reviewed_at' => now(),
+        ]);
+
+        return redirect()->back()->with('success', count($request->ids) . ' translations approved successfully.');
     }
 }

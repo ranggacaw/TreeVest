@@ -17,9 +17,11 @@ interface QueueItem {
 interface ReviewCardProps {
     item: QueueItem;
     locale: string;
+    selected?: boolean;
+    onSelect?: (id: number, checked: boolean) => void;
 }
 
-export default function ReviewCard({ item, locale }: ReviewCardProps) {
+export default function ReviewCard({ item, locale, selected = false, onSelect }: ReviewCardProps) {
     const { t } = useTranslation(['admin', 'translation']);
     const [isEditing, setIsEditing] = useState(false);
 
@@ -46,6 +48,14 @@ export default function ReviewCard({ item, locale }: ReviewCardProps) {
         <div className="bg-white border rounded-lg shadow-sm mb-4 overflow-hidden">
             <div className="bg-gray-50 px-4 py-3 border-b flex justify-between items-center">
                 <div className="flex items-center space-x-3">
+                    {onSelect && (
+                        <input
+                            type="checkbox"
+                            checked={selected}
+                            onChange={(e) => onSelect(item.id, e.target.checked)}
+                            className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 h-4 w-4"
+                        />
+                    )}
                     <span className="font-semibold text-gray-800">
                         {item.type_name} #{item.item_id}
                     </span>
