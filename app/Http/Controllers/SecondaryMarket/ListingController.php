@@ -78,7 +78,7 @@ class ListingController extends Controller
     public function create(Request $request)
     {
         if (! $request->user()->hasVerifiedKyc()) {
-            return redirect()->back()->with('error', 'You must verify your KYC before creating a listing.');
+            return redirect()->back()->with('error', __('investments.kyc_required_for_listing'));
         }
 
         $activeInvestments = Investment::query()
@@ -107,7 +107,7 @@ class ListingController extends Controller
             );
 
             return redirect()->route('secondary-market.show', $listing)
-                ->with('success', 'Your listing has been created successfully.');
+                ->with('success', __('investments.listing_created'));
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -121,7 +121,7 @@ class ListingController extends Controller
             $this->service->cancelListing($listing, $request->user());
 
             return redirect()->route('investments.show', $listing->investment_id)
-                ->with('success', 'Your listing has been cancelled.');
+                ->with('success', __('investments.listing_cancelled'));
         } catch (\Exception $e) {
             return redirect()->back()
                 ->with('error', $e->getMessage());

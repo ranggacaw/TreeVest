@@ -65,92 +65,92 @@
 
 ## Phase 6: Page Component Translation — Admin Pages
 
-- [ ] 6.1 Translate `Admin/Dashboard.tsx` — admin overview metrics
-- [ ] 6.2 Translate `Admin/Users/Index.tsx` and `Admin/Users/Show.tsx` — user management
-- [ ] 6.3 Translate `Admin/Farms/Index.tsx` and `Admin/Farms/Show.tsx` — farm oversight
-- [ ] 6.4 Translate `Admin/Investments/Index.tsx` — investment oversight
-- [ ] 6.5 Translate `Admin/Articles/Index.tsx`, `Create.tsx`, and `Edit.tsx` — article management
-- [ ] 6.6 Translate `Admin/AuditLogs/Index.tsx` and `Admin/AuditLogs/Show.tsx` — audit log viewer
-- [ ] 6.7 Translate `Admin/FraudAlerts.tsx` — fraud alert page
-- [ ] 6.8 Translate remaining admin pages (KYC review, reports, etc.)
+- [x] 6.1 Translate `Admin/Dashboard.tsx` — admin overview metrics
+- [x] 6.2 Translate `Admin/Users/Index.tsx` and `Admin/Users/Show.tsx` — user management
+- [x] 6.3 Translate `Admin/Farms/Index.tsx` and `Admin/Farms/Show.tsx` — farm oversight
+- [x] 6.4 Translate `Admin/Investments/Index.tsx` — investment oversight
+- [x] 6.5 Translate `Admin/Articles/Index.tsx`, `Create.tsx`, and `Edit.tsx` — article management
+- [x] 6.6 Translate `Admin/AuditLogs/Index.tsx` and `Admin/AuditLogs/Show.tsx` — audit log viewer
+- [x] 6.7 Translate `Admin/FraudAlerts.tsx` — fraud alert page
+- [x] 6.8 Translate remaining admin pages (KYC review, reports, etc.)
     - **Validate:** Navigate all admin pages in `id` locale — zero English strings
 
 ## Phase 7: Page Component Translation — Education Pages
 
-- [ ] 7.1 Translate `Education/Index.tsx` — education center landing
-- [ ] 7.2 Translate education article pages and encyclopedia components
+- [x] 7.1 Translate `Education/Index.tsx` — education center landing
+- [x] 7.2 Translate education article pages and encyclopedia components
     - **Validate:** Browse education center in `id` locale — all chrome and navigation in Bahasa Indonesia
 
 ## Phase 8: Server-Side Translation Expansion
 
-- [ ] 8.1 Create `lang/en/investments.php` and `lang/id/investments.php` — investment-related server messages (purchase confirmation, limit exceeded, payment status)
-- [ ] 8.2 Create `lang/en/farms.php` and `lang/id/farms.php` — farm management server messages (approval, rejection, status changes)
-- [ ] 8.3 Create `lang/en/admin.php` and `lang/id/admin.php` — admin action messages
-- [ ] 8.4 Create `lang/en/harvests.php` and `lang/id/harvests.php` — harvest-related server messages
-- [ ] 8.5 Audit all controllers for hardcoded flash messages → replace with `__('domain.key')` calls
-- [ ] 8.6 Expand `lang/{en,id}/validation.php` with custom validation messages for all FormRequests
+- [x] 8.1 Create `lang/en/investments.php` and `lang/id/investments.php` — investment-related server messages (purchase confirmation, limit exceeded, payment status)
+- [x] 8.2 Create `lang/en/farms.php` and `lang/id/farms.php` — farm management server messages (approval, rejection, status changes)
+- [x] 8.3 Create `lang/en/admin.php` and `lang/id/admin.php` — admin action messages
+- [x] 8.4 Create `lang/en/harvests.php` and `lang/id/harvests.php` — harvest-related server messages
+- [x] 8.5 Audit all controllers for hardcoded flash messages → replace with `__('domain.key')` calls
+- [x] 8.6 Expand `lang/{en,id}/validation.php` with custom validation messages for all FormRequests
     - **Validate:** Trigger flash messages and validation errors in `id` locale → all in Bahasa Indonesia
 
 ## Phase 9: LanguageSwitcher Enhancement
 
-- [ ] 9.1 Add flag icons/badges (🇬🇧 / 🇮🇩) to `LanguageSwitcher.tsx` dropdown items
-- [ ] 9.2 Update `LanguageSwitcher.tsx` to read full locale metadata from shared props (flags, native names)
-- [ ] 9.3 Add visual distinction for active locale (checkmark, bold, highlight)
-- [ ] 9.4 Hide `LanguageSwitcher` when only one locale is configured
+- [x] 9.1 Add flag icons/badges (🇬🇧 / 🇮🇩) to `LanguageSwitcher.tsx` dropdown items
+- [x] 9.2 Update `LanguageSwitcher.tsx` to read full locale metadata from shared props (flags, native names)
+- [x] 9.3 Add visual distinction for active locale (checkmark, bold, highlight)
+- [x] 9.4 Hide `LanguageSwitcher` when only one locale is configured
     - **Validate:** LanguageSwitcher shows flags, highlights active locale, and dynamically renders from config
 
 ## Phase 10: Config-Driven Multi-Locale Architecture
 
-- [ ] 10.1 Create `config/locales.php` with centralized locale configuration (supported locales with metadata, default, fallback)
-- [ ] 10.2 Update `SetLocale` middleware to validate against `config('locales.supported')`
-- [ ] 10.3 Update `HandleInertiaRequests` to share full locale metadata (flag, name, native_name, dir) from `config/locales.php`
-- [ ] 10.4 Update `UpdateLocaleRequest` to validate locale against `config('locales.supported')` keys
-- [ ] 10.5 Create Artisan command `locale:scaffold {locale}`:
+- [x] 10.1 Create `config/locales.php` with centralized locale configuration (supported locales with metadata, default, fallback)
+- [x] 10.2 Update `SetLocale` middleware to validate against `config('locales.supported')`
+- [x] 10.3 Update `HandleInertiaRequests` to share full locale metadata (flag, name, native_name, dir) from `config/locales.php`
+- [x] 10.4 Update `UpdateLocaleRequest` to validate locale against `config('locales.supported')` keys
+- [x] 10.5 Create Artisan command `locale:scaffold {locale}`:
     - Creates `public/locales/{locale}/*.json` stubs (matching EN namespace structure with empty values)
     - Creates `lang/{locale}/*.php` stubs (matching EN file structure with empty values)
     - Outputs next-steps checklist
-- [ ] 10.6 Create `docs/adding-new-locale.md` developer guide
+- [x] 10.6 Create `docs/adding-new-locale.md` developer guide
     - **Validate:** Run `php artisan locale:scaffold ms` → directory structure created correctly
     - **Validate:** Add a test locale to `config/locales.php` → appears in LanguageSwitcher automatically
 
 ## Phase 11: UGC Translation Infrastructure
 
-- [ ] 11.1 Create migration for `content_translations` table (polymorphic, with status/source/reviewer columns)
-- [ ] 11.2 Create `ContentTranslation` Eloquent model with relationships and scopes
-- [ ] 11.3 Create `Translatable` trait (`app/Concerns/Translatable.php`) with methods: `translations()`, `getTranslation()`, `setTranslation()`, `translatedAttribute()`
-- [ ] 11.4 Apply `Translatable` trait to `Farm` model with `$translatable = ['description']`
-- [ ] 11.5 Apply `Translatable` trait to `Article` model with `$translatable = ['title', 'content']`
-- [ ] 11.6 Update `FarmController@show` and `ArticleController@show` to pass translated content to Inertia pages via `translatedAttribute()`
-- [ ] 11.7 Add model event listener: when a translatable field is updated on the original model, mark existing translations as `under_review`
+- [x] 11.1 Create migration for `content_translations` table (polymorphic, with status/source/reviewer columns)
+- [x] 11.2 Create `ContentTranslation` Eloquent model with relationships and scopes
+- [x] 11.3 Create `Translatable` trait (`app/Concerns/Translatable.php`) with methods: `translations()`, `getTranslation()`, `setTranslation()`, `translatedAttribute()`
+- [x] 11.4 Apply `Translatable` trait to `Farm` model with `$translatable = ['description']`
+- [x] 11.5 Apply `Translatable` trait to `Article` model with `$translatable = ['title', 'content']`
+- [x] 11.6 Update `FarmController@show` and `ArticleController@show` to pass translated content to Inertia pages via `translatedAttribute()`
+- [x] 11.7 Add model event listener: when a translatable field is updated on the original model, mark existing translations as `under_review`
     - **Validate:** Create a farm with description → add Indonesian translation → verify it appears when viewing farm in `id` locale
 
 ## Phase 12: Admin Translation Management UI
 
-- [ ] 12.1 Create `Admin/Translations/Index.tsx` — translation coverage dashboard showing % complete per content type per locale
-- [ ] 12.2 Create `Admin/Translations/Edit.tsx` — side-by-side translation editor (original left, editable translation right)
-- [ ] 12.3 Create `TranslationController.php` with `index()`, `edit()`, `update()` methods
-- [ ] 12.4 Add "Translations" menu item to admin sidebar navigation
-- [ ] 12.5 Add routes: `GET /admin/translations`, `GET /admin/translations/{type}/{id}/edit`, `PATCH /admin/translations/{id}`
+- [x] 12.1 Create `Admin/Translations/Index.tsx` — translation coverage dashboard showing % complete per content type per locale
+- [x] 12.2 Create `Admin/Translations/Edit.tsx` — side-by-side translation editor (original left, editable translation right)
+- [x] 12.3 Create `TranslationController.php` with `index()`, `edit()`, `update()` methods
+- [x] 12.4 Add "Translations" menu item to admin sidebar navigation
+- [x] 12.5 Add routes: `GET /admin/translations`, `GET /admin/translations/{type}/{id}/edit`, `PATCH /admin/translations/{id}`
     - **Validate:** Admin can view translation coverage → open a farm → edit its Indonesian description → save
 
 ## Phase 13: Machine Translation Service
 
-- [ ] 13.1 Create `TranslationServiceInterface` in `app/Services/Translation/`
-- [ ] 13.2 Create `GoogleTranslationService` implementing the interface using `google/cloud-translate` SDK
-- [ ] 13.3 Add `translation_service` config section to `config/locales.php` (driver, api_key, rate_limit)
-- [ ] 13.4 Register service binding in `AppServiceProvider` (interface → implementation based on config driver)
-- [ ] 13.5 Implement rate limiting (max requests per minute via config)
-- [ ] 13.6 Implement character count logging for cost tracking
+- [x] 13.1 Create `TranslationServiceInterface` in `app/Services/Translation/`
+- [x] 13.2 Create `GoogleTranslationService` implementing the interface using `google/cloud-translate` SDK
+- [x] 13.3 Add `translation_service` config section to `config/locales.php` (driver, api_key, rate_limit)
+- [x] 13.4 Register service binding in `AppServiceProvider` (interface → implementation based on config driver)
+- [x] 13.5 Implement rate limiting (max requests per minute via config)
+- [x] 13.6 Implement character count logging for cost tracking
     - **Validate:** Call `TranslationService::translate('Hello', 'en', 'id')` → returns Indonesian translation
 
 ## Phase 14: Machine Translation CLI & UGC Integration
 
-- [ ] 14.1 Create Artisan command `translate:generate {source} {target}` for static JSON namespace files
+- [x] 14.1 Create Artisan command `translate:generate {source} {target}` for static JSON namespace files
     - Reads source locale JSON, identifies missing keys in target, calls translation API, outputs `.draft` file
-- [ ] 14.2 Add `--namespace` flag to limit scope to a single namespace
-- [ ] 14.3 Add `--php` flag to process `lang/` PHP files
-- [ ] 14.4 Add "Generate Draft Translation" button in admin translation editor that calls `TranslationService` for UGC fields
-- [ ] 14.5 Create `content_translations` entries with `status = 'machine_translated'`, `source = 'machine'`
+- [x] 14.2 Add `--namespace` flag to limit scope to a single namespace
+- [x] 14.3 Add `--php` flag to process `lang/` PHP files
+- [x] 14.4 Add "Generate Draft Translation" button in admin translation editor that calls `TranslationService` for UGC fields
+- [x] 14.5 Create `content_translations` entries with `status = 'machine_translated'`, `source = 'machine'`
     - **Validate:** Run `php artisan translate:generate en id --namespace=farms` → `.draft` file generated with translations
 
 ## Phase 15: Translation Review Workflow

@@ -29,20 +29,23 @@ class HandleInertiaRequests extends Middleware
      */
     public function share(Request $request): array
     {
-        view()->share('isRtl', in_array(app()->getLocale(), ['ar', 'he', 'fa'], true));
-
-        $availableLocalesEnv = env('APP_AVAILABLE_LOCALES', 'en');
-        $availableLocalesCodes = array_map('trim', explode(',', $availableLocalesEnv));
-        $allLocales = config('app.available_locales', []);
-        $availableLocales = array_intersect_key($allLocales, array_flip($availableLocalesCodes));
-
-        $rtlLocales = ['ar', 'he', 'fa'];
-        $isRtl = in_array(app()->getLocale(), $rtlLocales, true);
+        $currentLocale = app()->getLocale();
+        $supportedLocales = config('locales.supported', []);
+        
+        // Get current locale metadata
+        $currentLocaleData = $supportedLocales[$currentLocale] ?? $supportedLocales['en'];
+        $isRtl = ($currentLocaleData['dir'] ?? 'ltr') === 'rtl';
+        
+        view()->share('isRtl', $isRtl);
 
         return [
             ...parent::share($request),
-            'locale' => app()->getLocale(),
-            'availableLocales' => $availableLocales,
+            'locale' => $currentLocale,
+            'locales' => [
+                'current' => $currentLocaleData,
+                'supported' => $supportedLocales,
+            ],
+            'availableLocales' => $supportedLocales, // Legacy support
             'isRtl' => $isRtl,
             'auth' => [
                 'user' => $request->user() ? [

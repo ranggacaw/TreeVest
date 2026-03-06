@@ -173,6 +173,17 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             Route::get('/{harvest}', [\App\Http\Controllers\Admin\HarvestController::class, 'show'])->name('show');
         });
 
+        Route::prefix('translations')->name('translations.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('index');
+            Route::get('/queue', [\App\Http\Controllers\Admin\TranslationController::class, 'queue'])->name('queue');
+            Route::post('/queue/{id}/approve', [\App\Http\Controllers\Admin\TranslationController::class, 'approve'])->name('approve');
+            Route::post('/queue/{id}/reject', [\App\Http\Controllers\Admin\TranslationController::class, 'reject'])->name('reject');
+            Route::get('/list/{type}', [\App\Http\Controllers\Admin\TranslationController::class, 'list'])->name('list');
+            Route::get('/{type}/{id}/edit', [\App\Http\Controllers\Admin\TranslationController::class, 'edit'])->name('edit');
+            Route::patch('/{type}/{id}', [\App\Http\Controllers\Admin\TranslationController::class, 'update'])->name('update');
+            Route::post('/{type}/{id}/draft', [\App\Http\Controllers\Admin\TranslationController::class, 'generateDraft'])->name('draft');
+        });
+
         Route::post('/media/upload', [MediaController::class, 'upload'])->name('media.upload');
         Route::delete('/media/delete', [MediaController::class, 'delete'])->name('media.delete');
     });

@@ -154,9 +154,21 @@ export interface Farm {
     }>;
 }
 
+export interface LocaleMetadata {
+    code: string;
+    name: string;
+    native_name: string;
+    flag: string;
+    dir: 'ltr' | 'rtl';
+}
+
 export interface LocalePageProps {
     locale: string;
-    availableLocales: Record<string, string>;
+    locales: {
+        current: LocaleMetadata;
+        supported: Record<string, LocaleMetadata>;
+    };
+    availableLocales: Record<string, LocaleMetadata>; // Legacy support
     isRtl: boolean;
 }
 

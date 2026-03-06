@@ -176,14 +176,14 @@ class InvestmentController extends Controller
 
         if (!$tree->isInvestable()) {
             return redirect()->route('marketplace.trees')
-                ->with('error', 'This tree is not currently available for investment.');
+                ->with('error', __('investments.tree_not_available'));
         }
 
         $user = $request->user();
 
         if (!$user->isKycValid()) {
             return redirect()->route('kyc.verify')
-                ->with('warning', 'You must complete KYC verification before investing.');
+                ->with('warning', __('investments.kyc_required'));
         }
 
         // Use TreeResource for consistent data transformation
@@ -241,7 +241,7 @@ class InvestmentController extends Controller
             ]);
 
             return redirect()->route('investments.confirmation', $investment->id)
-                ->with('success', 'Investment initiated successfully. Please complete payment.');
+                ->with('success', __('investments.purchase_success'));
         } catch (\App\Exceptions\KycNotVerifiedException $e) {
             Log::warning('Investment attempt with unverified KYC', [
                 'user_id' => $user->id,
@@ -249,7 +249,7 @@ class InvestmentController extends Controller
                 'ip_address' => $request->ip()
             ]);
             return redirect()->route('kyc.verify')
-                ->with('warning', 'You must complete KYC verification before investing.');
+                ->with('warning', __('investments.kyc_required'));
         } catch (\App\Exceptions\TreeNotInvestableException $e) {
             Log::warning('Investment attempt on non-investable tree', [
                 'user_id' => $user->id,
@@ -292,7 +292,7 @@ class InvestmentController extends Controller
                 'trace' => $e->getTraceAsString(),
                 'ip_address' => $request->ip()
             ]);
-            return back()->with('error', 'An unexpected error occurred. Please try again or contact support.');
+            return back()->with('error', __('investments.purchase_failed'));
         }
     }
 

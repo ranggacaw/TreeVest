@@ -1,0 +1,51 @@
+{
+    "my_harvests": "",
+    "my_harvests_subtitle": "",
+    "schedule_harvest": "",
+    "no_harvests": "",
+    "no_harvests_desc": "",
+    "schedule_first_harvest": "",
+    "showing_results": "",
+    "scheduled_date": "",
+    "estimated_yield": "",
+    "actual_yield": "",
+    "harvest": "",
+    "harvest_id": "",
+    "details": {
+        "harvest_details": "",
+        "scheduled_date": "",
+        "estimated_yield": "",
+        "actual_yield": "",
+        "status": "",
+        "notes": "",
+        "fruit_crop": "",
+        "farm": "",
+        "tree": "",
+        "variant": "",
+        "yield_recorded": "",
+        "harvest_completed": "",
+        "mark_as_completed": "",
+        "record_yield": "",
+        "cancel_harvest": ""
+    },
+    "create": {
+        "title": "",
+        "subtitle": "",
+        "select_tree": "",
+        "select_tree_placeholder": "",
+        "scheduled_date": "",
+        "estimated_yield_kg": "",
+        "estimated_yield_placeholder": "",
+        "notes": "",
+        "notesAdd any notes about_placeholder": "",
+        "submit": "",
+        "cancel": ""
+    },
+    "status": {
+        "scheduled": "",
+        "in_progress": "",
+        "completed": "",
+        "failed": "",
+        "cancelled": ""
+    }
+}

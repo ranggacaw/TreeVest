@@ -11,7 +11,7 @@ class SetLocale
 {
     public function handle(Request $request, Closure $next): Response
     {
-        $availableLocales = array_keys(config('app.available_locales', []));
+        $availableLocales = array_keys(config('locales.supported', []));
 
         $locale = null;
 
@@ -47,7 +47,7 @@ class SetLocale
         }
 
         if (! $locale) {
-            $locale = config('app.locale', 'en');
+            $locale = config('locales.default', config('app.locale', 'en'));
         }
 
         App::setLocale($locale);

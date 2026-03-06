@@ -72,7 +72,7 @@ class ArticleController extends Controller
         $article->categories()->sync($validated['category_ids']);
         $article->tags()->sync($validated['tag_ids'] ?? []);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Article created successfully.');
+        return redirect()->route('admin.articles.index')->with('success', __('admin.article_created'));
     }
 
     public function edit(Article $article)
@@ -126,27 +126,27 @@ class ArticleController extends Controller
         $article->categories()->sync($validated['category_ids']);
         $article->tags()->sync($validated['tag_ids'] ?? []);
 
-        return redirect()->route('admin.articles.index')->with('success', 'Article updated successfully.');
+        return redirect()->route('admin.articles.index')->with('success', __('admin.article_updated'));
     }
 
     public function destroy(Article $article)
     {
         $article->delete();
 
-        return redirect()->route('admin.articles.index')->with('success', 'Article deleted successfully.');
+        return redirect()->route('admin.articles.index')->with('success', __('admin.article_deleted'));
     }
 
     public function publish(Article $article)
     {
         $article->publish();
 
-        return back()->with('success', 'Article published successfully.');
+        return back()->with('success', __('admin.article_published'));
     }
 
     public function unpublish(Article $article)
     {
         $article->unpublish();
 
-        return back()->with('success', 'Article unpublished successfully.');
+        return back()->with('success', __('admin.article_unpublished'));
     }
 }

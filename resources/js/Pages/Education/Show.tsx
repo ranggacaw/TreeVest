@@ -1,6 +1,7 @@
 import { Head } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface Article {
     id: number;
@@ -26,6 +27,7 @@ interface Props {
 }
 
 export default function EducationShow({ article, relatedArticles }: Props) {
+    const { t } = useTranslation();
     const canonicalUrl = route('education.show', article.slug);
     const ogImage = article.featured_image || route('home');
 

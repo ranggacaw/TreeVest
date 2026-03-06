@@ -105,4 +105,104 @@ return [
     'uploaded' => 'Kolom :attribute gagal diunggah.',
     'url' => 'Format kolom :attribute tidak valid.',
     'uuid' => 'Kolom :attribute harus berupa UUID yang valid.',
+
+    /*
+    |--------------------------------------------------------------------------
+    | Pesan Validasi Kustom
+    |--------------------------------------------------------------------------
+    |
+    | Di sini Anda dapat menentukan pesan validasi kustom untuk atribut menggunakan
+    | konvensi "rule.attribute" untuk menamai baris. Ini memudahkan untuk
+    | menentukan baris bahasa kustom yang spesifik untuk aturan atribut tertentu.
+    |
+    */
+
+    'custom' => [
+        'ask_price_cents' => [
+            'required' => 'Harga yang diminta wajib diisi.',
+            'integer' => 'Harga yang diminta harus berupa jumlah yang valid.',
+            'min' => 'Harga yang diminta minimal :min.',
+        ],
+        'investment_id' => [
+            'required' => 'Silakan pilih investasi untuk didaftarkan.',
+            'exists' => 'Investasi yang dipilih tidak ada.',
+        ],
+        'tree_identifier' => [
+            'required' => 'Identifikasi pohon wajib diisi.',
+            'unique' => 'Identifikasi pohon ini sudah digunakan.',
+        ],
+        'fruit_crop_id' => [
+            'required' => 'Silakan pilih jenis tanaman buah.',
+            'exists' => 'Jenis tanaman buah yang dipilih tidak ada.',
+        ],
+        'harvest_date' => [
+            'required' => 'Tanggal panen wajib diisi.',
+            'date' => 'Tanggal panen harus berupa tanggal yang valid.',
+            'after' => 'Tanggal panen harus setelah hari ini.',
+        ],
+        'estimated_yield_kg' => [
+            'required' => 'Perkiraan hasil panen wajib diisi.',
+            'numeric' => 'Perkiraan hasil panen harus berupa angka.',
+            'min' => 'Perkiraan hasil panen minimal :min kg.',
+        ],
+        'actual_yield_kg' => [
+            'required' => 'Hasil panen aktual wajib diisi.',
+            'numeric' => 'Hasil panen aktual harus berupa angka.',
+            'min' => 'Hasil panen aktual minimal :min kg.',
+        ],
+        'category_ids' => [
+            'required' => 'Silakan pilih setidaknya satu kategori.',
+            'array' => 'Kategori harus disediakan sebagai daftar.',
+        ],
+        'locale' => [
+            'required' => 'Pemilihan bahasa wajib diisi.',
+            'in' => 'Bahasa yang dipilih tidak didukung.',
+        ],
+        'phone' => [
+            'required' => 'Nomor telepon wajib diisi.',
+            'regex' => 'Format nomor telepon tidak valid. Gunakan format: +62xxxxxxxxx',
+        ],
+        'kyc_documents' => [
+            'required' => 'Setidaknya satu dokumen KYC diperlukan.',
+            'array' => 'Dokumen KYC harus disediakan sebagai daftar.',
+        ],
+        'document_type' => [
+            'required' => 'Jenis dokumen wajib diisi.',
+            'in' => 'Jenis dokumen yang dipilih tidak valid.',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Atribut Validasi Kustom
+    |--------------------------------------------------------------------------
+    |
+    | Baris bahasa berikut digunakan untuk mengganti placeholder atribut kami
+    | dengan sesuatu yang lebih ramah pembaca seperti "Alamat Surel" instead
+    | dari "email". Ini hanya membantu kami membuat pesan lebih ekspresif.
+    |
+    */
+
+    'attributes' => [
+        'name' => 'nama',
+        'username' => 'nama pengguna',
+        'email' => 'alamat email',
+        'password' => 'kata sandi',
+        'password_confirmation' => 'konfirmasi kata sandi',
+        'phone' => 'nomor telepon',
+        'locale' => 'bahasa',
+        'ask_price_cents' => 'harga yang diminta',
+        'investment_id' => 'investasi',
+        'tree_identifier' => 'identifikasi pohon',
+        'fruit_crop_id' => 'jenis tanaman buah',
+        'harvest_date' => 'tanggal panen',
+        'estimated_yield_kg' => 'perkiraan hasil panen',
+        'actual_yield_kg' => 'hasil panen aktual',
+        'category_ids' => 'kategori',
+        'tag_ids' => 'tag',
+        'kyc_documents' => 'dokumen KYC',
+        'document_type' => 'jenis dokumen',
+        'role' => 'peran pengguna',
+        'status' => 'status',
+    ],
 ];

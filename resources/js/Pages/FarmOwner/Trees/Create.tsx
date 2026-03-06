@@ -218,7 +218,7 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}>{t(\'common.save\')}</PrimaryButton>
+                                    <PrimaryButton disabled={processing}>{t('common.save')}</PrimaryButton>
                                 </div>
                             </form>
                         </div>

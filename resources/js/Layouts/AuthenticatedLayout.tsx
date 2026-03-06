@@ -71,6 +71,9 @@ export default function Authenticated({
                                         <NavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
                                             {t('navigation.farm_management')}
                                         </NavLink>
+                                        <NavLink href={route('admin.translations.index')} active={route().current('admin.translations.*')}>
+                                            {t('navigation.translations', 'Translations')}
+                                        </NavLink>
                                     </>
                                 )}
 
@@ -217,6 +220,9 @@ export default function Authenticated({
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
                                     {t('navigation.farm_management')}
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('admin.translations.index')} active={route().current('admin.translations.*')}>
+                                    {t('navigation.translations', 'Translations')}
                                 </ResponsiveNavLink>
                             </>
                         )}

@@ -40,7 +40,7 @@ class PaymentMethodController extends Controller
             auth()->id(),
         );
 
-        return redirect()->back()->with('success', 'Payment method added successfully.');
+        return redirect()->back()->with('success', __('investments.payment_method_added'));
     }
 
     public function destroy(PaymentMethod $paymentMethod)
@@ -50,7 +50,7 @@ class PaymentMethodController extends Controller
         $this->stripeService->detachPaymentMethod($paymentMethod->stripe_payment_method_id);
         $paymentMethod->delete();
 
-        return redirect()->back()->with('success', 'Payment method deleted successfully.');
+        return redirect()->back()->with('success', __('investments.payment_method_deleted'));
     }
 
     public function setDefault(PaymentMethod $paymentMethod)
@@ -59,6 +59,6 @@ class PaymentMethodController extends Controller
 
         $paymentMethod->update(['is_default' => true]);
 
-        return redirect()->back()->with('success', 'Default payment method updated.');
+        return redirect()->back()->with('success', __('investments.payment_method_default_updated'));
     }
 }

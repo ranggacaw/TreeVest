@@ -13,27 +13,38 @@ class AppServiceProvider extends ServiceProvider
      */
     public function register(): void
     {
+        // Register translation service based on config driver
+        $this->app->singleton(\App\Services\Translation\TranslationServiceInterface::class, function ($app) {
+            $driver = config('locales.translation_service.driver', 'google');
+
+            if ($driver === 'google') {
+                return new \App\Services\Translation\GoogleTranslationService();
+            }
+
+            // Fallback to dummy implementation if needed, or throw exception
+            return new \App\Services\Translation\GoogleTranslationService();
+        });
         $this->app->bind(\App\Contracts\SmsServiceInterface::class, \App\Services\TwilioSmsProvider::class);
         $this->app->bind(\App\Contracts\KycProviderInterface::class, \App\Services\KycProviders\ManualKycProvider::class);
-        
+
         // Bind the enhanced investment service
         $this->app->bind(\App\Services\InvestmentService::class, \App\Services\InvestmentServiceEnhanced::class);
-        
+
         // Register error tracking service with interface validation
         $this->app->bind(ErrorTrackingServiceInterface::class, \App\Services\ErrorTrackingService::class);
         $this->app->singleton(\App\Services\ErrorTrackingService::class, function ($app) {
             $service = new \App\Services\ErrorTrackingService();
-            
+
             // Validate that the service properly implements the interface
             if (!$service instanceof ErrorTrackingServiceInterface) {
                 throw new \InvalidArgumentException(
                     'ErrorTrackingService must implement ErrorTrackingServiceInterface'
                 );
             }
-            
+
             // Validate that all required methods exist with proper signatures
             $this->validateErrorTrackingServiceInterface($service);
-            
+
             return $service;
         });
     }

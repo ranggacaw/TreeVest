@@ -55,7 +55,7 @@ class HarvestController extends Controller
         $this->harvestService->scheduleHarvest(auth()->user(), $tree, $request->validated());
 
         return redirect()->route('farm-owner.harvests.index')
-            ->with('success', 'Harvest scheduled successfully.');
+            ->with('success', __('harvests.scheduled', ['date' => $request->validated()['scheduled_date']]));
     }
 
     public function show(Harvest $harvest): Response
@@ -79,7 +79,7 @@ class HarvestController extends Controller
 
         $this->harvestService->startHarvest($harvest, auth()->user());
 
-        return back()->with('success', 'Harvest started.');
+        return back()->with('success', __('harvests.started'));
     }
 
     public function recordYield(RecordYieldRequest $request, Harvest $harvest): RedirectResponse
@@ -97,7 +97,7 @@ class HarvestController extends Controller
             auth()->user()
         );
 
-        return back()->with('success', 'Yield recorded successfully.');
+        return back()->with('success', __('harvests.yield_recorded', ['yield' => $request->actual_yield_kg]));
     }
 
     public function confirm(Harvest $harvest): RedirectResponse
@@ -108,7 +108,7 @@ class HarvestController extends Controller
 
         $this->harvestService->confirmComplete($harvest, auth()->user());
 
-        return back()->with('success', 'Harvest confirmed and payouts calculated.');
+        return back()->with('success', __('harvests.completed'));
     }
 
     public function fail(\Illuminate\Http\Request $request, Harvest $harvest): RedirectResponse
@@ -123,6 +123,6 @@ class HarvestController extends Controller
 
         $this->harvestService->failHarvest($harvest, auth()->user(), $request->notes);
 
-        return back()->with('success', 'Harvest marked as failed.');
+        return back()->with('success', __('harvests.failed'));
     }
 }

@@ -1,6 +1,7 @@
 import { AppLayout } from '@/Layouts';
 import { Head } from '@inertiajs/react';
 import { Link } from '@inertiajs/react';
+import { useTranslation } from 'react-i18next';
 
 interface Article {
     id: number;
@@ -43,26 +44,27 @@ interface Props {
 }
 
 export default function AdminArticlesIndex({ articles }: Props) {
+    const { t } = useTranslation();
     return (
-        <AppLayout title="Manage Articles">
-            <Head title="Manage Articles" />
+        <AppLayout title={t('admin.articles.title')}>
+            <Head title={t('admin.articles.title')} />
 
             <div className="min-h-screen bg-gray-50">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">
-                                Manage Articles
+                                {t('admin.articles.title')}
                             </h1>
                             <p className="mt-2 text-gray-600">
-                                Create and manage educational content
+                                {t('admin.articles.subtitle')}
                             </p>
                         </div>
                         <Link
                             href={route('admin.articles.create')}
                             className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700"
                         >
-                            Create Article
+                            {t('admin.articles.create_article')}
                         </Link>
                     </div>
 
@@ -71,22 +73,22 @@ export default function AdminArticlesIndex({ articles }: Props) {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Title
+                                        {t('admin.articles.article_title')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Status
+                                        {t('common.status')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Author
+                                        {t('admin.articles.author')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Views
+                                        {t('admin.articles.views')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Updated
+                                        {t('admin.articles.updated_at')}
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        Actions
+                                        {t('common.actions')}
                                     </th>
                                 </tr>
                             </thead>

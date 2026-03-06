@@ -29,6 +29,7 @@
         "submit": "Kirim",
         "search": "Cari",
         "filter": "Filter",
+        "reset": "Reset",
         "actions": "Aksi",
         "status": "Status",
         "date": "Tanggal",
@@ -41,6 +42,7 @@
         "or": "atau",
         "and": "dan",
         "of": "dari",
+        "to": "ke",
         "per": "per",
         "total": "Total",
         "items": "Item",
@@ -54,7 +56,9 @@
         "upload": "Unggah",
         "close": "Tutup",
         "confirm": "Konfirmasi",
-        "proceed": "Lanjutkan"
+        "proceed": "Lanjutkan",
+        "view_all": "Lihat Semua",
+        "all_status": "Semua Status"
     },
     "navigation": {
         "home": "Beranda",

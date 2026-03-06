@@ -51,12 +51,12 @@ class KycReviewController extends Controller
         $result = $this->kycService->approveVerification($verification, auth()->user());
 
         if (! $result) {
-            return back()->with('error', 'Cannot approve this verification. It may not be in submitted status.');
+            return back()->with('error', __('admin.kyc_cannot_approve'));
         }
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'KYC verification approved successfully.');
+        return back()->with('success', __('admin.kyc_verified'));
     }
 
     public function reject(RejectKycRequest $request, KycVerification $verification)
@@ -68,12 +68,12 @@ class KycReviewController extends Controller
         );
 
         if (! $result) {
-            return back()->with('error', 'Cannot reject this verification. It may not be in submitted status.');
+            return back()->with('error', __('admin.kyc_cannot_reject'));
         }
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'KYC verification rejected.');
+        return back()->with('success', __('admin.kyc_rejected'));
     }
 
     public function documentPreview(KycDocument $document)

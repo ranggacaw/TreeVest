@@ -40,7 +40,7 @@ class FarmController extends Controller
         $farm = $this->farmService->createFarm($request->user(), $request);
 
         return redirect()->route('farms.manage.index')
-            ->with('success', 'Farm created successfully. It is pending approval.');
+            ->with('success', __('farms.created') . ' ' . __('farms.pending_approval'));
     }
 
     public function show(Farm $farm)
@@ -48,6 +48,9 @@ class FarmController extends Controller
         $this->authorizeFarmAccess($farm);
 
         $farm->load(['images', 'certifications', 'owner']);
+
+        // Load translated description
+        $farm->description = $farm->translatedAttribute('description');
 
         return Inertia::render('Farms/Manage/Show', [
             'farm' => $farm,
@@ -72,8 +75,8 @@ class FarmController extends Controller
         $farm = $this->farmService->updateFarm($farm, $request);
 
         $message = $farm->isPendingApproval()
-            ? 'Farm updated successfully. It is pending approval.'
-            : 'Farm updated successfully.';
+            ? __('farms.updated') . ' ' . __('farms.pending_approval')
+            : __('farms.updated');
 
         return redirect()->route('farms.manage.show', $farm)
             ->with('success', $message);
@@ -86,7 +89,7 @@ class FarmController extends Controller
         $this->farmService->deleteFarm($farm);
 
         return redirect()->route('farms.manage.index')
-            ->with('success', 'Farm deleted successfully.');
+            ->with('success', __('farms.deleted'));
     }
 
     public function deleteImage(Farm $farm, FarmImage $image)
@@ -103,7 +106,7 @@ class FarmController extends Controller
 
         $image->delete();
 
-        return back()->with('success', 'Image deleted successfully.');
+        return back()->with('success', __('farms.image_deleted'));
     }
 
     protected function authorizeFarmAccess(Farm $farm): void

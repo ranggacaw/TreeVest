@@ -1,1 +1,15 @@
-{}
+{
+    "title": "Education Center",
+    "subtitle": "Learn about fruit tree investing, risk management, and market trends",
+    "search_placeholder": "Search articles...",
+    "categories": "Categories",
+    "all_categories": "All Categories",
+    "views": "views",
+    "read_more": "Read More",
+    "related_articles": "Related Articles",
+    "published_on": "Published on",
+    "updated_on": "Updated on",
+    "by": "By",
+    "share": "Share",
+    "back_to_education": "Back to Education Center"
+}

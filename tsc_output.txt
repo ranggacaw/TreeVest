@@ -1,0 +1,4 @@
+resources/js/Pages/FarmOwner/Crops/Create.tsx(123,77): error TS1127: Invalid character.
+resources/js/Pages/FarmOwner/Crops/Create.tsx(123,93): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?
+resources/js/Pages/FarmOwner/Trees/Create.tsx(221,77): error TS1127: Invalid character.
+resources/js/Pages/FarmOwner/Trees/Create.tsx(221,93): error TS1381: Unexpected token. Did you mean `{'}'}` or `&rbrace;`?

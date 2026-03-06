@@ -74,7 +74,7 @@ class UserController extends Controller
         $newRole = $request->input('role');
 
         if ($user->id === auth()->user()->id) {
-            return back()->with('error', 'You cannot change your own role.');
+            return back()->with('error', __('admin.cannot_change_own_role'));
         }
 
         $user->role = $newRole;
@@ -86,17 +86,17 @@ class UserController extends Controller
             'new_role' => $newRole,
         ]);
 
-        return back()->with('success', 'User role updated successfully.');
+        return back()->with('success', __('admin.role_changed', ['role' => $newRole]));
     }
 
     public function suspend(SuspendUserRequest $request, User $user)
     {
         if ($user->role === 'admin') {
-            return back()->with('error', 'Cannot suspend an admin user.');
+            return back()->with('error', __('admin.cannot_suspend_admin'));
         }
 
         if ($user->isSuspended()) {
-            return back()->with('error', 'User is already suspended.');
+            return back()->with('error', __('admin.already_suspended'));
         }
 
         $user->suspended_at = now();
@@ -109,13 +109,13 @@ class UserController extends Controller
             'reason' => $request->input('reason'),
         ]);
 
-        return back()->with('success', 'User suspended successfully.');
+        return back()->with('success', __('admin.user_suspended'));
     }
 
     public function reactivate(User $user)
     {
         if (!$user->isSuspended()) {
-            return back()->with('error', 'User is not suspended.');
+            return back()->with('error', __('admin.not_suspended'));
         }
 
         $user->suspended_at = null;
@@ -127,13 +127,13 @@ class UserController extends Controller
             'target_user_id' => $user->id,
         ]);
 
-        return back()->with('success', 'User reactivated successfully.');
+        return back()->with('success', __('admin.user_reactivated'));
     }
 
     public function destroy(User $user)
     {
         if ($user->role === 'admin') {
-            return back()->with('error', 'Cannot delete an admin user.');
+            return back()->with('error', __('admin.cannot_delete_admin'));
         }
 
         $activeInvestments = Investment::where('user_id', $user->id)
@@ -141,7 +141,7 @@ class UserController extends Controller
             ->count();
 
         if ($activeInvestments > 0) {
-            return back()->with('error', 'Cannot delete user with active investments.');
+            return back()->with('error', __('admin.cannot_delete_with_investments'));
         }
 
         AuditLogService::log(auth()->user(), AuditEventType::ADMIN_ACTION, [
@@ -152,6 +152,6 @@ class UserController extends Controller
 
         $user->delete();
 
-        return redirect()->route('admin.users.index')->with('success', 'User deleted successfully.');
+        return redirect()->route('admin.users.index')->with('success', __('admin.user_deleted_successfully'));
     }
 }

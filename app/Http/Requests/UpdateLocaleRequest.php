@@ -14,7 +14,7 @@ class UpdateLocaleRequest extends FormRequest
 
     public function rules(): array
     {
-        $availableLocales = array_keys(config('app.available_locales', []));
+        $availableLocales = array_keys(config('locales.supported', []));
 
         return [
             'locale' => ['required', 'string', new In($availableLocales)],

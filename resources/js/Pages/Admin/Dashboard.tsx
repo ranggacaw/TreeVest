@@ -4,7 +4,8 @@ import { AdminDashboardProps } from '@/types';
 import StatCard from '@/Components/Dashboard/StatCard';
 import ActivityFeed from '@/Components/Dashboard/ActivityFeed';
 import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
-import { Users, FileCheck, Landmark, DollarSign, Clock, Leaf, Sprout, HandCoins, FileText } from 'lucide-react';
+import { useTranslation } from 'react-i18next';
+import { Users, FileCheck, Landmark, DollarSign, Clock, Leaf, Sprout, HandCoins, FileText, Globe } from 'lucide-react';
 
 interface Article {
     id: number;
@@ -34,6 +35,7 @@ export default function Dashboard({
     publishedArticles,
     draftArticles,
 }: Props) {
+    const { t } = useTranslation();
     const { data, setData, get } = useForm({
         date_from: date_from || '',
         date_to: date_to || '',
@@ -50,10 +52,11 @@ export default function Dashboard({
     };
 
     const quickActions = [
-        { label: 'Manage Users', href: route('admin.users.index'), icon: <Users /> },
-        { label: 'Review KYC', href: route('admin.kyc.index'), icon: <FileCheck /> },
-        { label: 'Approve Farms', href: route('admin.farms.index'), icon: <Leaf /> },
-        { label: 'Create Article', href: route('admin.articles.create'), icon: <FileText /> },
+        { label: t('admin.dashboard.manage_users'), href: route('admin.users.index'), icon: <Users /> },
+        { label: t('admin.dashboard.review_kyc'), href: route('admin.kyc.index'), icon: <FileCheck /> },
+        { label: t('admin.dashboard.approve_farms'), href: route('admin.farms.index'), icon: <Leaf /> },
+        { label: t('admin.dashboard.create_article'), href: route('admin.articles.create'), icon: <FileText /> },
+        { label: t('admin.translations.title', 'Translation Management'), href: route('admin.translations.index'), icon: <Globe /> },
     ];
 
     const formatCurrency = (cents: number) => {
@@ -62,12 +65,12 @@ export default function Dashboard({
 
     return (
         <AppLayout
-            title="Admin Dashboard"
+            title={t('admin.dashboard.title')}
             header={
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">Admin Dashboard</h2>
-                        <p className="text-sm text-pine-500 mt-1">Platform overview and content management.</p>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">{t('admin.dashboard.title')}</h2>
+                        <p className="text-sm text-pine-500 mt-1">{t('admin.dashboard.subtitle')}</p>
                     </div>
                 </div>
             }
@@ -83,7 +86,7 @@ export default function Dashboard({
                     {/* Metrics and Date Filter */}
                     <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <h2 className="text-lg font-bold text-pine-800">Platform KPIs</h2>
+                            <h2 className="text-lg font-bold text-pine-800">{t('admin.dashboard.platform_kpis')}</h2>
 
                             <form onSubmit={submitFilter} className="flex flex-wrap items-center gap-2">
                                 <input
@@ -92,7 +95,7 @@ export default function Dashboard({
                                     onChange={e => setData('date_from', e.target.value)}
                                     className="rounded-lg border-sand-300 text-sm focus:border-pine-500 focus:ring-pine-500"
                                 />
-                                <span className="text-sand-500 text-sm">to</span>
+                                <span className="text-sand-500 text-sm">{t('common.to')}</span>
                                 <input
                                     type="date"
                                     value={data.date_to}
@@ -100,55 +103,55 @@ export default function Dashboard({
                                     className="rounded-lg border-sand-300 text-sm focus:border-pine-500 focus:ring-pine-500"
                                 />
                                 <button type="submit" className="px-3 py-2 bg-pine-600 text-white rounded-lg text-sm font-medium hover:bg-pine-700 transition">
-                                    Filter
+                                    {t('common.filter')}
                                 </button>
                                 {(data.date_from || data.date_to) && (
                                     <button type="button" onClick={resetFilter} className="px-3 py-2 bg-sand-200 text-sand-700 rounded-lg text-sm font-medium hover:bg-sand-300 transition">
-                                        Reset
+                                        {t('common.reset')}
                                     </button>
                                 )}
                             </form>
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <StatCard label="Total Users" value={metrics.total_users} icon={<Users />} />
-                            <StatCard label="KYC Verified" value={metrics.kyc_verified} icon={<FileCheck />} />
-                            <StatCard label="Active Investments" value={metrics.active_investments} icon={<Sprout />} />
-                            <StatCard label="Investment Volume" value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
+                            <StatCard label={t('admin.dashboard.total_users')} value={metrics.total_users} icon={<Users />} />
+                            <StatCard label={t('admin.dashboard.kyc_verified')} value={metrics.kyc_verified} icon={<FileCheck />} />
+                            <StatCard label={t('admin.dashboard.active_investments')} value={metrics.active_investments} icon={<Sprout />} />
+                            <StatCard label={t('admin.dashboard.investment_volume')} value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
 
                             <StatCard
-                                label="Pending KYC"
+                                label={t('admin.dashboard.pending_kyc')}
                                 value={metrics.pending_kyc}
                                 icon={<Clock />}
                                 accent={metrics.pending_kyc > 0 ? 'amber' : 'none'}
                             />
                             <StatCard
-                                label="Pending Farms"
+                                label={t('admin.dashboard.pending_farms')}
                                 value={metrics.pending_farms}
                                 icon={<Clock />}
                                 accent={metrics.pending_farms > 0 ? 'amber' : 'none'}
                             />
-                            <StatCard label="Completed Harvests" value={metrics.completed_harvests} icon={<Leaf />} />
-                            <StatCard label="Total Payouts" value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
+                            <StatCard label={t('admin.dashboard.completed_harvests')} value={metrics.completed_harvests} icon={<Leaf />} />
+                            <StatCard label={t('admin.dashboard.total_payouts')} value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Recent Activity */}
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200 lg:row-span-2">
-                            <h2 className="text-lg font-bold text-pine-800 mb-6">Recent Activity</h2>
+                            <h2 className="text-lg font-bold text-pine-800 mb-6">{t('admin.dashboard.recent_activity')}</h2>
                             <ActivityFeed activities={recentActivity} />
                         </div>
 
                         {/* Article Sections (Popular/Stale) */}
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-pine-800">Popular Articles</h2>
+                                <h2 className="text-lg font-bold text-pine-800">{t('admin.dashboard.popular_articles')}</h2>
                                 <Link
                                     href={route('admin.articles.index')}
                                     className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors"
                                 >
-                                    View All
+                                    {t('common.view_all')}
                                 </Link>
                             </div>
                             {popularArticles.length > 0 ? (
@@ -165,8 +168,13 @@ export default function Dashboard({
                                                             {article.title}
                                                         </p>
                                                         <p className="text-xs text-gray-500">
-                                                            Last updated: {new Date(article.updated_at).toLocaleDateString()}
+                                                            {t('admin.dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
                                                         </p>
+                                                    </div>
+                                                    <div className="ml-4 flex items-center text-sm text-gray-500">
+                                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
+                                                            {t('admin.dashboard.stale')}
+                                                        </span>
                                                     </div>
                                                     <div className="ml-4 flex items-center text-sm text-gray-500">
                                                         <svg
@@ -196,20 +204,20 @@ export default function Dashboard({
                                     ))}
                                 </ul>
                             ) : (
-                                <p className="text-sm text-gray-500">No articles yet.</p>
+                                <p className="text-sm text-gray-500">{t('admin.dashboard.no_articles')}</p>
                             )}
                         </div>
 
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="text-lg font-bold text-pine-800">
-                                    <span className="text-yellow-600">⚠️</span> Stale Content
+                                    <span className="text-yellow-600">⚠️</span> {t('admin.dashboard.stale_content')}
                                 </h2>
                             </div>
                             {staleArticles.length > 0 ? (
                                 <>
                                     <p className="mb-4 text-sm text-gray-600">
-                                        These articles haven't been updated in over 6 months and may need review.
+                                        {t('admin.dashboard.stale_content_description')}
                                     </p>
                                     <ul className="divide-y divide-gray-200">
                                         {staleArticles.map((article) => (
@@ -224,7 +232,7 @@ export default function Dashboard({
                                                                 {article.title}
                                                             </p>
                                                             <p className="text-xs text-gray-500">
-                                                                Last updated: {new Date(article.updated_at).toLocaleDateString()}
+                                                                {t('admin.dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
                                                             </p>
                                                         </div>
                                                         <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
@@ -237,7 +245,7 @@ export default function Dashboard({
                                     </ul>
                                 </>
                             ) : (
-                                <p className="text-sm text-gray-500">All content is up to date.</p>
+                                <p className="text-sm text-gray-500">{t('admin.dashboard.all_content_up_to_date')}</p>
                             )}
                         </div>
                     </div>

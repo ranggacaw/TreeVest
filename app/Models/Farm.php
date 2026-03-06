@@ -12,7 +12,9 @@ use Illuminate\Support\Facades\Storage;
 
 class Farm extends Model
 {
-    use HasFactory, SoftDeletes;
+    use HasFactory, SoftDeletes, \App\Concerns\Translatable;
+
+    public array $translatable = ['description'];
 
     protected $fillable = [
         'owner_id',
@@ -177,7 +179,7 @@ class Farm extends Model
 
     public function transitionTo(FarmStatus $newStatus): bool
     {
-        if (! $this->canTransitionTo($newStatus)) {
+        if (!$this->canTransitionTo($newStatus)) {
             return false;
         }
 
@@ -227,7 +229,7 @@ class Farm extends Model
 
     public function getImageUrl(?string $path): ?string
     {
-        if (! $path) {
+        if (!$path) {
             return null;
         }
 

@@ -105,4 +105,104 @@ return [
     'uploaded' => 'The :attribute failed to upload.',
     'url' => 'The :attribute format is invalid.',
     'uuid' => 'The :attribute must be a valid UUID.',
+    
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Language Lines
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify custom validation messages for attributes using the
+    | convention "rule.attribute" to name the lines. This makes it quick to
+    | specify a specific custom language line for a given attribute rule.
+    |
+    */
+
+    'custom' => [
+        'ask_price_cents' => [
+            'required' => 'The asking price is required.',
+            'integer' => 'The asking price must be a valid amount.',
+            'min' => 'The asking price must be at least :min.',
+        ],
+        'investment_id' => [
+            'required' => 'Please select an investment to list.',
+            'exists' => 'The selected investment does not exist.',
+        ],
+        'tree_identifier' => [
+            'required' => 'The tree identifier is required.',
+            'unique' => 'This tree identifier is already in use.',
+        ],
+        'fruit_crop_id' => [
+            'required' => 'Please select a fruit crop.',
+            'exists' => 'The selected fruit crop does not exist.',
+        ],
+        'harvest_date' => [
+            'required' => 'The harvest date is required.',
+            'date' => 'The harvest date must be a valid date.',
+            'after' => 'The harvest date must be after today.',
+        ],
+        'estimated_yield_kg' => [
+            'required' => 'The estimated yield is required.',
+            'numeric' => 'The estimated yield must be a number.',
+            'min' => 'The estimated yield must be at least :min kg.',
+        ],
+        'actual_yield_kg' => [
+            'required' => 'The actual yield is required.',
+            'numeric' => 'The actual yield must be a number.',
+            'min' => 'The actual yield must be at least :min kg.',
+        ],
+        'category_ids' => [
+            'required' => 'Please select at least one category.',
+            'array' => 'Categories must be provided as a list.',
+        ],
+        'locale' => [
+            'required' => 'Language selection is required.',
+            'in' => 'The selected language is not supported.',
+        ],
+        'phone' => [
+            'required' => 'Phone number is required.',
+            'regex' => 'Phone number format is invalid. Use format: +62xxxxxxxxx',
+        ],
+        'kyc_documents' => [
+            'required' => 'At least one KYC document is required.',
+            'array' => 'KYC documents must be provided as a list.',
+        ],
+        'document_type' => [
+            'required' => 'Document type is required.',
+            'in' => 'The selected document type is invalid.',
+        ],
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Custom Validation Attributes
+    |--------------------------------------------------------------------------
+    |
+    | The following language lines are used to swap our attribute placeholder
+    | with something more reader friendly such as "E-Mail Address" instead
+    | of "email". This simply helps us make our message more expressive.
+    |
+    */
+
+    'attributes' => [
+        'name' => 'name',
+        'username' => 'username',
+        'email' => 'email address',
+        'password' => 'password',
+        'password_confirmation' => 'password confirmation',
+        'phone' => 'phone number',
+        'locale' => 'language',
+        'ask_price_cents' => 'asking price',
+        'investment_id' => 'investment',
+        'tree_identifier' => 'tree identifier',
+        'fruit_crop_id' => 'fruit crop',
+        'harvest_date' => 'harvest date',
+        'estimated_yield_kg' => 'estimated yield',
+        'actual_yield_kg' => 'actual yield',
+        'category_ids' => 'categories',
+        'tag_ids' => 'tags',
+        'kyc_documents' => 'KYC documents',
+        'document_type' => 'document type',
+        'role' => 'user role',
+        'status' => 'status',
+    ],
 ];

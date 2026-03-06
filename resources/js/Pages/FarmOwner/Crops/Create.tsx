@@ -120,7 +120,7 @@ export default function Create({ auth, farms, fruitTypes }: PageProps<{ farms: a
                                 </div>
 
                                 <div className="flex items-center gap-4">
-                                    <PrimaryButton disabled={processing}>{t(\'common.save\')}</PrimaryButton>
+                                    <PrimaryButton disabled={processing}>{t('common.save')}</PrimaryButton>
                                 </div>
                             </form>
                         </div>

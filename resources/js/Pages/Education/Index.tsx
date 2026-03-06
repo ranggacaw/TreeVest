@@ -76,15 +76,15 @@ export default function EducationIndex({ articles, categories, filters }: Props)
 
     return (
         <>
-            <Head title="Education Center" />
+            <Head title={t('education.title')} />
 
             <div className="min-h-screen bg-gray-50">
                 <Navbar />
                 <div className="bg-white shadow">
                     <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
-                        <h1 className="text-3xl font-bold text-gray-900">Education Center</h1>
+                        <h1 className="text-3xl font-bold text-gray-900">{t('education.title')}</h1>
                         <p className="mt-2 text-gray-600">
-                            Learn about fruit tree investing, risk management, and market trends
+                            {t('education.subtitle')}
                         </p>
                     </div>
                 </div>
@@ -93,18 +93,18 @@ export default function EducationIndex({ articles, categories, filters }: Props)
                     <div className="grid grid-cols-1 gap-8 lg:grid-cols-4">
                         <aside className="lg:col-span-1">
                             <div className="bg-white p-6 shadow-sm sm:rounded-lg">
-                                <h2 className="text-lg font-semibold text-gray-900">{t(\'common.search\')}</h2>
+                                <h2 className="text-lg font-semibold text-gray-900">{t('common.search')}</h2>
                                 <form onSubmit={handleSearch} className="mt-4">
                                     <input
                                         type="text"
                                         name="search"
                                         defaultValue={filters.search || ''}
-                                        placeholder="Search articles..."
+                                        placeholder={t('education.search_placeholder')}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
                                 </form>
 
-                                <h2 className="mt-6 text-lg font-semibold text-gray-900">Categories</h2>
+                                <h2 className="mt-6 text-lg font-semibold text-gray-900">{t('education.categories')}</h2>
                                 <ul className="mt-4 space-y-2">
                                     <li>
                                         <button
@@ -113,7 +113,7 @@ export default function EducationIndex({ articles, categories, filters }: Props)
                                                 !filters.category ? 'font-semibold text-indigo-600' : 'text-gray-700'
                                             }`}
                                         >
-                                            All Categories
+                                            {t('education.all_categories')}
                                         </button>
                                     </li>
                                     {categories.map((category) => (
@@ -170,7 +170,7 @@ export default function EducationIndex({ articles, categories, filters }: Props)
                                             <p className="mb-4 flex-1 text-gray-600">{article.excerpt}</p>
                                             <div className="flex items-center justify-between text-sm text-gray-500">
                                                 <span>{article.author.name}</span>
-                                                <span>{article.view_count} views</span>
+                                                <span>{article.view_count} {t('education.views')}</span>
                                             </div>
                                         </div>
                                     </article>

@@ -64,13 +64,13 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
     };
 
     return (
-        <AppLayout title="User Management">
-            <Head title="User Management" />
+        <AppLayout title={t('admin.users.title')}>
+            <Head title={t('admin.users.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">User Management</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('admin.users.title')}</h3>
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -80,7 +80,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     <input
                                         type="text"
                                         name="search"
-                                        placeholder="Search by name, email, or phone..."
+                                        placeholder={t('admin.users.search_placeholder')}
                                         defaultValue={filters.search}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
@@ -90,40 +90,40 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     defaultValue={filters.role}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">All Roles</option>
-                                    <option value="admin">Admin</option>
-                                    <option value="investor">Investor</option>
-                                    <option value="farm_owner">Farm Owner</option>
+                                    <option value="">{t('admin.users.all_roles')}</option>
+                                    <option value="admin">{t('admin.users.role_admin')}</option>
+                                    <option value="investor">{t('admin.users.role_investor')}</option>
+                                    <option value="farm_owner">{t('admin.users.role_farm_owner')}</option>
                                 </select>
                                 <select
                                     name="kyc_status"
                                     defaultValue={filters.kyc_status}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">All KYC Status</option>
-                                    <option value="pending">Pending</option>
-                                    <option value="submitted">Submitted</option>
-                                    <option value="verified">Verified</option>
-                                    <option value="rejected">Rejected</option>
+                                    <option value="">{t('admin.users.all_kyc_status')}</option>
+                                    <option value="pending">{t('admin.kyc.pending_review')}</option>
+                                    <option value="submitted">{t('admin.kyc.submitted')}</option>
+                                    <option value="verified">{t('admin.kyc.verified')}</option>
+                                    <option value="rejected">{t('admin.kyc.rejected')}</option>
                                 </select>
                                 <button
                                     type="submit"
                                     className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                                 >
-                                    Search
+                                    {t('common.search')}
                                 </button>
                             </form>
 
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Role</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">KYC</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Joined</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.name')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.email')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.role')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.kyc.title')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.joined')}</th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -133,22 +133,22 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}>
-                                                    {user.role}
+                                                    {t(`admin.users.role_${user.role}`)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getKycStatusBadge(user.kyc_status)}`}>
-                                                    {user.kyc_status}
+                                                    {t(`admin.kyc.${user.kyc_status}`, user.kyc_status)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 {user.suspended_at ? (
                                                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                        Suspended
+                                                        {t('admin.users.suspended')}
                                                     </span>
                                                 ) : (
                                                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                        Active
+                                                        {t('admin.users.active')}
                                                     </span>
                                                 )}
                                             </td>
@@ -163,7 +163,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     {users.data.length === 0 && (
                                         <tr>
                                             <td colSpan={7} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                No users found.
+                                                {t('admin.users.no_users')}
                                             </td>
                                         </tr>
                                     )}
@@ -178,18 +178,18 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                                 href={route('admin.users.index', { page: users.current_page - 1 })}
                                                 className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             >
-                                                Previous
+                                                {t('common.previous')}
                                             </Link>
                                         )}
                                         <span className="px-3 py-1 text-gray-700">
-                                            Page {users.current_page} of {users.last_page}
+                                            {t('common.page')} {users.current_page} {t('common.of')} {users.last_page}
                                         </span>
                                         {users.current_page < users.last_page && (
                                             <Link
                                                 href={route('admin.users.index', { page: users.current_page + 1 })}
                                                 className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             >
-                                                Next
+                                                {t('common.next')}
                                             </Link>
                                         )}
                                     </div>

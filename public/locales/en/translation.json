@@ -43,6 +43,7 @@
         "submit": "Submit",
         "search": "Search",
         "filter": "Filter",
+        "reset": "Reset",
         "actions": "Actions",
         "status": "Status",
         "date": "Date",
@@ -55,6 +56,7 @@
         "or": "or",
         "and": "and",
         "of": "of",
+        "to": "to",
         "per": "per",
         "total": "Total",
         "items": "Items",
@@ -68,7 +70,9 @@
         "upload": "Upload",
         "close": "Close",
         "confirm": "Confirm",
-        "proceed": "Proceed"
+        "proceed": "Proceed",
+        "view_all": "View All",
+        "all_status": "All Status"
     },
     "navigation": {
         "home": "Home",

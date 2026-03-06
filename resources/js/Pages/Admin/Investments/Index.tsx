@@ -76,13 +76,13 @@ export default function Index({ investments, farms, filters }: Props) {
     };
 
     return (
-        <AppLayout title="Investment Oversight">
-            <Head title="Investment Oversight" />
+        <AppLayout title={t('admin.investments.title')}>
+            <Head title={t('admin.investments.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">Investment Oversight</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('admin.investments.title')}</h3>
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -92,7 +92,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     <input
                                         type="text"
                                         name="search"
-                                        placeholder="Search by investor name or email..."
+                                        placeholder={t('admin.investments.search_placeholder')}
                                         defaultValue={filters.search}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
@@ -102,7 +102,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     defaultValue={filters.farm_id}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">All Farms</option>
+                                    <option value="">{t('admin.farms.all_farms')}</option>
                                     {farms.map((farm) => (
                                         <option key={farm.id} value={farm.id}>
                                             {farm.name}
@@ -114,18 +114,18 @@ export default function Index({ investments, farms, filters }: Props) {
                                     defaultValue={filters.status}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">All Status</option>
-                                    <option value="pending_payment">Pending Payment</option>
-                                    <option value="active">Active</option>
-                                    <option value="matured">Matured</option>
-                                    <option value="sold">Sold</option>
-                                    <option value="cancelled">Cancelled</option>
+                                    <option value="">{t('common.all_status', 'All Status')}</option>
+                                    <option value="pending_payment">{t('admin.investments.pending_payment')}</option>
+                                    <option value="active">{t('admin.investments.active')}</option>
+                                    <option value="matured">{t('admin.investments.matured')}</option>
+                                    <option value="sold">{t('admin.investments.sold')}</option>
+                                    <option value="cancelled">{t('admin.investments.cancelled')}</option>
                                 </select>
                                 <button
                                     type="submit"
                                     className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700"
                                 >
-                                    Filter
+                                    {t('common.filter')}
                                 </button>
                             </form>
 
@@ -133,12 +133,12 @@ export default function Index({ investments, farms, filters }: Props) {
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Investor</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Amount</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Tree</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Date</th>
-                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.investor')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.amount')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.tree')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.date')}</th>
+                                        <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.actions')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white divide-y divide-gray-200">
@@ -152,10 +152,10 @@ export default function Index({ investments, farms, filters }: Props) {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {formatAmount(investment.amount_cents, investment.currency)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">Tree #{investment.tree_id}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t('admin.investments.tree_id', { id: investment.tree_id })}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(investment.status)}`}>
-                                                    {investment.status.replace('_', ' ').toUpperCase()}
+                                                    {t(`admin.investments.${investment.status}`, investment.status.replace('_', ' ').toUpperCase())}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
@@ -169,7 +169,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     {investments.data.length === 0 && (
                                         <tr>
                                             <td colSpan={7} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                No investments found.
+                                                {t('admin.investments.no_investments')}
                                             </td>
                                         </tr>
                                     )}
@@ -184,18 +184,18 @@ export default function Index({ investments, farms, filters }: Props) {
                                                 href={route('admin.investments.index', { page: investments.current_page - 1, ...filters })}
                                                 className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             >
-                                                Previous
+                                                {t('common.previous')}
                                             </Link>
                                         )}
                                         <span className="px-3 py-1 text-gray-700">
-                                            Page {investments.current_page} of {investments.last_page}
+                                            {t('common.page')} {investments.current_page} {t('common.of')} {investments.last_page}
                                         </span>
                                         {investments.current_page < investments.last_page && (
                                             <Link
                                                 href={route('admin.investments.index', { page: investments.current_page + 1, ...filters })}
                                                 className="px-3 py-1 rounded-md bg-gray-200 text-gray-700 hover:bg-gray-300"
                                             >
-                                                Next
+                                                {t('common.next')}
                                             </Link>
                                         )}
                                     </div>

@@ -65,6 +65,10 @@ class ArticleController extends Controller
         $article->incrementViewCount();
         $article->load(['categories', 'tags', 'author']);
 
+        // Load translated title and content
+        $article->title = $article->translatedAttribute('title');
+        $article->content = $article->translatedAttribute('content');
+
         $relatedCacheKey = "article:{$article->id}:related";
 
         $relatedArticles = cache()->remember($relatedCacheKey, 600, function () use ($article) {

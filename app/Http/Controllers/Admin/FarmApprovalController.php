@@ -61,7 +61,7 @@ class FarmApprovalController extends Controller
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'Farm approved successfully.');
+        return back()->with('success', __('admin.farm_approved'));
     }
 
     public function reject(Request $request, Farm $farm)
@@ -76,7 +76,7 @@ class FarmApprovalController extends Controller
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'Farm rejected.');
+        return back()->with('success', __('admin.farm_rejected'));
     }
 
     public function suspend(Farm $farm)
@@ -87,7 +87,7 @@ class FarmApprovalController extends Controller
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'Farm suspended successfully.');
+        return back()->with('success', __('admin.farm_suspended'));
     }
 
     public function reinstate(Farm $farm)
@@ -98,6 +98,6 @@ class FarmApprovalController extends Controller
 
         DashboardController::invalidateMetricsCache();
 
-        return back()->with('success', 'Farm reinstated successfully.');
+        return back()->with('success', __('farms.reactivated'));
     }
 }

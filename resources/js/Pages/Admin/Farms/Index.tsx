@@ -1,6 +1,7 @@
 import { Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { Farm, PageProps } from '@/types';
+import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     farms: {
@@ -27,6 +28,7 @@ const statusColors: Record<string, string> = {
 };
 
 export default function Index({ farms, filters, stats }: Props) {
+    const { t } = useTranslation();
     const statuses = ['', 'pending_approval', 'active', 'suspended', 'deactivated'];
 
     const handleStatusFilter = (status: string) => {
@@ -35,17 +37,17 @@ export default function Index({ farms, filters, stats }: Props) {
 
     return (
         <AppLayout
-            title="Farm Management"
+            title={t('admin.farms.title')}
             header={
                 <div className="flex justify-between items-center">
                     <div>
                         <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">
-                            Farm Management
+                            {t('admin.farms.title')}
                         </h2>
-                        <p className="text-sm text-pine-500 mt-1">Manage and review all platform farms.</p>
+                        <p className="text-sm text-pine-500 mt-1">{t('admin.farms.subtitle')}</p>
                     </div>
                     <div>
-                        <span className="text-sm font-medium text-pine-600 bg-pine-50 px-3 py-1 rounded-full border border-pine-100">{stats.total} farms total</span>
+                        <span className="text-sm font-medium text-pine-600 bg-pine-50 px-3 py-1 rounded-full border border-pine-100">{stats.total} {t('admin.farms.farms_total')}</span>
                     </div>
                 </div>
             }
@@ -56,15 +58,15 @@ export default function Index({ farms, filters, stats }: Props) {
                     {/* Dashboard Stats */}
                     <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Total Farms</h3>
+                            <h3 className="text-sm font-medium text-pine-500">{t('admin.farms.total_farms')}</h3>
                             <p className="mt-2 text-3xl font-bold text-pine-800">{stats.total}</p>
                         </div>
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Active Farms</h3>
+                            <h3 className="text-sm font-medium text-pine-500">{t('admin.farms.active_farms')}</h3>
                             <p className="mt-2 text-3xl font-bold text-green-600">{stats.active}</p>
                         </div>
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                            <h3 className="text-sm font-medium text-pine-500">Pending Approval</h3>
+                            <h3 className="text-sm font-medium text-pine-500">{t('admin.farms.pending_approval')}</h3>
                             <p className="mt-2 text-3xl font-bold text-yellow-600">{stats.pending}</p>
                         </div>
                     </div>
@@ -80,7 +82,7 @@ export default function Index({ farms, filters, stats }: Props) {
                                     : 'bg-white text-pine-600 border-sand-200 hover:bg-sand-50'
                                     }`}
                             >
-                                {s ? s.replace('_', ' ').replace(/\b\w/g, c => c.toUpperCase()) : 'All'}
+                                {s ? t(`admin.farms.${s}`) : t('admin.farms.all')}
                             </button>
                         ))}
                     </div>
@@ -88,9 +90,9 @@ export default function Index({ farms, filters, stats }: Props) {
                     <div className="bg-white rounded-3xl shadow-card border border-sand-200 overflow-hidden">
                         {farms.data.length === 0 ? (
                             <div className="p-12 text-center flex flex-col items-center justify-center min-h-[400px]">
-                                <h3 className="text-2xl font-bold text-pine-800 mb-2">No farms found</h3>
+                                <h3 className="text-2xl font-bold text-pine-800 mb-2">{t('admin.farms.no_farms')}</h3>
                                 <p className="text-pine-500 max-w-md mx-auto mb-8">
-                                    There are no farms matching the current filters.
+                                    {t('admin.farms.no_farms_description')}
                                 </p>
                             </div>
                         ) : (
