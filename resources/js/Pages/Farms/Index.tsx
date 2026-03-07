@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useForm, usePage } from '@inertiajs/react';
+import React, { useState, useEffect, useRef } from 'react';
+import { useForm, usePage, Link } from '@inertiajs/react';
 import Navbar from '@/Components/Navbar';
 import FarmCard from '@/Components/FarmCard';
 import FarmMap from '@/Components/FarmMap';
@@ -30,6 +30,31 @@ export default function Index({ farms, filters, options }: Props) {
     const { t } = useTranslation('farms');
     const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
 
+    const { data, setData, get } = useForm({
+        search: filters.search || '',
+        country: filters.country || '',
+        climate: filters.climate || ''
+    });
+
+    const isFirstRender = useRef(true);
+
+    useEffect(() => {
+        if (isFirstRender.current) {
+            isFirstRender.current = false;
+            return;
+        }
+
+        const timeoutId = setTimeout(() => {
+            get('/farms', {
+                preserveState: true,
+                replace: true,
+                preserveScroll: true
+            });
+        }, 300);
+
+        return () => clearTimeout(timeoutId);
+    }, [data.search, data.country, data.climate]);
+
     return (
         <div className="min-h-screen bg-[#FDFBF7] font-sans pb-16">
             <Navbar />
@@ -59,8 +84,10 @@ export default function Index({ farms, filters, options }: Props) {
                         </div>
                         <input
                             type="text"
+                            name="search"
                             placeholder={t('search_placeholder')}
-                            defaultValue={filters.search}
+                            value={data.search}
+                            onChange={(e) => setData('search', e.target.value)}
                             className="block w-full pl-11 pr-3 py-3 border-0 bg-sand/30 rounded-xl text-pine placeholder-earth-400 focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors"
                         />
                     </div>
@@ -71,7 +98,8 @@ export default function Index({ farms, filters, options }: Props) {
                                 <MapPin className="h-4 w-4 text-earth-400" />
                             </div>
                             <select
-                                defaultValue={filters.country}
+                                value={data.country}
+                                onChange={(e) => setData('country', e.target.value)}
                                 className="block w-full pl-9 pr-10 py-3 border-0 bg-sand/30 rounded-xl text-pine focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors appearance-none"
                             >
                                 <option value="">{t('all_regions')}</option>
@@ -88,7 +116,8 @@ export default function Index({ farms, filters, options }: Props) {
                                 <ThermometerSun className="h-4 w-4 text-earth-400" />
                             </div>
                             <select
-                                defaultValue={filters.climate}
+                                value={data.climate}
+                                onChange={(e) => setData('climate', e.target.value)}
                                 className="block w-full pl-9 pr-10 py-3 border-0 bg-sand/30 rounded-xl text-pine focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors appearance-none"
                             >
                                 <option value="">{t('all_climates')}</option>
@@ -143,12 +172,12 @@ export default function Index({ farms, filters, options }: Props) {
                                 <p className="text-earth-500 max-w-md mx-auto">
                                     {t('no_farms_desc')}
                                 </p>
-                                <button
-                                    onClick={() => window.location.href = '/farms'}
-                                    className="mt-6 px-6 py-2.5 bg-pine text-white rounded-xl hover:bg-pine-600 transition-colors font-medium"
+                                <Link
+                                    href="/farms"
+                                    className="mt-6 px-6 py-2.5 bg-pine text-white rounded-xl hover:bg-pine-600 transition-colors font-medium inline-block"
                                 >
                                     {t('clear_filters')}
-                                </button>
+                                </Link>
                             </div>
                         )}
                     </>
@@ -162,16 +191,19 @@ export default function Index({ farms, filters, options }: Props) {
                 {farms.last_page > 1 && (
                     <div className="mt-12 flex justify-center gap-2">
                         {Array.from({ length: farms.last_page }, (_, i) => i + 1).map((page) => (
-                            <a
+                            <Link
                                 key={page}
-                                href={`?page=${page}`}
+                                href={`/farms`}
+                                data={{ ...data, page }}
+                                preserveScroll
+                                preserveState
                                 className={`w-10 h-10 flex items-center justify-center rounded-xl font-medium transition-all ${page === farms.current_page
                                     ? 'bg-pine text-white shadow-soft'
                                     : 'bg-white text-earth-600 border border-sand hover:border-pine-300 hover:text-pine'
                                     }`}
                             >
                                 {page}
-                            </a>
+                            </Link>
                         ))}
                     </div>
                 )}

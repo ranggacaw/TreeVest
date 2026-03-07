@@ -190,21 +190,27 @@ class FarmService
     {
         $query = Farm::active()->with(['images', 'certifications']);
 
-        if ($request->has('search')) {
+        if ($request->filled('search')) {
             $search = $request->input('search');
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'LIKE', "%{$search}%")
                     ->orWhere('description', 'LIKE', "%{$search}%")
                     ->orWhere('city', 'LIKE', "%{$search}%")
-                    ->orWhere('country', 'LIKE', "%{$search}%");
+                    ->orWhere('country', 'LIKE', "%{$search}%")
+                    ->orWhereHas('fruitCrops.fruitType', function ($subq) use ($search) {
+                        $subq->where('name', 'LIKE', "%{$search}%");
+                    })
+                    ->orWhereHas('fruitCrops', function ($subq) use ($search) {
+                        $subq->where('variant', 'LIKE', "%{$search}%");
+                    });
             });
         }
 
-        if ($request->has('country')) {
+        if ($request->filled('country')) {
             $query->where('country', $request->input('country'));
         }
 
-        if ($request->has('climate')) {
+        if ($request->filled('climate')) {
             $query->where('climate', $request->input('climate'));
         }
 
