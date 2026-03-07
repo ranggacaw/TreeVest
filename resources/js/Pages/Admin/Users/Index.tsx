@@ -28,7 +28,7 @@ interface Filters {
 }
 
 export default function Index({ users, filters }: { users: UsersData; filters: Filters }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     const getKycStatusBadge = (status: string) => {
         switch (status) {
             case 'verified':
@@ -64,13 +64,13 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
     };
 
     return (
-        <AppLayout title={t('admin.users.title')}>
-            <Head title={t('admin.users.title')} />
+        <AppLayout title={t('users.title')}>
+            <Head title={t('users.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">{t('admin.users.title')}</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('users.title')}</h3>
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -80,7 +80,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     <input
                                         type="text"
                                         name="search"
-                                        placeholder={t('admin.users.search_placeholder')}
+                                        placeholder={t('users.search_placeholder')}
                                         defaultValue={filters.search}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
@@ -90,21 +90,21 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     defaultValue={filters.role}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">{t('admin.users.all_roles')}</option>
-                                    <option value="admin">{t('admin.users.role_admin')}</option>
-                                    <option value="investor">{t('admin.users.role_investor')}</option>
-                                    <option value="farm_owner">{t('admin.users.role_farm_owner')}</option>
+                                    <option value="">{t('users.all_roles')}</option>
+                                    <option value="admin">{t('users.role_admin')}</option>
+                                    <option value="investor">{t('users.role_investor')}</option>
+                                    <option value="farm_owner">{t('users.role_farm_owner')}</option>
                                 </select>
                                 <select
                                     name="kyc_status"
                                     defaultValue={filters.kyc_status}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">{t('admin.users.all_kyc_status')}</option>
-                                    <option value="pending">{t('admin.kyc.pending_review')}</option>
-                                    <option value="submitted">{t('admin.kyc.submitted')}</option>
-                                    <option value="verified">{t('admin.kyc.verified')}</option>
-                                    <option value="rejected">{t('admin.kyc.rejected')}</option>
+                                    <option value="">{t('users.all_kyc_status')}</option>
+                                    <option value="pending">{t('kyc.pending_review')}</option>
+                                    <option value="submitted">{t('kyc.submitted')}</option>
+                                    <option value="verified">{t('kyc.verified')}</option>
+                                    <option value="rejected">{t('kyc.rejected')}</option>
                                 </select>
                                 <button
                                     type="submit"
@@ -117,12 +117,12 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.name')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.email')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.role')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.kyc.title')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users.name')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users.email')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users.role')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('kyc.title')}</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.users.joined')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('users.joined')}</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.actions')}</th>
                                     </tr>
                                 </thead>
@@ -133,22 +133,22 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{user.email}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getRoleBadge(user.role)}`}>
-                                                    {t(`admin.users.role_${user.role}`)}
+                                                    {t(`users.role_${user.role}`)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getKycStatusBadge(user.kyc_status)}`}>
-                                                    {t(`admin.kyc.${user.kyc_status}`, user.kyc_status)}
+                                                    {t(`kyc.${user.kyc_status}`, user.kyc_status)}
                                                 </span>
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 {user.suspended_at ? (
                                                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-red-100 text-red-800">
-                                                        {t('admin.users.suspended')}
+                                                        {t('users.suspended')}
                                                     </span>
                                                 ) : (
                                                     <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">
-                                                        {t('admin.users.active')}
+                                                        {t('users.active')}
                                                     </span>
                                                 )}
                                             </td>
@@ -163,7 +163,7 @@ export default function Index({ users, filters }: { users: UsersData; filters: F
                                     {users.data.length === 0 && (
                                         <tr>
                                             <td colSpan={7} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                {t('admin.users.no_users')}
+                                                {t('users.no_users')}
                                             </td>
                                         </tr>
                                     )}

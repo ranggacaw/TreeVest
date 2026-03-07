@@ -11,5 +11,22 @@
     "updated_on": "Diperbarui pada",
     "by": "Oleh",
     "share": "Bagikan",
-    "back_to_education": "Kembali ke Pusat Edukasi"
+    "back_to_education": "Kembali ke Pusat Edukasi",
+    "common": {
+        "save": "Simpan",
+        "cancel": "Batal",
+        "delete": "Hapus",
+        "edit": "Edit",
+        "view": "Lihat",
+        "back": "Kembali",
+        "search": "Cari",
+        "filter": "Filter",
+        "submit": "Kirim",
+        "confirm": "Konfirmasi",
+        "loading": "Memuat...",
+        "no_results": "Tidak ada hasil ditemukan",
+        "actions": "Aksi",
+        "date": "Tanggal",
+        "type": "Tipe"
+    }
 }

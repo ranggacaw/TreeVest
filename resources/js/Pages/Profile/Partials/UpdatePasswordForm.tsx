@@ -12,7 +12,7 @@ export default function UpdatePasswordForm({
 }: {
     className?: string;
 }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const passwordInput = useRef<HTMLInputElement>(null);
     const currentPasswordInput = useRef<HTMLInputElement>(null);
 

@@ -27,7 +27,7 @@ interface Props {
 }
 
 export default function EducationShow({ article, relatedArticles }: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('education');
     const canonicalUrl = route('education.show', article.slug);
     const ogImage = article.featured_image || route('home');
 

@@ -74,22 +74,6 @@
         "view_all": "View All",
         "all_status": "All Status"
     },
-    "navigation": {
-        "home": "Home",
-        "education": "Education",
-        "start_investing": "Start Investing",
-        "dashboard": "Dashboard",
-        "profile": "Profile",
-        "settings": "Settings",
-        "notifications": "Notifications",
-        "portfolio": "Portfolio",
-        "investments": "Investments",
-        "payouts": "Payouts",
-        "reports": "Reports",
-        "farms": "Farms",
-        "trees": "Trees",
-        "admin": "Admin"
-    },
     "validation": {
         "required": "This field is required",
         "email": "Please enter a valid email address",

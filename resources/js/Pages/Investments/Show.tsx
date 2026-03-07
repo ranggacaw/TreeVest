@@ -120,7 +120,7 @@ export default function Show({ auth, investment }: Props) {
                         <ol className="flex items-center space-x-2">
                             <li>
                                 <Link href="/portfolio" className="text-sm text-gray-500 hover:text-gray-700">
-                                    {t('navigation.portfolio')}
+                                    {t('navigation:portfolio')}
                                 </Link>
                             </li>
                             <li>

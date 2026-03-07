@@ -39,13 +39,13 @@ export default function Authenticated({
                                 {user.role === 'investor' && (
                                     <>
                                         <NavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
-                                            {t('navigation.portfolio')}
+                                            {t('navigation:portfolio')}
                                         </NavLink>
                                         <NavLink href={route('farms.index')} active={route().current('farms.*')}>
-                                            {t('navigation.marketplace')}
+                                            {t('navigation:marketplace')}
                                         </NavLink>
                                         <NavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
-                                            {t('navigation.secondary_market')}
+                                            {t('navigation:secondary_market')}
                                         </NavLink>
                                     </>
                                 )}
@@ -54,10 +54,10 @@ export default function Authenticated({
                                 {user.role === 'farm_owner' && (
                                     <>
                                         <NavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
-                                            {t('navigation.farm_dashboard')}
+                                            {t('navigation:farm_dashboard')}
                                         </NavLink>
                                         <NavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
-                                            {t('navigation.my_farms')}
+                                            {t('navigation:my_farms')}
                                         </NavLink>
                                     </>
                                 )}
@@ -66,23 +66,23 @@ export default function Authenticated({
                                 {user.role === 'admin' && (
                                     <>
                                         <NavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
-                                            {t('navigation.admin_panel')}
+                                            {t('navigation:admin_panel')}
                                         </NavLink>
                                         <NavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
-                                            {t('navigation.farm_management')}
+                                            {t('navigation:farm_management')}
                                         </NavLink>
                                         <NavLink href={route('admin.translations.index')} active={route().current('admin.translations.*')}>
-                                            {t('navigation.translations', 'Translations')}
+                                            {t('navigation:translations', 'Translations')}
                                         </NavLink>
                                     </>
                                 )}
 
                                 {/* Modules available to all authenticated users */}
                                 <NavLink href={route('education.index')} active={route().current('education.*')}>
-                                    {t('navigation.education')}
+                                    {t('navigation:education')}
                                 </NavLink>
                                 <NavLink href={route('encyclopedia.index')} active={route().current('encyclopedia.*')}>
-                                    {t('navigation.encyclopedia')}
+                                    {t('navigation:encyclopedia')}
                                 </NavLink>
                             </div>
                         </div>
@@ -121,7 +121,7 @@ export default function Authenticated({
                                         <Dropdown.Link
                                             href={route('profile.edit')}
                                         >
-                                            {t('navigation.profile')}
+                                            {t('navigation:profile')}
                                         </Dropdown.Link>
                                         <Dropdown.Link
                                             href={route('logout')}
@@ -189,13 +189,13 @@ export default function Authenticated({
                         {user.role === 'investor' && (
                             <>
                                 <ResponsiveNavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
-                                    {t('navigation.portfolio')}
+                                    {t('navigation:portfolio')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('farms.index')} active={route().current('farms.*')}>
-                                    {t('navigation.marketplace')}
+                                    {t('navigation:marketplace')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
-                                    {t('navigation.secondary_market')}
+                                    {t('navigation:secondary_market')}
                                 </ResponsiveNavLink>
                             </>
                         )}
@@ -204,10 +204,10 @@ export default function Authenticated({
                         {user.role === 'farm_owner' && (
                             <>
                                 <ResponsiveNavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
-                                    {t('navigation.farm_dashboard')}
+                                    {t('navigation:farm_dashboard')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
-                                    {t('navigation.my_farms')}
+                                    {t('navigation:my_farms')}
                                 </ResponsiveNavLink>
                             </>
                         )}
@@ -216,23 +216,23 @@ export default function Authenticated({
                         {user.role === 'admin' && (
                             <>
                                 <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
-                                    {t('navigation.admin_panel')}
+                                    {t('navigation:admin_panel')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('admin.farms.index')} active={route().current('admin.farms.*')}>
-                                    {t('navigation.farm_management')}
+                                    {t('navigation:farm_management')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('admin.translations.index')} active={route().current('admin.translations.*')}>
-                                    {t('navigation.translations', 'Translations')}
+                                    {t('navigation:translations', 'Translations')}
                                 </ResponsiveNavLink>
                             </>
                         )}
 
                         {/* Modules available to all authenticated users */}
                         <ResponsiveNavLink href={route('education.index')} active={route().current('education.*')}>
-                            {t('navigation.education')}
+                            {t('navigation:education')}
                         </ResponsiveNavLink>
                         <ResponsiveNavLink href={route('encyclopedia.index')} active={route().current('encyclopedia.*')}>
-                            {t('navigation.encyclopedia')}
+                            {t('navigation:encyclopedia')}
                         </ResponsiveNavLink>
                     </div>
 
@@ -248,7 +248,7 @@ export default function Authenticated({
 
                         <div className="mt-3 space-y-1">
                             <ResponsiveNavLink href={route('profile.edit')}>
-                                {t('navigation.profile')}
+                                {t('navigation:profile')}
                             </ResponsiveNavLink>
                             <ResponsiveNavLink
                                 method="post"

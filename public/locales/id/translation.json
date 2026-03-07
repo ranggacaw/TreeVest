@@ -60,22 +60,6 @@
         "view_all": "Lihat Semua",
         "all_status": "Semua Status"
     },
-    "navigation": {
-        "home": "Beranda",
-        "education": "Edukasi",
-        "start_investing": "Mulai Investasi",
-        "dashboard": "Dasbor",
-        "profile": "Profil",
-        "settings": "Pengaturan",
-        "notifications": "Notifikasi",
-        "portfolio": "Portofolio",
-        "investments": "Investasi",
-        "payouts": "Pembayaran",
-        "reports": "Laporan",
-        "farms": "Kebun",
-        "trees": "Pohon",
-        "admin": "Admin"
-    },
     "validation": {
         "required": "Kolom ini wajib diisi",
         "email": "Silakan masukkan alamat email yang valid",

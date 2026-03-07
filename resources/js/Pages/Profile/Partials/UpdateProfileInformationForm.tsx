@@ -16,7 +16,7 @@ export default function UpdateProfileInformation({
     status?: string;
     className?: string;
 }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const page = usePage();
     const user = page.props.auth?.user;
 

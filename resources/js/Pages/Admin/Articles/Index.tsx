@@ -44,27 +44,27 @@ interface Props {
 }
 
 export default function AdminArticlesIndex({ articles }: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     return (
-        <AppLayout title={t('admin.articles.title')}>
-            <Head title={t('admin.articles.title')} />
+        <AppLayout title={t('articles.title')}>
+            <Head title={t('articles.title')} />
 
             <div className="min-h-screen bg-gray-50">
                 <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
                     <div className="flex items-center justify-between">
                         <div>
                             <h1 className="text-3xl font-bold text-gray-900">
-                                {t('admin.articles.title')}
+                                {t('articles.title')}
                             </h1>
                             <p className="mt-2 text-gray-600">
-                                {t('admin.articles.subtitle')}
+                                {t('articles.subtitle')}
                             </p>
                         </div>
                         <Link
                             href={route('admin.articles.create')}
                             className="rounded-lg bg-indigo-600 px-4 py-2 font-semibold text-white transition hover:bg-indigo-700"
                         >
-                            {t('admin.articles.create_article')}
+                            {t('articles.create_article')}
                         </Link>
                     </div>
 
@@ -73,19 +73,19 @@ export default function AdminArticlesIndex({ articles }: Props) {
                             <thead className="bg-gray-50">
                                 <tr>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        {t('admin.articles.article_title')}
+                                        {t('articles.article_title')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         {t('common.status')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        {t('admin.articles.author')}
+                                        {t('articles.author')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        {t('admin.articles.views')}
+                                        {t('articles.views')}
                                     </th>
                                     <th className="px-6 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">
-                                        {t('admin.articles.updated_at')}
+                                        {t('articles.updated_at')}
                                     </th>
                                     <th className="px-6 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">
                                         {t('common.actions')}

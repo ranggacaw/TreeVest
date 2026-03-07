@@ -11,5 +11,22 @@
     "updated_on": "Updated on",
     "by": "By",
     "share": "Share",
-    "back_to_education": "Back to Education Center"
+    "back_to_education": "Back to Education Center",
+    "common": {
+        "save": "Save",
+        "cancel": "Cancel",
+        "delete": "Delete",
+        "edit": "Edit",
+        "view": "View",
+        "back": "Back",
+        "search": "Search",
+        "filter": "Filter",
+        "submit": "Submit",
+        "confirm": "Confirm",
+        "loading": "Loading...",
+        "no_results": "No results found",
+        "actions": "Actions",
+        "date": "Date",
+        "type": "Type"
+    }
 }

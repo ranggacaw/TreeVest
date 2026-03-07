@@ -8,7 +8,7 @@ import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ConfirmPassword() {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const { data, setData, post, processing, errors, reset } = useForm({
         password: '',
     });

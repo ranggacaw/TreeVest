@@ -24,8 +24,8 @@ export default function List({ items, type, locale }: ListProps) {
     const { t } = useTranslation(['admin', 'translation']);
 
     return (
-        <AppLayout title={t('admin.translations.list_title', 'Translations List')}>
-            <Head title={t('admin.translations.list_title', 'Translations List')} />
+        <AppLayout title={t('translations.list_title', 'Translations List')}>
+            <Head title={t('translations.list_title', 'Translations List')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -41,7 +41,7 @@ export default function List({ items, type, locale }: ListProps) {
                                 {type} Translations
                             </h3>
                             <p className="text-sm text-gray-500 mt-1">
-                                {t('admin.translations.target_locale', 'Target Locale')}: <span className="font-semibold uppercase">{locale}</span>
+                                {t('translations.target_locale', 'Target Locale')}: <span className="font-semibold uppercase">{locale}</span>
                             </p>
                         </div>
                     </div>
@@ -55,7 +55,7 @@ export default function List({ items, type, locale }: ListProps) {
                                             {t('common.id', 'ID')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.item_title', 'Title / Name')}
+                                            {t('translations.item_title', 'Title / Name')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {t('common.status', 'Status')}
@@ -103,7 +103,7 @@ export default function List({ items, type, locale }: ListProps) {
                                     {items.data.length === 0 && (
                                         <tr>
                                             <td colSpan={5} className="px-6 py-4 text-center text-gray-500 text-sm">
-                                                {t('admin.translations.no_items', 'No items found.')}
+                                                {t('translations.no_items', 'No items found.')}
                                             </td>
                                         </tr>
                                     )}

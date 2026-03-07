@@ -9,7 +9,7 @@ import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Create({ auth }: PageProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     const { data, setData, post, processing, errors } = useForm({
         name: '',
         slug: '',

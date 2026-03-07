@@ -35,7 +35,7 @@ export default function Dashboard({
     publishedArticles,
     draftArticles,
 }: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     const { data, setData, get } = useForm({
         date_from: date_from || '',
         date_to: date_to || '',
@@ -52,11 +52,11 @@ export default function Dashboard({
     };
 
     const quickActions = [
-        { label: t('admin.dashboard.manage_users'), href: route('admin.users.index'), icon: <Users /> },
-        { label: t('admin.dashboard.review_kyc'), href: route('admin.kyc.index'), icon: <FileCheck /> },
-        { label: t('admin.dashboard.approve_farms'), href: route('admin.farms.index'), icon: <Leaf /> },
-        { label: t('admin.dashboard.create_article'), href: route('admin.articles.create'), icon: <FileText /> },
-        { label: t('admin.translations.title', 'Translation Management'), href: route('admin.translations.index'), icon: <Globe /> },
+        { label: t('dashboard.manage_users'), href: route('admin.users.index'), icon: <Users /> },
+        { label: t('dashboard.review_kyc'), href: route('admin.kyc.index'), icon: <FileCheck /> },
+        { label: t('dashboard.approve_farms'), href: route('admin.farms.index'), icon: <Leaf /> },
+        { label: t('dashboard.create_article'), href: route('admin.articles.create'), icon: <FileText /> },
+        { label: t('translations.title', 'Translation Management'), href: route('admin.translations.index'), icon: <Globe /> },
     ];
 
     const formatCurrency = (cents: number) => {
@@ -65,12 +65,12 @@ export default function Dashboard({
 
     return (
         <AppLayout
-            title={t('admin.dashboard.title')}
+            title={t('dashboard.title')}
             header={
                 <div className="flex justify-between items-center">
                     <div>
-                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">{t('admin.dashboard.title')}</h2>
-                        <p className="text-sm text-pine-500 mt-1">{t('admin.dashboard.subtitle')}</p>
+                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">{t('dashboard.title')}</h2>
+                        <p className="text-sm text-pine-500 mt-1">{t('dashboard.subtitle')}</p>
                     </div>
                 </div>
             }
@@ -86,7 +86,7 @@ export default function Dashboard({
                     {/* Metrics and Date Filter */}
                     <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                         <div className="mb-6 flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-                            <h2 className="text-lg font-bold text-pine-800">{t('admin.dashboard.platform_kpis')}</h2>
+                            <h2 className="text-lg font-bold text-pine-800">{t('dashboard.platform_kpis')}</h2>
 
                             <form onSubmit={submitFilter} className="flex flex-wrap items-center gap-2">
                                 <input
@@ -114,39 +114,39 @@ export default function Dashboard({
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <StatCard label={t('admin.dashboard.total_users')} value={metrics.total_users} icon={<Users />} />
-                            <StatCard label={t('admin.dashboard.kyc_verified')} value={metrics.kyc_verified} icon={<FileCheck />} />
-                            <StatCard label={t('admin.dashboard.active_investments')} value={metrics.active_investments} icon={<Sprout />} />
-                            <StatCard label={t('admin.dashboard.investment_volume')} value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
+                            <StatCard label={t('dashboard.total_users')} value={metrics.total_users} icon={<Users />} />
+                            <StatCard label={t('dashboard.kyc_verified')} value={metrics.kyc_verified} icon={<FileCheck />} />
+                            <StatCard label={t('dashboard.active_investments')} value={metrics.active_investments} icon={<Sprout />} />
+                            <StatCard label={t('dashboard.investment_volume')} value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
 
                             <StatCard
-                                label={t('admin.dashboard.pending_kyc')}
+                                label={t('dashboard.pending_kyc')}
                                 value={metrics.pending_kyc}
                                 icon={<Clock />}
                                 accent={metrics.pending_kyc > 0 ? 'amber' : 'none'}
                             />
                             <StatCard
-                                label={t('admin.dashboard.pending_farms')}
+                                label={t('dashboard.pending_farms')}
                                 value={metrics.pending_farms}
                                 icon={<Clock />}
                                 accent={metrics.pending_farms > 0 ? 'amber' : 'none'}
                             />
-                            <StatCard label={t('admin.dashboard.completed_harvests')} value={metrics.completed_harvests} icon={<Leaf />} />
-                            <StatCard label={t('admin.dashboard.total_payouts')} value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
+                            <StatCard label={t('dashboard.completed_harvests')} value={metrics.completed_harvests} icon={<Leaf />} />
+                            <StatCard label={t('dashboard.total_payouts')} value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
                         </div>
                     </div>
 
                     <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                         {/* Recent Activity */}
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200 lg:row-span-2">
-                            <h2 className="text-lg font-bold text-pine-800 mb-6">{t('admin.dashboard.recent_activity')}</h2>
+                            <h2 className="text-lg font-bold text-pine-800 mb-6">{t('dashboard.recent_activity')}</h2>
                             <ActivityFeed activities={recentActivity} />
                         </div>
 
                         {/* Article Sections (Popular/Stale) */}
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
-                                <h2 className="text-lg font-bold text-pine-800">{t('admin.dashboard.popular_articles')}</h2>
+                                <h2 className="text-lg font-bold text-pine-800">{t('dashboard.popular_articles')}</h2>
                                 <Link
                                     href={route('admin.articles.index')}
                                     className="text-sm font-bold text-pine-600 hover:text-pine-800 transition-colors"
@@ -168,12 +168,12 @@ export default function Dashboard({
                                                             {article.title}
                                                         </p>
                                                         <p className="text-xs text-gray-500">
-                                                            {t('admin.dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
+                                                            {t('dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
                                                         </p>
                                                     </div>
                                                     <div className="ml-4 flex items-center text-sm text-gray-500">
                                                         <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
-                                                            {t('admin.dashboard.stale')}
+                                                            {t('dashboard.stale')}
                                                         </span>
                                                     </div>
                                                     <div className="ml-4 flex items-center text-sm text-gray-500">
@@ -204,20 +204,20 @@ export default function Dashboard({
                                     ))}
                                 </ul>
                             ) : (
-                                <p className="text-sm text-gray-500">{t('admin.dashboard.no_articles')}</p>
+                                <p className="text-sm text-gray-500">{t('dashboard.no_articles')}</p>
                             )}
                         </div>
 
                         <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
                             <div className="mb-4 flex items-center justify-between">
                                 <h2 className="text-lg font-bold text-pine-800">
-                                    <span className="text-yellow-600">⚠️</span> {t('admin.dashboard.stale_content')}
+                                    <span className="text-yellow-600">⚠️</span> {t('dashboard.stale_content')}
                                 </h2>
                             </div>
                             {staleArticles.length > 0 ? (
                                 <>
                                     <p className="mb-4 text-sm text-gray-600">
-                                        {t('admin.dashboard.stale_content_description')}
+                                        {t('dashboard.stale_content_description')}
                                     </p>
                                     <ul className="divide-y divide-gray-200">
                                         {staleArticles.map((article) => (
@@ -232,7 +232,7 @@ export default function Dashboard({
                                                                 {article.title}
                                                             </p>
                                                             <p className="text-xs text-gray-500">
-                                                                {t('admin.dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
+                                                                {t('dashboard.last_updated')}: {new Date(article.updated_at).toLocaleDateString()}
                                                             </p>
                                                         </div>
                                                         <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-1 text-xs font-medium text-yellow-800">
@@ -245,7 +245,7 @@ export default function Dashboard({
                                     </ul>
                                 </>
                             ) : (
-                                <p className="text-sm text-gray-500">{t('admin.dashboard.all_content_up_to_date')}</p>
+                                <p className="text-sm text-gray-500">{t('dashboard.all_content_up_to_date')}</p>
                             )}
                         </div>
                     </div>

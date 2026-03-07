@@ -37,7 +37,7 @@ export default function ReviewCard({ item, locale, selected = false, onSelect }:
     };
 
     const handleReject = () => {
-        if (confirm(t('admin.translations.confirm_reject', 'Are you sure you want to reject and delete this translation?'))) {
+        if (confirm(t('translations.confirm_reject', 'Are you sure you want to reject and delete this translation?'))) {
             post(route('admin.translations.reject', { id: item.id }), {
                 preserveScroll: true
             });
@@ -77,7 +77,7 @@ export default function ReviewCard({ item, locale, selected = false, onSelect }:
             <div className="p-4 grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                     <h5 className="text-xs font-semibold text-gray-500 uppercase tracking-wider mb-2">
-                        {t('admin.translations.original_content', 'Original Content')}
+                        {t('translations.original_content', 'Original Content')}
                     </h5>
                     <div className="bg-gray-100 p-3 rounded text-sm text-gray-800 whitespace-pre-wrap max-h-60 overflow-y-auto">
                         {item.original || <span className="italic text-gray-400">Empty</span>}
@@ -86,7 +86,7 @@ export default function ReviewCard({ item, locale, selected = false, onSelect }:
 
                 <div>
                     <h5 className="text-xs font-semibold text-indigo-600 uppercase tracking-wider mb-2">
-                        {t('admin.translations.target_locale', 'Target')}: {locale.toUpperCase()}
+                        {t('translations.target_locale', 'Target')}: {locale.toUpperCase()}
                     </h5>
                     {isEditing ? (
                         <div>
@@ -113,7 +113,7 @@ export default function ReviewCard({ item, locale, selected = false, onSelect }:
                             <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                             </svg>
-                            {t('admin.translations.source_machine', 'Machine Translated')}
+                            {t('translations.source_machine', 'Machine Translated')}
                         </p>
                     )}
                 </div>
@@ -136,7 +136,7 @@ export default function ReviewCard({ item, locale, selected = false, onSelect }:
                                 disabled={processing}
                                 className="px-3 py-1.5 border border-transparent rounded shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700"
                             >
-                                {t('admin.translations.save_and_approve', 'Save & Approve')}
+                                {t('translations.save_and_approve', 'Save & Approve')}
                             </button>
                         </>
                     ) : (

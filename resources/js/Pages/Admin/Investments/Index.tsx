@@ -53,7 +53,7 @@ interface Props {
 }
 
 export default function Index({ investments, farms, filters }: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     const getStatusBadge = (status: string) => {
         switch (status) {
             case 'active':
@@ -76,13 +76,13 @@ export default function Index({ investments, farms, filters }: Props) {
     };
 
     return (
-        <AppLayout title={t('admin.investments.title')}>
-            <Head title={t('admin.investments.title')} />
+        <AppLayout title={t('investments.title')}>
+            <Head title={t('investments.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">{t('admin.investments.title')}</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('investments.title')}</h3>
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -92,7 +92,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     <input
                                         type="text"
                                         name="search"
-                                        placeholder={t('admin.investments.search_placeholder')}
+                                        placeholder={t('investments.search_placeholder')}
                                         defaultValue={filters.search}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />
@@ -102,7 +102,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     defaultValue={filters.farm_id}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">{t('admin.farms.all_farms')}</option>
+                                    <option value="">{t('farms.all_farms')}</option>
                                     {farms.map((farm) => (
                                         <option key={farm.id} value={farm.id}>
                                             {farm.name}
@@ -115,11 +115,11 @@ export default function Index({ investments, farms, filters }: Props) {
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
                                     <option value="">{t('common.all_status', 'All Status')}</option>
-                                    <option value="pending_payment">{t('admin.investments.pending_payment')}</option>
-                                    <option value="active">{t('admin.investments.active')}</option>
-                                    <option value="matured">{t('admin.investments.matured')}</option>
-                                    <option value="sold">{t('admin.investments.sold')}</option>
-                                    <option value="cancelled">{t('admin.investments.cancelled')}</option>
+                                    <option value="pending_payment">{t('investments.pending_payment')}</option>
+                                    <option value="active">{t('investments.active')}</option>
+                                    <option value="matured">{t('investments.matured')}</option>
+                                    <option value="sold">{t('investments.sold')}</option>
+                                    <option value="cancelled">{t('investments.cancelled')}</option>
                                 </select>
                                 <button
                                     type="submit"
@@ -133,9 +133,9 @@ export default function Index({ investments, farms, filters }: Props) {
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">ID</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.investor')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.amount')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('admin.investments.tree')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('investments.investor')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('investments.amount')}</th>
+                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('investments.tree')}</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.status')}</th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.date')}</th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('common.actions')}</th>
@@ -152,7 +152,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                                                 {formatAmount(investment.amount_cents, investment.currency)}
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t('admin.investments.tree_id', { id: investment.tree_id })}</td>
+                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t('investments.tree_id', { id: investment.tree_id })}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                 <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(investment.status)}`}>
                                                     {t(`admin.investments.${investment.status}`, investment.status.replace('_', ' ').toUpperCase())}
@@ -169,7 +169,7 @@ export default function Index({ investments, farms, filters }: Props) {
                                     {investments.data.length === 0 && (
                                         <tr>
                                             <td colSpan={7} className="px-6 py-4 whitespace-nowrap text-sm text-gray-500 text-center">
-                                                {t('admin.investments.no_investments')}
+                                                {t('investments.no_investments')}
                                             </td>
                                         </tr>
                                     )}

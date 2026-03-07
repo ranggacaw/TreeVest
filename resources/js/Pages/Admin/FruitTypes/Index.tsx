@@ -25,7 +25,7 @@ interface Filters {
 }
 
 export default function Index({ fruitTypes, filters }: { fruitTypes: FruitTypesData; filters: Filters }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     return (
         <AppLayout title="Fruit Types">
             <Head title="Fruit Types" />

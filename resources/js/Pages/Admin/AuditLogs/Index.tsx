@@ -34,15 +34,15 @@ interface Filters {
 }
 
 export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData; filters: Filters }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     return (
-        <AppLayout title={t('admin.audit_logs.title')}>
-            <Head title={t('admin.audit_logs.title')} />
+        <AppLayout title={t('audit_logs.title')}>
+            <Head title={t('audit_logs.title')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
-                        <h3 className="text-lg font-medium text-gray-900">{t('admin.audit_logs.title')}</h3>
+                        <h3 className="text-lg font-medium text-gray-900">{t('audit_logs.title')}</h3>
                     </div>
 
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
@@ -53,23 +53,23 @@ export default function Index({ auditLogs, filters }: { auditLogs: AuditLogsData
                                     defaultValue={filters.event_type}
                                     className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                 >
-                                    <option value="">{t('admin.audit_logs.all_event_types')}</option>
-                                    <option value="login">{t('admin.audit_logs.event_login')}</option>
-                                    <option value="failed_login">{t('admin.audit_logs.event_failed_login')}</option>
-                                    <option value="user.registered">{t('admin.audit_logs.event_registration')}</option>
-                                    <option value="kyc_submitted">{t('admin.audit_logs.event_kyc_submitted')}</option>
-                                    <option value="kyc_verified">{t('admin.audit_logs.event_kyc_verified')}</option>
-                                    <option value="kyc_rejected">{t('admin.audit_logs.event_kyc_rejected')}</option>
-                                    <option value="investment_purchased">{t('admin.audit_logs.event_investment')}</option>
-                                    <option value="payout_processed">{t('admin.audit_logs.event_payout')}</option>
-                                    <option value="admin_action">{t('admin.audit_logs.event_admin')}</option>
-                                    <option value="role.changed">{t('admin.audit_logs.event_role')}</option>
+                                    <option value="">{t('audit_logs.all_event_types')}</option>
+                                    <option value="login">{t('audit_logs.event_login')}</option>
+                                    <option value="failed_login">{t('audit_logs.event_failed_login')}</option>
+                                    <option value="user.registered">{t('audit_logs.event_registration')}</option>
+                                    <option value="kyc_submitted">{t('audit_logs.event_kyc_submitted')}</option>
+                                    <option value="kyc_verified">{t('audit_logs.event_kyc_verified')}</option>
+                                    <option value="kyc_rejected">{t('audit_logs.event_kyc_rejected')}</option>
+                                    <option value="investment_purchased">{t('audit_logs.event_investment')}</option>
+                                    <option value="payout_processed">{t('audit_logs.event_payout')}</option>
+                                    <option value="admin_action">{t('audit_logs.event_admin')}</option>
+                                    <option value="role.changed">{t('audit_logs.event_role')}</option>
                                 </select>
                                 <div className="flex-1 min-w-[200px]">
                                     <input
                                         type="text"
                                         name="user_id"
-                                        placeholder={t('admin.audit_logs.user_id_placeholder')}
+                                        placeholder={t('audit_logs.user_id_placeholder')}
                                         defaultValue={filters.user_id}
                                         className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
                                     />

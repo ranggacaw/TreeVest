@@ -141,7 +141,11 @@
         "filter": "Filter",
         "clear": "Hapus",
         "loading": "Memuat...",
-        "no_results": "Tidak ada hasil",
-        "confirm_delete": "Apakah Anda yakin ingin menghapus item ini?"
+        "no_results": "Tidak ada hasil ditemukan",
+        "confirm_delete": "Apakah Anda yakin ingin menghapus item ini?",
+        "view": "Lihat",
+        "confirm": "Konfirmasi",
+        "actions": "Aksi"
     }
+}
 }

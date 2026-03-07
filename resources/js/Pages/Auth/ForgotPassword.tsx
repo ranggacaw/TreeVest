@@ -7,7 +7,7 @@ import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function ForgotPassword({ status }: { status?: string }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const { data, setData, post, processing, errors } = useForm({
         email: '',
     });

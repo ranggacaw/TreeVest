@@ -12,34 +12,34 @@ interface FraudAlert {
 }
 
 export default function FraudAlerts({ auth }: PageProps) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('admin');
     // This is a placeholder for the actual datatable implementation
     const alerts: FraudAlert[] = []; 
 
     return (
         <div className="min-h-screen bg-gray-100 dark:bg-gray-900 pt-6">
-            <Head title={t('admin.fraud_alerts.title')} />
+            <Head title={t('fraud_alerts.title')} />
 
             <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                 <div className="bg-white dark:bg-gray-800 overflow-hidden shadow-sm sm:rounded-lg">
                     <div className="p-6 text-gray-900 dark:text-gray-100">
-                        <h1 className="text-2xl font-bold mb-4">{t('admin.fraud_alerts.title')}</h1>
-                        <p>{t('admin.fraud_alerts.subtitle')}</p>
+                        <h1 className="text-2xl font-bold mb-4">{t('fraud_alerts.title')}</h1>
+                        <p>{t('fraud_alerts.subtitle')}</p>
                         
                         <div className="mt-4">
                             <table className="min-w-full divide-y divide-gray-200 dark:divide-gray-700">
                                 <thead>
                                     <tr>
-                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('admin.fraud_alerts.type')}</th>
-                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('admin.fraud_alerts.severity')}</th>
-                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('admin.fraud_alerts.detected_at')}</th>
+                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('fraud_alerts.type')}</th>
+                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('fraud_alerts.severity')}</th>
+                                        <th className="px-6 py-3 bg-gray-50 dark:bg-gray-800 text-left text-xs font-medium text-gray-500 dark:text-gray-400 uppercase tracking-wider">{t('fraud_alerts.detected_at')}</th>
                                     </tr>
                                 </thead>
                                 <tbody className="bg-white dark:bg-gray-800 divide-y divide-gray-200 dark:divide-gray-700">
                                     {alerts.length === 0 ? (
                                         <tr>
                                             <td colSpan={3} className="px-6 py-4 text-center text-gray-500 dark:text-gray-400">
-                                                {t('admin.fraud_alerts.no_alerts')}
+                                                {t('fraud_alerts.no_alerts')}
                                             </td>
                                         </tr>
                                     ) : (

@@ -14,7 +14,7 @@ export default function ResetPassword({
     token: string;
     email: string;
 }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const { data, setData, post, processing, errors, reset } = useForm({
         token: token,
         email: email,

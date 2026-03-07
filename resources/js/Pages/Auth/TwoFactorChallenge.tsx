@@ -8,7 +8,7 @@ import { FormEventHandler, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function TwoFactorChallenge() {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const [otp, setOtp] = useState('');
     const [useRecoveryCode, setUseRecoveryCode] = useState(false);
 

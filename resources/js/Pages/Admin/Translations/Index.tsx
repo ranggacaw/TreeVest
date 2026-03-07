@@ -24,14 +24,14 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
     const { t } = useTranslation(['admin', 'translation']);
 
     return (
-        <AppLayout title={t('admin.translations.title', 'Translation Management')}>
-            <Head title={t('admin.translations.title', 'Translation Management')} />
+        <AppLayout title={t('translations.title', 'Translation Management')}>
+            <Head title={t('translations.title', 'Translation Management')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex items-center justify-between">
                         <h3 className="text-lg font-medium text-gray-900">
-                            {t('admin.translations.title', 'Translation Management')}
+                            {t('translations.title', 'Translation Management')}
                         </h3>
 
                         <div className="flex items-center space-x-4">
@@ -39,7 +39,7 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                                 href={route('admin.translations.queue', { locale })}
                                 className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 disabled:opacity-25 transition ease-in-out duration-150"
                             >
-                                {t('admin.translations.review_queue', 'Review Queue')}
+                                {t('translations.review_queue', 'Review Queue')}
                                 {stats.reduce((acc, curr) => acc + curr.pending_review, 0) > 0 && (
                                     <span className="ml-2 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-red-100 bg-red-600 rounded-full">
                                         {stats.reduce((acc, curr) => acc + curr.pending_review, 0)}
@@ -48,7 +48,7 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                             </Link>
 
                             <span className="text-sm text-gray-500">
-                                {t('admin.translations.target_locale', 'Target Locale')}:
+                                {t('translations.target_locale', 'Target Locale')}:
                             </span>
                             <form method="get" className="flex items-center">
                                 <select
@@ -71,7 +71,7 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                         <div className="mb-6 grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center justify-between border-l-4 border-indigo-500">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('admin.translations.api_chars_month', 'Machine Translation Characters (This Month)')}</p>
+                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('translations.api_chars_month', 'Machine Translation Characters (This Month)')}</p>
                                     <p className="text-2xl font-bold text-gray-900">{apiUsage.characters_this_month.toLocaleString()}</p>
                                 </div>
                                 <div className="p-3 bg-indigo-50 rounded-full">
@@ -80,7 +80,7 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                             </div>
                             <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6 flex items-center justify-between border-l-4 border-emerald-500">
                                 <div>
-                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('admin.translations.api_estimated_cost', 'Estimated API Cost (This Month)')}</p>
+                                    <p className="text-sm font-medium text-gray-500 mb-1">{t('translations.api_estimated_cost', 'Estimated API Cost (This Month)')}</p>
                                     <p className="text-2xl font-bold text-gray-900">${apiUsage.estimated_cost.toFixed(2)}</p>
                                 </div>
                                 <div className="p-3 bg-emerald-50 rounded-full">
@@ -93,26 +93,26 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
                             <h4 className="text-md font-semibold text-gray-800 mb-4">
-                                {t('admin.translations.coverage_by_type', 'Coverage by Content Type')} ({locale.toUpperCase()})
+                                {t('translations.coverage_by_type', 'Coverage by Content Type')} ({locale.toUpperCase()})
                             </h4>
 
                             <table className="min-w-full divide-y divide-gray-200">
                                 <thead className="bg-gray-50">
                                     <tr>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.content_type', 'Content Type')}
+                                            {t('translations.content_type', 'Content Type')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.total_items', 'Total Items')}
+                                            {t('translations.total_items', 'Total Items')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.translated', 'Translated')}
+                                            {t('translations.translated', 'Translated')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.pending_review', 'Pending Review')}
+                                            {t('translations.pending_review', 'Pending Review')}
                                         </th>
                                         <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                                            {t('admin.translations.coverage', 'Coverage')}
+                                            {t('translations.coverage', 'Coverage')}
                                         </th>
                                         <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
                                             {t('common.actions', 'Actions')}
@@ -163,7 +163,7 @@ export default function Index({ stats, locale, availableLocales, apiUsage }: Ind
                                     {stats.length === 0 && (
                                         <tr>
                                             <td colSpan={6} className="px-6 py-4 text-center text-gray-500 text-sm">
-                                                {t('admin.translations.no_data', 'No translatable content found.')}
+                                                {t('translations.no_data', 'No translatable content found.')}
                                             </td>
                                         </tr>
                                     )}

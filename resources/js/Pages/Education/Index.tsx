@@ -56,7 +56,7 @@ interface Props {
 }
 
 export default function EducationIndex({ articles, categories, filters }: Props) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('education');
     const handleFilterChange = (filterType: string, value: string) => {
         const url = new URL(window.location.href);
         if (value) {

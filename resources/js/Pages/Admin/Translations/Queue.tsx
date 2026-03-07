@@ -68,7 +68,7 @@ export default function Queue({ translations, locale, availableLocales, filters,
 
     const handleBatchApprove = () => {
         if (!selectedIds.length) return;
-        if (confirm(t('admin.translations.confirm_batch_approve', 'Are you sure you want to approve selected translations?'))) {
+        if (confirm(t('translations.confirm_batch_approve', 'Are you sure you want to approve selected translations?'))) {
             router.post(route('admin.translations.batch-approve'), { ids: selectedIds }, {
                 preserveScroll: true,
                 onSuccess: () => setSelectedIds([])
@@ -77,15 +77,15 @@ export default function Queue({ translations, locale, availableLocales, filters,
     };
 
     return (
-        <AppLayout title={t('admin.translations.review_queue', 'Translation Review Queue')}>
-            <Head title={t('admin.translations.review_queue', 'Translation Review Queue')} />
+        <AppLayout title={t('translations.review_queue', 'Translation Review Queue')}>
+            <Head title={t('translations.review_queue', 'Translation Review Queue')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
                     <div className="mb-6 flex flex-col sm:flex-row items-center justify-between gap-4">
                         <div className="flex items-center space-x-4">
                             <h3 className="text-lg font-medium text-gray-900">
-                                {t('admin.translations.review_queue', 'Translation Review Queue')}
+                                {t('translations.review_queue', 'Translation Review Queue')}
                             </h3>
                             <span className="bg-yellow-100 text-yellow-800 text-xs font-semibold px-2.5 py-0.5 rounded-full">
                                 {translations.total} pending
@@ -97,12 +97,12 @@ export default function Queue({ translations, locale, availableLocales, filters,
                                 href={route('admin.translations.index', { locale })}
                                 className="text-sm text-indigo-600 hover:text-indigo-900 self-end"
                             >
-                                {t('admin.translations.back_to_dashboard', 'Back to Dashboard')}
+                                {t('translations.back_to_dashboard', 'Back to Dashboard')}
                             </Link>
 
                             <form onSubmit={handleFilter} className="flex flex-wrap items-center gap-3 bg-gray-50 p-3 rounded-lg border shadow-sm">
                                 <div className="flex items-center">
-                                    <span className="text-sm font-medium text-gray-700 mr-2">{t('admin.translations.target_locale', 'Locale')}:</span>
+                                    <span className="text-sm font-medium text-gray-700 mr-2">{t('translations.target_locale', 'Locale')}:</span>
                                     <select
                                         name="locale"
                                         value={filterForm.data.locale}
@@ -135,8 +135,8 @@ export default function Queue({ translations, locale, availableLocales, filters,
                                         className="rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm py-1"
                                     >
                                         <option value="">{t('common.all_pending', 'All Pending')}</option>
-                                        <option value="machine_translated">{t('admin.translations.status_machine', 'Machine Translated')}</option>
-                                        <option value="under_review">{t('admin.translations.status_review', 'Under Review')}</option>
+                                        <option value="machine_translated">{t('translations.status_machine', 'Machine Translated')}</option>
+                                        <option value="under_review">{t('translations.status_review', 'Under Review')}</option>
                                     </select>
                                 </div>
                                 <div className="flex items-center gap-2">
@@ -173,7 +173,7 @@ export default function Queue({ translations, locale, availableLocales, filters,
                                         className={`px-3 py-1.5 border border-transparent rounded shadow-sm text-sm font-medium text-white ${selectedIds.length > 0 ? 'bg-indigo-600 hover:bg-indigo-700' : 'bg-indigo-300 cursor-not-allowed'
                                             }`}
                                     >
-                                        {t('admin.translations.approve_selected', 'Approve Selected')}
+                                        {t('translations.approve_selected', 'Approve Selected')}
                                     </button>
                                 </div>
                             </div>

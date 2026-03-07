@@ -5,7 +5,7 @@ import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function VerifyEmail({ status }: { status?: string }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const { post, processing } = useForm({});
 
     const submit: FormEventHandler = (e) => {

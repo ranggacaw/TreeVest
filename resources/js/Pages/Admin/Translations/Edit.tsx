@@ -39,8 +39,8 @@ export default function Edit({ item, locale, type }: EditProps) {
     };
 
     return (
-        <AppLayout title={t('admin.translations.edit_title', 'Edit Translation')}>
-            <Head title={t('admin.translations.edit_title', 'Edit Translation')} />
+        <AppLayout title={t('translations.edit_title', 'Edit Translation')}>
+            <Head title={t('translations.edit_title', 'Edit Translation')} />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
@@ -53,10 +53,10 @@ export default function Edit({ item, locale, type }: EditProps) {
                                 &larr; {t('common.back', 'Back')}
                             </Link>
                             <h3 className="text-xl font-medium text-gray-900">
-                                {t('admin.translations.translate_item', 'Translate')} {type.split('\\').pop()} #{item.original_id}
+                                {t('translations.translate_item', 'Translate')} {type.split('\\').pop()} #{item.original_id}
                             </h3>
                             <p className="text-sm text-gray-500 mt-1">
-                                {t('admin.translations.target_locale', 'Target Locale')}: <span className="font-semibold uppercase">{locale}</span>
+                                {t('translations.target_locale', 'Target Locale')}: <span className="font-semibold uppercase">{locale}</span>
                             </p>
                         </div>
 
@@ -76,7 +76,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                 <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z"></path>
                                 </svg>
-                                {t('admin.translations.generate_draft', 'Generate Draft Translation')}
+                                {t('translations.generate_draft', 'Generate Draft Translation')}
                             </button>
                         </form>
                     </div>
@@ -105,7 +105,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                             {/* Original Content Column */}
                                             <div>
                                                 <label className="block text-sm font-medium text-gray-500 mb-2">
-                                                    {t('admin.translations.original_content', 'Original Content')}
+                                                    {t('translations.original_content', 'Original Content')}
                                                 </label>
                                                 <div className="bg-gray-100 p-4 rounded-md border text-gray-700 min-h-[150px] whitespace-pre-wrap max-h-[400px] overflow-y-auto">
                                                     {dataObj.original || <span className="text-gray-400 italic">Empty</span>}
@@ -115,7 +115,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                             {/* Translated Content Column */}
                                             <div>
                                                 <label className="block text-sm font-medium text-indigo-600 mb-2">
-                                                    {t('admin.translations.translated_content', 'Translated Content')} ({locale.toUpperCase()})
+                                                    {t('translations.translated_content', 'Translated Content')} ({locale.toUpperCase()})
                                                 </label>
                                                 <textarea
                                                     name={field}
@@ -123,7 +123,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                                     onChange={e => setData(field, e.target.value)}
                                                     className={`w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 min-h-[150px] ${errors[field] ? 'border-red-500 focus:border-red-500 focus:ring-red-500' : ''
                                                         }`}
-                                                    placeholder={`${t('admin.translations.enter_translation_for', 'Enter translation for')} ${field}...`}
+                                                    placeholder={`${t('translations.enter_translation_for', 'Enter translation for')} ${field}...`}
                                                     rows={8}
                                                 />
                                                 {errors[field] && (
@@ -135,7 +135,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                                         <svg className="w-4 h-4 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
                                                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path>
                                                         </svg>
-                                                        {t('admin.translations.machine_translated', 'Draft generated by Machine Translation')}
+                                                        {t('translations.machine_translated', 'Draft generated by Machine Translation')}
                                                     </p>
                                                 )}
                                             </div>
@@ -155,7 +155,7 @@ export default function Edit({ item, locale, type }: EditProps) {
                                         disabled={processing}
                                         className="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 text-sm font-medium shadow-sm transition-colors"
                                     >
-                                        {processing ? t('common.saving', 'Saving...') : t('admin.translations.save_and_approve', 'Save & Approve')}
+                                        {processing ? t('common.saving', 'Saving...') : t('translations.save_and_approve', 'Save & Approve')}
                                     </button>
                                 </div>
                             </form>

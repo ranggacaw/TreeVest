@@ -13,9 +13,24 @@ export const initI18n = async (locale: string = "en") => {
     await i18n
         .use(
             resourcesToBackend((language: string, namespace: string) => {
-                return import(
-                    `../public/locales/${language}/${namespace}.json`
-                );
+                // Try to load from public/locales directory
+                return fetch(`/locales/${language}/${namespace}.json`)
+                    .then((response) => {
+                        if (!response.ok) {
+                            console.warn(
+                                `Translation file not found: /locales/${language}/${namespace}.json`,
+                            );
+                            return null;
+                        }
+                        return response.json();
+                    })
+                    .catch((error) => {
+                        console.error(
+                            `Error loading translation file: /locales/${language}/${namespace}.json`,
+                            error,
+                        );
+                        return null;
+                    });
             }),
         )
         .use(initReactI18next)
@@ -32,10 +47,12 @@ export const initI18n = async (locale: string = "en") => {
                 "harvests",
                 "education",
                 "auth",
+                "navigation",
             ],
             interpolation: {
                 escapeValue: false,
             },
+            debug: process.env.NODE_ENV === "development",
         });
 
     isInitialized = true;

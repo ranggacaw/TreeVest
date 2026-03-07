@@ -9,7 +9,7 @@ import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 
 export default function Create({ auth, farms, fruitTypes }: PageProps<{ farms: any[], fruitTypes: any[] }>) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('farms');
     const { data, setData, post, processing, errors } = useForm({
         farm_id: '',
         fruit_type_id: '',

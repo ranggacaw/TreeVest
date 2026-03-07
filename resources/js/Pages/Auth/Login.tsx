@@ -16,7 +16,7 @@ export default function Login({
     status?: string;
     canResetPassword: boolean;
 }) {
-    const { t } = useTranslation();
+    const { t } = useTranslation('auth');
     const { data, setData, post, processing, errors, reset } = useForm({
         email: '',
         password: '',
