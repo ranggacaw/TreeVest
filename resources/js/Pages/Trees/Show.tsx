@@ -90,8 +90,8 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                     <dd className="mt-1 text-sm text-gray-900">{t('years', { count: tree.age_years })}</dd>
                                 </div>
                                 <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">{t('lifespan')}</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{t('years', { count: tree.productive_lifespan_years })}</dd>
+                                    <dt className="text-sm font-medium text-gray-500">{t('remaining_productivity', { defaultValue: 'Remaining Productivity' })}</dt>
+                                    <dd className="mt-1 text-sm text-green-700 bg-green-50 inline-flex px-2 py-0.5 rounded border border-green-100 font-medium">{t('years', { count: Math.max(0, tree.productive_lifespan_years - tree.age_years) })} ({t('produces_yields', { defaultValue: 'produces yields' })})</dd>
                                 </div>
                                 <div className="sm:col-span-1">
                                     <dt className="text-sm font-medium text-gray-500">{t('status')}</dt>

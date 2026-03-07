@@ -269,6 +269,10 @@ Route::middleware('auth')->group(function () {
         Route::get('/{investment}/top-up', [InvestmentController::class, 'topUpForm'])->name('top-up.form');
         Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up');
 
+        if (app()->environment('local')) {
+            Route::post('/{investment}/mock-confirm', [InvestmentController::class, 'mockConfirm'])->name('mock-confirm');
+        }
+
         Route::get('/health-feed', [InvestorHealthFeedController::class, 'index'])->name('health-feed.index');
         Route::get('/health-feed/{healthUpdate}', [InvestorHealthFeedController::class, 'show'])->name('health-feed.show');
         Route::get('/health-alerts', [InvestorHealthFeedController::class, 'alerts'])->name('health-alerts');

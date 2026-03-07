@@ -115,7 +115,7 @@ export default function Show({ auth, investment }: Props) {
             <Head title={t('investment_number', { id: investment.id })} />
 
             <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     <nav className="flex mb-6" aria-label="Breadcrumb">
                         <ol className="flex items-center space-x-2">
                             <li>
@@ -151,12 +151,10 @@ export default function Show({ auth, investment }: Props) {
                                         {investment.status_label}
                                     </span>
                                 </div>
-                                <Link
-                                    href="/portfolio"
-                                    className="text-sm text-gray-600 hover:text-gray-900"
-                                >
+
+                                <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
                                     {t('back_to_portfolio')}
-                                </Link>
+                                </button>
                             </div>
 
                             <div className="border-t border-gray-200 pt-6">

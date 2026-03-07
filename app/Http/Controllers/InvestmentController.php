@@ -167,11 +167,11 @@ class InvestmentController extends Controller
     {
         // Optimized query with specific select for form data
         $tree = Tree::with([
-            'fruitCrop:id,variant,farm_id,fruit_type_id',
+            'fruitCrop:id,variant,farm_id,fruit_type_id,harvest_cycle',
             'fruitCrop.farm:id,name,city,state',
             'fruitCrop.fruitType:id,name'
         ])
-            ->select(['id', 'tree_identifier', 'price_cents', 'expected_roi_percent', 'risk_rating', 'min_investment_cents', 'max_investment_cents', 'fruit_crop_id', 'status'])
+            ->select(['id', 'tree_identifier', 'price_cents', 'expected_roi_percent', 'risk_rating', 'min_investment_cents', 'max_investment_cents', 'fruit_crop_id', 'status', 'age_years', 'productive_lifespan_years'])
             ->findOrFail($treeId);
 
         if (!$tree->isInvestable()) {
@@ -317,6 +317,7 @@ class InvestmentController extends Controller
 
         return Inertia::render('Investments/Purchase/Confirmation', [
             'investment' => $investmentResource->forConfirmation(),
+            'is_local' => app()->environment('local'),
         ]);
     }
 
@@ -425,5 +426,24 @@ class InvestmentController extends Controller
             ]);
             return back()->with('error', $e->getMessage());
         }
+    }
+
+    public function mockConfirm(int $investment)
+    {
+        if (!app()->environment('local')) {
+            abort(403);
+        }
+
+        $investmentModel = Investment::with('transaction')->findOrFail($investment);
+        $this->authorize('view', $investmentModel);
+
+        if ($investmentModel->transaction) {
+            $investmentModel->transaction->update(['status' => \App\Enums\TransactionStatus::Completed]);
+        }
+
+        $this->investmentService->confirmInvestment($investmentModel->id);
+
+        return redirect()->route('investments.show', $investment)
+            ->with('success', 'Development bypass: Investment confirmed.');
     }
 }

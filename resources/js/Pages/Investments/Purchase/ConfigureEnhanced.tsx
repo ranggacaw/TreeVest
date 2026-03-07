@@ -228,8 +228,8 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                                     <div
                                                         key={method.id}
                                                         className={`p-3 border rounded-md cursor-pointer transition-colors ${selectedPaymentMethod === method.id
-                                                                ? 'border-green-500 bg-green-50'
-                                                                : 'border-gray-300 hover:border-gray-400'
+                                                            ? 'border-green-500 bg-green-50'
+                                                            : 'border-gray-300 hover:border-gray-400'
                                                             }`}
                                                         onClick={() => handlePaymentMethodChange(method.id)}
                                                     >

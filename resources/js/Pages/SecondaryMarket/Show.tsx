@@ -25,6 +25,12 @@ export default function Show({ auth, listing, isOwner, isBuyer, canPurchase, can
 
             <div className="py-12">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mb-5">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back
+                        </button>
+                    </div>
                     {flash?.success && (
                         <div className="mb-6 p-4 bg-green-100 border border-green-400 text-green-700 rounded">
                             {flash.success}
@@ -59,11 +65,10 @@ export default function Show({ auth, listing, isOwner, isBuyer, canPurchase, can
                                 </div>
                                 <div className="p-4 bg-gray-50 rounded">
                                     <p className="text-sm text-gray-500">Status</p>
-                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${
-                                        listing.status === 'active' ? 'bg-green-100 text-green-800' :
+                                    <span className={`inline-flex items-center px-2 py-1 rounded-full text-xs font-medium ${listing.status === 'active' ? 'bg-green-100 text-green-800' :
                                         listing.status === 'sold' ? 'bg-blue-100 text-blue-800' :
-                                        'bg-gray-100 text-gray-800'
-                                    }`}>
+                                            'bg-gray-100 text-gray-800'
+                                        }`}>
                                         {listing.status}
                                     </span>
                                 </div>

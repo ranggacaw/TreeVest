@@ -23,7 +23,7 @@ export default function Show({ harvest }: Props) {
             <Head title={`Harvest #${harvest.id}`} />
 
             <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6">
                         <Link
@@ -248,15 +248,14 @@ export default function Show({ harvest }: Props) {
                                                     </td>
                                                     <td className="px-4 py-3">
                                                         <span
-                                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                                                payout.status === 'completed'
+                                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${payout.status === 'completed'
                                                                     ? 'bg-green-100 text-green-800'
                                                                     : payout.status === 'processing'
-                                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                                    : payout.status === 'failed'
-                                                                    ? 'bg-red-100 text-red-800'
-                                                                    : 'bg-gray-100 text-gray-600'
-                                                            }`}
+                                                                        ? 'bg-yellow-100 text-yellow-800'
+                                                                        : payout.status === 'failed'
+                                                                            ? 'bg-red-100 text-red-800'
+                                                                            : 'bg-gray-100 text-gray-600'
+                                                                }`}
                                                         >
                                                             {payout.status}
                                                         </span>

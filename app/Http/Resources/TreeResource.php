@@ -96,9 +96,12 @@ class TreeResource extends JsonResource
             'max_investment_cents' => $this->max_investment_cents,
             'min_investment_formatted' => 'Rp ' . number_format($this->min_investment_cents / 100, 2),
             'max_investment_formatted' => 'Rp ' . number_format($this->max_investment_cents / 100, 2),
+            'age_years' => $this->age_years,
+            'productive_lifespan_years' => $this->productive_lifespan_years,
             'fruit_crop' => [
                 'variant' => $this->fruitCrop->variant,
                 'fruit_type' => $this->fruitCrop->fruitType->name,
+                'harvest_cycle' => $this->fruitCrop->harvest_cycle?->value ?? $this->fruitCrop->harvest_cycle,
             ],
             'farm' => [
                 'name' => $this->fruitCrop->farm->name,

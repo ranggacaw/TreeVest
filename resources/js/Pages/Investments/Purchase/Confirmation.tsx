@@ -7,9 +7,10 @@ import { useTranslation } from 'react-i18next';
 
 interface Props extends PageProps {
     investment: InvestmentDetail;
+    is_local?: boolean;
 }
 
-export default function Confirmation({ auth, investment }: Props) {
+export default function Confirmation({ auth, investment, is_local }: Props) {
     const { t } = useTranslation(['investments', 'translation']);
     const [paymentStatus, setPaymentStatus] = useState<'pending' | 'processing' | 'completed' | 'failed'>('pending');
 
@@ -150,10 +151,20 @@ export default function Confirmation({ auth, investment }: Props) {
                                             </Link>
                                             <Link
                                                 href="/investments"
-                                                className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50"
+                                                className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50 bg-white"
                                             >
                                                 {t('view_all_investments')}
                                             </Link>
+                                            {is_local && (
+                                                <Link
+                                                    href={`/investments/${investment.id}/mock-confirm`}
+                                                    method="post"
+                                                    as="button"
+                                                    className="px-6 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-purple-700"
+                                                >
+                                                    Simulate Payment Match
+                                                </Link>
+                                            )}
                                         </>
                                     )}
                                 </div>

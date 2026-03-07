@@ -63,7 +63,13 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
             <Head title={t('configure_investment')} />
 
             <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
+                    <div className="mb-5">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            {t('back_to_dashboard')}
+                        </button>
+                    </div>
                     <FinancialErrorBoundary context="investment-purchase-configure">
                         {flash?.error && (
                             <div className="mb-6 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative" role="alert">
@@ -106,6 +112,24 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                                 <dt className="text-sm text-gray-500">{t('expected_roi', { roi: '' }).replace('%', '').trim()}</dt>
                                                 <dd className="font-medium text-gray-900">{tree.expected_roi}%</dd>
                                             </div>
+                                            {tree.age_years !== undefined && tree.productive_lifespan_years !== undefined && (
+                                                <>
+                                                    <div>
+                                                        <dt className="text-sm text-gray-500">{t('tree_age', { defaultValue: 'Tree Age' })}</dt>
+                                                        <dd className="font-medium text-gray-900">{tree.age_years} {t('years', { defaultValue: 'years' })}</dd>
+                                                    </div>
+                                                    <div>
+                                                        <dt className="text-sm text-gray-500">{t('remaining_productivity', { defaultValue: 'Remaining Productivity' })}</dt>
+                                                        <dd className="font-medium text-green-700 bg-green-50 inline-block px-2 py-0.5 rounded mt-1 border border-green-100">{Math.max(0, tree.productive_lifespan_years - tree.age_years)} {t('years', { defaultValue: 'years' })} ({t('produces_yields', { defaultValue: 'produces yields' })})</dd>
+                                                    </div>
+                                                </>
+                                            )}
+                                            {tree.fruit_crop.harvest_cycle && (
+                                                <div>
+                                                    <dt className="text-sm text-gray-500">{t('harvest_cycle', { defaultValue: 'Payout Cycle' })}</dt>
+                                                    <dd className="font-medium text-gray-900 capitalize">{tree.fruit_crop.harvest_cycle.replace(/_/g, ' ')}</dd>
+                                                </div>
+                                            )}
                                             <div>
                                                 <dt className="text-sm text-gray-500">{t('risk_rating')}</dt>
                                                 <dd className="font-medium text-gray-900 capitalize">{tree.risk_rating}</dd>

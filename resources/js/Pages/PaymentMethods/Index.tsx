@@ -2,6 +2,7 @@ import { Head, Link, router } from '@inertiajs/react';
 import { useState } from 'react';
 import Modal from '@/Components/Modal';
 import { CardElement, useElements, useStripe } from '@stripe/react-stripe-js';
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 
 interface PaymentMethod {
     id: number;
@@ -150,11 +151,24 @@ export default function Index({ paymentMethods }: PageProps) {
     };
 
     return (
-        <>
+        <AuthenticatedLayout
+            header={
+                <h2 className="text-xl font-semibold leading-tight text-gray-800">
+                    Payment Methods
+                </h2>
+            }
+        >
             <Head title="Payment Methods" />
 
-            <div className="min-h-screen bg-gray-50 py-12">
+            <div className="bg-gray-50 py-12">
                 <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+                    <div className="mb-5">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back
+                        </button>
+                    </div>
+
                     <div className="md:flex md:items-center md:justify-between">
                         <div className="min-w-0 flex-1">
                             <h2 className="text-2xl font-bold leading-7 text-gray-900 sm:truncate sm:text-3xl sm:tracking-tight">
@@ -266,6 +280,6 @@ export default function Index({ paymentMethods }: PageProps) {
             </div>
 
             <AddPaymentMethodModal show={showAddModal} onClose={() => setShowAddModal(false)} />
-        </>
+        </AuthenticatedLayout>
     );
 }

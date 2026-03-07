@@ -46,7 +46,7 @@ export default function Show({ fruitType }: Props) {
             <Head title={`Fruit Type: ${fruitType.name}`} />
 
             <div className="py-12">
-                <div className="mx-auto max-w-4xl sm:px-6 lg:px-8">
+                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
                     {/* Header */}
                     <div className="mb-6 flex items-center justify-between">
                         <div>
@@ -67,11 +67,10 @@ export default function Show({ fruitType }: Props) {
                             </Link>
                             <button
                                 onClick={handleToggleActive}
-                                className={`px-4 py-2 rounded text-sm font-medium ${
-                                    fruitType.is_active
+                                className={`px-4 py-2 rounded text-sm font-medium ${fruitType.is_active
                                         ? 'bg-yellow-600 text-white hover:bg-yellow-700'
                                         : 'bg-green-600 text-white hover:bg-green-700'
-                                }`}
+                                    }`}
                             >
                                 {fruitType.is_active ? 'Deactivate' : 'Activate'}
                             </button>
@@ -95,11 +94,10 @@ export default function Show({ fruitType }: Props) {
                                     <dt className="text-sm text-gray-500">Status</dt>
                                     <dd>
                                         <span
-                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                                fruitType.is_active
+                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${fruitType.is_active
                                                     ? 'bg-green-100 text-green-800'
                                                     : 'bg-gray-100 text-gray-600'
-                                            }`}
+                                                }`}
                                         >
                                             {fruitType.is_active ? 'Active' : 'Inactive'}
                                         </span>
@@ -172,13 +170,12 @@ export default function Show({ fruitType }: Props) {
                                                 <td className="px-4 py-3 text-sm">
                                                     {crop.farm && (
                                                         <span
-                                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${
-                                                                crop.farm.status === 'active'
+                                                            className={`inline-flex rounded-full px-2 py-1 text-xs font-medium ${crop.farm.status === 'active'
                                                                     ? 'bg-green-100 text-green-800'
                                                                     : crop.farm.status === 'pending_approval'
-                                                                    ? 'bg-yellow-100 text-yellow-800'
-                                                                    : 'bg-gray-100 text-gray-600'
-                                                            }`}
+                                                                        ? 'bg-yellow-100 text-yellow-800'
+                                                                        : 'bg-gray-100 text-gray-600'
+                                                                }`}
                                                         >
                                                             {crop.farm.status.replace('_', ' ')}
                                                         </span>

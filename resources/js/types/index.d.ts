@@ -159,7 +159,7 @@ export interface LocaleMetadata {
     name: string;
     native_name: string;
     flag: string;
-    dir: 'ltr' | 'rtl';
+    dir: "ltr" | "rtl";
 }
 
 export interface LocalePageProps {
@@ -197,9 +197,12 @@ export interface Tree {
     max_investment_cents: number;
     min_investment_formatted: string;
     max_investment_formatted: string;
+    age_years?: number;
+    productive_lifespan_years?: number;
     fruit_crop: {
         variant: string;
         fruit_type: string;
+        harvest_cycle?: string;
     };
     farm: {
         name: string;
