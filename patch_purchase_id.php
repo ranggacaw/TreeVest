@@ -5,7 +5,7 @@ $data = json_decode($json, true);
 $data['invest_in_tree'] = 'Investasi pada Pohon #{{identifier}}';
 $data['configure_investment'] = 'Konfigurasi Investasi';
 $data['investment_amount'] = 'Jumlah Investasi';
-$data['amount_label'] = 'Jumlah ({{formatted}}vestasi';
+$data['amount_label'] = 'Jumlah ({{formatted}})';
 $data['cancel_button'] = 'Batal';
 
 $data['risk_modal_title'] = 'Pengungkapan Risiko';

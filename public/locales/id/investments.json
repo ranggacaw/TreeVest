@@ -68,7 +68,7 @@
     "invest_in_tree": "Investasi pada Pohon #{{identifier}}",
     "configure_investment": "Konfigurasi Investasi",
     "investment_amount": "Jumlah Investasi",
-    "amount_label": "Jumlah ({{formatted}}vestasi",
+    "amount_label": "Jumlah ({{formatted}})",
     "cancel_button": "Batal",
     "risk_modal_title": "Pengungkapan Risiko",
     "risk_modal_intro": "Berinvestasi pada pohon buah melibatkan risiko yang signifikan, termasuk namun tidak terbatas pada:",
@@ -94,5 +94,7 @@
     "disclaimer_text": "Dengan melanjutkan, Anda mengakui bahwa investasi mengandung risiko dan keuntungan tidak dijamin. Silakan baca",
     "terms_of_service": "Ketentuan Layanan",
     "and": "dan",
-    "problems_with_submission": "Ada beberapa masalah dengan kiriman Anda:"
+    "problems_with_submission": "Ada beberapa masalah dengan kiriman Anda:",
+    "payment_method": "Metode Pembayaran",
+    "view_all_investments": "Lihat Semua Investasi"
 }
