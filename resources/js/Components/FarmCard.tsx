@@ -1,30 +1,83 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Farm } from '@/types';
 import FarmStatusBadge from './FarmStatusBadge';
-import { MapPin, Trees, Sun } from 'lucide-react';
+import { MapPin, Trees, Sun, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface Props {
     farm: Farm;
 }
 
 export default function FarmCard({ farm }: Props) {
-    const featuredImage = farm.images?.find((img) => img.is_featured);
+    const [currentImageIndex, setCurrentImageIndex] = useState(0);
+    const [isHovered, setIsHovered] = useState(false);
+
+    const images = farm.images?.length ? farm.images : [];
 
     // Use an organic Unsplash placeholder if no image exists
     const fallbackImage = 'https://images.unsplash.com/photo-1595841696677-6489ff3f8cd1?auto=format&fit=crop&q=80&w=800';
-    const imageUrl = featuredImage?.file_path
-        ? (featuredImage.file_path.startsWith('http') ? featuredImage.file_path : `/storage/${featuredImage.file_path}`)
-        : fallbackImage;
+
+    useEffect(() => {
+        if (images.length > 0) {
+            const featuredIndex = images.findIndex((img) => img.is_featured);
+            setCurrentImageIndex(featuredIndex >= 0 ? featuredIndex : 0);
+        }
+    }, [farm.id, images.length]);
+
+    const getImageUrl = (filePath?: string) => {
+        if (!filePath) return fallbackImage;
+        return filePath.startsWith('http') ? filePath : `/storage/${filePath}`;
+    };
 
     return (
         <div className="bg-white rounded-3xl shadow-card overflow-hidden hover:shadow-soft transition-all duration-300 border border-sand group flex flex-col h-full">
-            <div className="relative h-56 bg-sand overflow-hidden">
+            <div
+                className="relative h-56 bg-sand overflow-hidden group/image"
+                onMouseEnter={() => setIsHovered(true)}
+                onMouseLeave={() => setIsHovered(false)}
+            >
                 <img
-                    src={imageUrl}
+                    src={images.length > 0 ? getImageUrl(images[currentImageIndex]?.file_path) : fallbackImage}
                     alt={farm.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700 ease-in-out"
                 />
-                <div className="absolute top-4 right-4">
+
+                {images.length > 1 && isHovered && (
+                    <>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setCurrentImageIndex((prev) => (prev === 0 ? images.length - 1 : prev - 1));
+                            }}
+                            className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1.5 backdrop-blur-sm transition-all z-10"
+                        >
+                            <ChevronLeft className="w-5 h-5" />
+                        </button>
+                        <button
+                            onClick={(e) => {
+                                e.preventDefault();
+                                e.stopPropagation();
+                                setCurrentImageIndex((prev) => (prev === images.length - 1 ? 0 : prev + 1));
+                            }}
+                            className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/30 hover:bg-black/50 text-white rounded-full p-1.5 backdrop-blur-sm transition-all z-10"
+                        >
+                            <ChevronRight className="w-5 h-5" />
+                        </button>
+                    </>
+                )}
+
+                {images.length > 1 && (
+                    <div className="absolute bottom-3 left-0 right-0 flex justify-center gap-1.5 z-10">
+                        {images.map((_, idx) => (
+                            <div
+                                key={idx}
+                                className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentImageIndex ? 'w-4 bg-white' : 'w-1.5 bg-white/50'}`}
+                            />
+                        ))}
+                    </div>
+                )}
+
+                <div className="absolute top-4 right-4 z-20">
                     <FarmStatusBadge status={farm.status} />
                 </div>
             </div>

@@ -105,8 +105,8 @@ export default function Index({ farms, filters, options }: Props) {
                         <button
                             onClick={() => setViewMode('grid')}
                             className={`p-2.5 rounded-lg flex items-center justify-center transition-all ${viewMode === 'grid'
-                                    ? 'bg-white text-pine shadow-sm'
-                                    : 'text-earth-500 hover:text-pine hover:bg-sand'
+                                ? 'bg-white text-pine shadow-sm'
+                                : 'text-earth-500 hover:text-pine hover:bg-sand'
                                 }`}
                             title={t('grid_view')}
                         >
@@ -115,8 +115,8 @@ export default function Index({ farms, filters, options }: Props) {
                         <button
                             onClick={() => setViewMode('map')}
                             className={`p-2.5 rounded-lg flex items-center justify-center transition-all ${viewMode === 'map'
-                                    ? 'bg-white text-pine shadow-sm'
-                                    : 'text-earth-500 hover:text-pine hover:bg-sand'
+                                ? 'bg-white text-pine shadow-sm'
+                                : 'text-earth-500 hover:text-pine hover:bg-sand'
                                 }`}
                             title={t('map_view')}
                         >
@@ -166,8 +166,8 @@ export default function Index({ farms, filters, options }: Props) {
                                 key={page}
                                 href={`?page=${page}`}
                                 className={`w-10 h-10 flex items-center justify-center rounded-xl font-medium transition-all ${page === farms.current_page
-                                        ? 'bg-pine text-white shadow-soft'
-                                        : 'bg-white text-earth-600 border border-sand hover:border-pine-300 hover:text-pine'
+                                    ? 'bg-pine text-white shadow-soft'
+                                    : 'bg-white text-earth-600 border border-sand hover:border-pine-300 hover:text-pine'
                                     }`}
                             >
                                 {page}
