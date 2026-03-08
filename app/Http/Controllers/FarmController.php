@@ -61,7 +61,7 @@ class FarmController extends Controller
     {
         $this->authorizeFarmAccess($farm);
 
-        $farm->load(['images', 'certifications']);
+        $farm->load(['images', 'certifications', 'fruitCrops.fruitType', 'fruitCrops.trees']);
 
         return Inertia::render('Farms/Manage/Edit', [
             'farm' => $farm,

@@ -99,7 +99,7 @@ class Tree extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->price_cents / 100, 2);
+        return 'Rp ' . number_format($this->price_cents, 0, ',', '.');
     }
 
     public function getExpectedRoiFormattedAttribute(): string

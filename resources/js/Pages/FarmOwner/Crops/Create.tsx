@@ -1,5 +1,5 @@
 import { AppLayout } from '@/Layouts';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
@@ -10,8 +10,11 @@ import { useTranslation } from 'react-i18next';
 
 export default function Create({ auth, farms, fruitTypes }: PageProps<{ farms: any[], fruitTypes: any[] }>) {
     const { t } = useTranslation('farms');
+    const queryParams = new URLSearchParams(window.location.search);
+    const prefillFarmId = queryParams.get('farm_id') || '';
+
     const { data, setData, post, processing, errors } = useForm({
-        farm_id: '',
+        farm_id: prefillFarmId,
         fruit_type_id: '',
         variant: '',
         harvest_cycle: 'annual',
@@ -30,9 +33,15 @@ export default function Create({ auth, farms, fruitTypes }: PageProps<{ farms: a
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="mb-6 flex items-center justify-between">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back to Previous
+                        </button>
+                    </div>
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
-                            <form onSubmit={submit} className="space-y-6 max-w-xl">
+                            <form onSubmit={submit} className="grid grid-cols-2 gap-5">
                                 <div>
                                     <InputLabel htmlFor="farm_id" value="Farm" />
                                     <select
@@ -121,6 +130,12 @@ export default function Create({ auth, farms, fruitTypes }: PageProps<{ farms: a
 
                                 <div className="flex items-center gap-4">
                                     <PrimaryButton disabled={processing}>{t('common.save')}</PrimaryButton>
+                                    <Link
+                                        href={route('farm-owner.crops.index')}
+                                        className="px-4 py-2 border border-gray-300 text-gray-700 rounded-md hover:bg-gray-50 text-sm"
+                                    >
+                                        Cancel
+                                    </Link>
                                 </div>
                             </form>
                         </div>

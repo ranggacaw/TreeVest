@@ -4,6 +4,7 @@ import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { PageProps, Tree, PaymentMethod } from '@/types';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 interface Props extends PageProps {
     tree: Tree;
@@ -28,7 +29,6 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
     const [showRiskModal, setShowRiskModal] = useState(false);
 
-    const amountInDollars = data.amount_cents / 100;
     const isValidAmount = data.amount_cents >= tree.min_investment_cents &&
         data.amount_cents <= tree.max_investment_cents;
 
@@ -46,10 +46,6 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
         }
 
         post('/investments');
-    };
-
-    const formatCurrency = (cents: number) => {
-        return 'Rp ' + (cents / 100).toFixed(2);
     };
 
     return (
@@ -146,7 +142,7 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
                                         <div className="mb-4">
                                             <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                {t('amount_label', { formatted: formatCurrency(data.amount_cents) })}
+                                                {t('amount_label', { formatted: formatRupiah(data.amount_cents) })}
                                             </label>
                                             <input
                                                 type="range"

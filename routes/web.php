@@ -194,6 +194,25 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
     Route::prefix('farm-owner')->name('farm-owner.')->group(function () {
         Route::get('/dashboard', [FarmOwnerDashboardController::class, 'index'])->name('dashboard');
 
+        Route::prefix('crops')->name('crops.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'store'])->name('store');
+            Route::get('/{fruitCrop}/edit', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'edit'])->name('edit');
+            Route::put('/{fruitCrop}', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'update'])->name('update');
+            Route::delete('/{fruitCrop}', [\App\Http\Controllers\FarmOwner\FruitCropController::class, 'destroy'])->name('destroy');
+        });
+
+        Route::prefix('trees')->name('trees.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\FarmOwner\TreeController::class, 'index'])->name('index');
+            Route::get('/create', [\App\Http\Controllers\FarmOwner\TreeController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\FarmOwner\TreeController::class, 'store'])->name('store');
+            Route::get('/{tree}/edit', [\App\Http\Controllers\FarmOwner\TreeController::class, 'edit'])->name('edit');
+            Route::put('/{tree}', [\App\Http\Controllers\FarmOwner\TreeController::class, 'update'])->name('update');
+            Route::patch('/{tree}/status', [\App\Http\Controllers\FarmOwner\TreeController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/{tree}', [\App\Http\Controllers\FarmOwner\TreeController::class, 'destroy'])->name('destroy');
+        });
+
         Route::prefix('health-updates')->name('health-updates.')->group(function () {
             Route::get('/', [FarmOwnerHealthUpdateController::class, 'index'])->name('index');
             Route::get('/create', [FarmOwnerHealthUpdateController::class, 'create'])->name('create');

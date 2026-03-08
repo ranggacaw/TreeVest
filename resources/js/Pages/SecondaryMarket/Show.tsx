@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps, MarketListing } from '@/types';
+import { formatRupiah } from '@/utils/currency';
 
 interface Props extends PageProps {
     listing: MarketListing;
@@ -104,7 +105,7 @@ export default function Show({ auth, listing, isOwner, isBuyer, canPurchase, can
                             <div className="mb-6">
                                 <h4 className="text-sm font-medium text-gray-700 mb-2">Investment Details</h4>
                                 <div className="text-sm text-gray-600 space-y-1">
-                                    <p>Original Amount: {listing.investment.amount_cents / 100} {listing.currency}</p>
+                                    <p>Original Amount: {formatRupiah(listing.investment.amount_cents)}</p>
                                     <p>Purchase Date: {new Date(listing.investment.purchase_date).toLocaleDateString()}</p>
                                     <p>Expected ROI: {listing.investment.tree.expected_roi_percent}%</p>
                                     <p>Risk Rating: {listing.investment.tree.risk_rating}</p>

@@ -24,7 +24,28 @@ class TreePricingService
     public function updateTreePrice(Tree $tree): void
     {
         $tree->price_cents = $this->calculatePrice($tree);
+        $tree->expected_roi_percent = $this->calculateRoi($tree);
         $tree->save();
+    }
+
+    public function calculateRoi(Tree $tree): float
+    {
+        $config = $tree->pricing_config_json ?? $this->getDefaultConfig();
+
+        $cropPremium = $config['crop_premium'] ?? 1.0;
+        $riskMultiplier = $config['risk_multiplier'] ?? $tree->risk_rating->getMultiplier();
+        $lifespan = $tree->productive_lifespan_years ?? 10;
+
+        // Realistic-looking formula for projected ROI percent
+        // Base ROI is 8%. Premium increases it. Higher risk implies higher expected return to compensate.
+        $roi = 8.0 * $cropPremium * $riskMultiplier;
+
+        // Add a small bonus for longer lifespan (0.5% per year over 5 years)
+        if ($lifespan > 5) {
+            $roi += (($lifespan - 5) * 0.5);
+        }
+
+        return round(min(max($roi, 1.0), 99.99), 2);
     }
 
     private function getDefaultConfig(): array

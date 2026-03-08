@@ -7,20 +7,24 @@ import PrimaryButton from '@/Components/PrimaryButton';
 import TextInput from '@/Components/TextInput';
 import { FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
     const { t } = useTranslation('farms');
+    const queryParams = new URLSearchParams(window.location.search);
+    const prefillCropId = queryParams.get('crop_id') || '';
+
     const { data, setData, post, processing, errors } = useForm({
-        fruit_crop_id: '',
+        fruit_crop_id: prefillCropId,
         tree_identifier: '',
         age_years: 0,
         productive_lifespan_years: 10,
         risk_rating: 'medium',
-        min_investment_cents: 1000,
-        max_investment_cents: 100000,
+        min_investment_cents: 500000,
+        max_investment_cents: 50000000,
         status: 'growing',
         pricing_config: {
-            base_price: 10000,
+            base_price: 100000,
             age_coefficient: 0.1,
             crop_premium: 1.0,
             risk_multiplier: 1.0,
@@ -32,15 +36,34 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
         post(route('farm-owner.trees.store'));
     };
 
+    const estimatedPrice =
+        data.pricing_config.base_price *
+        (1 + data.pricing_config.age_coefficient * data.age_years) *
+        data.pricing_config.crop_premium *
+        data.pricing_config.risk_multiplier;
+
+    let rawROI = 8.0 * data.pricing_config.crop_premium * data.pricing_config.risk_multiplier;
+    if (data.productive_lifespan_years > 5) {
+        rawROI += (data.productive_lifespan_years - 5) * 0.5;
+    }
+    const estimatedROI = Math.min(Math.max(rawROI, 1.0), 99.99).toFixed(2);
+
     return (
         <AppLayout title="Add Tree">
             <Head title="Add Tree" />
 
             <div className="py-12">
                 <div className="max-w-7xl mx-auto sm:px-6 lg:px-8">
+                    <div className="mb-5">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                            Back to Previous
+                        </button>
+                    </div>
+
                     <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
                         <div className="p-6 bg-white border-b border-gray-200">
-                            <form onSubmit={submit} className="space-y-6 max-w-xl">
+                            <form onSubmit={submit} className="grid grid-cols-2 gap-5">
                                 <div>
                                     <InputLabel htmlFor="fruit_crop_id" value="Crop" />
                                     <select
@@ -53,7 +76,7 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                         <option value="">Select a Crop</option>
                                         {crops.map(crop => (
                                             <option key={crop.id} value={crop.id}>
-                                                {crop.fruit_type?.name} - {crop.variant} (Farm ID: {crop.farm_id})
+                                                {crop.fruit_type?.name} — {crop.variant} ({crop.farm?.name ?? `Farm #${crop.farm_id}`})
                                             </option>
                                         ))}
                                     </select>
@@ -136,27 +159,39 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="min_investment_cents" value="Min Investment (cents)" />
+                                        <InputLabel htmlFor="min_investment_cents" value="Min Investment (IDR)" />
                                         <TextInput
                                             id="min_investment_cents"
-                                            type="number"
+                                            type="text"
                                             className="mt-1 block w-full"
-                                            value={data.min_investment_cents}
-                                            onChange={e => setData('min_investment_cents', parseInt(e.target.value))}
+                                            value={data.min_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.min_investment_cents)}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                setData('min_investment_cents', parseInt(val) || 0);
+                                            }}
                                             required
                                         />
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            {formatRupiah(data.min_investment_cents)}
+                                        </p>
                                         <InputError message={errors.min_investment_cents} className="mt-2" />
                                     </div>
                                     <div>
-                                        <InputLabel htmlFor="max_investment_cents" value="Max Investment (cents)" />
+                                        <InputLabel htmlFor="max_investment_cents" value="Max Investment (IDR)" />
                                         <TextInput
                                             id="max_investment_cents"
-                                            type="number"
+                                            type="text"
                                             className="mt-1 block w-full"
-                                            value={data.max_investment_cents}
-                                            onChange={e => setData('max_investment_cents', parseInt(e.target.value))}
+                                            value={data.max_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.max_investment_cents)}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                setData('max_investment_cents', parseInt(val) || 0);
+                                            }}
                                             required
                                         />
+                                        <p className="mt-1 text-xs text-gray-500">
+                                            {formatRupiah(data.max_investment_cents)}
+                                        </p>
                                         <InputError message={errors.max_investment_cents} className="mt-2" />
                                     </div>
                                 </div>
@@ -165,15 +200,21 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                     <h4 className="font-medium text-gray-900 mb-4">Pricing Configuration</h4>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
-                                            <InputLabel htmlFor="base_price" value="Base Price (cents)" />
+                                            <InputLabel htmlFor="base_price" value="Base Price (IDR)" />
                                             <TextInput
                                                 id="base_price"
-                                                type="number"
+                                                type="text"
                                                 className="mt-1 block w-full"
-                                                value={data.pricing_config.base_price}
-                                                onChange={e => setData('pricing_config', { ...data.pricing_config, base_price: parseInt(e.target.value) })}
+                                                value={data.pricing_config.base_price === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.pricing_config.base_price)}
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, '');
+                                                    setData('pricing_config', { ...data.pricing_config, base_price: parseInt(val) || 0 });
+                                                }}
                                                 required
                                             />
+                                            <p className="mt-1 text-xs text-gray-500">
+                                                {formatRupiah(data.pricing_config.base_price)}
+                                            </p>
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="age_coefficient" value="Age Coefficient" />
@@ -213,7 +254,9 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                         </div>
                                     </div>
                                     <p className="mt-4 text-sm text-gray-600">
-                                        Estimated Price: Rp {((data.pricing_config.base_price * (1 + data.pricing_config.age_coefficient * data.age_years) * data.pricing_config.crop_premium * data.pricing_config.risk_multiplier) / 100).toFixed(2)}
+                                        Estimated Price: <span className="font-semibold text-gray-900">{formatRupiah(estimatedPrice)}</span>{' '}
+                                        <span className="mx-2 text-gray-300">|</span>{' '}
+                                        Estimated ROI: <span className="font-semibold text-green-700">{estimatedROI}%</span>
                                     </p>
                                 </div>
 

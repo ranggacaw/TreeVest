@@ -162,6 +162,109 @@ export default function Edit({ farm }: Props) {
                         </div>
                     </div>
 
+                    {/* Fruit Crops Management Block */}
+                    <div className="bg-white shadow-sm rounded-lg p-6 mb-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-lg font-semibold text-gray-900">
+                                Fruit Crops {farm.fruit_crops && farm.fruit_crops.length > 0 && `(${farm.fruit_crops.length})`}
+                            </h2>
+                            <Link
+                                href={`${route('farm-owner.crops.create')}?farm_id=${farm.id}`}
+                                className="inline-flex items-center px-3 py-1.5 bg-green-600 text-white text-xs font-semibold rounded hover:bg-green-700 transition"
+                            >
+                                + Add Crop
+                            </Link>
+                        </div>
+
+                        {farm.fruit_crops && farm.fruit_crops.length > 0 ? (
+                            <div className="space-y-4">
+                                {farm.fruit_crops.map((crop: any) => (
+                                    <div key={crop.id} className="border border-gray-200 rounded-lg p-4 bg-gray-50/50">
+                                        <div className="flex items-center justify-between mb-3">
+                                            <div>
+                                                <p className="text-sm font-medium text-gray-900">{crop.variant}</p>
+                                                <p className="text-xs text-gray-500">{crop.fruit_type?.name} — <span className="capitalize">{crop.harvest_cycle?.replace('_', ' ')}</span></p>
+                                            </div>
+                                            <div className="flex items-center gap-2">
+                                                <Link
+                                                    href={route('farm-owner.crops.edit', crop.id)}
+                                                    className="text-xs text-indigo-600 hover:text-indigo-800 font-medium bg-white px-2 py-1 border border-gray-200 rounded shadow-sm hover:shadow"
+                                                >
+                                                    Edit Crop
+                                                </Link>
+                                                <Link
+                                                    href={`${route('farm-owner.trees.create')}?crop_id=${crop.id}`}
+                                                    className="inline-flex items-center px-2.5 py-1 bg-indigo-600 text-white text-xs font-semibold rounded hover:bg-indigo-700 transition shadow-sm"
+                                                >
+                                                    + Add Tree
+                                                </Link>
+                                            </div>
+                                        </div>
+                                        {crop.trees && crop.trees.length > 0 ? (
+                                            <div className="mt-4 overflow-hidden rounded-md border border-gray-200 bg-white">
+                                                <div className="overflow-x-auto">
+                                                    <table className="min-w-full text-xs divide-y divide-gray-200">
+                                                        <thead className="bg-gray-50">
+                                                            <tr className="text-gray-500 uppercase tracking-wider">
+                                                                <th className="py-2.5 px-4 text-left font-medium">Tree ID</th>
+                                                                <th className="py-2.5 px-4 text-left font-medium">Age/Lifespan</th>
+                                                                <th className="py-2.5 px-4 text-left font-medium">Status</th>
+                                                                <th className="py-2.5 px-4 text-left font-medium">Price</th>
+                                                                <th className="py-2.5 px-4 text-right font-medium">ROI</th>
+                                                            </tr>
+                                                        </thead>
+                                                        <tbody className="divide-y divide-gray-100">
+                                                            {crop.trees.map((tree: any) => (
+                                                                <tr key={tree.id} className="text-gray-700 hover:bg-gray-50/80 transition-colors">
+                                                                    <td className="py-2 px-4 font-mono">{tree.tree_identifier}</td>
+                                                                    <td className="py-2 px-4">{tree.age_years} / {tree.productive_lifespan_years} yrs</td>
+                                                                    <td className="py-2 px-4 capitalize">
+                                                                        <span className={`inline-flex items-center px-2 py-0.5 rounded text-[10px] font-medium ${tree.status === 'productive' ? 'bg-green-100 text-green-800' :
+                                                                                tree.status === 'growing' ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'
+                                                                            }`}>
+                                                                            {tree.status?.replace('_', ' ')}
+                                                                        </span>
+                                                                    </td>
+                                                                    <td className="py-2 px-4">Rp {(tree.price_cents / 100).toLocaleString('id-ID')}</td>
+                                                                    <td className="py-2 px-4 text-right">
+                                                                        <span className="bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-bold">
+                                                                            {tree.expected_roi_percent}%
+                                                                        </span>
+                                                                    </td>
+                                                                </tr>
+                                                            ))}
+                                                        </tbody>
+                                                    </table>
+                                                </div>
+                                            </div>
+                                        ) : (
+                                            <div className="mt-3 flex items-center justify-between p-3 bg-white border border-dashed border-gray-300 rounded-md">
+                                                <p className="text-xs text-gray-500">No trees setup yet. Investors can't invest without trees.</p>
+                                                <Link
+                                                    href={`${route('farm-owner.trees.create')}?crop_id=${crop.id}`}
+                                                    className="text-xs text-indigo-600 hover:text-indigo-800 font-medium"
+                                                >
+                                                    Add first tree →
+                                                </Link>
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="text-center py-6 border-2 border-dashed border-gray-200 rounded-lg bg-gray-50">
+                                <p className="text-sm text-gray-500 mb-3">No fruit crops have been added to this farm.</p>
+                                <Link
+                                    href={`${route('farm-owner.crops.create')}?farm_id=${farm.id}`}
+                                    className="inline-flex items-center px-4 py-2 bg-green-600 text-white text-sm font-medium rounded hover:bg-green-700 transition shadow-sm"
+                                >
+                                    + Add Your First Crop
+                                </Link>
+                                <p className="text-xs text-gray-400 mt-2">Crops define the variants of fruit grown (e.g., Montong Durian).</p>
+                            </div>
+                        )}
+                    </div>
+
                     <form onSubmit={handleSubmit} className="space-y-8">
                         <div className="bg-white shadow-sm rounded-lg p-6">
                             <h2 className="text-lg font-semibold text-gray-900 mb-4">

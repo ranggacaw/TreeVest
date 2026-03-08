@@ -5,6 +5,7 @@ import HarvestCycleIcon from '@/Components/HarvestCycleIcon';
 import HealthStatusIndicator from '@/Components/HealthStatusIndicator';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 export default function Show({ tree, auth, healthStatus, recentUpdates, currentWeather }: PageProps<{
     tree: any;
@@ -16,9 +17,9 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
     const crop = tree.fruit_crop;
     const farm = crop?.farm;
     const fruitType = crop?.fruit_type;
-    const price = (tree.price_cents / 100).toFixed(2);
-    const minInv = (tree.min_investment_cents / 100).toFixed(2);
-    const maxInv = (tree.max_investment_cents / 100).toFixed(2);
+    const price = formatRupiah(tree.price_cents);
+    const minInv = formatRupiah(tree.min_investment_cents);
+    const maxInv = formatRupiah(tree.max_investment_cents);
 
     return (
         <div className="min-h-screen bg-gray-50 py-8">
@@ -80,7 +81,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 </div>
                                 <div className="bg-gray-50 p-4 rounded-lg">
                                     <div className="text-sm text-gray-500 mb-1">{t('current_price')}</div>
-                                    <div className="text-2xl font-bold text-gray-900">Rp {price}</div>
+                                    <div className="text-2xl font-bold text-gray-900">{price}</div>
                                 </div>
                             </div>
 
@@ -109,8 +110,8 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                             <div className="mt-8 border-t border-gray-200 pt-6">
                                 <h3 className="text-lg font-medium text-gray-900 mb-4">{t('investment_limits')}</h3>
                                 <div className="flex justify-between text-sm text-gray-600">
-                                    <span>{t('minimum')} <strong className="text-gray-900">Rp {minInv}</strong></span>
-                                    <span>{t('maximum')} <strong className="text-gray-900">Rp {maxInv}</strong></span>
+                                    <span>{t('minimum')} <strong className="text-gray-900">{minInv}</strong></span>
+                                    <span>{t('maximum')} <strong className="text-gray-900">{maxInv}</strong></span>
                                 </div>
                             </div>
 

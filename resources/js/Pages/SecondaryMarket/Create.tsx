@@ -1,6 +1,7 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm } from '@inertiajs/react';
 import { PageProps, Investment } from '@/types';
+import { formatRupiah } from '@/utils/currency';
 
 interface Props extends PageProps {
     activeInvestments: Investment[];
@@ -64,7 +65,7 @@ export default function Create({ auth, activeInvestments }: Props) {
 
                                 <div className="mb-4">
                                     <label htmlFor="ask_price_cents" className="block text-sm font-medium text-gray-700">
-                                        Ask Price (cents)
+                                        Ask Price (IDR)
                                     </label>
                                     <input
                                         type="number"
@@ -77,8 +78,13 @@ export default function Create({ auth, activeInvestments }: Props) {
                                     {errors.ask_price_cents && (
                                         <p className="mt-1 text-sm text-red-600">{errors.ask_price_cents}</p>
                                     )}
+                                    {data.ask_price_cents && (
+                                        <p className="mt-1 text-xs text-green-700 font-medium">
+                                            {formatRupiah(Number(data.ask_price_cents))}
+                                        </p>
+                                    )}
                                     <p className="mt-1 text-xs text-gray-500">
-                                        Minimum price: {activeInvestments.find(i => i.id === Number(data.investment_id))?.amount_cents || 0} cents
+                                        Minimum price: {formatRupiah(activeInvestments.find(i => i.id === Number(data.investment_id))?.amount_cents || 0)}
                                     </p>
                                 </div>
 

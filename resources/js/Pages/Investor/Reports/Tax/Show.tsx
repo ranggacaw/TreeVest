@@ -1,6 +1,7 @@
 import { Head, useForm } from '@inertiajs/react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { GeneratedReportStatus } from '@/types';
+import { formatRupiah } from '@/utils/currency';
 
 interface TaxSummaryData {
     year: number;
@@ -43,9 +44,7 @@ interface Props {
 }
 
 export default function Show({ taxData, year, recentReports }: Props) {
-    const formatCurrency = (cents: number) => {
-        return `Rp ${(cents / 100).toFixed(2)}`;
-    };
+    const formatCurrency = formatRupiah;
 
     const { post: requestPdf, processing: pdfGenerating } = useForm({ year });
 
@@ -144,8 +143,8 @@ export default function Show({ taxData, year, recentReports }: Props) {
                                     </dt>
                                     <dd
                                         className={`mt-1 text-2xl font-semibold ${taxData.summary.netCents >= 0
-                                                ? 'text-green-600'
-                                                : 'text-red-600'
+                                            ? 'text-green-600'
+                                            : 'text-red-600'
                                             }`}
                                     >
                                         {formatCurrency(taxData.summary.netCents)}

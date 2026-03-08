@@ -6,6 +6,7 @@ import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import FarmMap from '@/Components/FarmMap';
 import { Farm } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 interface Props {
     farm: Farm;
@@ -274,18 +275,14 @@ export default function Show({ farm }: Props) {
                                                         )}
                                                         <div className="mb-4">
                                                             <div className="text-2xl font-bold text-gray-900">
-                                                                Rp{' '}
-                                                                {(tree.price_cents / 100).toLocaleString(undefined, {
-                                                                    minimumFractionDigits: 2,
-                                                                    maximumFractionDigits: 2,
-                                                                })}
+                                                                {formatRupiah(tree.price_cents)}
                                                             </div>
                                                             <div className="text-sm text-gray-500 mt-1 flex justify-between">
                                                                 <span>
-                                                                    {t('min')} Rp {(tree.min_investment_cents / 100).toLocaleString('id-ID')}
+                                                                    {t('min')} {formatRupiah(tree.min_investment_cents)}
                                                                 </span>
                                                                 <span>
-                                                                    {t('max')} Rp {(tree.max_investment_cents / 100).toLocaleString('id-ID')}
+                                                                    {t('max')} {formatRupiah(tree.max_investment_cents)}
                                                                 </span>
                                                             </div>
                                                         </div>

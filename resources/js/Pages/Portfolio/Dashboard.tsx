@@ -16,6 +16,7 @@ import InvestmentCard from '@/Components/Portfolio/InvestmentCard';
 import EmptyPortfolio from '@/Components/Portfolio/EmptyPortfolio';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 interface Props extends PageProps {
     summary: PortfolioSummary;
@@ -29,9 +30,6 @@ interface Props extends PageProps {
     investments: PaginatedInvestments;
 }
 
-function formatCurrency(cents: number): string {
-    return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
 
 export default function Dashboard({
     auth,
@@ -67,7 +65,7 @@ export default function Dashboard({
                             <EmptyPortfolio />
                         ) : (
                             <>
-                                <PortfolioSummaryCard summary={summary} formatCurrency={formatCurrency} />
+                                <PortfolioSummaryCard summary={summary} formatCurrency={formatRupiah} />
 
                                 <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
                                     <HarvestCalendar
@@ -81,7 +79,7 @@ export default function Dashboard({
                                 <div className="mt-6">
                                     <PerformanceChart
                                         performance={performance}
-                                        formatCurrency={formatCurrency}
+                                        formatCurrency={formatRupiah}
                                     />
                                 </div>
 
@@ -104,7 +102,7 @@ export default function Dashboard({
                                             <InvestmentCard
                                                 key={investment.id}
                                                 investment={investment}
-                                                formatCurrency={formatCurrency}
+                                                formatCurrency={formatRupiah}
                                             />
                                         ))}
                                     </div>

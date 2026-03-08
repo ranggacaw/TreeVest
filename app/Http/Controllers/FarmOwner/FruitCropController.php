@@ -7,12 +7,12 @@ use App\Http\Requests\StoreFruitCropRequest;
 use App\Http\Requests\UpdateFruitCropRequest;
 use App\Models\FruitCrop;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class FruitCropController extends Controller
 {
-    public function index(): View
+    public function index(): Response
     {
         $crops = FruitCrop::whereHas('farm', function ($q) {
             $q->where('owner_id', auth()->id());
@@ -23,7 +23,7 @@ class FruitCropController extends Controller
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
         $user = auth()->user();
         $farms = $user->farms ?? collect();
@@ -43,7 +43,7 @@ class FruitCropController extends Controller
             ->with('success', 'Fruit crop created successfully.');
     }
 
-    public function edit(FruitCrop $fruitCrop): View
+    public function edit(FruitCrop $fruitCrop): Response
     {
         $user = auth()->user();
         $farms = $user->farms ?? collect();

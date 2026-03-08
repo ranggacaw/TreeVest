@@ -9,27 +9,45 @@ use App\Http\Requests\UpdateTreeStatusRequest;
 use App\Models\Tree;
 use App\Services\TreePricingService;
 use Illuminate\Http\RedirectResponse;
-use Illuminate\View\View;
 use Inertia\Inertia;
+use Inertia\Response;
 
 class TreeController extends Controller
 {
     public function __construct(
         private TreePricingService $pricingService
-    ) {}
+    ) {
+    }
 
-    public function index(): View
+    public function index(): Response
     {
+        $search = request('search');
+
         $trees = Tree::whereHas('fruitCrop.farm', function ($q) {
             $q->where('owner_id', auth()->id());
-        })->with(['fruitCrop.fruitType', 'fruitCrop.farm'])->paginate(20);
+        })
+            ->when($search, function ($query, $search) {
+                $query->where(function ($q) use ($search) {
+                    $q->where('tree_identifier', 'like', "%{$search}%")
+                        ->orWhereHas('fruitCrop.fruitType', function ($q2) use ($search) {
+                            $q2->where('name', 'like', "%{$search}%");
+                        })
+                        ->orWhereHas('fruitCrop.farm', function ($q3) use ($search) {
+                            $q3->where('name', 'like', "%{$search}%");
+                        });
+                });
+            })
+            ->with(['fruitCrop.fruitType', 'fruitCrop.farm'])
+            ->paginate(10)
+            ->withQueryString();
 
         return Inertia::render('FarmOwner/Trees/Index', [
             'trees' => $trees,
+            'filters' => request()->only(['search']),
         ]);
     }
 
-    public function create(): View
+    public function create(): Response
     {
         $user = auth()->user();
         $crops = \App\Models\FruitCrop::whereHas('farm', function ($q) use ($user) {
@@ -45,6 +63,7 @@ class TreeController extends Controller
     {
         $validated = $request->validated();
         $validated['pricing_config_json'] = $validated['pricing_config'];
+        $validated['price_cents'] = 0; // Temporary value, updated right after
         unset($validated['pricing_config']);
 
         $tree = Tree::create($validated);
@@ -54,7 +73,7 @@ class TreeController extends Controller
             ->with('success', 'Tree created successfully.');
     }
 
-    public function edit(Tree $tree): View
+    public function edit(Tree $tree): Response
     {
         $user = auth()->user();
         $crops = \App\Models\FruitCrop::whereHas('farm', function ($q) use ($user) {
@@ -86,5 +105,13 @@ class TreeController extends Controller
         $tree->save();
 
         return back()->with('success', 'Tree status updated successfully.');
+    }
+
+    public function destroy(Tree $tree): RedirectResponse
+    {
+        $tree->delete();
+
+        return redirect()->route('farm-owner.trees.index')
+            ->with('success', 'Tree deleted successfully.');
     }
 }
