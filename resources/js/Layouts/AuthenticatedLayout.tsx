@@ -18,9 +18,8 @@ export default function Authenticated({
     const [showingNavigationDropdown, setShowingNavigationDropdown] =
         useState(false);
 
-    if (!user) {
-        return null;
-    }
+    // Removed early return null to prevent blank pages during logout transitions.
+    // Component will handle missing user gracefully.
 
     return (
         <div className="min-h-screen bg-gray-100">
@@ -36,7 +35,7 @@ export default function Authenticated({
 
                             <div className="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
                                 {/* Investor Only Modules */}
-                                {user.role === 'investor' && (
+                                {user?.role === 'investor' && (
                                     <>
                                         <NavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
                                             {t('navigation:portfolio')}
@@ -51,7 +50,7 @@ export default function Authenticated({
                                 )}
 
                                 {/* Farm Owner Only Modules */}
-                                {user.role === 'farm_owner' && (
+                                {user?.role === 'farm_owner' && (
                                     <>
                                         <NavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
                                             {t('navigation:farm_dashboard')}
@@ -59,11 +58,14 @@ export default function Authenticated({
                                         <NavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
                                             {t('navigation:my_farms')}
                                         </NavLink>
+                                        <NavLink href={route('farm-owner.trees.index')} active={route().current('farm-owner.trees.*')}>
+                                            {t('navigation:trees')}
+                                        </NavLink>
                                     </>
                                 )}
 
                                 {/* Admin Only Modules */}
-                                {user.role === 'admin' && (
+                                {user?.role === 'admin' && (
                                     <>
                                         <NavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
                                             {t('navigation:admin_panel')}
@@ -99,7 +101,7 @@ export default function Authenticated({
                                                 type="button"
                                                 className="inline-flex items-center rounded-md border border-transparent bg-white px-3 py-2 text-sm font-medium leading-4 text-gray-500 transition duration-150 ease-in-out hover:text-gray-700 focus:outline-none"
                                             >
-                                                {user.name}
+                                                {user?.name}
 
                                                 <svg
                                                     className="-me-0.5 ms-2 h-4 w-4"
@@ -186,7 +188,7 @@ export default function Authenticated({
                 >
                     <div className="space-y-1 pb-3 pt-2">
                         {/* Investor Only Modules */}
-                        {user.role === 'investor' && (
+                        {user?.role === 'investor' && (
                             <>
                                 <ResponsiveNavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
                                     {t('navigation:portfolio')}
@@ -201,7 +203,7 @@ export default function Authenticated({
                         )}
 
                         {/* Farm Owner Only Modules */}
-                        {user.role === 'farm_owner' && (
+                        {user?.role === 'farm_owner' && (
                             <>
                                 <ResponsiveNavLink href={route('farm-owner.dashboard')} active={route().current('farm-owner.dashboard')}>
                                     {t('navigation:farm_dashboard')}
@@ -209,11 +211,14 @@ export default function Authenticated({
                                 <ResponsiveNavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
                                     {t('navigation:my_farms')}
                                 </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('farm-owner.trees.index')} active={route().current('farm-owner.trees.*')}>
+                                    {t('navigation:trees')}
+                                </ResponsiveNavLink>
                             </>
                         )}
 
                         {/* Admin Only Modules */}
-                        {user.role === 'admin' && (
+                        {user?.role === 'admin' && (
                             <>
                                 <ResponsiveNavLink href={route('admin.dashboard')} active={route().current('admin.dashboard')}>
                                     {t('navigation:admin_panel')}
@@ -239,10 +244,10 @@ export default function Authenticated({
                     <div className="border-t border-gray-200 pb-1 pt-4">
                         <div className="px-4">
                             <div className="text-base font-medium text-gray-800">
-                                {user.name}
+                                {user?.name}
                             </div>
                             <div className="text-sm font-medium text-gray-500">
-                                {user.email}
+                                {user?.email}
                             </div>
                         </div>
 

@@ -52,7 +52,7 @@ export default function Dashboard({
                         </div>
                     )}
 
-                    {metrics.total_investments_count === 0 ? (
+                    {metrics?.total_investments_count === 0 ? (
                         <div className="bg-pine-50 rounded-3xl p-12 text-center border border-pine-200 shadow-sm">
                             <Sprout className="mx-auto h-12 w-12 text-pine-400 mb-4" />
                             <h3 className="text-xl font-bold text-pine-900 mb-2">Ready to grow your wealth?</h3>
@@ -75,11 +75,11 @@ export default function Dashboard({
 
                             {/* KPIs */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                                <StatCard label="Total Invested" value={formatCurrency(metrics.total_invested_cents)} icon={<DollarSign />} accent="pine" />
-                                <StatCard label="Active Trees" value={metrics.active_trees} icon={<Sprout />} accent="pine" />
-                                <StatCard label="Total Payouts" value={formatCurrency(metrics.total_payouts_cents)} icon={<HandCoins />} accent="amber" />
-                                <StatCard label="Portfolio ROI %" value={`${metrics.portfolio_roi_percent.toFixed(2)}%`} icon={<LineChart />} accent="sun" />
-                                <StatCard label="Investments" value={metrics.total_investments_count} icon={<Leaf />} accent="pine" />
+                                <StatCard label="Total Invested" value={formatCurrency(metrics?.total_invested_cents || 0)} icon={<DollarSign />} accent="pine" />
+                                <StatCard label="Active Trees" value={metrics?.active_trees || 0} icon={<Sprout />} accent="pine" />
+                                <StatCard label="Total Payouts" value={formatCurrency(metrics?.total_payouts_cents || 0)} icon={<HandCoins />} accent="amber" />
+                                <StatCard label="Portfolio ROI %" value={`${(metrics?.portfolio_roi_percent || 0).toFixed(2)}%`} icon={<LineChart />} accent="sun" />
+                                <StatCard label="Investments" value={metrics?.total_investments_count || 0} icon={<Leaf />} accent="pine" />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

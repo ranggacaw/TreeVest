@@ -46,6 +46,7 @@
             "create_farm": "Buat Kebun",
             "schedule_harvest": "Jadwalkan Panen",
             "post_health_update": "Posting Pembaruan Kesehatan",
+            "manage_trees": "Kelola Pohon",
             "view_analytics": "Lihat Analitik",
             "welcome_title": "Selamat Datang di TreeVest",
             "no_farms": "Anda belum memiliki kebun apapun. Buat kebun pertama Anda untuk mulai menokenisasi pohon dan menerima investasi.",
@@ -147,5 +148,4 @@
         "confirm": "Konfirmasi",
         "actions": "Aksi"
     }
-}
 }

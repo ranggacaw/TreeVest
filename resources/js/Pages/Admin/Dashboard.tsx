@@ -114,25 +114,25 @@ export default function Dashboard({
                         </div>
 
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-                            <StatCard label={t('dashboard.total_users')} value={metrics.total_users} icon={<Users />} />
-                            <StatCard label={t('dashboard.kyc_verified')} value={metrics.kyc_verified} icon={<FileCheck />} />
-                            <StatCard label={t('dashboard.active_investments')} value={metrics.active_investments} icon={<Sprout />} />
-                            <StatCard label={t('dashboard.investment_volume')} value={formatCurrency(metrics.investment_volume)} icon={<DollarSign />} />
+                            <StatCard label={t('dashboard.total_users')} value={metrics?.total_users || 0} icon={<Users />} />
+                            <StatCard label={t('dashboard.kyc_verified')} value={metrics?.kyc_verified || 0} icon={<FileCheck />} />
+                            <StatCard label={t('dashboard.active_investments')} value={metrics?.active_investments || 0} icon={<Sprout />} />
+                            <StatCard label={t('dashboard.investment_volume')} value={formatCurrency(metrics?.investment_volume || 0)} icon={<DollarSign />} />
 
                             <StatCard
                                 label={t('dashboard.pending_kyc')}
-                                value={metrics.pending_kyc}
+                                value={metrics?.pending_kyc || 0}
                                 icon={<Clock />}
-                                accent={metrics.pending_kyc > 0 ? 'amber' : 'none'}
+                                accent={(metrics?.pending_kyc || 0) > 0 ? 'amber' : 'none'}
                             />
                             <StatCard
                                 label={t('dashboard.pending_farms')}
-                                value={metrics.pending_farms}
+                                value={metrics?.pending_farms || 0}
                                 icon={<Clock />}
-                                accent={metrics.pending_farms > 0 ? 'amber' : 'none'}
+                                accent={(metrics?.pending_farms || 0) > 0 ? 'amber' : 'none'}
                             />
-                            <StatCard label={t('dashboard.completed_harvests')} value={metrics.completed_harvests} icon={<Leaf />} />
-                            <StatCard label={t('dashboard.total_payouts')} value={formatCurrency(metrics.total_payouts)} icon={<HandCoins />} />
+                            <StatCard label={t('dashboard.completed_harvests')} value={metrics?.completed_harvests || 0} icon={<Leaf />} />
+                            <StatCard label={t('dashboard.total_payouts')} value={formatCurrency(metrics?.total_payouts || 0)} icon={<HandCoins />} />
                         </div>
                     </div>
 

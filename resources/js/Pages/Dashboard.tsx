@@ -11,7 +11,7 @@ interface Props extends PageProps {
 
 export default function Dashboard({ auth }: Props) {
     const { t } = useTranslation('investments');
-    const needsKyc = auth.user.kyc_status !== 'verified';
+    const needsKyc = auth.user?.kyc_status !== 'verified';
 
     return (
         <AuthenticatedLayout

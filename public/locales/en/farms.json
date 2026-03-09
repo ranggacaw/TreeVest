@@ -46,6 +46,7 @@
             "create_farm": "Create Farm",
             "schedule_harvest": "Schedule Harvest",
             "post_health_update": "Post Health Update",
+            "manage_trees": "Manage Trees",
             "view_analytics": "View Analytics",
             "welcome_title": "Welcome to TreeVest",
             "no_farms": "You don't have any farms yet. Create your first farm to start tokenizing trees and receiving investments.",

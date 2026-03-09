@@ -63,7 +63,11 @@ class TreeController extends Controller
     {
         $validated = $request->validated();
         $validated['pricing_config_json'] = $validated['pricing_config'];
-        $validated['price_cents'] = 0; // Temporary value, updated right after
+        $validated['price_cents'] = 0;
+
+        $tempTree = new Tree($validated);
+        $validated['expected_roi_percent'] = $this->pricingService->calculateRoi($tempTree);
+
         unset($validated['pricing_config']);
 
         $tree = Tree::create($validated);

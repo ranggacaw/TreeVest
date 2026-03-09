@@ -21,6 +21,7 @@ export default function Dashboard({
         { label: t('farm_owner.dashboard.create_farm'), href: route('farms.manage.create'), icon: <Leaf />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.schedule_harvest'), href: route('farm-owner.harvests.create'), icon: <Calendar />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.post_health_update'), href: route('farm-owner.health-updates.create'), icon: <Stethoscope />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.manage_trees'), href: route('farm-owner.trees.index'), icon: <Sprout />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.view_analytics'), href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
     ];
 
@@ -42,7 +43,7 @@ export default function Dashboard({
         >
             <div className="py-8">
                 <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
-                    {metrics.total_farms === 0 ? (
+                    {metrics?.total_farms === 0 ? (
                         <div className="bg-sage-50 rounded-3xl p-12 text-center border border-sage-200 shadow-sm">
                             <Sprout className="mx-auto h-12 w-12 text-sage-400 mb-4" />
                             <h3 className="text-xl font-bold text-sage-900 mb-2">{t('farm_owner.dashboard.welcome_title')}</h3>
@@ -65,11 +66,11 @@ export default function Dashboard({
 
                             {/* KPIs */}
                             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                                <StatCard label={t('farm_owner.dashboard.total_farms')} value={metrics.total_farms} icon={<Leaf />} accent="sage" />
-                                <StatCard label={t('farm_owner.dashboard.active_farms')} value={metrics.active_farms} icon={<Leaf />} accent="sage" />
-                                <StatCard label={t('farm_owner.dashboard.total_trees')} value={metrics.total_trees} icon={<Sprout />} accent="sage" />
-                                <StatCard label={t('farm_owner.dashboard.total_investors')} value={metrics.total_investors} icon={<Users />} accent="sage" />
-                                <StatCard label={t('farm_owner.dashboard.total_earnings')} value={formatCurrency(metrics.total_earnings_cents)} icon={<HandCoins />} accent="amber" />
+                                <StatCard label={t('farm_owner.dashboard.total_farms')} value={metrics?.total_farms || 0} icon={<Leaf />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_farms')} value={metrics?.active_farms || 0} icon={<Leaf />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_trees')} value={metrics?.total_trees || 0} icon={<Sprout />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_investors')} value={metrics?.total_investors || 0} icon={<Users />} accent="sage" />
+                                <StatCard label={t('farm_owner.dashboard.total_earnings')} value={formatCurrency(metrics?.total_earnings_cents || 0)} icon={<HandCoins />} accent="amber" />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

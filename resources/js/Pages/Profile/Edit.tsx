@@ -15,7 +15,7 @@ export default function Edit({
     auth,
 }: PageProps<{ mustVerifyEmail: boolean; status?: string; auth: { user: any } }>) {
     const { t } = useTranslation('profile');
-    const user = auth.user as any;
+    const user = auth.user || {};
 
     const { data, setData, patch, processing, errors } = useForm({
         phone: user.phone || '',
@@ -101,7 +101,7 @@ export default function Edit({
                                 disabled={processing}
                                 className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
                             >
-                                {user.phone ? t('update_phone') : t('add_phone')}
+                                {user?.phone ? t('update_phone') : t('add_phone')}
                             </button>
                         </div>
                     </div>
