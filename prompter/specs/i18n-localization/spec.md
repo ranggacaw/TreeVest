@@ -49,29 +49,19 @@ The system SHALL pass the active locale and list of available locales to all Rea
 
 ### Requirement: React UI Translation via react-i18next
 
-The system SHALL use `react-i18next` to translate all user-facing strings in React components, with translation files stored as JSON under `public/locales/`.
+The system SHALL use `react-i18next` to translate all user-facing strings in React components, with translation files organized into domain-specific namespaces stored as JSON under `public/locales/`.
 
-#### Scenario: Component uses translation hook
-- **WHEN** a React component renders any user-facing text string
-- **THEN** the text is wrapped with `t('key')` from the `useTranslation()` hook
-- **AND** no raw English string literals appear in TSX markup
+#### Scenario: Multiple namespaces are registered
 
-#### Scenario: English translation file exists
-- **WHEN** developer inspects `public/locales/en/translation.json`
-- **THEN** the file contains all translation keys used in React components
-- **AND** all values are correct English strings
+- **WHEN** developer inspects `resources/js/i18n.ts`
+- **THEN** the `ns` array includes: `['translation', 'health', 'admin', 'farms', 'investments', 'harvests', 'education', 'auth']`
+- **AND** `defaultNS` is `'translation'`
 
-#### Scenario: Indonesian translation file exists
-- **WHEN** developer inspects `public/locales/id/translation.json`
-- **THEN** the file contains all translation keys used in React components
-- **AND** all values are correct Bahasa Indonesia strings
+#### Scenario: Page components declare their namespaces
 
-#### Scenario: Missing translation key falls back to English
-- **WHEN** `t('some.key')` is called and the key does not exist in the active locale's file
-- **THEN** `i18next` falls back to the `en` locale file
-- **AND** returns the English string without throwing an error
-
----
+- **WHEN** a React page component uses translations
+- **THEN** it calls `useTranslation(['primary_namespace', 'translation'])` specifying the domain namespace and the common namespace
+- **AND** `i18next-resources-to-backend` lazy-loads only the requested namespace files
 
 ### Requirement: PHP Backend Translation via Laravel Lang Files
 
@@ -96,32 +86,25 @@ The system SHALL use Laravel's `lang/` directory and `__()` / `trans()` helpers 
 
 ### Requirement: Language Switcher UI
 
-The system SHALL provide a language switcher component in the navigation bar that allows users to change their preferred language.
+The system SHALL provide a language switcher component in the navigation bar that allows users to change their preferred language, displaying flag icons and locale badges for visual identification.
 
-#### Scenario: Language switcher visible to all users
+#### Scenario: Language switcher displays flag icons
+
 - **WHEN** any authenticated or guest user views a page
-- **THEN** a `LanguageSwitcher` component is visible in the navigation bar
-- **AND** it displays the currently active locale label (e.g., "English" or "Bahasa Indonesia")
+- **THEN** the `LanguageSwitcher` component displays the active locale with its flag icon (e.g., 🇬🇧 EN or 🇮🇩 ID)
+- **AND** the dropdown lists all configured locales with their flag icons and native names
 
-#### Scenario: Authenticated user switches language
-- **WHEN** an authenticated user selects "Bahasa Indonesia" from the language switcher
-- **THEN** the system sends a PATCH request to `/profile/locale` with `{ locale: 'id' }`
-- **AND** the `users.locale` column is updated for that user
-- **AND** the page reloads with the new locale applied
-- **AND** subsequent requests use the stored `id` locale
+#### Scenario: Language switcher dynamically renders from config
 
-#### Scenario: Guest user switches language
-- **WHEN** an unauthenticated guest selects a different language
-- **THEN** the system stores the preference in the session (`locale` key)
-- **AND** the page reloads with the new locale applied
-- **AND** the preference is not persisted to the database
+- **WHEN** the `LanguageSwitcher` component renders its options
+- **THEN** it reads locale data from `usePage().props.availableLocales` which includes `flag`, `name`, and `native_name` for each locale
+- **AND** it does NOT hardcode locale options — adding a new locale via `config/locales.php` automatically appears in the switcher
 
-#### Scenario: Only supported locales are shown
-- **WHEN** the language switcher renders its options
-- **THEN** only locales listed in `APP_AVAILABLE_LOCALES` are displayed
-- **AND** the currently active locale is visually highlighted
+#### Scenario: Active locale is visually distinguished
 
----
+- **WHEN** the language switcher dropdown is open
+- **THEN** the currently active locale has a distinct background color and a checkmark or bold styling
+- **AND** non-active locales have hover states
 
 ### Requirement: Locale-Aware Date and Time Formatting
 

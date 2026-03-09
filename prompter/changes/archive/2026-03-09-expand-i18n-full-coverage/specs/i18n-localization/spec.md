@@ -2,7 +2,7 @@
 
 ## MODIFIED Requirements
 
-### Requirement: Language Switcher UI (MODIFIED)
+### Requirement: Language Switcher UI
 
 The system SHALL provide a language switcher component in the navigation bar that allows users to change their preferred language, displaying flag icons and locale badges for visual identification.
 
@@ -24,7 +24,7 @@ The system SHALL provide a language switcher component in the navigation bar tha
 - **THEN** the currently active locale has a distinct background color and a checkmark or bold styling
 - **AND** non-active locales have hover states
 
-### Requirement: React UI Translation via react-i18next (MODIFIED)
+### Requirement: React UI Translation via react-i18next
 
 The system SHALL use `react-i18next` to translate all user-facing strings in React components, with translation files organized into domain-specific namespaces stored as JSON under `public/locales/`.
 
