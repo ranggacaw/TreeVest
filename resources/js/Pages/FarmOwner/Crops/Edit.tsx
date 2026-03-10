@@ -16,6 +16,8 @@ export default function Edit({ auth, fruitCrop, farms, fruitTypes }: PageProps<{
         variant: fruitCrop.variant || '',
         harvest_cycle: fruitCrop.harvest_cycle || 'annual',
         planted_date: fruitCrop.planted_date || '',
+        total_trees: fruitCrop.total_trees?.toString() || '',
+        productive_trees: fruitCrop.productive_trees?.toString() || '',
         description: fruitCrop.description || '',
     });
 
@@ -111,6 +113,32 @@ export default function Edit({ auth, fruitCrop, farms, fruitTypes }: PageProps<{
                                         onChange={e => setData('planted_date', e.target.value)}
                                     />
                                     <InputError message={errors.planted_date} className="mt-2" />
+                                </div>
+
+                                <div className=''>
+                                    <InputLabel htmlFor="total_trees" value="Total Trees (Optional)" />
+                                    <TextInput
+                                        id="total_trees"
+                                        type="number"
+                                        min="0"
+                                        className="mt-1 block w-full"
+                                        value={data.total_trees}
+                                        onChange={e => setData('total_trees', e.target.value)}
+                                    />
+                                    <InputError message={errors.total_trees} className="mt-2" />
+                                </div>
+
+                                <div className=''>
+                                    <InputLabel htmlFor="productive_trees" value="Productive Trees (Optional)" />
+                                    <TextInput
+                                        id="productive_trees"
+                                        type="number"
+                                        min="0"
+                                        className="mt-1 block w-full"
+                                        value={data.productive_trees}
+                                        onChange={e => setData('productive_trees', e.target.value)}
+                                    />
+                                    <InputError message={errors.productive_trees} className="mt-2" />
                                 </div>
 
                                 <div className=''>

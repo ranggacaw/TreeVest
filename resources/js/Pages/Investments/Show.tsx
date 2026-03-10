@@ -157,6 +157,11 @@ export default function Show({ auth, investment }: Props) {
                                 </button>
                             </div>
 
+                            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-4 mb-6 mt-6">
+                                <h4 className="text-sm font-semibold text-emerald-800">40% Investor Profit Share</h4>
+                                <p className="text-xs text-emerald-700 mt-1">Your projected returns and upcoming payouts are calculated based on your proportional share of the 40% investor pool. The farm owner retains 60% of the net harvest revenue.</p>
+                            </div>
+
                             <div className="border-t border-gray-200 pt-6">
                                 <h4 className="text-sm font-medium text-gray-500 mb-4">{t('investment_summary')}</h4>
                                 <div className="grid grid-cols-2 md:grid-cols-4 gap-4">

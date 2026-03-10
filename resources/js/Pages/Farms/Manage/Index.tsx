@@ -136,4 +136,3 @@ export default function Index({ farms }: Props) {
         </AppLayout>
     );
 }
-

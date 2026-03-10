@@ -4,6 +4,7 @@ import Navbar from '@/Components/Navbar';
 import FarmImageGallery from '@/Components/FarmImageGallery';
 import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import FarmMap from '@/Components/FarmMap';
+import AgrotourismEventCard from '@/Components/AgrotourismEventCard';
 import { Farm } from '@/types';
 import { useTranslation } from 'react-i18next';
 import { formatRupiah } from '@/utils/currency';
@@ -191,6 +192,22 @@ export default function Show({ farm }: Props) {
                 </div>
 
                 <div className="grid grid-cols-1">
+                    {farm.agrotourism_events && farm.agrotourism_events.length > 0 && (
+                        <div className="mt-8">
+                            <h2 className="text-2xl font-bold text-gray-900 mb-6">Upcoming Agrotourism Events</h2>
+                            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 mb-8">
+                                {farm.agrotourism_events.map((event: any) => (
+                                    <AgrotourismEventCard
+                                        key={event.id}
+                                        event={event}
+                                        registrationRoute={route('investor.agrotourism.index')}
+                                    />
+                                ))}
+                            </div>
+                            <p className="text-sm text-gray-500 mb-8 mt-2">To register for an event, go to the <a href={route('investor.agrotourism.index')} className="text-emerald-600 underline">Events Portal</a>.</p>
+                        </div>
+                    )}
+
                     {farm.fruit_crops && farm.fruit_crops.length > 0 && (
                         <div className="mt-8">
                             <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('investment_opportunities')}</h2>

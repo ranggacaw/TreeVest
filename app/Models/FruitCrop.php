@@ -8,6 +8,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Validator;
+use Illuminate\Validation\ValidationException;
 
 class FruitCrop extends Model
 {
@@ -20,14 +22,33 @@ class FruitCrop extends Model
         'description',
         'harvest_cycle',
         'planted_date',
+        'total_trees',
+        'productive_trees',
     ];
 
     protected function casts(): array
     {
         return [
-            'harvest_cycle' => HarvestCycle::class,
-            'planted_date' => 'date',
+            'harvest_cycle'    => HarvestCycle::class,
+            'planted_date'     => 'date',
+            'total_trees'      => 'integer',
+            'productive_trees' => 'integer',
         ];
+    }
+
+    protected static function booted(): void
+    {
+        static::saving(function (FruitCrop $fruitCrop): void {
+            $validator = Validator::make($fruitCrop->toArray(), [
+                'productive_trees' => 'lte:total_trees',
+            ], [
+                'productive_trees.lte' => 'Productive trees cannot exceed total trees.',
+            ]);
+
+            if ($validator->fails()) {
+                throw new ValidationException($validator);
+            }
+        });
     }
 
     public function farm(): BelongsTo

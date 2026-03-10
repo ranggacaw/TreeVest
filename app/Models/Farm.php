@@ -76,6 +76,11 @@ class Farm extends Model
         return $this->hasMany(FruitCrop::class);
     }
 
+    public function agrotourismEvents(): HasMany
+    {
+        return $this->hasMany(AgrotourismEvent::class);
+    }
+
     public function weatherData(): HasMany
     {
         return $this->hasMany(WeatherData::class)->orderBy('fetched_at', 'desc');

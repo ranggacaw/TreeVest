@@ -24,6 +24,7 @@ class Harvest extends Model
         'quality_grade',
         'market_price_id',
         'platform_fee_rate',
+        'farm_owner_share_cents',
         'notes',
         'confirmed_by',
         'confirmed_at',

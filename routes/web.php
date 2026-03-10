@@ -2,9 +2,12 @@
 
 use App\Http\Controllers\AccountController;
 use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\AgrotourismController as AdminAgrotourismController;
 use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\FarmOwner\DashboardController as FarmOwnerDashboardController;
+use App\Http\Controllers\FarmOwner\AgrotourismController as FarmOwnerAgrotourismController;
 use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
+use App\Http\Controllers\Investor\AgrotourismController as InvestorAgrotourismController;
 use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
 use App\Http\Controllers\Admin\KycReviewController;
 use App\Http\Controllers\Admin\UserController;
@@ -173,6 +176,11 @@ Route::middleware(['auth', 'role:admin'])->group(function () {
             Route::get('/{harvest}', [\App\Http\Controllers\Admin\HarvestController::class, 'show'])->name('show');
         });
 
+        Route::prefix('agrotourism')->name('agrotourism.')->group(function () {
+            Route::get('/', [AdminAgrotourismController::class, 'index'])->name('index');
+            Route::post('/{event}/suspend', [AdminAgrotourismController::class, 'suspend'])->name('suspend');
+        });
+
         Route::prefix('translations')->name('translations.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Admin\TranslationController::class, 'index'])->name('index');
             Route::get('/queue', [\App\Http\Controllers\Admin\TranslationController::class, 'queue'])->name('queue');
@@ -232,6 +240,17 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::post('/{harvest}/confirm', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'confirm'])->name('confirm');
             Route::post('/{harvest}/fail', [\App\Http\Controllers\FarmOwner\HarvestController::class, 'fail'])->name('fail');
         });
+
+        Route::prefix('agrotourism')->name('agrotourism.')->group(function () {
+            Route::get('/', [FarmOwnerAgrotourismController::class, 'index'])->name('index');
+            Route::get('/create', [FarmOwnerAgrotourismController::class, 'create'])->name('create');
+            Route::post('/', [FarmOwnerAgrotourismController::class, 'store'])->name('store');
+            Route::get('/{event}', [FarmOwnerAgrotourismController::class, 'show'])->name('show');
+            Route::get('/{event}/edit', [FarmOwnerAgrotourismController::class, 'edit'])->name('edit');
+            Route::put('/{event}', [FarmOwnerAgrotourismController::class, 'update'])->name('update');
+            Route::post('/{event}/cancel', [FarmOwnerAgrotourismController::class, 'cancel'])->name('cancel');
+            Route::post('/{event}/close-registrations', [FarmOwnerAgrotourismController::class, 'closeRegistrations'])->name('close-registrations');
+        });
     });
 
     Route::prefix('farms/manage')->name('farms.manage.')->group(function () {
@@ -253,6 +272,12 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::prefix('payouts')->name('payouts.')->group(function () {
             Route::get('/', [\App\Http\Controllers\Investor\PayoutController::class, 'index'])->name('index');
             Route::get('/{payout}', [\App\Http\Controllers\Investor\PayoutController::class, 'show'])->name('show');
+        });
+
+        Route::prefix('agrotourism')->name('agrotourism.')->group(function () {
+            Route::get('/', [InvestorAgrotourismController::class, 'index'])->name('index');
+            Route::post('/{event}/register', [InvestorAgrotourismController::class, 'register'])->name('register');
+            Route::delete('/registrations/{registration}', [InvestorAgrotourismController::class, 'cancelRegistration'])->name('registrations.cancel');
         });
     });
 

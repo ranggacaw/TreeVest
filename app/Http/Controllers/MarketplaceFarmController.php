@@ -52,6 +52,9 @@ class MarketplaceFarmController extends Controller
             'images',
             'certifications',
             'owner',
+            'agrotourismEvents' => function ($query) {
+                $query->upcoming()->open()->orderBy('event_date');
+            },
             'fruitCrops.fruitType',
             'fruitCrops.trees' => function ($query) {
                 $query->investable()->whereDoesntHave('investments', function ($q) {

@@ -98,6 +98,16 @@ class AppServiceProvider extends ServiceProvider
             \App\Listeners\NotifyBuyerOfPurchase::class
         );
 
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\AgrotourismRegistrationConfirmed::class,
+            \App\Listeners\NotifyInvestorOfRegistrationConfirmation::class
+        );
+
+        \Illuminate\Support\Facades\Event::listen(
+            \App\Events\AgrotourismEventCancelled::class,
+            \App\Listeners\NotifyInvestorsOfEventCancellation::class
+        );
+
         \Illuminate\Support\Facades\RateLimiter::for('auth-throttle', function (\Illuminate\Http\Request $request) {
             return \Illuminate\Cache\RateLimiting\Limit::perMinute(5)
                 ->by($request->ip())

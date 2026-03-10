@@ -47,7 +47,7 @@ class FarmController extends Controller
     {
         $this->authorizeFarmAccess($farm);
 
-        $farm->load(['images', 'certifications', 'owner']);
+        $farm->load(['images', 'certifications', 'owner', 'fruitCrops.fruitType', 'fruitCrops.trees']);
 
         // Load translated description
         $farm->description = $farm->translatedAttribute('description');

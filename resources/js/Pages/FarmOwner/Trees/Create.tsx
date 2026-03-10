@@ -4,8 +4,9 @@ import { PageProps } from '@/types';
 import InputError from '@/Components/InputError';
 import InputLabel from '@/Components/InputLabel';
 import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
-import { FormEventHandler } from 'react';
+import { useEffect, FormEventHandler } from 'react';
 import { useTranslation } from 'react-i18next';
 import { formatRupiah } from '@/utils/currency';
 
@@ -30,6 +31,86 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
             risk_multiplier: 1.0,
         },
     });
+
+    const selectedCrop = crops.find(c => String(c.id) === String(data.fruit_crop_id)) ?? null;
+
+    const generateIdentifier = (cropId?: string) => {
+        const id = cropId || data.fruit_crop_id;
+        const crop = crops.find(c => String(c.id) === String(id));
+        if (!crop) return;
+
+        const variantAcronym = (crop.variant || '')
+            .split(' ')
+            .filter((word: string) => word.length > 0)
+            .map((word: string) => word[0])
+            .join('')
+            .toUpperCase();
+
+        const typePrefix = (crop.fruit_type?.name || 'TR')
+            .substring(0, 3)
+            .toUpperCase();
+
+        const randomSuffix = Math.random().toString(36).substring(2, 6).toUpperCase();
+
+        const newIdentifier = `${variantAcronym}-${typePrefix}-${randomSuffix}`;
+        setData('tree_identifier', newIdentifier);
+    };
+
+    useEffect(() => {
+        if (prefillCropId && !data.tree_identifier) {
+            generateIdentifier(prefillCropId);
+        }
+    }, []);
+
+    const printIdentifier = () => {
+        const identifier = data.tree_identifier;
+        if (!identifier) return;
+
+        const printWindow = window.open('', '_blank');
+        if (!printWindow) return;
+
+        printWindow.document.write(`
+            <html>
+                <head>
+                    <title>Print Label - ${identifier}</title>
+                    <style>
+                        body {
+                            display: flex;
+                            justify-content: center;
+                            align-items: center;
+                            height: 100vh;
+                            margin: 0;
+                            font-family: sans-serif;
+                            text-align: center;
+                        }
+                        .label {
+                            border: 3px solid black;
+                            padding: 40px;
+                            border-radius: 15px;
+                            max-width: 80%;
+                        }
+                        h1 { font-size: 5rem; margin: 10px 0; letter-spacing: 2px; }
+                        p { font-size: 2rem; color: #333; margin: 0; font-weight: bold; text-transform: uppercase; }
+                        .farm { font-size: 1.2rem; color: #666; margin-top: 15px; font-weight: normal; }
+                    </style>
+                </head>
+                <body>
+                    <div class="label">
+                        <p>${selectedCrop?.fruit_type?.name} - ${selectedCrop?.variant}</p>
+                        <h1>${identifier}</h1>
+                        <div class="farm">${selectedCrop?.farm?.name || ''}</div>
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            window.print();
+                            window.onafterprint = function() { window.close(); };
+                        };
+                    </script>
+                </body>
+            </html>
+        `);
+        printWindow.document.close();
+    };
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
@@ -70,7 +151,11 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                         id="fruit_crop_id"
                                         className="mt-1 block w-full border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 rounded-md shadow-sm"
                                         value={data.fruit_crop_id}
-                                        onChange={e => setData('fruit_crop_id', e.target.value)}
+                                        onChange={e => {
+                                            const newId = e.target.value;
+                                            setData('fruit_crop_id', newId);
+                                            if (newId) generateIdentifier(newId);
+                                        }}
                                         required
                                     >
                                         <option value="">Select a Crop</option>
@@ -81,17 +166,111 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
                                         ))}
                                     </select>
                                     <InputError message={errors.fruit_crop_id} className="mt-2" />
+
+                                    {selectedCrop && (() => {
+                                        const registered = selectedCrop.trees_count ?? 0;
+                                        const capacity   = selectedCrop.total_trees ?? null;
+                                        const productive = selectedCrop.productive_trees ?? null;
+                                        // On create: this tree doesn't exist yet, so no self-exclusion
+                                        const remaining  = capacity != null ? capacity - registered : null;
+                                        const fillPct    = capacity != null && capacity > 0
+                                            ? Math.min(100, Math.round((registered / capacity) * 100))
+                                            : null;
+                                        const isOver = remaining != null && remaining < 0;
+                                        const isFull = remaining != null && remaining === 0;
+
+                                        return (
+                                            <div className={`mt-2 rounded-md border px-3 py-2.5 text-xs ${isOver ? 'border-red-200 bg-red-50 text-red-800' : isFull ? 'border-amber-200 bg-amber-50 text-amber-800' : 'border-blue-200 bg-blue-50 text-blue-800'}`}>
+                                                <p className="font-semibold mb-1.5">
+                                                    {selectedCrop.farm?.name ?? `Farm #${selectedCrop.farm_id}`}
+                                                    <span className="mx-1.5 font-normal opacity-50">›</span>
+                                                    {selectedCrop.fruit_type?.name} — {selectedCrop.variant}
+                                                </p>
+
+                                                <div className="flex items-center gap-4 flex-wrap">
+                                                    <span>
+                                                        Registered in this crop:{' '}
+                                                        <span className="font-bold">{registered}</span>
+                                                        {capacity != null && (
+                                                            <span className="opacity-70"> / {capacity} capacity</span>
+                                                        )}
+                                                    </span>
+
+                                                    {productive != null && (
+                                                        <>
+                                                            <span className="opacity-30">·</span>
+                                                            <span>
+                                                                Productive trees:{' '}
+                                                                <span className="font-bold">{productive}</span>
+                                                            </span>
+                                                        </>
+                                                    )}
+
+                                                    {remaining != null && (
+                                                        <>
+                                                            <span className="opacity-30">·</span>
+                                                            <span className={`font-semibold ${isOver ? 'text-red-700' : isFull ? 'text-amber-700' : ''}`}>
+                                                                {isOver
+                                                                    ? `${Math.abs(remaining)} over capacity`
+                                                                    : isFull
+                                                                        ? 'At capacity'
+                                                                        : `${remaining} slot${remaining !== 1 ? 's' : ''} remaining`}
+                                                            </span>
+                                                        </>
+                                                    )}
+                                                </div>
+
+                                                {fillPct != null && (
+                                                    <div className="mt-2 h-1.5 w-full rounded-full bg-black/10">
+                                                        <div
+                                                            className={`h-1.5 rounded-full transition-all ${isOver ? 'bg-red-500' : isFull ? 'bg-amber-500' : 'bg-blue-500'}`}
+                                                            style={{ width: `${fillPct}%` }}
+                                                        />
+                                                    </div>
+                                                )}
+
+                                                {(isOver || isFull) && (
+                                                    <p className={`mt-1.5 font-medium ${isOver ? 'text-red-700' : 'text-amber-700'}`}>
+                                                        {isOver
+                                                            ? '⚠ This crop already exceeds its declared total tree capacity.'
+                                                            : '⚠ This crop has reached its declared total tree capacity.'}
+                                                        {' '}Update the crop's Total Trees if needed.
+                                                    </p>
+                                                )}
+                                            </div>
+                                        );
+                                    })()}
                                 </div>
 
                                 <div>
                                     <InputLabel htmlFor="tree_identifier" value="Tree Identifier" />
-                                    <TextInput
-                                        id="tree_identifier"
-                                        className="mt-1 block w-full"
-                                        value={data.tree_identifier}
-                                        onChange={e => setData('tree_identifier', e.target.value)}
-                                        required
-                                    />
+                                    <div className="mt-1 flex gap-2">
+                                        <div className="relative flex-grow">
+                                            <TextInput
+                                                id="tree_identifier"
+                                                className="block w-full"
+                                                value={data.tree_identifier}
+                                                onChange={e => setData('tree_identifier', e.target.value)}
+                                                required
+                                            />
+                                        </div>
+                                        <SecondaryButton
+                                            type="button"
+                                            onClick={() => generateIdentifier()}
+                                            title="Generate Identifier"
+                                            className="px-3"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15" /></svg>
+                                        </SecondaryButton>
+                                        <SecondaryButton
+                                            type="button"
+                                            onClick={printIdentifier}
+                                            title="Print Label"
+                                            className="px-3"
+                                        >
+                                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 17h2a2 2 0 002-2v-4a2 2 0 00-2-2H5a2 2 0 00-2 2v4a2 2 0 002 2h2m2 4h6a2 2 0 002-2v-4a2 2 0 00-2-2H9a2 2 0 00-2 2v4a2 2 0 002 2zm8-12V5a2 2 0 00-2-2H9a2 2 0 00-2 2v4h10z" /></svg>
+                                        </SecondaryButton>
+                                    </div>
                                     <InputError message={errors.tree_identifier} className="mt-2" />
                                 </div>
 

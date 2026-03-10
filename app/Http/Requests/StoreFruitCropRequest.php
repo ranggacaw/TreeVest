@@ -29,6 +29,8 @@ class StoreFruitCropRequest extends FormRequest
             'harvest_cycle' => 'required|in:' . implode(',', array_column(HarvestCycle::cases(), 'value')),
             'planted_date' => 'nullable|date',
             'description' => 'nullable|max:1000',
+            'total_trees' => 'nullable|integer|min:0',
+            'productive_trees' => 'nullable|integer|min:0|lte:total_trees',
         ];
     }
 }

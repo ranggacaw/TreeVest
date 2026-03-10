@@ -58,6 +58,9 @@ export default function Authenticated({
                                         <NavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
                                             {t('navigation:my_farms')}
                                         </NavLink>
+                                        <NavLink href={route('farm-owner.crops.index')} active={route().current('farm-owner.crops.*')}>
+                                            {t('navigation:crops', 'Crops')}
+                                        </NavLink>
                                         <NavLink href={route('farm-owner.trees.index')} active={route().current('farm-owner.trees.*')}>
                                             {t('navigation:trees')}
                                         </NavLink>
@@ -210,6 +213,9 @@ export default function Authenticated({
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('farms.manage.index')} active={route().current('farms.manage.*')}>
                                     {t('navigation:my_farms')}
+                                </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('farm-owner.crops.index')} active={route().current('farm-owner.crops.*')}>
+                                    {t('navigation:crops', 'Crops')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('farm-owner.trees.index')} active={route().current('farm-owner.trees.*')}>
                                     {t('navigation:trees')}

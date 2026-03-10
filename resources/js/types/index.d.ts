@@ -133,6 +133,7 @@ export interface Farm {
     images?: FarmImage[];
     certifications?: FarmCertification[];
     owner?: User;
+    agrotourism_events?: AgrotourismEvent[];
     fruit_crops?: Array<{
         id: number;
         variant: string;
@@ -758,4 +759,48 @@ export interface InvestorDashboardProps {
         farm_name: string;
         status: string;
     }>;
+}
+
+// ─── Agrotourism ─────────────────────────────────────────────────────────────
+
+export type AgrotourismEventType = "online" | "offline" | "hybrid";
+export type AgrotourismRegistrationStatus =
+    | "pending"
+    | "confirmed"
+    | "cancelled";
+
+export interface AgrotourismEvent {
+    id: number;
+    farm_id: number;
+    title: string;
+    description: string | null;
+    event_date: string;
+    event_type: AgrotourismEventType;
+    max_capacity: number | null;
+    location_notes: string | null;
+    is_registration_open: boolean;
+    cancelled_at: string | null;
+    created_at: string;
+    updated_at: string;
+    deleted_at?: string | null;
+    // Relations (loaded conditionally)
+    farm?: Farm;
+    registrations?: AgrotourismRegistration[];
+    // Computed / withCount
+    confirmed_registrations_count?: number;
+}
+
+export interface AgrotourismRegistration {
+    id: number;
+    event_id: number;
+    user_id: number;
+    registration_type: AgrotourismEventType;
+    status: AgrotourismRegistrationStatus;
+    confirmed_at: string | null;
+    cancelled_at: string | null;
+    created_at: string;
+    updated_at: string;
+    // Relations (loaded conditionally)
+    event?: AgrotourismEvent;
+    investor?: User;
 }

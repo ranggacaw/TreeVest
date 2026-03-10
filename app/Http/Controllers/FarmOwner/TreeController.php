@@ -52,7 +52,7 @@ class TreeController extends Controller
         $user = auth()->user();
         $crops = \App\Models\FruitCrop::whereHas('farm', function ($q) use ($user) {
             $q->where('owner_id', $user->id);
-        })->with('fruitType')->get();
+        })->with(['fruitType', 'farm'])->withCount('trees')->get();
 
         return Inertia::render('FarmOwner/Trees/Create', [
             'crops' => $crops,
@@ -82,7 +82,7 @@ class TreeController extends Controller
         $user = auth()->user();
         $crops = \App\Models\FruitCrop::whereHas('farm', function ($q) use ($user) {
             $q->where('owner_id', $user->id);
-        })->with('fruitType')->get();
+        })->with(['fruitType', 'farm'])->withCount('trees')->get();
 
         return Inertia::render('FarmOwner/Trees/Edit', [
             'tree' => $tree->load(['fruitCrop.fruitType', 'fruitCrop.farm']),
