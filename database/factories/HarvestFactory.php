@@ -3,7 +3,6 @@
 namespace Database\Factories;
 
 use App\Enums\HarvestStatus;
-use App\Models\FruitCrop;
 use App\Models\Tree;
 use Illuminate\Database\Eloquent\Factories\Factory;
 

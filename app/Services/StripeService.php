@@ -11,6 +11,7 @@ use Stripe\StripeClient;
 class StripeService
 {
     protected ?StripeClient $client = null;
+
     protected ?string $secret = null;
 
     public function __construct()
@@ -20,13 +21,13 @@ class StripeService
 
     /**
      * Get the StripeClient instance or throw an AuthenticationException if not configured.
-     * 
+     *
      * @throws AuthenticationException
      */
     protected function getClient(): StripeClient
     {
-        if (!$this->client) {
-            if (!$this->secret) {
+        if (! $this->client) {
+            if (! $this->secret) {
                 throw new AuthenticationException(
                     'Stripe API key is not configured. Please set STRIPE_SECRET in your .env file.'
                 );
@@ -55,7 +56,7 @@ class StripeService
             if (str_starts_with((string) $secret, 'sk_test_4eC39')) {
                 if (app()->environment('local', 'testing')) {
                     return \Stripe\PaymentIntent::constructFrom([
-                        'id' => 'pi_mock_' . \Illuminate\Support\Str::random(16),
+                        'id' => 'pi_mock_'.\Illuminate\Support\Str::random(16),
                         'amount' => $amount,
                         'currency' => $currency,
                         'metadata' => $metadata,
@@ -67,10 +68,9 @@ class StripeService
 
             throw new \App\Exceptions\PaymentConfigurationException($message);
         } catch (\Stripe\Exception\ApiErrorException $e) {
-            throw new \App\Exceptions\PaymentConfigurationException('Stripe API error: ' . $e->getMessage());
+            throw new \App\Exceptions\PaymentConfigurationException('Stripe API error: '.$e->getMessage());
         }
     }
-
 
     public function retrievePaymentIntent(string $paymentIntentId): PaymentIntent
     {
@@ -138,7 +138,7 @@ class StripeService
                     'last4' => '4242',
                     'exp_month' => 12,
                     'exp_year' => date('Y') + 1,
-                ]
+                ],
             ]);
         }
 
@@ -155,7 +155,7 @@ class StripeService
                         'last4' => '4242',
                         'exp_month' => 12,
                         'exp_year' => date('Y') + 1,
-                    ]
+                    ],
                 ]);
             }
             throw $e;

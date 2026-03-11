@@ -19,6 +19,7 @@ class TransactionSeeder extends Seeder
         // Guard: skip if transactions already exist
         if (Transaction::count() > 0) {
             $this->command->info('TransactionSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -43,7 +44,7 @@ class TransactionSeeder extends Seeder
                 'amount' => $investment->amount_cents,
                 'currency' => 'IDR',
                 'related_investment_id' => $investment->id,
-                'stripe_payment_intent_id' => 'pi_' . fake()->unique()->lexify('??????????????????'),
+                'stripe_payment_intent_id' => 'pi_'.fake()->unique()->lexify('??????????????????'),
                 'payment_method_id' => null,
                 'related_payout_id' => null,
                 'metadata' => [
@@ -109,7 +110,7 @@ class TransactionSeeder extends Seeder
                     'amount' => $amountCents,
                     'currency' => 'IDR',
                     'related_investment_id' => null,
-                'stripe_payment_intent_id' => 'pi_' . fake()->unique()->lexify('??????????????????'),
+                    'stripe_payment_intent_id' => 'pi_'.fake()->unique()->lexify('??????????????????'),
                     'payment_method_id' => null,
                     'related_payout_id' => null,
                     'metadata' => [

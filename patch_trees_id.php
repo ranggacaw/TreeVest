@@ -1,4 +1,5 @@
 <?php
+
 $json = file_get_contents('public/locales/id/trees.json');
 $data = json_decode($json, true);
 

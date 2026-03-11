@@ -15,6 +15,7 @@ class GeneratedReportSeeder extends Seeder
         // Guard: skip if reports already exist
         if (GeneratedReport::count() > 0) {
             $this->command->info('GeneratedReportSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -106,8 +107,8 @@ class GeneratedReportSeeder extends Seeder
     private function getFilePath(ReportType $type, User $investor): string
     {
         $filename = match ($type) {
-            ReportType::ProfitLoss => "pnl_{$investor->id}_" . now()->format('Y-m-d') . '.pdf',
-            ReportType::TaxSummary => "tax_summary_{$investor->id}_" . now()->format('Y') . '.pdf',
+            ReportType::ProfitLoss => "pnl_{$investor->id}_".now()->format('Y-m-d').'.pdf',
+            ReportType::TaxSummary => "tax_summary_{$investor->id}_".now()->format('Y').'.pdf',
         };
 
         return "reports/{$investor->id}/{$filename}";

@@ -43,7 +43,7 @@ class InvestmentPolicy
     public function update(User $user, Investment $investment): bool
     {
         // Users can only update their own investments if in pending status
-        return $user->id === $investment->user_id && 
+        return $user->id === $investment->user_id &&
                $investment->status === 'pending_payment';
     }
 
@@ -63,7 +63,7 @@ class InvestmentPolicy
     public function topUp(User $user, Investment $investment): bool
     {
         // Users can only top up their own active investments
-        return $user->id === $investment->user_id && 
+        return $user->id === $investment->user_id &&
                $investment->status === 'active' &&
                $user->isKycValid();
     }

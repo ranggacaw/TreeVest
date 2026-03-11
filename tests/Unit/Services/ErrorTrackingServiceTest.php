@@ -14,7 +14,7 @@ class ErrorTrackingServiceTest extends TestCase
     protected function setUp(): void
     {
         parent::setUp();
-        $this->service = new ErrorTrackingService();
+        $this->service = new ErrorTrackingService;
     }
 
     public function test_report_error_logs_to_laravel_logs()
@@ -24,7 +24,7 @@ class ErrorTrackingServiceTest extends TestCase
             ->with(
                 'Error tracked: Test exception message',
                 \Mockery::on(function ($context) {
-                    return isset($context['timestamp']) 
+                    return isset($context['timestamp'])
                         && isset($context['environment'])
                         && isset($context['exception_class'])
                         && $context['exception_message'] === 'Test exception message';
@@ -51,9 +51,9 @@ class ErrorTrackingServiceTest extends TestCase
 
         $exception = new Exception('Payment failed');
         $this->service->reportFinancialError(
-            $exception, 
-            'investment_purchase', 
-            ['amount_cents' => 500000], 
+            $exception,
+            'investment_purchase',
+            ['amount_cents' => 500000],
             'user456'
         );
     }
@@ -125,17 +125,17 @@ class ErrorTrackingServiceTest extends TestCase
             ->andReturnUsing(function ($message, $context) {
                 static $callCount = 0;
                 $callCount++;
-                
+
                 if ($callCount === 1) {
                     throw new Exception('Logging failed');
                 }
-                
+
                 // Second call should be the error tracking failure log
                 $this->assertStringContainsString('Error tracking service failed', $message);
             });
 
         $exception = new Exception('Original exception');
-        
+
         // This should not throw an exception even if logging fails
         $this->service->reportError($exception);
     }

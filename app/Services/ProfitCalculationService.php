@@ -28,8 +28,9 @@ class ProfitCalculationService
      * Each investor receives a proportion of investorPoolCents equal to their
      * share of total invested capital in the tree, minus the platform fee.
      *
-     * @throws \InvalidArgumentException if harvest is missing required data
      * @return Collection<int, Payout>
+     *
+     * @throws \InvalidArgumentException if harvest is missing required data
      */
     public function calculate(Harvest $harvest): Collection
     {
@@ -47,7 +48,7 @@ class ProfitCalculationService
             $totalYieldCents = $harvest->actual_yield_kg * $marketPrice->price_per_kg_cents;
 
             // 60/40 split: investors receive 40% of total yield revenue
-            $investorPoolCents  = (int) round($totalYieldCents * self::INVESTOR_SHARE_RATE);
+            $investorPoolCents = (int) round($totalYieldCents * self::INVESTOR_SHARE_RATE);
             $farmOwnerShareCents = (int) ($totalYieldCents - $investorPoolCents);
 
             // Store farm owner's 60% share on the harvest for financial audit purposes.
@@ -80,14 +81,14 @@ class ProfitCalculationService
                 $netAmountCents = $grossAmountCents - $platformFeeCents;
 
                 $payout = Payout::create([
-                    'investment_id'     => $investment->id,
-                    'harvest_id'        => $harvest->id,
-                    'investor_id'       => $investment->user_id,
+                    'investment_id' => $investment->id,
+                    'harvest_id' => $harvest->id,
+                    'investor_id' => $investment->user_id,
                     'gross_amount_cents' => $grossAmountCents,
                     'platform_fee_cents' => $platformFeeCents,
-                    'net_amount_cents'  => $netAmountCents,
-                    'currency'          => $marketPrice->currency,
-                    'status'            => \App\Enums\PayoutStatus::Pending,
+                    'net_amount_cents' => $netAmountCents,
+                    'currency' => $marketPrice->currency,
+                    'status' => \App\Enums\PayoutStatus::Pending,
                 ]);
 
                 $payouts->push($payout);

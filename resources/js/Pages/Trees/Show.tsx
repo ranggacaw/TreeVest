@@ -1,44 +1,55 @@
 import { Head, Link } from '@inertiajs/react';
 import { PageProps } from '@/types';
+import Navbar from '@/Components/Navbar';
 import RiskBadge from '@/Components/RiskBadge';
 import HarvestCycleIcon from '@/Components/HarvestCycleIcon';
 import HealthStatusIndicator from '@/Components/HealthStatusIndicator';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
+import WishlistToggleButton from '@/Components/WishlistToggleButton';
 import { useTranslation } from 'react-i18next';
 import { formatRupiah } from '@/utils/currency';
 
-export default function Show({ tree, auth, healthStatus, recentUpdates, currentWeather }: PageProps<{
+export default function Show({ tree, auth, isWishlisted, healthStatus, recentUpdates, currentWeather }: PageProps<{
     tree: any;
+    isWishlisted?: boolean;
     healthStatus?: any;
     recentUpdates?: any[];
     currentWeather?: any;
 }>) {
     const { t } = useTranslation('trees');
-    const crop = tree.fruit_crop;
+    const crop = tree?.fruit_crop;
     const farm = crop?.farm;
     const fruitType = crop?.fruit_type;
-    const price = formatRupiah(tree.price_cents);
-    const minInv = formatRupiah(tree.min_investment_cents);
-    const maxInv = formatRupiah(tree.max_investment_cents);
+    const fruitTypeName = typeof fruitType === 'string' ? fruitType : fruitType?.name;
+
+    const price = formatRupiah(tree?.price_cents ?? 0);
+    const minInv = formatRupiah(tree?.min_investment_cents ?? 0);
+    const maxInv = formatRupiah(tree?.max_investment_cents ?? 0);
+    const authenticated = !!auth?.user;
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
-            <Head title={t('invest_in_tree', { name: fruitType?.name })} />
+        <div className="min-h-screen bg-gray-50">
+            <Navbar />
+            <Head title={t('invest_in_tree', { name: fruitTypeName })} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
                 {/* Breadcrumb */}
                 <nav className="flex mb-8 text-sm text-gray-500" aria-label="Breadcrumb">
                     <ol className="flex items-center space-x-4">
+                        {farm?.id && (
+                            <>
+                                <li>
+                                    <Link href={route('farms.show', farm.id)} className="hover:text-gray-900">{farm.name}</Link>
+                                </li>
+                                <li>
+                                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
+                                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
+                                    </svg>
+                                </li>
+                            </>
+                        )}
                         <li>
-                            <Link href={route('farms.show', farm?.id)} className="hover:text-gray-900">{farm?.name}</Link>
-                        </li>
-                        <li>
-                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                            </svg>
-                        </li>
-                        <li>
-                            <span className="text-gray-900 font-medium">{fruitType?.name} ({crop?.variant})</span>
+                            <span className="text-gray-900 font-medium">{fruitTypeName} ({crop?.variant})</span>
                         </li>
                         <li>
                             <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
@@ -62,15 +73,20 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                     {t('no_image_available')}
                                 </div>
                             )}
-                            <div className="absolute top-4 right-4 flex gap-2">
+                            <div className="absolute top-4 right-4 flex gap-2 items-center">
                                 <RiskBadge rating={tree.risk_rating} className="text-sm px-3 py-1" />
+                                <WishlistToggleButton
+                                    treeId={tree.id}
+                                    isWishlisted={isWishlisted ?? false}
+                                    authenticated={authenticated}
+                                />
                             </div>
                         </div>
 
                         {/* Details Side */}
                         <div className="p-8 flex flex-col">
                             <div className="mb-2 text-sm font-semibold text-indigo-600 uppercase tracking-wide">
-                                {fruitType?.name} - {crop?.variant}
+                                {fruitTypeName} - {crop?.variant}
                             </div>
                             <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('tree_investment')}</h1>
 
@@ -92,7 +108,7 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 </div>
                                 <div className="sm:col-span-1">
                                     <dt className="text-sm font-medium text-gray-500">{t('remaining_productivity', { defaultValue: 'Remaining Productivity' })}</dt>
-                                    <dd className="mt-1 text-sm text-green-700 bg-green-50 inline-flex px-2 py-0.5 rounded border border-green-100 font-medium">{t('years', { count: Math.max(0, tree.productive_lifespan_years - tree.age_years) })} ({t('produces_yields', { defaultValue: 'produces yields' })})</dd>
+                                    <dd className="mt-1 text-sm text-green-700 bg-green-50 inline-flex px-2 py-0.5 rounded border border-green-100 font-medium">{t('years', { count: Math.max(0, (tree?.productive_lifespan_years ?? 0) - (tree?.age_years ?? 0)) })} ({t('produces_yields', { defaultValue: 'produces yields' })})</dd>
                                 </div>
                                 <div className="sm:col-span-1">
                                     <dt className="text-sm font-medium text-gray-500">{t('status')}</dt>
@@ -131,12 +147,12 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                     </div>
                                 </div>
 
-                                <button
-                                    type="button"
+                                <Link
+                                    href={authenticated ? route('investments.create', tree.id) : route('login')}
                                     className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                                 >
                                     {t('invest_now')}
-                                </button>
+                                </Link>
                             </div>
                         </div>
                     </div>
@@ -172,26 +188,29 @@ export default function Show({ tree, auth, healthStatus, recentUpdates, currentW
                                 <div className="mt-6 border-t pt-4">
                                     <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('recent_updates')}</h3>
                                     <div className="space-y-3">
-                                        {recentUpdates.slice(0, 3).map((update: any) => (
-                                            <Link
-                                                key={update.id}
-                                                href={route('investments.health-feed.show', update.id)}
-                                                className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                            >
-                                                <div className="flex items-start justify-between mb-1">
-                                                    <span className="text-sm font-medium text-gray-900 line-clamp-1">
-                                                        {update.title}
+                                        {recentUpdates.slice(0, 3).map((update: any) => {
+                                            if (!update) return null;
+                                            return (
+                                                <Link
+                                                    key={update.id}
+                                                    href={route('investments.health-feed.show', update.id)}
+                                                    className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
+                                                >
+                                                    <div className="flex items-start justify-between mb-1">
+                                                        <span className="text-sm font-medium text-gray-900 line-clamp-1">
+                                                            {update?.title}
+                                                        </span>
+                                                        <HealthSeverityBadge severity={update?.severity} />
+                                                    </div>
+                                                    <span className="text-xs text-gray-500">
+                                                        {update?.created_at ? new Date(update.created_at).toLocaleDateString() : ''}
                                                     </span>
-                                                    <HealthSeverityBadge severity={update.severity} />
-                                                </div>
-                                                <span className="text-xs text-gray-500">
-                                                    {new Date(update.created_at).toLocaleDateString()}
-                                                </span>
-                                            </Link>
-                                        ))}
+                                                </Link>
+                                            );
+                                        })}
                                     </div>
                                     <Link
-                                        href={route('investments.health-feed')}
+                                        href={route('investments.health-feed.index')}
                                         className="mt-3 inline-block text-sm text-emerald-600 hover:text-emerald-700 font-medium"
                                     >
                                         {t('view_all_updates')}

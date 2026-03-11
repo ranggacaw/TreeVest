@@ -5,11 +5,9 @@ namespace Tests\Unit;
 use App\Enums\AgrotourismEventType;
 use App\Enums\AgrotourismRegistrationStatus;
 use App\Models\AgrotourismEvent;
-use App\Models\AgrotourismRegistration;
 use App\Models\Farm;
 use App\Models\User;
 use App\Services\AgrotourismService;
-use Exception;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
@@ -20,9 +18,13 @@ class AgrotourismServiceTest extends TestCase
     use RefreshDatabase;
 
     private AgrotourismService $service;
+
     private Farm $farm;
+
     private AgrotourismEvent $event;
+
     private User $investor;
+
     private User $farmOwner;
 
     protected function setUp(): void

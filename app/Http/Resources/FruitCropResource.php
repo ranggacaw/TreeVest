@@ -32,7 +32,7 @@ class FruitCropResource extends JsonResource
                 'name' => $this->farm?->name,
                 'city' => $this->farm?->city,
                 'state' => $this->farm?->state,
-                'location' => $this->farm?->location ?? ($this->farm?->city . ', ' . $this->farm?->state),
+                'location' => $this->farm?->location ?? ($this->farm?->city.', '.$this->farm?->state),
             ],
         ];
     }
@@ -42,7 +42,7 @@ class FruitCropResource extends JsonResource
      */
     public static function basic($fruitCrop): array
     {
-        if (!$fruitCrop) {
+        if (! $fruitCrop) {
             return [];
         }
 

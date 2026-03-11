@@ -16,8 +16,7 @@ class TreeController extends Controller
 {
     public function __construct(
         private TreePricingService $pricingService
-    ) {
-    }
+    ) {}
 
     public function index(): Response
     {

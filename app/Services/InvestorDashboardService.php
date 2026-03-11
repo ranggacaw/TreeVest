@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
+use App\Enums\InvestmentStatus;
 use App\Models\Harvest;
 use App\Models\Investment;
 use App\Models\Payout;
 use App\Models\User;
-use App\Enums\InvestmentStatus;
 use Illuminate\Support\Facades\Cache;
 
 class InvestorDashboardService
@@ -69,6 +69,7 @@ class InvestorDashboardService
                 if ($p->investment && $p->investment->tree && $p->investment->tree->fruitCrop && $p->investment->tree->fruitCrop->farm) {
                     $farmName = $p->investment->tree->fruitCrop->farm->name;
                 }
+
                 return [
                     'id' => $p->id,
                     'date' => $p->created_at->toIso8601String(),
@@ -88,6 +89,7 @@ class InvestorDashboardService
                     if ($i->tree && $i->tree->fruitCrop && $i->tree->fruitCrop->farm) {
                         $farmName = $i->tree->fruitCrop->farm->name;
                     }
+
                     return [
                         'id' => $i->id,
                         'date' => $i->created_at->toIso8601String(),

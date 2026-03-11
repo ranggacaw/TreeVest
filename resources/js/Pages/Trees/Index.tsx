@@ -2,17 +2,18 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
 import GuestLayout from '@/Layouts/GuestLayout';
 import TreeCard from '@/Components/TreeCard';
+import Navbar from '@/Components/Navbar';
 import { useTranslation } from 'react-i18next';
 
-export default function Index({ trees, filters, auth }: PageProps<{ trees: any, filters: any }>) {
+export default function Index({ trees, filters = {}, auth, wishlistedTreeIds = [] }: PageProps<{ trees: any, filters?: any, wishlistedTreeIds?: number[] }>) {
     const { t } = useTranslation('trees');
     const { data, setData, get } = useForm({
-        fruit_type: filters.fruit_type || '',
-        variant: filters.variant || '',
-        risk_rating: filters.risk_rating || '',
-        harvest_cycle: filters.harvest_cycle || '',
-        price_min: filters.price_min || '',
-        price_max: filters.price_max || '',
+        fruit_type: filters?.fruit_type || '',
+        variant: filters?.variant || '',
+        risk_rating: filters?.risk_rating || '',
+        harvest_cycle: filters?.harvest_cycle || '',
+        price_min: filters?.price_min || '',
+        price_max: filters?.price_max || '',
     });
 
     const applyFilters = (e: React.FormEvent) => {
@@ -21,7 +22,8 @@ export default function Index({ trees, filters, auth }: PageProps<{ trees: any, 
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 py-8">
+        <div className="min-h-screen bg-gray-50">
+            <Navbar />
             <Head title={t('marketplace')} />
 
             <div className="bg-gray-50 py-12">
@@ -95,7 +97,7 @@ export default function Index({ trees, filters, auth }: PageProps<{ trees: any, 
                             {trees.data.length > 0 ? (
                                 <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                                     {trees.data.map((tree: any) => (
-                                        <TreeCard key={tree.id} tree={tree} />
+                                        <TreeCard key={tree.id} tree={tree} isWishlisted={(wishlistedTreeIds || []).includes(tree.id)} authenticated={!!auth?.user} />
                                     ))}
                                 </div>
                             ) : (
@@ -116,8 +118,8 @@ export default function Index({ trees, filters, auth }: PageProps<{ trees: any, 
                                                 key={idx}
                                                 href={link.url || '#'}
                                                 className={`relative inline-flex items-center px-4 py-2 border text-sm font-medium ${link.active
-                                                        ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
-                                                        : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
+                                                    ? 'z-10 bg-indigo-50 border-indigo-500 text-indigo-600'
+                                                    : 'bg-white border-gray-300 text-gray-500 hover:bg-gray-50'
                                                     }`}
                                                 dangerouslySetInnerHTML={{ __html: link.label }}
                                             />

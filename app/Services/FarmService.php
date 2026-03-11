@@ -239,7 +239,7 @@ class FarmService
     {
         foreach ($images as $index => $image) {
             if ($image->isValid()) {
-                $filename = Str::uuid() . '.' . $image->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$image->getClientOriginalExtension();
                 $path = $image->storeAs("farms/{$farm->id}", $filename, 'public');
 
                 FarmImage::create([
@@ -288,7 +288,7 @@ class FarmService
             ];
 
             if (isset($cert['file']) && $cert['file']->isValid()) {
-                $filename = Str::uuid() . '.' . $cert['file']->getClientOriginalExtension();
+                $filename = Str::uuid().'.'.$cert['file']->getClientOriginalExtension();
                 $path = $cert['file']->storeAs("farms/{$farm->id}/certifications", $filename, 'public');
                 $certData['file_path'] = $path;
             }

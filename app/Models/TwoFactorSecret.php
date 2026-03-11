@@ -10,6 +10,7 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 class TwoFactorSecret extends Model
 {
     use HasFactory;
+
     protected $fillable = [
         'user_id',
         'type',

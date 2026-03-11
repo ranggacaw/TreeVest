@@ -26,7 +26,7 @@ class GeneratedReportFactory extends Factory
     {
         return $this->state(fn (array $attributes) => [
             'status' => GeneratedReportStatus::Completed,
-            'file_path' => 'reports/' . $this->faker->uuid() . '.pdf',
+            'file_path' => 'reports/'.$this->faker->uuid().'.pdf',
             'expires_at' => now()->addDays(7),
         ]);
     }

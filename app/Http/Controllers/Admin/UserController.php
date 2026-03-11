@@ -54,7 +54,7 @@ class UserController extends Controller
             'kycVerifications' => function ($query) {
                 $query->orderBy('created_at', 'desc')->limit(10);
             },
-            'latestKycVerification.documents'
+            'latestKycVerification.documents',
         ]);
 
         $auditEvents = AuditLog::where('user_id', $user->id)
@@ -114,7 +114,7 @@ class UserController extends Controller
 
     public function reactivate(User $user)
     {
-        if (!$user->isSuspended()) {
+        if (! $user->isSuspended()) {
             return back()->with('error', __('admin.not_suspended'));
         }
 

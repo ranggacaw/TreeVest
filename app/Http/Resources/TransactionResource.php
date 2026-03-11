@@ -35,7 +35,7 @@ class TransactionResource extends JsonResource
      */
     public static function basic($transaction): array
     {
-        if (!$transaction) {
+        if (! $transaction) {
             return [];
         }
 

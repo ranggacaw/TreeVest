@@ -45,7 +45,7 @@ class ProfitCalculationServiceTest extends TestCase
     {
         parent::setUp();
 
-        $this->service = new ProfitCalculationService();
+        $this->service = new ProfitCalculationService;
 
         $this->investor = User::factory()->investor()->create();
         $fruitType = FruitType::factory()->create();

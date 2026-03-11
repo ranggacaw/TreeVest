@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\ValidationException;
@@ -29,9 +30,9 @@ class FruitCrop extends Model
     protected function casts(): array
     {
         return [
-            'harvest_cycle'    => HarvestCycle::class,
-            'planted_date'     => 'date',
-            'total_trees'      => 'integer',
+            'harvest_cycle' => HarvestCycle::class,
+            'planted_date' => 'date',
+            'total_trees' => 'integer',
             'productive_trees' => 'integer',
         ];
     }
@@ -84,5 +85,10 @@ class FruitCrop extends Model
     public function activeHealthAlerts(): HasMany
     {
         return $this->healthAlerts()->unresolved();
+    }
+
+    public function wishlistItems(): MorphMany
+    {
+        return $this->morphMany(WishlistItem::class, 'wishlistable');
     }
 }

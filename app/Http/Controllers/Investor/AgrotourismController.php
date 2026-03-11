@@ -15,8 +15,7 @@ class AgrotourismController extends Controller
 {
     public function __construct(
         private readonly AgrotourismService $agrotourismService
-    ) {
-    }
+    ) {}
 
     public function index(): Response
     {

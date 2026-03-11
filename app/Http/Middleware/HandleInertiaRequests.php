@@ -31,11 +31,11 @@ class HandleInertiaRequests extends Middleware
     {
         $currentLocale = app()->getLocale();
         $supportedLocales = config('locales.supported', []);
-        
+
         // Get current locale metadata
         $currentLocaleData = $supportedLocales[$currentLocale] ?? $supportedLocales['en'];
         $isRtl = ($currentLocaleData['dir'] ?? 'ltr') === 'rtl';
-        
+
         view()->share('isRtl', $isRtl);
 
         return [

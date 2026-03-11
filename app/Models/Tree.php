@@ -8,6 +8,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Tree extends Model
@@ -99,12 +100,12 @@ class Tree extends Model
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'Rp ' . number_format($this->price_cents, 0, ',', '.');
+        return 'Rp '.number_format($this->price_cents, 0, ',', '.');
     }
 
     public function getExpectedRoiFormattedAttribute(): string
     {
-        return rtrim(rtrim(number_format($this->expected_roi_percent, 2), '0'), '.') . '%';
+        return rtrim(rtrim(number_format($this->expected_roi_percent, 2), '0'), '.').'%';
     }
 
     public function isInvestable(): bool
@@ -115,5 +116,10 @@ class Tree extends Model
     public function canTransitionTo(TreeLifecycleStage $newStatus): bool
     {
         return $this->status->canTransitionTo($newStatus);
+    }
+
+    public function wishlistItems(): MorphMany
+    {
+        return $this->morphMany(WishlistItem::class, 'wishlistable');
     }
 }

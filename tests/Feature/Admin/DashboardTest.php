@@ -3,11 +3,10 @@
 namespace Tests\Feature\Admin;
 
 use App\Models\Farm;
-use App\Models\KycVerification;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
@@ -21,7 +20,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Admin/Dashboard')
                 ->has('metrics')
                 ->has('metrics.total_users')
@@ -55,7 +54,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Admin/Dashboard')
                 ->where('date_from', now()->subDays(7)->toDateString())
                 ->where('date_to', now()->toDateString())

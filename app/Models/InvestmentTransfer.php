@@ -71,13 +71,13 @@ class InvestmentTransfer extends Model
     {
         $currency = $this->listing?->currency ?? 'IDR';
 
-        return $currency . ' ' . number_format($this->transfer_price_cents / 100, 2);
+        return $currency.' '.number_format($this->transfer_price_cents / 100, 2);
     }
 
     public function getFormattedPlatformFeeAttribute(): string
     {
         $currency = $this->listing?->currency ?? 'IDR';
 
-        return $currency . ' ' . number_format($this->platform_fee_cents / 100, 2);
+        return $currency.' '.number_format($this->platform_fee_cents / 100, 2);
     }
 }

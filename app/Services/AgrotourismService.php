@@ -93,11 +93,11 @@ class AgrotourismService
             }
 
             $registration = AgrotourismRegistration::create([
-                'event_id'          => $lockedEvent->id,
-                'user_id'           => $investor->id,
+                'event_id' => $lockedEvent->id,
+                'user_id' => $investor->id,
                 'registration_type' => $type,
-                'status'            => AgrotourismRegistrationStatus::Confirmed,
-                'confirmed_at'      => now(),
+                'status' => AgrotourismRegistrationStatus::Confirmed,
+                'confirmed_at' => now(),
             ]);
 
             event(new AgrotourismRegistrationConfirmed($registration));
@@ -116,7 +116,7 @@ class AgrotourismService
         }
 
         $registration->update([
-            'status'       => AgrotourismRegistrationStatus::Cancelled,
+            'status' => AgrotourismRegistrationStatus::Cancelled,
             'cancelled_at' => now(),
         ]);
 

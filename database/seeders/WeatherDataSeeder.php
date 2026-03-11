@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Models\Farm;
 use App\Models\WeatherData;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\DB;
 
 class WeatherDataSeeder extends Seeder
 {
@@ -14,6 +13,7 @@ class WeatherDataSeeder extends Seeder
         // Guard: skip if weather data already exists
         if (WeatherData::count() > 0) {
             $this->command->info('WeatherDataSeeder: data already exists, skipping.');
+
             return;
         }
 

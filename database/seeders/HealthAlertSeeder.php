@@ -17,6 +17,7 @@ class HealthAlertSeeder extends Seeder
         // Guard: skip if health alerts already exist
         if (HealthAlert::count() > 0) {
             $this->command->info('HealthAlertSeeder: data already exists, skipping.');
+
             return;
         }
 

@@ -3,12 +3,12 @@
 namespace Tests\Unit\Resources;
 
 use App\Http\Resources\InvestmentResource;
-use App\Models\Investment;
-use App\Models\Tree;
-use App\Models\FruitCrop;
 use App\Models\Farm;
+use App\Models\FruitCrop;
 use App\Models\FruitType;
+use App\Models\Investment;
 use App\Models\Transaction;
+use App\Models\Tree;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -46,7 +46,7 @@ class InvestmentResourceTest extends TestCase
             'tree_id' => $tree->id,
             'amount_cents' => 150000,
         ]);
-        
+
         $investment->load('tree');
 
         $result = InvestmentResource::basic($investment);
@@ -71,15 +71,15 @@ class InvestmentResourceTest extends TestCase
             'fruit_crop_id' => $fruitCrop->id,
         ]);
         $transaction = Transaction::factory()->create([
-            'metadata' => ['client_secret' => 'pi_test_123_secret_456']
+            'metadata' => ['client_secret' => 'pi_test_123_secret_456'],
         ]);
-        
+
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
             'transaction_id' => $transaction->id,
             'amount_cents' => 250000,
         ]);
-        
+
         $investment->load(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'transaction']);
 
         $resource = new InvestmentResource($investment);
@@ -99,12 +99,12 @@ class InvestmentResourceTest extends TestCase
             'tree_identifier' => 'TREE002',
             'max_investment_cents' => 1000000, // Rp 10,000
         ]);
-        
+
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
             'amount_cents' => 500000, // Rp 5,000
         ]);
-        
+
         $investment->load('tree');
 
         $resource = new InvestmentResource($investment);
@@ -122,12 +122,12 @@ class InvestmentResourceTest extends TestCase
         $tree = Tree::factory()->create([
             'expected_roi_percent' => 20,
         ]);
-        
+
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
             'amount_cents' => 100000, // Rp 1,000
         ]);
-        
+
         $investment->load('tree');
 
         $resource = new InvestmentResource($investment);

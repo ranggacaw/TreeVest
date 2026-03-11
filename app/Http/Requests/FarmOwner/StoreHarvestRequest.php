@@ -23,5 +23,4 @@ class StoreHarvestRequest extends FormRequest
             'notes' => ['nullable', 'string'],
         ];
     }
-
 }

@@ -1,12 +1,19 @@
 import { Link } from '@inertiajs/react';
 import RiskBadge from './RiskBadge';
 import HarvestCycleIcon from './HarvestCycleIcon';
+import WishlistToggleButton from './WishlistToggleButton';
+import { formatRupiah } from '@/utils/currency';
 
-export default function TreeCard({ tree }: { tree: any }) {
+interface Props {
+    tree: any;
+    isWishlisted?: boolean;
+    authenticated?: boolean;
+}
+
+export default function TreeCard({ tree, isWishlisted = false, authenticated = true }: Props) {
     const crop = tree.fruit_crop;
     const farm = crop?.farm;
     const fruitType = crop?.fruit_type;
-    const price = (tree.price_cents / 100).toFixed(2);
 
     return (
         <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col transition-transform hover:-translate-y-1 hover:shadow-lg">
@@ -18,13 +25,18 @@ export default function TreeCard({ tree }: { tree: any }) {
                         No Image
                     </div>
                 )}
-                <div className="absolute top-2 right-2 flex gap-2">
+                <div className="absolute top-2 right-2 flex gap-2 items-center">
                     <RiskBadge rating={tree.risk_rating} />
+                    <WishlistToggleButton
+                        treeId={tree.id}
+                        isWishlisted={isWishlisted}
+                        authenticated={authenticated}
+                    />
                 </div>
             </div>
             <div className="p-4 flex flex-col flex-grow">
                 <div className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
-                    {fruitType?.name} &bull; {crop?.variant}
+                    {fruitType?.name ?? fruitType} &bull; {crop?.variant}
                 </div>
                 <h3 className="text-lg font-bold text-gray-900 mb-2 truncate" title={farm?.name}>
                     {farm?.name}
@@ -39,8 +51,8 @@ export default function TreeCard({ tree }: { tree: any }) {
                     </div>
                     <div className="flex justify-between items-end">
                         <div>
-                            <div className="text-xs text-gray-500">Price</div>
-                            <div className="text-xl font-bold text-gray-900">Rp {price}</div>
+                            <div className="text-xs text-gray-500">Price / tree</div>
+                            <div className="text-xl font-bold text-gray-900">{formatRupiah(tree.price_cents)}</div>
                         </div>
                         <Link
                             href={route('trees.show', tree.id)}

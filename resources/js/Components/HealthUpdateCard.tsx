@@ -84,7 +84,7 @@ export default function HealthUpdateCard({ healthUpdate }: Props) {
           </Link>
           <span className="text-gray-300">|</span>
           <span className="text-sm text-gray-500">
-            {healthUpdate.fruit_crop.fruit_type.name}
+            {healthUpdate.fruit_crop.fruit_type?.name}
           </span>
         </div>
         

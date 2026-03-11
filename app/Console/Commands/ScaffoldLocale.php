@@ -32,7 +32,7 @@ class ScaffoldLocale extends Command
         // as they might want to scaffold new files for an existing supported locale.
         $supportedLocales = array_keys(config('locales.supported', []));
 
-        if (!in_array($locale, $supportedLocales)) {
+        if (! in_array($locale, $supportedLocales)) {
             $this->warn("Locale '{$locale}' is not yet in config('locales.supported'). You will need to add it there.");
         }
 
@@ -49,8 +49,8 @@ class ScaffoldLocale extends Command
         $this->line("1. Add '{$locale}' to the `supported` array in `config/locales.php` (if you haven't already).");
         $this->line("2. Translate the keys in the generated JSON files: `public/locales/{$locale}/*.json`.");
         $this->line("3. Translate the keys in the generated PHP files: `lang/{$locale}/*.php`.");
-        $this->line("4. Check the frontend LanguageSwitcher to ensure the new locale appears correctly.");
-        $this->line("5. Test rendering pages with the new locale.");
+        $this->line('4. Check the frontend LanguageSwitcher to ensure the new locale appears correctly.');
+        $this->line('5. Test rendering pages with the new locale.');
 
         return 0;
     }
@@ -60,12 +60,13 @@ class ScaffoldLocale extends Command
         $enDir = public_path('locales/en');
         $targetDir = public_path("locales/{$locale}");
 
-        if (!File::isDirectory($enDir)) {
+        if (! File::isDirectory($enDir)) {
             $this->error("Cannot find English JSON directory: {$enDir}");
+
             return;
         }
 
-        if (!File::isDirectory($targetDir)) {
+        if (! File::isDirectory($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
 
@@ -74,7 +75,7 @@ class ScaffoldLocale extends Command
 
         foreach ($files as $file) {
             $filename = $file->getFilename();
-            $targetPath = $targetDir . '/' . $filename;
+            $targetPath = $targetDir.'/'.$filename;
 
             if (File::exists($targetPath)) {
                 $this->line("Skipped existing file: public/locales/{$locale}/{$filename}");
@@ -99,12 +100,13 @@ class ScaffoldLocale extends Command
         $enDir = base_path('lang/en');
         $targetDir = base_path("lang/{$locale}");
 
-        if (!File::isDirectory($enDir)) {
+        if (! File::isDirectory($enDir)) {
             $this->error("Cannot find English PHP lang directory: {$enDir}");
+
             return;
         }
 
-        if (!File::isDirectory($targetDir)) {
+        if (! File::isDirectory($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
 
@@ -113,7 +115,7 @@ class ScaffoldLocale extends Command
 
         foreach ($files as $file) {
             $filename = $file->getFilename();
-            $targetPath = $targetDir . '/' . $filename;
+            $targetPath = $targetDir.'/'.$filename;
 
             if (File::exists($targetPath)) {
                 $this->line("Skipped existing file: lang/{$locale}/{$filename}");
@@ -124,7 +126,7 @@ class ScaffoldLocale extends Command
 
             if (is_array($content)) {
                 $emptyContent = $this->emptyArrayValues($content);
-                $phpContent = "<?php\n\nreturn " . $this->exportArray($emptyContent) . ";\n";
+                $phpContent = "<?php\n\nreturn ".$this->exportArray($emptyContent).";\n";
                 File::put($targetPath, $phpContent);
                 $count++;
             }
@@ -146,6 +148,7 @@ class ScaffoldLocale extends Command
                 $result[$key] = '';
             }
         }
+
         return $result;
     }
 
@@ -161,7 +164,7 @@ class ScaffoldLocale extends Command
         $export = preg_replace('/^([ ]*)\)/m', '$1]', $export);
 
         // Fix indentation for arrays
-        $export = str_replace("=> \n  [", "=> [", $export);
+        $export = str_replace("=> \n  [", '=> [', $export);
 
         return $export;
     }

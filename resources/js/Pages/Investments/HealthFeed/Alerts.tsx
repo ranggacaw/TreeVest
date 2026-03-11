@@ -59,16 +59,20 @@ export default function Alerts({ healthAlerts, filters }: Props) {
                             {healthAlerts.data.filter(a => !a.is_resolved).length} unresolved alert(s)
                         </p>
                     </div>
+                    <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
+                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
+                        Back to Trees Details
+                    </button>
+                </div>
+
+                {/* Filters */}
+                <div className="mb-6 flex gap-4 flex-wrap">
                     <Link
                         href={route('investments.health-feed.index')}
                         className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 border border-emerald-200"
                     >
                         Back to Health Feed
                     </Link>
-                </div>
-
-                {/* Filters */}
-                <div className="mb-6 flex gap-4 flex-wrap">
                     <select
                         className="rounded-lg border-gray-300 text-sm"
                         value={filters.severity || ''}
@@ -115,11 +119,10 @@ export default function Alerts({ healthAlerts, filters }: Props) {
                         {healthAlerts.data.map((alert) => (
                             <div
                                 key={alert.id}
-                                className={`rounded-lg border ${
-                                    alert.is_resolved
-                                        ? 'border-gray-200 bg-gray-50'
-                                        : 'border-red-200 bg-red-50'
-                                } p-6`}
+                                className={`rounded-lg border ${alert.is_resolved
+                                    ? 'border-gray-200 bg-gray-50'
+                                    : 'border-red-200 bg-red-50'
+                                    } p-6`}
                             >
                                 <div className="flex items-start justify-between mb-3">
                                     <div className="flex items-center gap-3">
@@ -155,7 +158,7 @@ export default function Alerts({ healthAlerts, filters }: Props) {
                                     </div>
                                     {alert.fruit_crop && (
                                         <div>
-                                            <span className="font-medium">Crop:</span> {alert.fruit_crop.variant} ({alert.fruit_crop.fruit_type.name})
+                                            <span className="font-medium">Crop:</span> {alert.fruit_crop.variant} ({alert.fruit_crop.fruit_type?.name})
                                         </div>
                                     )}
                                 </div>
@@ -188,11 +191,10 @@ export default function Alerts({ healthAlerts, filters }: Props) {
                                 <Link
                                     key={page}
                                     href={`?page=${page}${filters.severity ? `&severity=${filters.severity}` : ''}${filters.unresolved ? `&unresolved=${filters.unresolved}` : ''}`}
-                                    className={`px-4 py-2 rounded-lg ${
-                                        page === healthAlerts.current_page
-                                            ? 'bg-emerald-600 text-white'
-                                            : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                    }`}
+                                    className={`px-4 py-2 rounded-lg ${page === healthAlerts.current_page
+                                        ? 'bg-emerald-600 text-white'
+                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                                        }`}
                                 >
                                     {page}
                                 </Link>

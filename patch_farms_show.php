@@ -1,4 +1,5 @@
 <?php
+
 $enJson = file_get_contents('public/locales/en/farms.json');
 $idJson = file_get_contents('public/locales/id/farms.json');
 $en = json_decode($enJson, true) ?: [];

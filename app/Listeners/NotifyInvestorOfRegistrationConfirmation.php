@@ -10,7 +10,7 @@ class NotifyInvestorOfRegistrationConfirmation implements ShouldQueue
     public function handle(AgrotourismRegistrationConfirmed $event): void
     {
         $registration = $event->registration;
-        $investor     = $registration->investor;
+        $investor = $registration->investor;
 
         $investor->notify(new \App\Notifications\AgrotourismRegistrationConfirmedNotification($registration));
     }

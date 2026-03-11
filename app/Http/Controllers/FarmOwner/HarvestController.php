@@ -17,8 +17,7 @@ class HarvestController extends Controller
 {
     public function __construct(
         private HarvestService $harvestService
-    ) {
-    }
+    ) {}
 
     public function index(): Response
     {

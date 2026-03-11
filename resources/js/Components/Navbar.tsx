@@ -30,6 +30,7 @@ export default function Navbar() {
                     <div className="hidden md:flex items-center space-x-8">
                         <Link href="/" className="text-earth-600 hover:text-pine transition-colors font-medium">{t('navigation:home')}</Link>
                         <Link href="/farms" className="text-earth-600 hover:text-pine transition-colors font-medium">{t('navigation:farms')}</Link>
+                        <Link href="/trees" className="text-earth-600 hover:text-pine transition-colors font-medium">{t('navigation:trees')}</Link>
                         <Link href="/education" className="text-earth-600 hover:text-pine transition-colors font-medium">{t('navigation:education')}</Link>
                     </div>
 
@@ -87,6 +88,12 @@ export default function Navbar() {
                             className="block px-3 py-2 rounded-md text-base font-medium text-earth-600 hover:text-pine hover:bg-sand/30"
                         >
                             {t('navigation:farms')}
+                        </Link>
+                        <Link
+                            href="/trees"
+                            className="block px-3 py-2 rounded-md text-base font-medium text-earth-600 hover:text-pine hover:bg-sand/30"
+                        >
+                            {t('navigation:trees')}
                         </Link>
                         <Link
                             href="/education"

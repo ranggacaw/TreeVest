@@ -1,4 +1,5 @@
 <?php
+
 require __DIR__.'/vendor/autoload.php';
 $app = require_once __DIR__.'/bootstrap/app.php';
 $kernel = $app->make(Illuminate\Contracts\Console\Kernel::class);
@@ -7,7 +8,7 @@ $kernel->bootstrap();
 $request = \Illuminate\Http\Request::create('/secondary-market/create', 'GET');
 $user = \App\Models\User::find(3);
 if ($user) {
-    if (!$user->kyc_verified_at) {
+    if (! $user->kyc_verified_at) {
         $user->kyc_verified_at = now();
         $user->save();
         echo "Set KYC verified.\n";
@@ -22,5 +23,5 @@ try {
     $response = $controller->create($request);
     echo "SUCCESS!\n";
 } catch (\Exception $e) {
-    echo "ERROR: " . $e->getMessage() . "\n";
+    echo 'ERROR: '.$e->getMessage()."\n";
 }

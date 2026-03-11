@@ -2,14 +2,16 @@
 
 namespace App\Services\Translation;
 
+use Exception;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\RateLimiter;
-use Exception;
 
 class GoogleTranslationService implements TranslationServiceInterface
 {
     protected $client;
+
     protected $projectId;
+
     protected $rateLimit;
 
     public function __construct()
@@ -57,10 +59,10 @@ class GoogleTranslationService implements TranslationServiceInterface
         foreach ($textsToTranslate as $t) {
             // Mock: Prefix with [Translated] in non-production, or if we don't have real API keys
             if (empty(config('locales.translation_service.api_key')) && app()->environment() !== 'production') {
-                $translatedTexts[] = "[{$targetLanguage}] " . $t;
+                $translatedTexts[] = "[{$targetLanguage}] ".$t;
             } else {
                 // Simulated success for when we "have" an API key
-                $translatedTexts[] = "[{$targetLanguage}] " . $t;
+                $translatedTexts[] = "[{$targetLanguage}] ".$t;
             }
         }
 

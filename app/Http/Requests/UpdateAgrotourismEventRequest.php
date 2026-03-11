@@ -13,7 +13,7 @@ class UpdateAgrotourismEventRequest extends FormRequest
         /** @var \App\Models\AgrotourismEvent|null $event */
         $event = $this->route('event');
 
-        if (!$event) {
+        if (! $event) {
             return false;
         }
 
@@ -23,11 +23,11 @@ class UpdateAgrotourismEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'          => ['sometimes', 'string', 'max:255'],
-            'description'    => ['sometimes', 'string'],
-            'event_date'     => ['sometimes', 'date', 'after:now'],
-            'event_type'     => ['sometimes', Rule::in(array_column(AgrotourismEventType::cases(), 'value'))],
-            'max_capacity'   => ['nullable', 'integer', 'min:1'],
+            'title' => ['sometimes', 'string', 'max:255'],
+            'description' => ['sometimes', 'string'],
+            'event_date' => ['sometimes', 'date', 'after:now'],
+            'event_type' => ['sometimes', Rule::in(array_column(AgrotourismEventType::cases(), 'value'))],
+            'max_capacity' => ['nullable', 'integer', 'min:1'],
             'location_notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

@@ -13,14 +13,14 @@ use Stripe\Exception\ApiErrorException;
 class PaymentService
 {
     protected ?InvestmentService $investmentService = null;
+
     protected ?SecondaryMarketService $secondaryMarketService = null;
 
     public function __construct(
         public StripeService $stripeService,
         protected FraudDetectionService $fraudDetectionService,
         protected AuditLogService $auditLogService,
-    ) {
-    }
+    ) {}
 
     public function setInvestmentService(InvestmentService $investmentService): void
     {
@@ -133,12 +133,12 @@ class PaymentService
     protected function handlePaymentIntentSucceeded(string $eventId, array $eventData): void
     {
         $paymentIntentId = $eventData['id'] ?? null;
-        if (!$paymentIntentId) {
+        if (! $paymentIntentId) {
             return;
         }
 
         $transaction = Transaction::where('stripe_payment_intent_id', $paymentIntentId)->first();
-        if (!$transaction) {
+        if (! $transaction) {
             return;
         }
 
@@ -185,12 +185,12 @@ class PaymentService
         $paymentIntentId = $eventData['id'] ?? null;
         $lastPaymentError = $eventData['last_payment_error'] ?? [];
 
-        if (!$paymentIntentId) {
+        if (! $paymentIntentId) {
             return;
         }
 
         $transaction = Transaction::where('stripe_payment_intent_id', $paymentIntentId)->first();
-        if (!$transaction) {
+        if (! $transaction) {
             return;
         }
 

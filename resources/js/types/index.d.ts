@@ -213,6 +213,7 @@ export interface Tree {
 
 export interface Investment {
     id: number;
+    quantity: number;
     amount_cents: number;
     formatted_amount: string;
     status: InvestmentStatus;
@@ -789,6 +790,89 @@ export interface AgrotourismEvent {
     // Computed / withCount
     confirmed_registrations_count?: number;
 }
+
+// ─── Wishlist ─────────────────────────────────────────────────────────────────
+
+export interface WishlistItem {
+    wishlist_id: number;
+    id: number;
+    identifier: string;
+    price_cents: number;
+    expected_roi_percent: number;
+    risk_rating: string;
+    status: string;
+    fruit_crop: {
+        variant: string;
+        fruit_type: string;
+        harvest_cycle: string | null;
+    };
+    farm: {
+        id: number;
+        name: string;
+    };
+    added_at: string;
+}
+
+// ─── Portfolio Dashboard (redesigned) ────────────────────────────────────────
+
+export interface PortfolioSummaryHeader {
+    total_invested_cents: number;
+    current_value_cents: number;
+    gain_loss_cents: number;
+    gain_loss_percent: number;
+    total_payouts_cents: number;
+    pending_payouts_cents: number;
+}
+
+export interface HoldingWithSparkline {
+    id: number;
+    quantity: number;
+    amount_cents: number;
+    purchase_date: string;
+    status: string;
+    actual_return_cents: number;
+    projected_return_cents: number;
+    gain_loss_cents: number;
+    sparkline: number[];
+    tree: {
+        id: number;
+        identifier: string;
+        status: string;
+        risk_rating: string;
+        expected_roi_percent: number;
+        fruit_type: string;
+        variant: string;
+        farm_name: string;
+    } | null;
+}
+
+export interface PaginatedHoldings {
+    data: HoldingWithSparkline[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+export interface PortfolioTransaction {
+    id: number;
+    type: string;
+    status: string;
+    amount: number;
+    currency: string;
+    created_at: string;
+    completed_at: string | null;
+}
+
+export interface PaginatedTransactions {
+    data: PortfolioTransaction[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+}
+
+// ─── Agrotourism ─────────────────────────────────────────────────────────────
 
 export interface AgrotourismRegistration {
     id: number;

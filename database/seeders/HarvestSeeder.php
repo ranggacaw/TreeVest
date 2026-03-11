@@ -5,7 +5,6 @@ namespace Database\Seeders;
 use App\Enums\HarvestStatus;
 use App\Enums\QualityGrade;
 use App\Models\FruitCrop;
-use App\Models\FruitType;
 use App\Models\Harvest;
 use App\Models\MarketPrice;
 use App\Models\Tree;
@@ -19,6 +18,7 @@ class HarvestSeeder extends Seeder
         // Guard: skip if harvest records already exist
         if (Harvest::count() > 0) {
             $this->command->info('HarvestSeeder: data already exists, skipping.');
+
             return;
         }
 

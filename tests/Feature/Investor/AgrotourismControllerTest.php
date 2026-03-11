@@ -15,6 +15,7 @@ class AgrotourismControllerTest extends TestCase
     use RefreshDatabase;
 
     private User $investor;
+
     private AgrotourismEvent $event;
 
     protected function setUp(): void
@@ -43,7 +44,7 @@ class AgrotourismControllerTest extends TestCase
             ->get(route('investor.agrotourism.index'));
 
         $response->assertStatus(200);
-        $response->assertInertia(fn($page) => $page->component('Investor/Agrotourism/Index'));
+        $response->assertInertia(fn ($page) => $page->component('Investor/Agrotourism/Index'));
     }
 
     public function test_can_register_for_event()

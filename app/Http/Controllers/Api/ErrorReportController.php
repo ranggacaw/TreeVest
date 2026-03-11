@@ -4,8 +4,8 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Services\ErrorTrackingService;
-use Illuminate\Http\Request;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class ErrorReportController extends Controller
@@ -16,9 +16,6 @@ class ErrorReportController extends Controller
 
     /**
      * Report a client-side error to the error tracking service
-     *
-     * @param Request $request
-     * @return JsonResponse
      */
     public function reportClientError(Request $request): JsonResponse
     {
@@ -54,7 +51,6 @@ class ErrorReportController extends Controller
                 'success' => true,
                 'message' => 'Error reported successfully',
             ]);
-
         } catch (\Throwable $e) {
             // Don't let error reporting itself fail the response
             return response()->json([
@@ -66,8 +62,6 @@ class ErrorReportController extends Controller
 
     /**
      * Get error tracking configuration for client-side
-     *
-     * @return JsonResponse
      */
     public function getConfig(): JsonResponse
     {

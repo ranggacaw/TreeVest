@@ -5,6 +5,8 @@ namespace App\Services;
 use App\Enums\InvestmentStatus;
 use App\Models\Harvest;
 use App\Models\Investment;
+use App\Models\Payout;
+use App\Models\Transaction;
 use Illuminate\Support\Collection;
 
 class InvestmentPortfolioService
@@ -30,7 +32,7 @@ class InvestmentPortfolioService
 
         $treeCountByStatus = $investments->groupBy(function ($investment) {
             return $investment->tree?->status?->value ?? 'unknown';
-        })->map(fn($group) => $group->count())->toArray();
+        })->map(fn ($group) => $group->count())->toArray();
 
         $totalPayouts = $this->getTotalPayouts($userId);
 
@@ -142,7 +144,7 @@ class InvestmentPortfolioService
             ->where('user_id', $userId)
             ->find($investmentId);
 
-        if (!$investment) {
+        if (! $investment) {
             return null;
         }
 
@@ -160,7 +162,7 @@ class InvestmentPortfolioService
             'actual_return_cents' => $actualReturn,
             'tree' => $this->formatTreeDetails($investment->tree),
             'farm' => $investment->tree?->fruitCrop?->farm ? $this->formatFarmDetails($investment->tree->fruitCrop->farm) : null,
-            'harvests' => $investment->tree?->harvests?->map(fn($h) => [
+            'harvests' => $investment->tree?->harvests?->map(fn ($h) => [
                 'id' => $h->id,
                 'harvest_date' => $h->scheduled_date?->format('Y-m-d'),
                 'estimated_yield_kg' => $h->estimated_yield_kg,
@@ -212,21 +214,21 @@ class InvestmentPortfolioService
     public function getDiversificationData(int $userId): array
     {
         $byFruitType = $this->getInvestmentsByCategory($userId, 'fruit_type')
-            ->map(fn($data, $category) => [
+            ->map(fn ($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
             ])->values();
 
         $byFarm = $this->getInvestmentsByCategory($userId, 'farm')
-            ->map(fn($data, $category) => [
+            ->map(fn ($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
             ])->values();
 
         $byRisk = $this->getInvestmentsByCategory($userId, 'risk')
-            ->map(fn($data, $category) => [
+            ->map(fn ($data, $category) => [
                 'category' => $category,
                 'value_cents' => $data['total_value_cents'],
                 'count' => $data['count'],
@@ -275,7 +277,7 @@ class InvestmentPortfolioService
 
     private function formatTreeDetails(?\App\Models\Tree $tree): ?array
     {
-        if (!$tree) {
+        if (! $tree) {
             return null;
         }
 
@@ -295,7 +297,7 @@ class InvestmentPortfolioService
 
     private function formatTreeSummary(?\App\Models\Tree $tree): ?array
     {
-        if (!$tree) {
+        if (! $tree) {
             return null;
         }
 
@@ -319,6 +321,148 @@ class InvestmentPortfolioService
             'city' => $farm->city,
             'state' => $farm->state,
             'image_url' => $farm->featuredImage()?->file_path,
+        ];
+    }
+
+    // ---------------------------------------------------------------
+    // New methods for the redesigned Portfolio Dashboard (Task 9)
+    // ---------------------------------------------------------------
+
+    /**
+     * Summary header KPIs for the portfolio overview card.
+     */
+    public function getSummaryHeader(int $userId): array
+    {
+        $investments = $this->getUserActiveInvestments($userId);
+
+        $totalInvestedCents = $investments->sum('amount_cents');
+
+        $completedPayouts = Payout::where('investor_id', $userId)
+            ->where('status', \App\Enums\PayoutStatus::Completed)
+            ->get();
+
+        $totalPayoutsCents = $completedPayouts->sum('net_amount_cents');
+
+        $pendingPayoutsCents = Payout::where('investor_id', $userId)
+            ->whereIn('status', [
+                \App\Enums\PayoutStatus::Pending,
+                \App\Enums\PayoutStatus::Processing,
+            ])
+            ->sum('net_amount_cents');
+
+        $currentValueCents = $totalInvestedCents; // Simplified; no real-time pricing yet
+        $gainLossCents = $totalPayoutsCents;
+        $gainLossPercent = $totalInvestedCents > 0
+            ? round(($gainLossCents / $totalInvestedCents) * 100, 2)
+            : 0.0;
+
+        return [
+            'total_invested_cents' => (int) $totalInvestedCents,
+            'current_value_cents' => (int) $currentValueCents,
+            'gain_loss_cents' => (int) $gainLossCents,
+            'gain_loss_percent' => $gainLossPercent,
+            'total_payouts_cents' => (int) $totalPayoutsCents,
+            'pending_payouts_cents' => (int) $pendingPayoutsCents,
+        ];
+    }
+
+    /**
+     * Paginated holdings with sparkline data (last 6 payouts per investment).
+     */
+    public function getHoldingsWithSparklines(int $userId, int $perPage = 20): array
+    {
+        $paginator = Investment::with([
+            'tree.fruitCrop.farm',
+            'tree.fruitCrop.fruitType',
+            'payouts' => fn ($q) => $q->where('status', \App\Enums\PayoutStatus::Completed)
+                ->orderBy('created_at', 'desc')
+                ->limit(6),
+        ])
+            ->where('user_id', $userId)
+            ->where('status', InvestmentStatus::Active)
+            ->orderBy('purchase_date', 'desc')
+            ->paginate($perPage);
+
+        $data = $paginator->map(function (Investment $investment) {
+            $sparkline = $investment->payouts
+                ->sortBy('created_at')
+                ->map(fn ($p) => (int) $p->net_amount_cents)
+                ->values()
+                ->toArray();
+
+            $actualReturn = $investment->payouts->sum('net_amount_cents');
+            $projectedReturn = (int) ($investment->amount_cents * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+
+            return [
+                'id' => $investment->id,
+                'quantity' => $investment->quantity,
+                'amount_cents' => $investment->amount_cents,
+                'purchase_date' => $investment->purchase_date?->format('Y-m-d'),
+                'status' => $investment->status->value,
+                'actual_return_cents' => (int) $actualReturn,
+                'projected_return_cents' => $projectedReturn,
+                'gain_loss_cents' => (int) $actualReturn - $projectedReturn,
+                'sparkline' => $sparkline,
+                'tree' => $this->formatTreeSummary($investment->tree),
+            ];
+        })->toArray();
+
+        return [
+            'data' => $data,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
+        ];
+    }
+
+    /**
+     * Asset allocation grouped by fruit type, farm, and risk rating.
+     */
+    public function getAllocationData(int $userId): array
+    {
+        return $this->getDiversificationData($userId);
+    }
+
+    /**
+     * Paginated transactions for the Transactions tab.
+     */
+    public function getTransactions(int $userId, string $filter = 'all', int $page = 1, int $perPage = 15): array
+    {
+        $query = Transaction::where('user_id', $userId)->orderBy('created_at', 'desc');
+
+        if ($filter !== 'all') {
+            $typeMap = [
+                'investment' => \App\Enums\TransactionType::InvestmentPurchase,
+                'topup' => \App\Enums\TransactionType::TopUp,
+                'payout' => \App\Enums\TransactionType::Payout,
+            ];
+
+            if (isset($typeMap[$filter])) {
+                $query->where('type', $typeMap[$filter]);
+            }
+        }
+
+        $paginator = $query->paginate($perPage, ['*'], 'page', $page);
+
+        $data = $paginator->map(function (Transaction $tx) {
+            return [
+                'id' => $tx->id,
+                'type' => $tx->type->value,
+                'status' => $tx->status->value,
+                'amount' => $tx->amount,
+                'currency' => $tx->currency,
+                'created_at' => $tx->created_at->toIso8601String(),
+                'completed_at' => $tx->completed_at?->toIso8601String(),
+            ];
+        })->toArray();
+
+        return [
+            'data' => $data,
+            'current_page' => $paginator->currentPage(),
+            'last_page' => $paginator->lastPage(),
+            'per_page' => $paginator->perPage(),
+            'total' => $paginator->total(),
         ];
     }
 }

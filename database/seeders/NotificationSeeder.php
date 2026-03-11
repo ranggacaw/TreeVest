@@ -18,6 +18,7 @@ class NotificationSeeder extends Seeder
         // Guard: skip if notifications already exist
         if (DB::table('notifications')->count() > 0) {
             $this->command->info('NotificationSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -35,7 +36,7 @@ class NotificationSeeder extends Seeder
 
                 DB::table('notifications')->insert([
                     'id' => $notificationId,
-                    'type' => 'App\\Notifications\\' . $this->getNotificationClass($type),
+                    'type' => 'App\\Notifications\\'.$this->getNotificationClass($type),
                     'notifiable_type' => User::class,
                     'notifiable_id' => $user->id,
                     'data' => json_encode([
@@ -56,7 +57,7 @@ class NotificationSeeder extends Seeder
                         'user_id' => $user->id,
                         'channel' => $channel,
                         'status' => $status,
-                        'provider_id' => 'msg_' . fake()->unique()->lexify('???????????????'),
+                        'provider_id' => 'msg_'.fake()->unique()->lexify('???????????????'),
                         'error_message' => $status === NotificationDeliveryStatus::Failed ? $this->getDeliveryError() : null,
                         'sent_at' => $createdAt->copy()->addMinutes(rand(1, 5)),
                         'delivered_at' => $status === NotificationDeliveryStatus::Delivered ? $createdAt->copy()->addMinutes(rand(5, 10)) : null,

@@ -5,7 +5,6 @@ namespace Database\Factories;
 use App\Enums\PayoutStatus;
 use App\Models\Harvest;
 use App\Models\Investment;
-use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class PayoutFactory extends Factory

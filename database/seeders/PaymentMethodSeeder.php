@@ -13,6 +13,7 @@ class PaymentMethodSeeder extends Seeder
         // Guard: skip if payment methods already exist
         if (PaymentMethod::count() > 0) {
             $this->command->info('PaymentMethodSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -26,7 +27,7 @@ class PaymentMethodSeeder extends Seeder
 
                 PaymentMethod::create([
                     'user_id' => $user->id,
-                    'stripe_payment_method_id' => 'pm_' . fake()->unique()->lexify('??????????????????'),
+                    'stripe_payment_method_id' => 'pm_'.fake()->unique()->lexify('??????????????????'),
                     'type' => $this->getRandomType(),
                     'last4' => fake()->randomNumber(4, true),
                     'brand' => $this->getRandomBrand(),

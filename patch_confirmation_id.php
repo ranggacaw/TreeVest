@@ -1,4 +1,5 @@
 <?php
+
 $json = file_get_contents('public/locales/id/investments.json');
 $data = json_decode($json, true);
 $data['payment_method'] = 'Metode Pembayaran';

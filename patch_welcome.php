@@ -1,4 +1,5 @@
 <?php
+
 $en = [
     'title' => 'Invest in Nature\'s Growth | Treevest',
     'explore_farms' => 'Explore Farms',
@@ -25,7 +26,7 @@ $en = [
     'f3_title' => 'Earn Dividends',
     'f3_desc' => 'When the trees are harvested and fruits are sold, you receive your share of the profits.',
     'footer_copyright' => '© 2026 Treevest. All rights reserved.',
-    'footer_disclaimer' => 'Agricultural investments carry inherent risks. Please read our risk disclosure.'
+    'footer_disclaimer' => 'Agricultural investments carry inherent risks. Please read our risk disclosure.',
 ];
 $id = [
     'title' => 'Investasi dalam Pertumbuhan Alam | Treevest',
@@ -53,7 +54,7 @@ $id = [
     'f3_title' => 'Dapatkan Dividen',
     'f3_desc' => 'Ketika pohon dipanen dan buah dijual, Anda menerima bagian keuntungan Anda.',
     'footer_copyright' => '© 2026 Treevest. Hak cipta dilindungi undang-undang.',
-    'footer_disclaimer' => 'Investasi pertanian memiliki risiko bawaan. Silakan baca pengungkapan risiko kami.'
+    'footer_disclaimer' => 'Investasi pertanian memiliki risiko bawaan. Silakan baca pengungkapan risiko kami.',
 ];
 file_put_contents('public/locales/en/welcome.json', json_encode($en, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 file_put_contents('public/locales/id/welcome.json', json_encode($id, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

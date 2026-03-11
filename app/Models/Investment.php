@@ -16,6 +16,7 @@ class Investment extends Model
         'user_id',
         'tree_id',
         'amount_cents',
+        'quantity',
         'currency',
         'purchase_date',
         'status',
@@ -29,6 +30,7 @@ class Investment extends Model
             'status' => InvestmentStatus::class,
             'metadata' => 'array',
             'amount_cents' => 'integer',
+            'quantity' => 'integer',
             'purchase_date' => 'date',
         ];
     }
@@ -103,19 +105,26 @@ class Investment extends Model
         return $this->status->canTransitionTo(InvestmentStatus::Cancelled);
     }
 
+    public function getMaxAdditionalTrees(int $maxInvestmentCents, int $pricePerTreeCents): int
+    {
+        $maxTrees = (int) floor($maxInvestmentCents / $pricePerTreeCents);
+
+        return max(0, $maxTrees - $this->quantity);
+    }
+
     public function getFormattedAmountAttribute(): string
     {
         $currencySymbol = match ($this->currency) {
             'IDR' => 'Rp',
             default => $this->currency,
         };
-        
-        return $currencySymbol . ' ' . number_format($this->amount_cents / 100, 2);
+
+        return $currencySymbol.' '.number_format($this->amount_cents / 100, 2);
     }
 
     public function transitionTo(InvestmentStatus $newStatus): bool
     {
-        if (!$this->status->canTransitionTo($newStatus)) {
+        if (! $this->status->canTransitionTo($newStatus)) {
             return false;
         }
 

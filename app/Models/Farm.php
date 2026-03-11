@@ -7,12 +7,13 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Storage;
 
 class Farm extends Model
 {
-    use HasFactory, SoftDeletes, \App\Concerns\Translatable;
+    use \App\Concerns\Translatable, HasFactory, SoftDeletes;
 
     public array $translatable = ['description'];
 
@@ -131,7 +132,7 @@ class Farm extends Model
             $this->state,
         ]);
 
-        return !empty($parts) ? implode(', ', $parts) : null;
+        return ! empty($parts) ? implode(', ', $parts) : null;
     }
 
     public function scopeActive($query)
@@ -184,7 +185,7 @@ class Farm extends Model
 
     public function transitionTo(FarmStatus $newStatus): bool
     {
-        if (!$this->canTransitionTo($newStatus)) {
+        if (! $this->canTransitionTo($newStatus)) {
             return false;
         }
 
@@ -234,7 +235,7 @@ class Farm extends Model
 
     public function getImageUrl(?string $path): ?string
     {
-        if (!$path) {
+        if (! $path) {
             return null;
         }
 
@@ -250,5 +251,10 @@ class Farm extends Model
                 }
             }
         });
+    }
+
+    public function wishlistItems(): MorphMany
+    {
+        return $this->morphMany(WishlistItem::class, 'wishlistable');
     }
 }

@@ -17,11 +17,11 @@ class StoreAgrotourismEventRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'title'          => ['required', 'string', 'max:255'],
-            'description'    => ['required', 'string'],
-            'event_date'     => ['required', 'date', 'after:now'],
-            'event_type'     => ['required', Rule::in(array_column(AgrotourismEventType::cases(), 'value'))],
-            'max_capacity'   => ['nullable', 'integer', 'min:1'],
+            'title' => ['required', 'string', 'max:255'],
+            'description' => ['required', 'string'],
+            'event_date' => ['required', 'date', 'after:now'],
+            'event_type' => ['required', Rule::in(array_column(AgrotourismEventType::cases(), 'value'))],
+            'max_capacity' => ['nullable', 'integer', 'min:1'],
             'location_notes' => ['nullable', 'string', 'max:1000'],
         ];
     }

@@ -1,4 +1,5 @@
 <?php
+
 $enJson = file_get_contents('public/locales/en/trees.json');
 $idJson = file_get_contents('public/locales/id/trees.json');
 

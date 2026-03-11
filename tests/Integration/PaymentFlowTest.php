@@ -17,7 +17,7 @@ class PaymentFlowTest extends TestCase
     {
         parent::setUp();
 
-        if (!config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
+        if (! config('services.stripe.secret') || config('services.stripe.secret') === 'sk_test_your_stripe_secret_key') {
             $this->markTestSkipped('Stripe API keys not configured');
         }
     }

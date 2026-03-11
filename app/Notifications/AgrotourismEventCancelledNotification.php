@@ -38,10 +38,10 @@ class AgrotourismEventCancelledNotification extends Notification implements Shou
     public function toArray(object $notifiable): array
     {
         return [
-            'type'        => 'agrotourism_event_cancelled',
-            'event_id'    => $this->event->id,
+            'type' => 'agrotourism_event_cancelled',
+            'event_id' => $this->event->id,
             'event_title' => $this->event->title,
-            'event_date'  => $this->event->event_date->toIso8601String(),
+            'event_date' => $this->event->event_date->toIso8601String(),
         ];
     }
 }

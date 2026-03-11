@@ -3,10 +3,9 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
+use App\Models\ContentTranslation;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use App\Models\ContentTranslation;
-use Illuminate\Support\Facades\DB;
 
 class TranslationController extends Controller
 {
@@ -55,7 +54,7 @@ class TranslationController extends Controller
 
         $localesList = [];
         foreach ($supportedLocales as $code => $data) {
-            $localesList[$code] = $data['name'] . ' ' . $data['flag'];
+            $localesList[$code] = $data['name'].' '.$data['flag'];
         }
 
         $machineTranslations = ContentTranslation::where('source', 'machine')
@@ -64,7 +63,8 @@ class TranslationController extends Controller
             ->get();
 
         $charactersThisMonth = $machineTranslations->sum(function ($t) {
-            return mb_strlen($t->value ?? ''); });
+            return mb_strlen($t->value ?? '');
+        });
         $estimatedCost = ($charactersThisMonth / 1000000) * 20; // $20 per 1M characters
 
         $apiUsage = [
@@ -87,7 +87,7 @@ class TranslationController extends Controller
     {
         $locale = $request->get('locale', 'id');
 
-        if (!isset($this->translatableModels[$type])) {
+        if (! isset($this->translatableModels[$type])) {
             abort(404, 'Translatable type not found');
         }
 
@@ -97,10 +97,10 @@ class TranslationController extends Controller
         $items = $class::with([
             'translations' => function ($query) use ($locale) {
                 $query->where('locale', $locale);
-            }
+            },
         ])->paginate(15);
 
-        $mappedItems = $items->through(function ($item) use ($locale) {
+        $mappedItems = $items->through(function ($item) {
             $status = 'missing';
             $trans = $item->translations->first();
 
@@ -110,7 +110,7 @@ class TranslationController extends Controller
 
             return [
                 'id' => $item->id,
-                'title' => $item->name ?? $item->title ?? 'Item #' . $item->id,
+                'title' => $item->name ?? $item->title ?? 'Item #'.$item->id,
                 'status' => $status,
                 'updated_at' => $item->updated_at,
             ];
@@ -127,7 +127,7 @@ class TranslationController extends Controller
     {
         $locale = $request->get('locale', 'id');
 
-        if (!isset($this->translatableModels[$type])) {
+        if (! isset($this->translatableModels[$type])) {
             abort(404, 'Translatable model not mapped');
         }
 
@@ -168,7 +168,7 @@ class TranslationController extends Controller
     {
         $locale = $request->get('locale', 'id');
 
-        if (!isset($this->translatableModels[$type])) {
+        if (! isset($this->translatableModels[$type])) {
             abort(404);
         }
 
@@ -186,7 +186,7 @@ class TranslationController extends Controller
 
         // Update or create
         foreach ($translatableFields as $field) {
-            if (isset($data[$field]) && !empty($data[$field])) {
+            if (isset($data[$field]) && ! empty($data[$field])) {
                 $model->setTranslation($field, $locale, $data[$field], 'human', 'approved');
             }
         }
@@ -200,7 +200,7 @@ class TranslationController extends Controller
         $locale = $request->get('locale', 'id');
         $sourceLocale = config('locales.default', 'en');
 
-        if (!isset($this->translatableModels[$type])) {
+        if (! isset($this->translatableModels[$type])) {
             abort(404);
         }
 
@@ -216,17 +216,17 @@ class TranslationController extends Controller
             $existing = $existingTranslations->get($field);
 
             // Only generate draft if it doesn't exist or is currently a draft
-            if (!$existing || in_array($existing->status, ['draft', 'machine_translated'])) {
+            if (! $existing || in_array($existing->status, ['draft', 'machine_translated'])) {
                 $originalText = $model->$field;
 
-                if (!empty($originalText)) {
+                if (! empty($originalText)) {
                     try {
                         $translatedText = $translationService->translate($originalText, $sourceLocale, $locale);
                         // Save as machine_translated
                         $model->setTranslation($field, $locale, $translatedText, 'machine', 'machine_translated');
                         $generatedCount++;
                     } catch (\Exception $e) {
-                        \Illuminate\Support\Facades\Log::error("Draft generation failed for {$type} {$id} {$field}: " . $e->getMessage());
+                        \Illuminate\Support\Facades\Log::error("Draft generation failed for {$type} {$id} {$field}: ".$e->getMessage());
                     }
                 }
             }
@@ -293,7 +293,7 @@ class TranslationController extends Controller
 
         $localesList = [];
         foreach ($supportedLocales as $code => $data) {
-            $localesList[$code] = $data['name'] . ' ' . $data['flag'];
+            $localesList[$code] = $data['name'].' '.$data['flag'];
         }
 
         $filters = [
@@ -317,7 +317,7 @@ class TranslationController extends Controller
         $translation = ContentTranslation::findOrFail($id);
 
         $request->validate([
-            'value' => 'nullable|string'
+            'value' => 'nullable|string',
         ]);
 
         if ($request->has('value')) {
@@ -347,7 +347,7 @@ class TranslationController extends Controller
     {
         $request->validate([
             'ids' => 'required|array',
-            'ids.*' => 'exists:content_translations,id'
+            'ids.*' => 'exists:content_translations,id',
         ]);
 
         ContentTranslation::whereIn('id', $request->ids)->update([
@@ -356,6 +356,6 @@ class TranslationController extends Controller
             'reviewed_at' => now(),
         ]);
 
-        return redirect()->back()->with('success', count($request->ids) . ' translations approved successfully.');
+        return redirect()->back()->with('success', count($request->ids).' translations approved successfully.');
     }
 }

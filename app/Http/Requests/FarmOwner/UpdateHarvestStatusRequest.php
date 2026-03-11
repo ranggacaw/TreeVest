@@ -26,5 +26,4 @@ class UpdateHarvestStatusRequest extends FormRequest
 
         return $rules;
     }
-
 }

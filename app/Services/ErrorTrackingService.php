@@ -9,11 +9,6 @@ class ErrorTrackingService
 {
     /**
      * Report an error to the error tracking service
-     *
-     * @param Throwable $exception
-     * @param array $context
-     * @param string|null $user_id
-     * @return void
      */
     public function reportError(Throwable $exception, array $context = [], ?string $user_id = null): void
     {
@@ -39,12 +34,12 @@ class ErrorTrackingService
 
                     // Set additional context
                     $scope->setContext('error_details', $errorContext);
-                    
+
                     // Add tags for categorization
                     if (isset($errorContext['category'])) {
                         $scope->setTag('category', $errorContext['category']);
                     }
-                    
+
                     if (isset($errorContext['component'])) {
                         $scope->setTag('component', $errorContext['component']);
                     }
@@ -55,8 +50,7 @@ class ErrorTrackingService
             }
 
             // Always log to Laravel logs as backup
-            Log::error('Error tracked: ' . $exception->getMessage(), $errorContext);
-
+            Log::error('Error tracked: '.$exception->getMessage(), $errorContext);
         } catch (Throwable $trackingError) {
             // If error tracking itself fails, log it but don't throw
             Log::error('Error tracking service failed', [
@@ -68,17 +62,11 @@ class ErrorTrackingService
 
     /**
      * Report a financial operation error with enhanced context
-     *
-     * @param Throwable $exception
-     * @param string $operation
-     * @param array $financial_context
-     * @param string|null $user_id
-     * @return void
      */
     public function reportFinancialError(
-        Throwable $exception, 
-        string $operation, 
-        array $financial_context = [], 
+        Throwable $exception,
+        string $operation,
+        array $financial_context = [],
         ?string $user_id = null
     ): void {
         $context = array_merge($financial_context, [
@@ -92,10 +80,6 @@ class ErrorTrackingService
 
     /**
      * Report a user interface error from React components
-     *
-     * @param array $error_info
-     * @param string|null $user_id
-     * @return void
      */
     public function reportUIError(array $error_info, ?string $user_id = null): void
     {
@@ -118,7 +102,6 @@ class ErrorTrackingService
             );
 
             $this->reportError($exception, $context, $user_id);
-
         } catch (Throwable $trackingError) {
             Log::error('Failed to report UI error', [
                 'ui_error' => $error_info,
@@ -129,8 +112,6 @@ class ErrorTrackingService
 
     /**
      * Check if error tracking is enabled
-     *
-     * @return bool
      */
     public function isEnabled(): bool
     {
@@ -139,8 +120,6 @@ class ErrorTrackingService
 
     /**
      * Get error tracking configuration info
-     *
-     * @return array
      */
     public function getConfig(): array
     {

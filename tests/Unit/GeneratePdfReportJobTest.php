@@ -11,7 +11,6 @@ use App\Models\User;
 use App\Services\PdfReportService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Event;
-use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\Queue;
 use Illuminate\Support\Facades\Storage;
 use Mockery;
@@ -42,10 +41,10 @@ class GeneratePdfReportJobTest extends TestCase
     public function test_job_calls_pdf_report_service_generate(): void
     {
         $reportId = $this->report->id;
-        
+
         $service = $this->mock(PdfReportService::class);
         $service->shouldReceive('generate')->once()->with(
-            Mockery::on(fn($report) => $report->id === $reportId)
+            Mockery::on(fn ($report) => $report->id === $reportId)
         );
 
         $job = new GeneratePdfReport($this->report);
@@ -190,7 +189,7 @@ class GeneratePdfReportJobTest extends TestCase
 
         $service = $this->mock(PdfReportService::class);
         $service->shouldReceive('generate')->once()->with(
-            Mockery::on(fn($report) => $report->id === $reportId)
+            Mockery::on(fn ($report) => $report->id === $reportId)
         );
 
         $job = new GeneratePdfReport($taxReport);

@@ -64,13 +64,13 @@ class InvestmentResource extends JsonResource
 
     private function getCompletedHarvests(): array
     {
-        if (!$this->relationLoaded('tree.harvests')) {
+        if (! $this->relationLoaded('tree.harvests')) {
             return [];
         }
 
         return $this->tree->harvests
-            ->filter(fn($h) => $h->actual_yield_kg !== null && $h->scheduled_date <= now()->toDateString())
-            ->map(fn($h) => [
+            ->filter(fn ($h) => $h->actual_yield_kg !== null && $h->scheduled_date <= now()->toDateString())
+            ->map(fn ($h) => [
                 'id' => $h->id,
                 'harvest_date' => $h->scheduled_date->toDateString(),
                 'estimated_yield_kg' => $h->estimated_yield_kg,
@@ -84,14 +84,14 @@ class InvestmentResource extends JsonResource
 
     private function getUpcomingHarvests(): array
     {
-        if (!$this->relationLoaded('tree.harvests')) {
+        if (! $this->relationLoaded('tree.harvests')) {
             return [];
         }
 
         return $this->tree->harvests
-            ->filter(fn($h) => $h->scheduled_date > now()->toDateString())
+            ->filter(fn ($h) => $h->scheduled_date > now()->toDateString())
             ->sortBy('scheduled_date')
-            ->map(fn($h) => [
+            ->map(fn ($h) => [
                 'id' => $h->id,
                 'harvest_date' => $h->scheduled_date->toDateString(),
                 'estimated_yield_kg' => $h->estimated_yield_kg,

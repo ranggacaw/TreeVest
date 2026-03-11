@@ -1,32 +1,32 @@
 <?php
 
 use App\Http\Controllers\AccountController;
-use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
 use App\Http\Controllers\Admin\AgrotourismController as AdminAgrotourismController;
+use App\Http\Controllers\Admin\ArticleController as AdminArticleController;
+use App\Http\Controllers\Admin\AuditLogController;
 use App\Http\Controllers\Admin\DashboardController;
-use App\Http\Controllers\FarmOwner\DashboardController as FarmOwnerDashboardController;
-use App\Http\Controllers\FarmOwner\AgrotourismController as FarmOwnerAgrotourismController;
-use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
-use App\Http\Controllers\Investor\AgrotourismController as InvestorAgrotourismController;
+use App\Http\Controllers\Admin\FarmApprovalController;
 use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
 use App\Http\Controllers\Admin\KycReviewController;
-use App\Http\Controllers\Admin\UserController;
-use App\Http\Controllers\Admin\AuditLogController;
-use App\Http\Controllers\Admin\FarmApprovalController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NotificationTemplateController as AdminNotificationTemplateController;
-use App\Http\Controllers\Admin\MarketListingController as AdminMarketListingController;
+use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\Auth\OAuthController;
+use App\Http\Controllers\Auth\TwoFactorController;
 use App\Http\Controllers\AvatarController;
 use App\Http\Controllers\EncyclopediaController;
 use App\Http\Controllers\FarmController;
+use App\Http\Controllers\FarmOwner\AgrotourismController as FarmOwnerAgrotourismController;
+use App\Http\Controllers\FarmOwner\DashboardController as FarmOwnerDashboardController;
 use App\Http\Controllers\FarmOwner\HealthUpdateController as FarmOwnerHealthUpdateController;
-use App\Http\Controllers\GdprController;
 use App\Http\Controllers\InvestmentController;
+use App\Http\Controllers\Investor\AgrotourismController as InvestorAgrotourismController;
+use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
 use App\Http\Controllers\Investor\HealthFeedController as InvestorHealthFeedController;
-use App\Http\Controllers\Investor\PayoutController;
 use App\Http\Controllers\Investor\ReportController;
 use App\Http\Controllers\Investor\TaxReportController;
+use App\Http\Controllers\Investor\WishlistController as InvestorWishlistController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
 use App\Http\Controllers\NotificationController;
@@ -38,8 +38,7 @@ use App\Http\Controllers\ProfileLocaleController;
 use App\Http\Controllers\SessionController;
 use App\Http\Controllers\SitemapController;
 use App\Http\Controllers\StripeWebhookController;
-use App\Http\Controllers\Auth\OAuthController;
-use App\Http\Controllers\Auth\TwoFactorController;
+use App\Http\Controllers\TreeMarketplaceController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -64,6 +63,7 @@ Route::get('/dashboard', function () {
     if ($user->hasRole('investor')) {
         return redirect()->route('investor.dashboard');
     }
+
     // Fallback: no specific role assigned yet
     return Inertia::render('Dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
@@ -117,7 +117,7 @@ Route::middleware('auth')->group(function () {
     });
 });
 
-require __DIR__ . '/auth.php';
+require __DIR__.'/auth.php';
 
 Route::controller(\App\Http\Controllers\LegalDocumentController::class)->group(function () {
     Route::get('/legal/privacy', 'privacyPolicy')->name('legal.privacy');
@@ -279,6 +279,9 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             Route::post('/{event}/register', [InvestorAgrotourismController::class, 'register'])->name('register');
             Route::delete('/registrations/{registration}', [InvestorAgrotourismController::class, 'cancelRegistration'])->name('registrations.cancel');
         });
+
+        Route::get('/wishlist', [InvestorWishlistController::class, 'index'])->name('wishlist.index');
+        Route::post('/wishlist/toggle', [InvestorWishlistController::class, 'toggle'])->name('wishlist.toggle');
     });
 
     Route::prefix('reports')->name('reports.')->group(function () {
@@ -286,7 +289,7 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
         Route::post('/pdf', [ReportController::class, 'requestPdf'])->name('pdf.request')->middleware('throttle:report-pdf');
         Route::get('/csv', [ReportController::class, 'exportCsv'])->name('csv');
         Route::get('/download/{report}', [ReportController::class, 'download'])->name('download');
-        Route::get('/tax', fn() => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
+        Route::get('/tax', fn () => redirect()->route('reports.tax.show', ['year' => now()->year]))->name('tax');
         Route::get('/tax/{year}', [TaxReportController::class, 'show'])->name('tax.show');
         Route::post('/tax/{year}/pdf', [TaxReportController::class, 'requestPdf'])->name('tax.pdf.request')->middleware('throttle:report-pdf');
         Route::get('/tax/{year}/csv', [TaxReportController::class, 'exportCsv'])->name('tax.csv');
@@ -307,19 +310,19 @@ Route::middleware('auth')->group(function () {
         Route::get('/', [InvestmentController::class, 'index'])->name('index');
         Route::get('/create/{tree}', [InvestmentController::class, 'create'])->name('create');
         Route::post('/', [InvestmentController::class, 'store'])->name('store');
-        Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show');
-        Route::get('/{investment}/confirmation', [InvestmentController::class, 'confirmation'])->name('confirmation');
-        Route::post('/{investment}/cancel', [InvestmentController::class, 'cancel'])->name('cancel');
-        Route::get('/{investment}/top-up', [InvestmentController::class, 'topUpForm'])->name('top-up.form');
-        Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up');
+        Route::get('/health-feed', [InvestorHealthFeedController::class, 'index'])->name('health-feed.index');
+        Route::get('/health-feed/{healthUpdate}', [InvestorHealthFeedController::class, 'show'])->name('health-feed.show')->whereNumber('healthUpdate');
+        Route::get('/health-alerts', [InvestorHealthFeedController::class, 'alerts'])->name('health-alerts');
+
+        Route::get('/{investment}', [InvestmentController::class, 'show'])->name('show')->whereNumber('investment');
+        Route::get('/{investment}/confirmation', [InvestmentController::class, 'confirmation'])->name('confirmation')->whereNumber('investment');
+        Route::post('/{investment}/cancel', [InvestmentController::class, 'cancel'])->name('cancel')->whereNumber('investment');
+        Route::get('/{investment}/top-up', [InvestmentController::class, 'topUpForm'])->name('top-up.form')->whereNumber('investment');
+        Route::post('/{investment}/top-up', [InvestmentController::class, 'topUp'])->name('top-up')->whereNumber('investment');
 
         if (app()->environment('local')) {
-            Route::post('/{investment}/mock-confirm', [InvestmentController::class, 'mockConfirm'])->name('mock-confirm');
+            Route::post('/{investment}/mock-confirm', [InvestmentController::class, 'mockConfirm'])->name('mock-confirm')->whereNumber('investment');
         }
-
-        Route::get('/health-feed', [InvestorHealthFeedController::class, 'index'])->name('health-feed.index');
-        Route::get('/health-feed/{healthUpdate}', [InvestorHealthFeedController::class, 'show'])->name('health-feed.show');
-        Route::get('/health-alerts', [InvestorHealthFeedController::class, 'alerts'])->name('health-alerts');
     });
 });
 
@@ -329,6 +332,11 @@ Route::prefix('farms')->name('farms.')->group(function () {
     Route::get('/', [MarketplaceFarmController::class, 'index'])->name('index');
     Route::get('/nearby', [MarketplaceFarmController::class, 'nearby'])->name('nearby');
     Route::get('/{farm}', [MarketplaceFarmController::class, 'show'])->name('show');
+});
+
+Route::prefix('trees')->name('trees.')->group(function () {
+    Route::get('/', [TreeMarketplaceController::class, 'index'])->name('index');
+    Route::get('/{tree}', [TreeMarketplaceController::class, 'show'])->name('show');
 });
 
 Route::prefix('education')->name('education.')->group(function () {
@@ -368,7 +376,8 @@ Route::get('storage/{path}', function ($path) {
         $filename = pathinfo($path, PATHINFO_FILENAME);
         // Replace dashes and underscores with spaces for a better avatar letter
         $name = str_replace(['-', '_'], ' ', $filename);
-        return redirect('https://placehold.co/600x400/png?text=' . urlencode($name));
+
+        return redirect('https://placehold.co/600x400/png?text='.urlencode($name));
     }
     abort(404);
 })->where('path', '.*');

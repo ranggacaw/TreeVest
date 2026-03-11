@@ -3,7 +3,6 @@
 namespace App\Http\Controllers\Admin;
 
 use App\Enums\FarmStatus;
-use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Controller;
 use App\Models\Farm;
 use App\Services\FarmService;
@@ -14,8 +13,7 @@ class FarmApprovalController extends Controller
 {
     public function __construct(
         protected FarmService $farmService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {

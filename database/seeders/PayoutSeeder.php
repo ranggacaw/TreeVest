@@ -16,6 +16,7 @@ class PayoutSeeder extends Seeder
         // Guard: skip if payout records already exist
         if (Payout::count() > 0) {
             $this->command->info('PayoutSeeder: data already exists, skipping.');
+
             return;
         }
 

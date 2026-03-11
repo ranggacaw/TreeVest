@@ -147,15 +147,13 @@ return [
         '/health',
         '/ping',
         '/status',
-        
+
         // Ignore telescope routes if using telescope
         '/telescope*',
-        
+
         // Ignore horizon routes if using horizon
         '/horizon*',
     ],
-
-
 
     /*
     |--------------------------------------------------------------------------
@@ -184,7 +182,7 @@ return [
         // Filter out specific errors in development
         if (app()->environment('local')) {
             // Don't send events in local development unless explicitly enabled
-            if (!env('SENTRY_SEND_LOCAL_EVENTS', false)) {
+            if (! env('SENTRY_SEND_LOCAL_EVENTS', false)) {
                 return null;
             }
         }

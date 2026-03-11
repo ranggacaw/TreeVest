@@ -15,6 +15,7 @@ class AuthTablesSeeder extends Seeder
         // Guard: skip if already have extra demo users from factory
         if (User::count() > 10) {
             $this->command->info('AuthTablesSeeder: extra users already exist, skipping.');
+
             return;
         }
 

@@ -2,8 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\AgrotourismEventCancelled;
 use App\Enums\AgrotourismRegistrationStatus;
+use App\Events\AgrotourismEventCancelled;
 use Illuminate\Contracts\Queue\ShouldQueue;
 
 class NotifyInvestorsOfEventCancellation implements ShouldQueue

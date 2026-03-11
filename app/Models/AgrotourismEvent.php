@@ -63,7 +63,7 @@ class AgrotourismEvent extends Model
 
     public function isCancelled(): bool
     {
-        return !is_null($this->cancelled_at);
+        return ! is_null($this->cancelled_at);
     }
 
     public function isFull(): bool

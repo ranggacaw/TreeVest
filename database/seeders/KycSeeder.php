@@ -16,6 +16,7 @@ class KycSeeder extends Seeder
         // Guard: skip if KYC records already exist
         if (KycVerification::count() > 0) {
             $this->command->info('KycSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -38,7 +39,7 @@ class KycSeeder extends Seeder
                 'verified_by_admin_id' => $verifiedAt ? User::where('role', 'admin')->first()->id : null,
                 'expires_at' => $verifiedAt ? $verifiedAt->addYears(2) : null,
                 'provider' => 'manual',
-                'provider_reference_id' => 'KYC-' . strtoupper(fake()->unique()->bothify('?????-#####')),
+                'provider_reference_id' => 'KYC-'.strtoupper(fake()->unique()->bothify('?????-#####')),
                 'created_at' => $submittedAt,
             ]);
 
@@ -47,8 +48,8 @@ class KycSeeder extends Seeder
                 KycDocument::create([
                     'kyc_verification_id' => $kyc->id,
                     'document_type' => $this->getRandomDocumentType(),
-                    'file_path' => "kyc/{$user->id}/" . fake()->uuid() . ".pdf",
-                    'original_filename' => fake()->word() . ".pdf",
+                    'file_path' => "kyc/{$user->id}/".fake()->uuid().'.pdf',
+                    'original_filename' => fake()->word().'.pdf',
                     'mime_type' => 'application/pdf',
                     'file_size' => rand(500000, 5000000),
                     'uploaded_at' => $submittedAt->addHours(rand(0, 24)),

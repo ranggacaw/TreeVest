@@ -14,6 +14,7 @@ class MarketPriceSeeder extends Seeder
         // Guard: skip if market prices already exist
         if (MarketPrice::count() > 0) {
             $this->command->info('MarketPriceSeeder: data already exists, skipping.');
+
             return;
         }
 

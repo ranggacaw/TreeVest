@@ -22,5 +22,4 @@ class RecordYieldRequest extends FormRequest
             'notes' => ['nullable', 'string'],
         ];
     }
-
 }

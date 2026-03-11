@@ -2,12 +2,12 @@
 
 namespace Tests\Unit\Resources;
 
-use App\Http\Resources\TreeResource;
-use App\Models\Tree;
-use App\Models\FruitCrop;
-use App\Models\Farm;
-use App\Models\FruitType;
 use App\Enums\RiskRating;
+use App\Http\Resources\TreeResource;
+use App\Models\Farm;
+use App\Models\FruitCrop;
+use App\Models\FruitType;
+use App\Models\Tree;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
@@ -33,7 +33,7 @@ class TreeResourceTest extends TestCase
 
         $this->assertEquals('DUR001', $array['identifier']);
         $this->assertEquals(500000, $array['price_cents']);
-        $this->assertEquals('Rp 5,000.00', $array['price_formatted']);
+        $this->assertEquals('Rp 500.000', $array['price_formatted']);
         $this->assertEquals(18, $array['expected_roi']);
         $this->assertEquals('18%', $array['expected_roi_formatted']);
         $this->assertEquals('medium', $array['risk_rating']);
@@ -41,8 +41,8 @@ class TreeResourceTest extends TestCase
         $this->assertEquals(25, $array['productive_lifespan_years']);
         $this->assertEquals(100000, $array['min_investment_cents']);
         $this->assertEquals(1000000, $array['max_investment_cents']);
-        $this->assertEquals('Rp 1,000.00', $array['min_investment_formatted']);
-        $this->assertEquals('Rp 10,000.00', $array['max_investment_formatted']);
+        $this->assertEquals('Rp 100.000', $array['min_investment_formatted']);
+        $this->assertEquals('Rp 1.000.000', $array['max_investment_formatted']);
     }
 
     public function test_basic_static_method_returns_essential_data()
@@ -57,7 +57,7 @@ class TreeResourceTest extends TestCase
 
         $this->assertEquals($tree->id, $result['id']);
         $this->assertEquals('MAN001', $result['identifier']);
-        $this->assertEquals('Rp 3,000.00', $result['price_formatted']);
+        $this->assertEquals('Rp 300.000', $result['price_formatted']);
         $this->assertEquals(15, $result['expected_roi']);
     }
 
@@ -90,7 +90,7 @@ class TreeResourceTest extends TestCase
             'max_investment_cents' => 500000,
             'fruit_crop_id' => $fruitCrop->id,
         ]);
-        
+
         $tree->load(['fruitCrop.fruitType', 'fruitCrop.farm']);
 
         $resource = new TreeResource($tree);
@@ -127,7 +127,7 @@ class TreeResourceTest extends TestCase
             'max_investment_cents' => 2000000,
             'fruit_crop_id' => $fruitCrop->id,
         ]);
-        
+
         $tree->load(['fruitCrop.fruitType', 'fruitCrop.farm']);
 
         $resource = new TreeResource($tree);
@@ -135,14 +135,14 @@ class TreeResourceTest extends TestCase
 
         $this->assertEquals('DUR003', $result['identifier']);
         $this->assertEquals(800000, $result['price_cents']);
-        $this->assertEquals('Rp 8,000.00', $result['price_formatted']);
+        $this->assertEquals('Rp 800.000', $result['price_formatted']);
         $this->assertEquals(22, $result['expected_roi']);
         $this->assertEquals('22%', $result['expected_roi_formatted']);
         $this->assertEquals('high', $result['risk_rating']);
         $this->assertEquals(200000, $result['min_investment_cents']);
         $this->assertEquals(2000000, $result['max_investment_cents']);
-        $this->assertEquals('Rp 2,000.00', $result['min_investment_formatted']);
-        $this->assertEquals('Rp 20,000.00', $result['max_investment_formatted']);
+        $this->assertEquals('Rp 200.000', $result['min_investment_formatted']);
+        $this->assertEquals('Rp 2.000.000', $result['max_investment_formatted']);
         $this->assertEquals('Musang King', $result['fruit_crop']['variant']);
         $this->assertEquals('Durian', $result['fruit_crop']['fruit_type']);
         $this->assertEquals('Durian Valley Farm', $result['farm']['name']);

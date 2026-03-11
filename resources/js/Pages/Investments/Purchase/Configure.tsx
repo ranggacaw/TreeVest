@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import { Head, Link, useForm, usePage } from '@inertiajs/react';
 import { PageProps, Tree, PaymentMethod } from '@/types';
@@ -19,9 +19,20 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
     const { props } = usePage<any>();
     const { flash } = props;
 
+    // Derive min/max trees from investment limits and tree price
+    const minTrees = useMemo(() => {
+        if (!tree.price_cents || tree.price_cents === 0) return 1;
+        return Math.ceil(tree.min_investment_cents / tree.price_cents);
+    }, [tree.min_investment_cents, tree.price_cents]);
+
+    const maxTrees = useMemo(() => {
+        if (!tree.price_cents || tree.price_cents === 0) return 1;
+        return Math.floor(tree.max_investment_cents / tree.price_cents);
+    }, [tree.max_investment_cents, tree.price_cents]);
+
     const { data, setData, post, processing, errors } = useForm({
         tree_id: tree.id,
-        amount_cents: tree.min_investment_cents,
+        quantity: minTrees,
         acceptance_risk_disclosure: false,
         acceptance_terms: false,
         payment_method_id: payment_methods.find(p => true)?.id || '',
@@ -29,13 +40,21 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
 
     const [showRiskModal, setShowRiskModal] = useState(false);
 
-    const isValidAmount = data.amount_cents >= tree.min_investment_cents &&
-        data.amount_cents <= tree.max_investment_cents;
+    const totalCents = data.quantity * tree.price_cents;
+    const isValidQuantity = data.quantity >= minTrees && data.quantity <= maxTrees;
+
+    const decrement = () => {
+        if (data.quantity > minTrees) setData('quantity', data.quantity - 1);
+    };
+
+    const increment = () => {
+        if (data.quantity < maxTrees) setData('quantity', data.quantity + 1);
+    };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!isValidAmount) {
+        if (!isValidQuantity) {
             alert(t('invalid_amount_message'));
             return;
         }
@@ -137,52 +156,75 @@ export default function Configure({ auth, tree, user, payment_methods }: Props) 
                                 <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
                                     <div className="p-6">
                                         <h3 className="text-lg font-semibold text-gray-900 mb-4">
-                                            {t('investment_amount')}
+                                            {t('number_of_trees', { defaultValue: 'Number of Trees' })}
                                         </h3>
 
-                                        <div className="mb-4">
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                {t('amount_label', { formatted: formatRupiah(data.amount_cents) })}
+                                        {/* Quantity stepper */}
+                                        <div className="mb-6">
+                                            <label className="block text-sm font-medium text-gray-700 mb-3">
+                                                {t('select_trees', { defaultValue: 'How many trees do you want to invest in?' })}
                                             </label>
-                                            <input
-                                                type="range"
-                                                min={tree.min_investment_cents}
-                                                max={tree.max_investment_cents}
-                                                step={100}
-                                                value={data.amount_cents}
-                                                onChange={(e) => setData('amount_cents', parseInt(e.target.value))}
-                                                className="w-full h-2 bg-gray-200 rounded-lg appearance-none cursor-pointer"
-                                            />
-                                            <div className="flex justify-between text-sm text-gray-500 mt-1">
-                                                <span>{tree.min_investment_formatted}</span>
-                                                <span>{tree.max_investment_formatted}</span>
+
+                                            <div className="flex items-center gap-4">
+                                                <button
+                                                    type="button"
+                                                    onClick={decrement}
+                                                    disabled={data.quantity <= minTrees}
+                                                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-green-500 hover:text-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-lg font-bold"
+                                                >
+                                                    −
+                                                </button>
+
+                                                <div className="flex-1 text-center">
+                                                    <input
+                                                        type="number"
+                                                        min={minTrees}
+                                                        max={maxTrees}
+                                                        value={data.quantity}
+                                                        onChange={(e) => {
+                                                            const val = parseInt(e.target.value) || minTrees;
+                                                            setData('quantity', Math.min(maxTrees, Math.max(minTrees, val)));
+                                                        }}
+                                                        className="w-24 text-center text-2xl font-bold text-gray-900 border-b-2 border-gray-300 focus:border-green-500 focus:outline-none bg-transparent py-1"
+                                                    />
+                                                    <p className="text-xs text-gray-500 mt-1">
+                                                        {t('trees_range', {
+                                                            min: minTrees,
+                                                            max: maxTrees,
+                                                            defaultValue: 'Min {{min}} — Max {{max}} trees',
+                                                        })}
+                                                    </p>
+                                                </div>
+
+                                                <button
+                                                    type="button"
+                                                    onClick={increment}
+                                                    disabled={data.quantity >= maxTrees}
+                                                    className="w-10 h-10 rounded-full border-2 border-gray-300 flex items-center justify-center text-gray-600 hover:border-green-500 hover:text-green-600 disabled:opacity-40 disabled:cursor-not-allowed transition-colors text-lg font-bold"
+                                                >
+                                                    +
+                                                </button>
                                             </div>
-                                            {errors.amount_cents && (
-                                                <p className="mt-1 text-sm text-red-600">{errors.amount_cents}</p>
+
+                                            {errors.quantity && (
+                                                <p className="mt-2 text-sm text-red-600">{errors.quantity}</p>
                                             )}
                                         </div>
 
-                                        <div className="mb-4">
-                                            <label className="block text-sm font-medium text-gray-700 mb-2">
-                                                {t('or_enter_custom_amount')}
-                                            </label>
-                                            <input
-                                                type="number"
-                                                min={tree.min_investment_cents}
-                                                max={tree.max_investment_cents}
-                                                value={data.amount_cents}
-                                                onChange={(e) => setData('amount_cents', parseInt(e.target.value) || 0)}
-                                                className="w-full px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-green-500"
-                                            />
-                                        </div>
-
-                                        {isValidAmount && (
-                                            <div className="bg-green-50 p-4 rounded-lg mb-6">
-                                                <p className="text-sm text-green-800">
-                                                    {t('valid_amount_message')}
-                                                </p>
+                                        {/* Total price preview */}
+                                        <div className="bg-green-50 border border-green-200 p-4 rounded-lg mb-6">
+                                            <div className="flex justify-between items-center">
+                                                <span className="text-sm text-green-800 font-medium">
+                                                    {t('total_investment', { defaultValue: 'Total Investment' })}
+                                                </span>
+                                                <span className="text-xl font-bold text-green-700">
+                                                    {formatRupiah(totalCents)}
+                                                </span>
                                             </div>
-                                        )}
+                                            <p className="text-xs text-green-600 mt-1">
+                                                {data.quantity} {t('trees', { defaultValue: 'trees' })} × {formatRupiah(tree.price_cents)} / {t('tree', { defaultValue: 'tree' })}
+                                            </p>
+                                        </div>
 
                                         <div className="space-y-4">
                                             <div className="flex items-start">

@@ -2,14 +2,14 @@
 
 namespace App\Services;
 
+use App\Enums\FarmStatus;
+use App\Enums\InvestmentStatus;
 use App\Models\Farm;
 use App\Models\Harvest;
 use App\Models\Investment;
 use App\Models\Tree;
 use App\Models\TreeHealthUpdate;
 use App\Models\User;
-use App\Enums\FarmStatus;
-use App\Enums\InvestmentStatus;
 use Illuminate\Support\Facades\Cache;
 
 class FarmOwnerDashboardService
@@ -21,7 +21,7 @@ class FarmOwnerDashboardService
             $farmIds = $farms->pluck('id');
 
             $totalFarms = $farms->count();
-            $activeFarms = $farms->filter(fn($f) => $f->status === FarmStatus::ACTIVE)->count();
+            $activeFarms = $farms->filter(fn ($f) => $f->status === FarmStatus::ACTIVE)->count();
 
             $totalTrees = Tree::whereHas('fruitCrop', function ($q) use ($farmIds) {
                 $q->whereIn('farm_id', $farmIds);

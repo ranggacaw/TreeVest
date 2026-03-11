@@ -2,14 +2,14 @@
 
 namespace Tests\Unit;
 
-use Tests\TestCase;
 use App\Services\Translation\GoogleTranslationService;
+use Tests\TestCase;
 
 class TranslationServiceTest extends TestCase
 {
     public function test_translate_method()
     {
-        $service = new GoogleTranslationService();
+        $service = new GoogleTranslationService;
 
         // Mock translate implementation (since it returns "[id] text" currently)
         $result = $service->translate('Hello', 'en', 'id');
@@ -20,7 +20,7 @@ class TranslationServiceTest extends TestCase
 
     public function test_translate_array()
     {
-        $service = new GoogleTranslationService();
+        $service = new GoogleTranslationService;
 
         $result = $service->translate(['Hello', 'World'], 'en', 'id');
 

@@ -42,11 +42,11 @@ class AgrotourismRegistrationConfirmedNotification extends Notification implemen
         $event = $this->registration->event;
 
         return [
-            'type'            => 'agrotourism_registration_confirmed',
+            'type' => 'agrotourism_registration_confirmed',
             'registration_id' => $this->registration->id,
-            'event_id'        => $event->id,
-            'event_title'     => $event->title,
-            'event_date'      => $event->event_date->toIso8601String(),
+            'event_id' => $event->id,
+            'event_title' => $event->title,
+            'event_date' => $event->event_date->toIso8601String(),
         ];
     }
 }

@@ -78,7 +78,7 @@ class AdminDashboardService
         $farms = Farm::with('owner')->orderByDesc('created_at')->limit($limit)->get()->map(function ($f) {
             return [
                 'type' => 'farm_created',
-                'description' => 'created a new farm: ' . $f->name,
+                'description' => 'created a new farm: '.$f->name,
                 'actor_name' => $f->owner ? $f->owner->name : 'Unknown',
                 'created_at' => $f->created_at->toIso8601String(),
             ];

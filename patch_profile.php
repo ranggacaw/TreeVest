@@ -1,4 +1,5 @@
 <?php
+
 $en = [
     'profile' => 'Profile',
     'phone_number' => 'Phone Number',
@@ -11,7 +12,7 @@ $en = [
     'security_desc' => 'Manage your account security settings including two-factor authentication and active sessions.',
     'two_factor_auth' => 'Two-Factor Authentication',
     'manage_sessions' => 'Manage Browser Sessions',
-    'account_settings_link' => 'Account Settings (Deactivate/Delete)'
+    'account_settings_link' => 'Account Settings (Deactivate/Delete)',
 ];
 $id = [
     'profile' => 'Profil',
@@ -25,7 +26,7 @@ $id = [
     'security_desc' => 'Kelola pengaturan keamanan akun Anda termasuk autentikasi dua faktor dan sesi aktif.',
     'two_factor_auth' => 'Autentikasi Dua Faktor',
     'manage_sessions' => 'Kelola Sesi Peramban',
-    'account_settings_link' => 'Pengaturan Akun (Nonaktifkan/Hapus)'
+    'account_settings_link' => 'Pengaturan Akun (Nonaktifkan/Hapus)',
 ];
 file_put_contents('public/locales/en/profile.json', json_encode($en, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 file_put_contents('public/locales/id/profile.json', json_encode($id, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

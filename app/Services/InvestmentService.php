@@ -23,27 +23,34 @@ class InvestmentService
     public function __construct(
         protected PaymentService $paymentService,
         protected AuditLogService $auditLogService,
-    ) {
-    }
+    ) {}
 
-    public function validateInvestmentEligibility(User $user, Tree $tree, int $amountCents): array
+    public function validateInvestmentEligibility(User $user, Tree $tree, int $quantity): array
     {
         $errors = [];
 
-        if (!$user->isKycValid()) {
+        if (! $user->isKycValid()) {
             $errors['kyc'] = 'KYC verification is required before investing.';
         }
 
-        if (!$tree->isInvestable()) {
+        if (! $tree->isInvestable()) {
             $errors['tree'] = 'This tree is not currently available for investment.';
         }
 
-        if ($amountCents < $tree->min_investment_cents) {
-            $errors['amount_min'] = 'Minimum investment is ' . number_format($tree->min_investment_cents / 100, 2);
-        }
+        if ($quantity < 1) {
+            $errors['quantity_min'] = 'You must invest in at least 1 tree.';
+        } else {
+            $amountCents = $quantity * $tree->price_cents;
+            $minTrees = (int) ceil($tree->min_investment_cents / $tree->price_cents);
+            $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
 
-        if ($amountCents > $tree->max_investment_cents) {
-            $errors['amount_max'] = 'Maximum investment is ' . number_format($tree->max_investment_cents / 100, 2);
+            if ($quantity < $minTrees) {
+                $errors['quantity_min'] = "Minimum investment is {$minTrees} trees.";
+            }
+
+            if ($quantity > $maxTrees) {
+                $errors['quantity_max'] = "Maximum investment is {$maxTrees} trees.";
+            }
         }
 
         return [
@@ -55,12 +62,12 @@ class InvestmentService
     public function initiateInvestment(
         User $user,
         Tree $tree,
-        int $amountCents,
+        int $quantity,
         ?int $paymentMethodId = null
     ): Investment {
-        $eligibility = $this->validateInvestmentEligibility($user, $tree, $amountCents);
+        $eligibility = $this->validateInvestmentEligibility($user, $tree, $quantity);
 
-        if (!$eligibility['eligible']) {
+        if (! $eligibility['eligible']) {
             $firstError = array_values($eligibility['errors'])[0] ?? 'Investment eligibility check failed';
 
             if (isset($eligibility['errors']['kyc'])) {
@@ -71,18 +78,22 @@ class InvestmentService
                 throw new TreeNotInvestableException($tree->id);
             }
 
-            if (isset($eligibility['errors']['amount_min'])) {
-                throw new InvalidInvestmentAmountException($amountCents, $tree->min_investment_cents);
+            if (isset($eligibility['errors']['quantity_min'])) {
+                $minTrees = (int) ceil($tree->min_investment_cents / $tree->price_cents);
+                throw new InvalidInvestmentAmountException($quantity * $tree->price_cents, $tree->min_investment_cents);
             }
 
-            if (isset($eligibility['errors']['amount_max'])) {
-                throw new InvestmentLimitExceededException($amountCents, $tree->max_investment_cents);
+            if (isset($eligibility['errors']['quantity_max'])) {
+                $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+                throw new InvestmentLimitExceededException($quantity * $tree->price_cents, $tree->max_investment_cents);
             }
 
             throw new \InvalidArgumentException($firstError);
         }
 
-        return TransactionHelper::smart(function () use ($user, $tree, $amountCents, $paymentMethodId) {
+        $amountCents = $quantity * $tree->price_cents;
+
+        return TransactionHelper::smart(function () use ($user, $tree, $quantity, $amountCents, $paymentMethodId) {
             $transaction = $this->paymentService->initiatePayment(
                 $user->id,
                 $amountCents,
@@ -95,6 +106,7 @@ class InvestmentService
                 'user_id' => $user->id,
                 'tree_id' => $tree->id,
                 'amount_cents' => $amountCents,
+                'quantity' => $quantity,
                 'currency' => 'IDR',
                 'purchase_date' => now()->toDateString(),
                 'status' => InvestmentStatus::PendingPayment,
@@ -111,6 +123,7 @@ class InvestmentService
                 [
                     'investment_id' => $investment->id,
                     'tree_id' => $tree->id,
+                    'quantity' => $quantity,
                     'amount' => $amountCents,
                     'transaction_id' => $transaction->id,
                     'payment_intent_id' => $transaction->stripe_payment_intent_id,
@@ -121,7 +134,7 @@ class InvestmentService
             // Dispatch notification
             $user->notify(new InvestmentPurchasedNotification([
                 'tree_identifier' => $tree->tree_identifier,
-                'formatted_amount' => 'Rp ' . number_format($amountCents / 100, 2),
+                'formatted_amount' => 'Rp '.number_format($amountCents / 100, 2),
                 'investment_url' => route('investments.confirmation', $investment->id),
             ]));
 
@@ -165,7 +178,7 @@ class InvestmentService
     {
         $investment = Investment::findOrFail($investmentId);
 
-        if (!$investment->canBeCancelled()) {
+        if (! $investment->canBeCancelled()) {
             throw new InvestmentNotCancellableException($investmentId);
         }
 
@@ -200,24 +213,32 @@ class InvestmentService
 
     public function topUpInvestment(
         int $investmentId,
-        int $topUpAmountCents,
+        int $topUpQuantity,
         ?int $paymentMethodId = null
     ): Investment {
         $investment = Investment::findOrFail($investmentId);
 
-        if (!$investment->isActive()) {
+        if (! $investment->isActive()) {
             throw new \InvalidArgumentException('Only active investments can be topped up.');
         }
 
         $tree = $investment->tree;
-        $newTotalAmount = $investment->amount_cents + $topUpAmountCents;
+        $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+        $newQuantity = $investment->quantity + $topUpQuantity;
 
-        if ($newTotalAmount > $tree->max_investment_cents) {
-            throw new InvestmentLimitExceededException($newTotalAmount, $tree->max_investment_cents);
+        if ($newQuantity > $maxTrees) {
+            throw new InvestmentLimitExceededException(
+                $newQuantity * $tree->price_cents,
+                $tree->max_investment_cents
+            );
         }
 
-        return TransactionHelper::smart(function () use ($investment, $topUpAmountCents, $paymentMethodId, $newTotalAmount) {
+        $topUpAmountCents = $topUpQuantity * $tree->price_cents;
+        $newTotalAmount = $investment->amount_cents + $topUpAmountCents;
+
+        return TransactionHelper::smart(function () use ($investment, $topUpQuantity, $topUpAmountCents, $paymentMethodId, $newQuantity, $newTotalAmount) {
             $originalAmount = $investment->amount_cents;
+            $originalQuantity = $investment->quantity;
 
             $transaction = $this->paymentService->initiatePayment(
                 $investment->user_id,
@@ -228,6 +249,7 @@ class InvestmentService
             );
 
             $investment->amount_cents = $newTotalAmount;
+            $investment->quantity = $newQuantity;
             $investment->transaction_id = $transaction->id;
             $investment->save();
 
@@ -237,8 +259,11 @@ class InvestmentService
                 [
                     'investment_id' => $investment->id,
                     'original_amount' => $originalAmount,
+                    'original_quantity' => $originalQuantity,
+                    'top_up_quantity' => $topUpQuantity,
                     'top_up_amount' => $topUpAmountCents,
                     'new_total' => $newTotalAmount,
+                    'new_quantity' => $newQuantity,
                     'transaction_id' => $transaction->id,
                     'event' => 'investment_top_up',
                 ]

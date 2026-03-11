@@ -3,7 +3,8 @@
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Support\Facades\DB;
 
-return new class extends Migration {
+return new class extends Migration
+{
     /**
      * Update all existing MYR currency values to IDR (Indonesian Rupiah).
      * This migration handles existing data in the database.

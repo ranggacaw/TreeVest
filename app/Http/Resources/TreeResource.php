@@ -29,8 +29,8 @@ class TreeResource extends JsonResource
             'status' => $this->status->value,
             'min_investment_cents' => $this->min_investment_cents,
             'max_investment_cents' => $this->max_investment_cents,
-            'min_investment_formatted' => 'Rp ' . number_format($this->min_investment_cents, 0, ',', '.'),
-            'max_investment_formatted' => 'Rp ' . number_format($this->max_investment_cents, 0, ',', '.'),
+            'min_investment_formatted' => 'Rp '.number_format($this->min_investment_cents, 0, ',', '.'),
+            'max_investment_formatted' => 'Rp '.number_format($this->max_investment_cents, 0, ',', '.'),
             'fruit_crop' => new FruitCropResource($this->whenLoaded('fruitCrop')),
             'fruit_type' => $this->whenLoaded('fruitType'),
         ];
@@ -41,7 +41,7 @@ class TreeResource extends JsonResource
      */
     public static function basic($tree): array
     {
-        if (!$tree) {
+        if (! $tree) {
             return [];
         }
 
@@ -94,8 +94,8 @@ class TreeResource extends JsonResource
             'risk_rating' => $this->risk_rating->value,
             'min_investment_cents' => $this->min_investment_cents,
             'max_investment_cents' => $this->max_investment_cents,
-            'min_investment_formatted' => 'Rp ' . number_format($this->min_investment_cents, 0, ',', '.'),
-            'max_investment_formatted' => 'Rp ' . number_format($this->max_investment_cents, 0, ',', '.'),
+            'min_investment_formatted' => 'Rp '.number_format($this->min_investment_cents, 0, ',', '.'),
+            'max_investment_formatted' => 'Rp '.number_format($this->max_investment_cents, 0, ',', '.'),
             'age_years' => $this->age_years,
             'productive_lifespan_years' => $this->productive_lifespan_years,
             'fruit_crop' => [

@@ -11,15 +11,15 @@ class I18nTranslationParityTest extends TestCase
         $enPath = public_path('locales/en');
         $idPath = public_path('locales/id');
 
-        if (!is_dir($enPath) || !is_dir($idPath)) {
+        if (! is_dir($enPath) || ! is_dir($idPath)) {
             $this->markTestSkipped('Translation directories do not exist.');
         }
 
-        $enFiles = glob($enPath . '/*.json');
+        $enFiles = glob($enPath.'/*.json');
 
         foreach ($enFiles as $file) {
             $filename = basename($file);
-            $idFile = $idPath . '/' . $filename;
+            $idFile = $idPath.'/'.$filename;
 
             $this->assertFileExists($idFile);
 

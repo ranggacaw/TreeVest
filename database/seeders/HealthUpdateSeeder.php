@@ -16,6 +16,7 @@ class HealthUpdateSeeder extends Seeder
         // Guard: skip if health updates already exist
         if (TreeHealthUpdate::count() > 0) {
             $this->command->info('HealthUpdateSeeder: data already exists, skipping.');
+
             return;
         }
 
@@ -94,12 +95,12 @@ class HealthUpdateSeeder extends Seeder
     private function getDescriptionForType(HealthUpdateType $type, string $cropVariant): string
     {
         return match ($type) {
-            HealthUpdateType::ROUTINE => "Regular health inspection completed. All trees showing normal growth patterns. Fruits developing well. No signs of stress or disease detected.",
-            HealthUpdateType::PEST => "Minor pest activity observed in sector B. Appropriate measures have been taken. Monitoring continues closely. Expected impact minimal.",
-            HealthUpdateType::DISEASE => "Early signs of leaf spot disease detected in a small area. Treatment initiated. Most trees remain healthy.",
-            HealthUpdateType::DAMAGE => "Some minor wind damage to branches after recent storm. Pruning and maintenance scheduled. No impact on fruit production.",
-            HealthUpdateType::WEATHER_IMPACT => "Recent heavy rains caused some soil saturation. Drainage improved. Trees recovering well. No long-term effects expected.",
-            HealthUpdateType::OTHER => "Special maintenance activity performed. Fertilizer application and soil treatment completed.",
+            HealthUpdateType::ROUTINE => 'Regular health inspection completed. All trees showing normal growth patterns. Fruits developing well. No signs of stress or disease detected.',
+            HealthUpdateType::PEST => 'Minor pest activity observed in sector B. Appropriate measures have been taken. Monitoring continues closely. Expected impact minimal.',
+            HealthUpdateType::DISEASE => 'Early signs of leaf spot disease detected in a small area. Treatment initiated. Most trees remain healthy.',
+            HealthUpdateType::DAMAGE => 'Some minor wind damage to branches after recent storm. Pruning and maintenance scheduled. No impact on fruit production.',
+            HealthUpdateType::WEATHER_IMPACT => 'Recent heavy rains caused some soil saturation. Drainage improved. Trees recovering well. No long-term effects expected.',
+            HealthUpdateType::OTHER => 'Special maintenance activity performed. Fertilizer application and soil treatment completed.',
         };
     }
 

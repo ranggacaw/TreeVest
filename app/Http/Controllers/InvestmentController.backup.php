@@ -15,8 +15,7 @@ class InvestmentController extends Controller
 {
     public function __construct(
         protected InvestmentService $investmentService,
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -25,7 +24,7 @@ class InvestmentController extends Controller
         $totalValue = $this->investmentService->getTotalInvestmentValue($user);
 
         return Inertia::render('Investments/Index', [
-            'investments' => $investments->map(fn($inv) => [
+            'investments' => $investments->map(fn ($inv) => [
                 'id' => $inv->id,
                 'amount_cents' => $inv->amount_cents,
                 'formatted_amount' => $inv->formatted_amount,
@@ -39,7 +38,7 @@ class InvestmentController extends Controller
                 ],
             ]),
             'total_value_cents' => $totalValue,
-            'total_value_formatted' => 'Rp ' . number_format($totalValue / 100, 2),
+            'total_value_formatted' => 'Rp '.number_format($totalValue / 100, 2),
         ]);
     }
 
@@ -89,11 +88,11 @@ class InvestmentController extends Controller
                     'farm' => [
                         'id' => $investment->tree->fruitCrop->farm->id,
                         'name' => $investment->tree->fruitCrop->farm->name,
-                        'location' => $investment->tree->fruitCrop->farm->city . ', ' . $investment->tree->fruitCrop->farm->state,
+                        'location' => $investment->tree->fruitCrop->farm->city.', '.$investment->tree->fruitCrop->farm->state,
                     ],
                 ],
                 'harvests' => [
-                    'completed' => $completedHarvests->map(fn($h) => [
+                    'completed' => $completedHarvests->map(fn ($h) => [
                         'id' => $h->id,
                         'harvest_date' => $h->scheduled_date->toDateString(),
                         'estimated_yield_kg' => $h->estimated_yield_kg,
@@ -101,13 +100,13 @@ class InvestmentController extends Controller
                         'quality_grade' => $h->quality_grade?->value,
                         'notes' => $h->notes,
                     ])->toArray(),
-                    'upcoming' => $upcomingHarvests->map(fn($h) => [
+                    'upcoming' => $upcomingHarvests->map(fn ($h) => [
                         'id' => $h->id,
                         'harvest_date' => $h->scheduled_date->toDateString(),
                         'estimated_yield_kg' => $h->estimated_yield_kg,
                     ])->toArray(),
                 ],
-                'payouts' => $investment->payouts->map(fn($p) => [
+                'payouts' => $investment->payouts->map(fn ($p) => [
                     'id' => $p->id,
                     'gross_amount_cents' => $p->gross_amount_cents,
                     'gross_amount_formatted' => $p->gross_amount_formatted,
@@ -139,14 +138,14 @@ class InvestmentController extends Controller
     {
         $tree = Tree::with(['fruitCrop.farm', 'fruitCrop.fruitType'])->findOrFail($treeId);
 
-        if (!$tree->isInvestable()) {
+        if (! $tree->isInvestable()) {
             return redirect()->route('marketplace.trees')
                 ->with('error', 'This tree is not currently available for investment.');
         }
 
         $user = $request->user();
 
-        if (!$user->isKycValid()) {
+        if (! $user->isKycValid()) {
             return redirect()->route('kyc.verify')
                 ->with('warning', 'You must complete KYC verification before investing.');
         }
@@ -162,8 +161,8 @@ class InvestmentController extends Controller
                 'risk_rating' => $tree->risk_rating->value,
                 'min_investment_cents' => $tree->min_investment_cents,
                 'max_investment_cents' => $tree->max_investment_cents,
-                'min_investment_formatted' => 'Rp ' . number_format($tree->min_investment_cents / 100, 2),
-                'max_investment_formatted' => 'Rp ' . number_format($tree->max_investment_cents / 100, 2),
+                'min_investment_formatted' => 'Rp '.number_format($tree->min_investment_cents / 100, 2),
+                'max_investment_formatted' => 'Rp '.number_format($tree->max_investment_cents / 100, 2),
                 'fruit_crop' => [
                     'variant' => $tree->fruitCrop->variant,
                     'fruit_type' => $tree->fruitCrop->fruitType->name,
@@ -176,7 +175,7 @@ class InvestmentController extends Controller
             'user' => [
                 'kyc_verified' => $user->isKycValid(),
             ],
-            'payment_methods' => $user->paymentMethods->map(fn($pm) => [
+            'payment_methods' => $user->paymentMethods->map(fn ($pm) => [
                 'id' => $pm->id,
                 'type' => $pm->type,
                 'last4' => $pm->last4,
@@ -295,7 +294,7 @@ class InvestmentController extends Controller
                     'max_investment_cents' => $investment->tree->max_investment_cents,
                 ],
             ],
-            'payment_methods' => $user->paymentMethods->map(fn($pm) => [
+            'payment_methods' => $user->paymentMethods->map(fn ($pm) => [
                 'id' => $pm->id,
                 'type' => $pm->type,
                 'last4' => $pm->last4,

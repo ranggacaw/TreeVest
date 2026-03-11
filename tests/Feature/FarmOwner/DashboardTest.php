@@ -5,8 +5,8 @@ namespace Tests\Feature\FarmOwner;
 use App\Models\Farm;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
@@ -20,7 +20,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('FarmOwner/Dashboard')
         );
     }
@@ -47,7 +47,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('FarmOwner/Dashboard')
                 ->where('metrics.total_farms', 2)
         );
@@ -63,7 +63,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($owner2)->get(route('farm-owner.dashboard'));
 
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('FarmOwner/Dashboard')
                 ->where('metrics.total_farms', 0)
         );

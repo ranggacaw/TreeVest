@@ -4,8 +4,8 @@ namespace Tests\Feature\Investor;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Tests\TestCase;
 use Inertia\Testing\AssertableInertia as Assert;
+use Tests\TestCase;
 
 class DashboardTest extends TestCase
 {
@@ -19,7 +19,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Investor/Dashboard')
         );
     }
@@ -41,7 +41,7 @@ class DashboardTest extends TestCase
 
         $response->assertStatus(200);
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Investor/Dashboard')
                 ->has('metrics.total_invested_cents')
         );
@@ -54,7 +54,7 @@ class DashboardTest extends TestCase
         $response = $this->actingAs($investor)->get(route('investor.dashboard'));
 
         $response->assertInertia(
-            fn(Assert $page) => $page
+            fn (Assert $page) => $page
                 ->component('Investor/Dashboard')
                 ->where('kyc_status', 'verified')
         );

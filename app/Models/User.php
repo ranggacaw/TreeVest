@@ -161,7 +161,7 @@ class User extends Authenticatable
 
     public function needsKycReverification(): bool
     {
-        if (!$this->hasVerifiedKyc()) {
+        if (! $this->hasVerifiedKyc()) {
             return false;
         }
 
@@ -170,12 +170,12 @@ class User extends Authenticatable
 
     public function canInvest(): bool
     {
-        return $this->hasVerifiedKyc() && !$this->needsKycReverification();
+        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
     }
 
     public function isKycValid(): bool
     {
-        return $this->hasVerifiedKyc() && !$this->needsKycReverification();
+        return $this->hasVerifiedKyc() && ! $this->needsKycReverification();
     }
 
     public function notificationPreferences()

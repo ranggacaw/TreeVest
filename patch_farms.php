@@ -1,4 +1,5 @@
 <?php
+
 $en = [
     'partner_farms' => 'PARTNER FARMS',
     'browse_farms' => 'Browse Farms',
@@ -10,7 +11,7 @@ $en = [
     'map_view' => 'Map View',
     'no_farms_found' => 'No farms found',
     'no_farms_desc' => 'We couldn\'t find any farms matching your current filters. Try adjusting your search criteria or exploring different regions.',
-    'clear_filters' => 'Clear all filters'
+    'clear_filters' => 'Clear all filters',
 ];
 $id = [
     'partner_farms' => 'MITRA PETERNAKAN',
@@ -23,9 +24,13 @@ $id = [
     'map_view' => 'Tampilan Peta',
     'no_farms_found' => 'Kebun tidak ditemukan',
     'no_farms_desc' => 'Kami tidak dapat menemukan kebun yang cocok dengan filter Anda saat ini. Coba sesuaikan kriteria pencarian Anda atau jelajahi wilayah yang berbeda.',
-    'clear_filters' => 'Hapus semua filter'
+    'clear_filters' => 'Hapus semua filter',
 ];
-if (!file_exists('public/locales/en')) mkdir('public/locales/en', 0777, true);
-if (!file_exists('public/locales/id')) mkdir('public/locales/id', 0777, true);
+if (! file_exists('public/locales/en')) {
+    mkdir('public/locales/en', 0777, true);
+}
+if (! file_exists('public/locales/id')) {
+    mkdir('public/locales/id', 0777, true);
+}
 file_put_contents('public/locales/en/farms.json', json_encode($en, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));
 file_put_contents('public/locales/id/farms.json', json_encode($id, JSON_PRETTY_PRINT | JSON_UNESCAPED_SLASHES));

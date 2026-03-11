@@ -2,10 +2,10 @@
 
 namespace App\Console\Commands;
 
-use Illuminate\Console\Command;
-use Illuminate\Support\Facades\File;
 use App\Services\Translation\TranslationServiceInterface;
 use Exception;
+use Illuminate\Console\Command;
+use Illuminate\Support\Facades\File;
 
 class GenerateTranslation extends Command
 {
@@ -61,12 +61,13 @@ class GenerateTranslation extends Command
         $sourceDir = public_path("locales/{$source}");
         $targetDir = public_path("locales/{$target}");
 
-        if (!File::isDirectory($sourceDir)) {
+        if (! File::isDirectory($sourceDir)) {
             $this->error("Source directory not found: {$sourceDir}");
+
             return;
         }
 
-        if (!File::isDirectory($targetDir)) {
+        if (! File::isDirectory($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
 
@@ -83,14 +84,14 @@ class GenerateTranslation extends Command
             $this->info("Processing {$filename}...");
 
             $sourceContent = json_decode(File::get($file->getPathname()), true);
-            $targetPath = $targetDir . '/' . $filename;
+            $targetPath = $targetDir.'/'.$filename;
 
             $targetContent = [];
             if (File::exists($targetPath)) {
                 $targetContent = json_decode(File::get($targetPath), true) ?: [];
             }
 
-            $draftPath = $targetPath . '.draft';
+            $draftPath = $targetPath.'.draft';
             $draftContent = [];
             if (File::exists($draftPath)) {
                 $draftContent = json_decode(File::get($draftPath), true) ?: [];
@@ -103,7 +104,7 @@ class GenerateTranslation extends Command
                 continue;
             }
 
-            $this->line("Found " . count($toTranslate) . " missing keys. Translating...");
+            $this->line('Found '.count($toTranslate).' missing keys. Translating...');
 
             $translated = $this->translateBatch($toTranslate, $source, $target);
 
@@ -122,12 +123,13 @@ class GenerateTranslation extends Command
         $sourceDir = base_path("lang/{$source}");
         $targetDir = base_path("lang/{$target}");
 
-        if (!File::isDirectory($sourceDir)) {
+        if (! File::isDirectory($sourceDir)) {
             $this->error("Source directory not found: {$sourceDir}");
+
             return;
         }
 
-        if (!File::isDirectory($targetDir)) {
+        if (! File::isDirectory($targetDir)) {
             File::makeDirectory($targetDir, 0755, true);
         }
 
@@ -144,21 +146,23 @@ class GenerateTranslation extends Command
             $this->info("Processing {$filename}...");
 
             $sourceContent = include $file->getPathname();
-            $targetPath = $targetDir . '/' . $filename;
+            $targetPath = $targetDir.'/'.$filename;
 
             $targetContent = [];
             if (File::exists($targetPath)) {
                 $targetContent = include $targetPath;
-                if (!is_array($targetContent))
+                if (! is_array($targetContent)) {
                     $targetContent = [];
+                }
             }
 
-            $draftPath = $targetPath . '.draft';
+            $draftPath = $targetPath.'.draft';
             $draftContent = [];
             if (File::exists($draftPath)) {
                 $draftContent = include $draftPath;
-                if (!is_array($draftContent))
+                if (! is_array($draftContent)) {
                     $draftContent = [];
+                }
             }
 
             $toTranslate = $this->findMissingKeys($sourceContent, $targetContent, $draftContent);
@@ -168,14 +172,14 @@ class GenerateTranslation extends Command
                 continue;
             }
 
-            $this->line("Found " . count($toTranslate) . " missing keys. Translating...");
+            $this->line('Found '.count($toTranslate).' missing keys. Translating...');
 
             $translated = $this->translateBatch($toTranslate, $source, $target);
 
             $newDraftContent = array_merge($draftContent, $translated);
             $finalDraft = $this->mergeTranslatedStructure($sourceContent, $newDraftContent);
 
-            $phpContent = "<?php\n\nreturn " . $this->exportArray($finalDraft) . ";\n";
+            $phpContent = "<?php\n\nreturn ".$this->exportArray($finalDraft).";\n";
             File::put($draftPath, $phpContent);
             $this->info("Generated draft file: lang/{$target}/{$filename}.draft");
         }
@@ -202,7 +206,7 @@ class GenerateTranslation extends Command
                 // If it's empty in target AND empty in draft, we need to translate it
                 if ((empty($targetVal) || $targetVal === $value) && empty($draftVal)) {
                     // Only translate non-empty source strings
-                    if (!empty($value)) {
+                    if (! empty($value)) {
                         $missing[$fullKey] = $value;
                     }
                 }
@@ -238,7 +242,7 @@ class GenerateTranslation extends Command
                 }
             }
         } catch (Exception $e) {
-            $this->error("Translation failed: " . $e->getMessage());
+            $this->error('Translation failed: '.$e->getMessage());
         }
 
         return $translated;
@@ -270,6 +274,7 @@ class GenerateTranslation extends Command
                 $result[$key] = $flatTranslations[$fullKey] ?? '';
             }
         }
+
         return $result;
     }
 
@@ -278,7 +283,8 @@ class GenerateTranslation extends Command
         $export = var_export($array, true);
         $export = preg_replace('/^([ ]*)array \(/m', '$1[', $export);
         $export = preg_replace('/^([ ]*)\)/m', '$1]', $export);
-        $export = str_replace("=> \n  [", "=> [", $export);
+        $export = str_replace("=> \n  [", '=> [', $export);
+
         return $export;
     }
 }

@@ -14,8 +14,7 @@ class FarmController extends Controller
 {
     public function __construct(
         protected FarmService $farmService
-    ) {
-    }
+    ) {}
 
     public function index(Request $request)
     {
@@ -40,7 +39,7 @@ class FarmController extends Controller
         $farm = $this->farmService->createFarm($request->user(), $request);
 
         return redirect()->route('farms.manage.index')
-            ->with('success', __('farms.created') . ' ' . __('farms.pending_approval'));
+            ->with('success', __('farms.created').' '.__('farms.pending_approval'));
     }
 
     public function show(Farm $farm)
@@ -75,7 +74,7 @@ class FarmController extends Controller
         $farm = $this->farmService->updateFarm($farm, $request);
 
         $message = $farm->isPendingApproval()
-            ? __('farms.updated') . ' ' . __('farms.pending_approval')
+            ? __('farms.updated').' '.__('farms.pending_approval')
             : __('farms.updated');
 
         return redirect()->route('farms.manage.show', $farm)
@@ -100,7 +99,7 @@ class FarmController extends Controller
             abort(403, 'Image does not belong to this farm.');
         }
 
-        if (!str_starts_with($image->file_path, 'http')) {
+        if (! str_starts_with($image->file_path, 'http')) {
             \Illuminate\Support\Facades\Storage::disk('public')->delete($image->file_path);
         }
 

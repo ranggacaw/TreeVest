@@ -8,7 +8,6 @@ use App\Models\FarmCertification;
 use App\Models\FarmImage;
 use App\Models\User;
 use Illuminate\Database\Seeder;
-use Illuminate\Support\Facades\Hash;
 
 class FarmSeeder extends Seeder
 {
@@ -17,6 +16,7 @@ class FarmSeeder extends Seeder
         // Guard: skip if farms already exist
         if (Farm::count() > 0) {
             $this->command->info('FarmSeeder: data already exists, skipping.');
+
             return;
         }
 

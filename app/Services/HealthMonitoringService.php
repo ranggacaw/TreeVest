@@ -21,7 +21,7 @@ class HealthMonitoringService
         }
 
         $query = TreeHealthUpdate::whereIn('fruit_crop_id', $cropIds)
-            ->with(['fruitCrop.farm', 'author'])
+            ->with(['fruitCrop.farm', 'fruitCrop.fruitType', 'author'])
             ->orderBy('created_at', 'desc');
 
         $query = $this->applyFilters($query, $filters);
@@ -67,6 +67,7 @@ class HealthMonitoringService
 
     public function getHealthStatusForCrop(FruitCrop $crop): array
     {
+        /** @var TreeHealthUpdate|null $latestUpdate */
         $latestUpdate = $crop->healthUpdates()->first();
         $recentAlerts = $crop->healthAlerts()
             ->unresolved()
@@ -106,7 +107,7 @@ class HealthMonitoringService
     {
         $farms = Farm::whereIn('id', $farmIds)->get();
 
-        return $farms->map(function ($farm) {
+        return $farms->map(function (Farm $farm) {
             $recentUpdates = $farm->fruitCrops()
                 ->with('healthUpdates')
                 ->get()
@@ -147,7 +148,7 @@ class HealthMonitoringService
                     ->from('fruit_crops')
                     ->whereIn('id', $cropIds);
             })
-            ->with(['farm', 'fruitCrop'])
+            ->with(['farm', 'fruitCrop.fruitType'])
             ->orderBy('created_at', 'desc');
 
         if (isset($filters['unresolved']) && $filters['unresolved']) {

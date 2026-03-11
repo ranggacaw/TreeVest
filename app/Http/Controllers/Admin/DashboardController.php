@@ -2,18 +2,8 @@
 
 namespace App\Http\Controllers\Admin;
 
-use App\Enums\FarmStatus;
-use App\Enums\HarvestStatus;
-use App\Enums\InvestmentStatus;
-use App\Enums\KycStatus;
 use App\Http\Controllers\Controller;
 use App\Models\Article;
-use App\Models\Farm;
-use App\Models\Harvest;
-use App\Models\Investment;
-use App\Models\KycVerification;
-use App\Models\Payout;
-use App\Models\User;
 use Illuminate\Support\Facades\Cache;
 use Inertia\Inertia;
 

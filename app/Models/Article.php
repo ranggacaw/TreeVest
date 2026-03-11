@@ -10,7 +10,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 
 class Article extends Model
 {
-    use HasFactory, SoftDeletes, \App\Concerns\Translatable;
+    use \App\Concerns\Translatable, HasFactory, SoftDeletes;
 
     public array $translatable = ['title', 'content'];
 
