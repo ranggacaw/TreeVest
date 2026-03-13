@@ -70,6 +70,10 @@ class HandleInertiaRequests extends Middleware
                 'warning' => $request->session()->get('warning'),
                 'info' => $request->session()->get('info'),
             ],
+            // Global notification badge count — available on every page
+            'unread_notifications_count' => fn () => $request->user()
+                ? $request->user()->unreadNotifications()->count()
+                : 0,
         ];
     }
 }

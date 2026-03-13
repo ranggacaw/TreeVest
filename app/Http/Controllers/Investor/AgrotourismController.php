@@ -42,7 +42,8 @@ class AgrotourismController extends Controller
         $this->agrotourismService->registerInvestor(
             $event,
             auth()->user(),
-            $request->validated('registration_type')
+            $request->validated('registration_type'),
+            (int) $request->validated('participants_count'),
         );
 
         return redirect()

@@ -184,6 +184,8 @@ export type PageProps<
             success?: string;
             error?: string;
         };
+        /** Globally shared: count of unread notifications for the authenticated user */
+        unread_notifications_count: number;
     };
 
 export interface Tree {
@@ -822,6 +824,7 @@ export interface PortfolioSummaryHeader {
     gain_loss_percent: number;
     total_payouts_cents: number;
     pending_payouts_cents: number;
+    total_trees?: number;
 }
 
 export interface HoldingWithSparkline {
@@ -833,6 +836,7 @@ export interface HoldingWithSparkline {
     actual_return_cents: number;
     projected_return_cents: number;
     gain_loss_cents: number;
+    gain_loss_percent: number;
     sparkline: number[];
     tree: {
         id: number;

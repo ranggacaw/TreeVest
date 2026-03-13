@@ -27,7 +27,11 @@ class KycController extends Controller
         $requiredDocuments = config("treevest.kyc.jurisdictions.{$jurisdiction}.required_documents", []);
         $optionalDocuments = config("treevest.kyc.jurisdictions.{$jurisdiction}.optional_documents", []);
 
-        return Inertia::render('Profile/KycVerification/Index', [
+        $view = $user->hasRole('investor')
+            ? 'Investor/KycVerification/Index'
+            : 'Profile/KycVerification/Index';
+
+        return Inertia::render($view, [
             'verification' => $verification ? [
                 'id' => $verification->id,
                 'status' => $verification->status->value,
@@ -61,7 +65,11 @@ class KycController extends Controller
         $user = $request->user();
         $verification = $this->kycService->createOrUpdateVerification($user);
 
-        return Inertia::render('Profile/KycVerification/Upload', [
+        $view = $request->user()->hasRole('investor')
+            ? 'Investor/KycVerification/Upload'
+            : 'Profile/KycVerification/Upload';
+
+        return Inertia::render($view, [
             'verification' => [
                 'id' => $verification->id,
                 'documents' => $verification->documents->map(fn (KycDocument $doc) => [

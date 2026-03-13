@@ -59,6 +59,27 @@ class PortfolioDashboardController extends Controller
             ->values()
             ->toArray();
 
+        $topTrees = collect(['Durian', 'Alpukat', 'Mangga'])->mapWithKeys(function ($type) {
+            $trees = \App\Models\Tree::with(['fruitCrop.fruitType'])
+                ->whereHas('fruitCrop.fruitType', function ($q) use ($type) {
+                    $q->where('name', $type);
+                })
+                ->whereIn('status', [\App\Enums\TreeLifecycleStage::GROWING, \App\Enums\TreeLifecycleStage::PRODUCTIVE]) // Investable
+                ->orderByDesc('expected_roi_percent')
+                ->limit(3)
+                ->get()
+                ->map(function ($tree) use ($type) {
+                    $variant = $tree->fruitCrop?->variant;
+                    $name = str_contains(strtolower((string)$variant), strtolower($type)) ? $variant : $type . ' ' . $variant;
+                    return [
+                        'id' => $tree->id,
+                        'name' => trim($name),
+                        'return' => rtrim(rtrim(number_format((float) $tree->expected_roi_percent, 2), '0'), '.') . '%',
+                    ];
+                });
+            return [$type => $trees];
+        });
+
         // For partial reload: only send Holdings data if on holdings tab
         if ($request->header('X-Inertia-Partial-Data') && $tab === 'transactions') {
             $transactions = $this->portfolioService->getTransactions($userId, $filter, $page);
@@ -72,14 +93,46 @@ class PortfolioDashboardController extends Controller
         $allocation = $this->portfolioService->getAllocationData($userId);
         $transactions = $this->portfolioService->getTransactions($userId, $filter, $page);
 
+        // ── Promo Banner: pull the nearest upcoming harvest for this investor ──
+        $nextHarvest = \App\Models\Harvest::query()
+            ->join('investments', 'harvests.tree_id', '=', 'investments.tree_id')
+            ->where('investments.user_id', $userId)
+            ->where('harvests.status', \App\Enums\HarvestStatus::Scheduled->value)
+            ->where('harvests.scheduled_date', '>', now())
+            ->with(['tree.fruitCrop.fruitType'])
+            ->orderBy('harvests.scheduled_date')
+            ->select('harvests.*')
+            ->first();
+
+        $promoBanner = null;
+        if ($nextHarvest) {
+            $daysUntil = (int) now()->diffInDays($nextHarvest->scheduled_date, false);
+            $monthsUntil = round($daysUntil / 30, 1);
+            $fruitType = $nextHarvest->tree?->fruitCrop?->fruitType?->name ?? 'Pohon';
+            $variant = $nextHarvest->tree?->fruitCrop?->variant ?? '';
+            $roi = $nextHarvest->tree?->expected_roi_percent ?? null;
+
+            $promoBanner = [
+                'title' => "Musim Panen {$fruitType} {$variant} Segera Tiba",
+                'days_until' => $daysUntil,
+                'months_until_label' => $monthsUntil <= 1
+                    ? "{$daysUntil} hari lagi"
+                    : number_format($monthsUntil, 1) . ' bulan lagi',
+                'roi_range' => $roi ? rtrim(rtrim(number_format((float) $roi, 2), '0'), '.') . '%' : null,
+                'tree_id' => $nextHarvest->tree_id,
+            ];
+        }
+
         return Inertia::render('Portfolio/Dashboard', [
             'summaryHeader' => $summaryHeader,
             'holdings' => $holdings,
             'allocation' => $allocation,
             'watchlist' => $formattedWishlist,
             'transactions' => $transactions,
+            'topTrees' => $topTrees,
             'activeTab' => $tab,
             'activeFilter' => $filter,
+            'promoBanner' => $promoBanner,
         ]);
     }
 

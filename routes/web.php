@@ -8,6 +8,7 @@ use App\Http\Controllers\Admin\DashboardController;
 use App\Http\Controllers\Admin\FarmApprovalController;
 use App\Http\Controllers\Admin\InvestmentController as AdminInvestmentController;
 use App\Http\Controllers\Admin\KycReviewController;
+use App\Http\Controllers\Admin\MarketListingController as AdminMarketListingController;
 use App\Http\Controllers\Admin\MediaController;
 use App\Http\Controllers\Admin\NotificationTemplateController as AdminNotificationTemplateController;
 use App\Http\Controllers\Admin\UserController;
@@ -20,12 +21,17 @@ use App\Http\Controllers\FarmController;
 use App\Http\Controllers\FarmOwner\AgrotourismController as FarmOwnerAgrotourismController;
 use App\Http\Controllers\FarmOwner\DashboardController as FarmOwnerDashboardController;
 use App\Http\Controllers\FarmOwner\HealthUpdateController as FarmOwnerHealthUpdateController;
+use App\Http\Controllers\FarmOwner\LotController as FarmOwnerLotController;
+use App\Http\Controllers\FarmOwner\WarehouseController as FarmOwnerWarehouseController;
 use App\Http\Controllers\InvestmentController;
 use App\Http\Controllers\Investor\AgrotourismController as InvestorAgrotourismController;
 use App\Http\Controllers\Investor\DashboardController as InvestorDashboardController;
 use App\Http\Controllers\Investor\HealthFeedController as InvestorHealthFeedController;
+use App\Http\Controllers\Investor\LotController as InvestorLotController;
 use App\Http\Controllers\Investor\ReportController;
 use App\Http\Controllers\Investor\TaxReportController;
+use App\Http\Controllers\Investor\WalletController as InvestorWalletController;
+use App\Http\Controllers\Investor\FarmVisitsController as InvestorFarmVisitsController;
 use App\Http\Controllers\Investor\WishlistController as InvestorWishlistController;
 use App\Http\Controllers\KycController;
 use App\Http\Controllers\MarketplaceFarmController;
@@ -42,6 +48,7 @@ use App\Http\Controllers\TreeMarketplaceController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
+
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
@@ -70,6 +77,7 @@ Route::get('/dashboard', function () {
 
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::get('/profile/edit-details', [ProfileController::class, 'editDetails'])->name('profile.edit-details');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
@@ -87,6 +95,8 @@ Route::middleware('auth')->group(function () {
 
     Route::post('/profile/avatar', [AvatarController::class, 'store'])->name('profile.avatar.store');
     Route::delete('/profile/avatar', [AvatarController::class, 'destroy'])->name('profile.avatar.destroy');
+
+    Route::patch('/profile/phone', [ProfileController::class, 'updatePhone'])->name('profile.phone.update');
 
     Route::post('/auth/{provider}/link', [OAuthController::class, 'link'])->name('oauth.link');
     Route::delete('/profile/oauth/{provider}', [OAuthController::class, 'unlink'])->name('oauth.unlink');
@@ -218,6 +228,7 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::get('/{tree}/edit', [\App\Http\Controllers\FarmOwner\TreeController::class, 'edit'])->name('edit');
             Route::put('/{tree}', [\App\Http\Controllers\FarmOwner\TreeController::class, 'update'])->name('update');
             Route::patch('/{tree}/status', [\App\Http\Controllers\FarmOwner\TreeController::class, 'updateStatus'])->name('update-status');
+            Route::delete('/bulk', [\App\Http\Controllers\FarmOwner\TreeController::class, 'bulkDestroy'])->name('bulk-destroy');
             Route::delete('/{tree}', [\App\Http\Controllers\FarmOwner\TreeController::class, 'destroy'])->name('destroy');
         });
 
@@ -250,6 +261,37 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::put('/{event}', [FarmOwnerAgrotourismController::class, 'update'])->name('update');
             Route::post('/{event}/cancel', [FarmOwnerAgrotourismController::class, 'cancel'])->name('cancel');
             Route::post('/{event}/close-registrations', [FarmOwnerAgrotourismController::class, 'closeRegistrations'])->name('close-registrations');
+            // Registration management (approve/reject offline registrations)
+            Route::post('/{event}/registrations/{registration}/approve', [FarmOwnerAgrotourismController::class, 'approveRegistration'])->name('registrations.approve');
+            Route::post('/{event}/registrations/{registration}/reject', [FarmOwnerAgrotourismController::class, 'rejectRegistration'])->name('registrations.reject');
+        });
+
+        // Warehouse / Rack / Lot management
+        Route::prefix('warehouses')->name('warehouses.')->group(function () {
+            Route::get('/', [FarmOwnerWarehouseController::class, 'index'])->name('index');
+            Route::get('/create', [FarmOwnerWarehouseController::class, 'create'])->name('create');
+            Route::post('/', [FarmOwnerWarehouseController::class, 'store'])->name('store');
+            Route::get('/{warehouse}', [FarmOwnerWarehouseController::class, 'show'])->name('show');
+            Route::get('/{warehouse}/edit', [FarmOwnerWarehouseController::class, 'edit'])->name('edit');
+            Route::put('/{warehouse}', [FarmOwnerWarehouseController::class, 'update'])->name('update');
+            Route::delete('/{warehouse}', [FarmOwnerWarehouseController::class, 'destroy'])->name('destroy');
+            // Rack management nested under warehouse
+            Route::post('/{warehouse}/racks', [FarmOwnerWarehouseController::class, 'storeRack'])->name('racks.store');
+            Route::put('/{warehouse}/racks/{rack}', [FarmOwnerWarehouseController::class, 'updateRack'])->name('racks.update');
+            Route::delete('/{warehouse}/racks/{rack}', [FarmOwnerWarehouseController::class, 'destroyRack'])->name('racks.destroy');
+        });
+
+        Route::prefix('lots')->name('lots.')->group(function () {
+            Route::get('/', [FarmOwnerLotController::class, 'index'])->name('index');
+            Route::get('/create', [FarmOwnerLotController::class, 'create'])->name('create');
+            Route::post('/', [FarmOwnerLotController::class, 'store'])->name('store');
+            Route::get('/{lot}', [FarmOwnerLotController::class, 'show'])->name('show');
+            Route::get('/{lot}/edit', [FarmOwnerLotController::class, 'edit'])->name('edit');
+            Route::put('/{lot}', [FarmOwnerLotController::class, 'update'])->name('update');
+            Route::delete('/{lot}', [FarmOwnerLotController::class, 'destroy'])->name('destroy');
+            // Lifecycle actions
+            Route::post('/{lot}/record-harvest', [FarmOwnerLotController::class, 'recordHarvest'])->name('record-harvest');
+            Route::post('/{lot}/submit-selling', [FarmOwnerLotController::class, 'submitSelling'])->name('submit-selling');
         });
     });
 
@@ -280,8 +322,20 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
             Route::delete('/registrations/{registration}', [InvestorAgrotourismController::class, 'cancelRegistration'])->name('registrations.cancel');
         });
 
+        Route::get('/wallet', [InvestorWalletController::class, 'index'])->name('wallet.index');
+        Route::post('/wallet/withdraw', [InvestorWalletController::class, 'withdraw'])->name('wallet.withdraw');
+
+        // Lot investment routes
+        Route::prefix('lots')->name('lots.')->group(function () {
+            Route::get('/{lot}', [InvestorLotController::class, 'show'])->name('show');
+            Route::post('/{lot}/invest', [InvestorLotController::class, 'invest'])->name('invest');
+            Route::post('/{lot}/reinvest', [InvestorLotController::class, 'reinvest'])->name('reinvest');
+        });
+
         Route::get('/wishlist', [InvestorWishlistController::class, 'index'])->name('wishlist.index');
         Route::post('/wishlist/toggle', [InvestorWishlistController::class, 'toggle'])->name('wishlist.toggle');
+        Route::get('/farm-visits', [InvestorFarmVisitsController::class, 'index'])->name('farm-visits.index');
+        Route::get('/support', fn () => Inertia::render('Investor/Support/Index'))->name('support');
     });
 
     Route::prefix('reports')->name('reports.')->group(function () {

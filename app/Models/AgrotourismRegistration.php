@@ -15,9 +15,12 @@ class AgrotourismRegistration extends Model
         'event_id',
         'user_id',
         'registration_type',
+        'participants_count',
         'status',
         'confirmed_at',
         'cancelled_at',
+        'rejected_at',
+        'rejection_reason',
     ];
 
     protected function casts(): array
@@ -25,8 +28,10 @@ class AgrotourismRegistration extends Model
         return [
             'registration_type' => \App\Enums\AgrotourismEventType::class,
             'status' => AgrotourismRegistrationStatus::class,
+            'participants_count' => 'integer',
             'confirmed_at' => 'datetime',
             'cancelled_at' => 'datetime',
+            'rejected_at' => 'datetime',
         ];
     }
 

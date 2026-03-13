@@ -6,9 +6,11 @@ use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreAgrotourismEventRequest;
 use App\Http\Requests\UpdateAgrotourismEventRequest;
 use App\Models\AgrotourismEvent;
+use App\Models\AgrotourismRegistration;
 use App\Models\Farm;
 use App\Services\AgrotourismService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -110,6 +112,41 @@ class AgrotourismController extends Controller
             ->with('success', __('Registrations closed.'));
     }
 
+    public function approveRegistration(AgrotourismEvent $event, AgrotourismRegistration $registration): RedirectResponse
+    {
+        $this->authorizeOwnership($event);
+        abort_unless($registration->event_id === $event->id, 404);
+
+        $registration->update([
+            'status' => \App\Enums\AgrotourismRegistrationStatus::Confirmed,
+            'confirmed_at' => now(),
+        ]);
+
+        return back()->with('success', "Registration for {$registration->investor->name} approved.");
+    }
+
+    public function rejectRegistration(Request $request, AgrotourismEvent $event, AgrotourismRegistration $registration): RedirectResponse
+    {
+        $this->authorizeOwnership($event);
+        abort_unless($registration->event_id === $event->id, 404);
+
+        $validated = $request->validate([
+            'rejection_reason' => ['nullable', 'string', 'max:500'],
+        ]);
+
+        $registration->update([
+            'status' => \App\Enums\AgrotourismRegistrationStatus::Cancelled,
+            'rejected_at' => now(),
+            'rejection_reason' => $validated['rejection_reason'] ?? null,
+        ]);
+
+        $registration->investor->notify(
+            new \App\Notifications\AgrotourismRegistrationRejectedNotification($registration->fresh())
+        );
+
+        return back()->with('success', "Registration rejected.");
+    }
+
     private function authorizeOwnership(AgrotourismEvent $event): void
     {
         $event->loadMissing('farm');
@@ -117,3 +154,4 @@ class AgrotourismController extends Controller
         abort_unless($event->farm->owner_id === auth()->id(), 403);
     }
 }
+

@@ -1,6 +1,11 @@
-import { Head, Link } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import React, { useState } from 'react';
+import { Head, Link, router } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import { PageProps } from '@/types';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
+import { IconArrowLeft, IconFlash, IconCheck, IconMapPin, IconTree } from '@/Components/Icons/AppIcons';
 
 interface HealthAlert {
     id: number;
@@ -24,12 +29,14 @@ interface HealthAlert {
     };
 }
 
-interface Props {
+interface Props extends PageProps {
     healthAlerts: {
         data: HealthAlert[];
         current_page: number;
         last_page: number;
         total: number;
+        next_page_url: string | null;
+        prev_page_url: string | null;
     };
     filters: {
         severity?: string;
@@ -37,7 +44,26 @@ interface Props {
     };
 }
 
-export default function Alerts({ healthAlerts, filters }: Props) {
+export default function Alerts({ auth, healthAlerts, filters, unread_notifications_count }: Props) {
+    const [filterSeverity, setFilterSeverity] = useState(filters.severity || '');
+    const [filterUnresolved, setFilterUnresolved] = useState(filters.unresolved || '');
+
+    const handleFilterChange = (key: string, value: string) => {
+        if (key === 'severity') setFilterSeverity(value);
+        if (key === 'unresolved') setFilterUnresolved(value);
+
+        router.get(
+            route('investments.health-alerts'),
+            {
+                ...filters,
+                [key]: value,
+                severity: key === 'severity' ? value : filterSeverity,
+                unresolved: key === 'unresolved' ? value : filterUnresolved
+            },
+            { preserveState: true, replace: true }
+        );
+    };
+
     const alertTypeLabels: Record<string, string> = {
         weather: 'Weather Alert',
         pest: 'Pest Infestation',
@@ -47,162 +73,171 @@ export default function Alerts({ healthAlerts, filters }: Props) {
         other: 'Other',
     };
 
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('en-US', {
+            month: 'short',
+            day: 'numeric',
+            hour: '2-digit',
+            minute: '2-digit',
+        });
+    };
+
     return (
-        <AuthenticatedLayout>
+        <AppShellLayout>
             <Head title="Health Alerts" />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                <div className="flex justify-between items-center mb-6">
-                    <div>
-                        <h1 className="text-2xl font-semibold text-gray-900">Health Alerts</h1>
-                        <p className="text-sm text-gray-500 mt-1">
-                            {healthAlerts.data.filter(a => !a.is_resolved).length} unresolved alert(s)
-                        </p>
-                    </div>
-                    <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                        <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                        Back to Trees Details
-                    </button>
-                </div>
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unread_notifications_count} />
 
-                {/* Filters */}
-                <div className="mb-6 flex gap-4 flex-wrap">
-                    <Link
-                        href={route('investments.health-feed.index')}
-                        className="px-4 py-2 bg-emerald-50 text-emerald-700 rounded-lg hover:bg-emerald-100 border border-emerald-200"
-                    >
-                        Back to Health Feed
-                    </Link>
-                    <select
-                        className="rounded-lg border-gray-300 text-sm"
-                        value={filters.severity || ''}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            const url = new URL(window.location.href);
-                            if (value) {
-                                url.searchParams.set('severity', value);
-                            } else {
-                                url.searchParams.delete('severity');
-                            }
-                            window.location.href = url.toString();
-                        }}
-                    >
-                        <option value="">All Severities</option>
-                        <option value="low">Low</option>
-                        <option value="medium">Medium</option>
-                        <option value="high">High</option>
-                        <option value="critical">Critical</option>
-                    </select>
-
-                    <select
-                        className="rounded-lg border-gray-300 text-sm"
-                        value={filters.unresolved || ''}
-                        onChange={(e) => {
-                            const value = e.target.value;
-                            const url = new URL(window.location.href);
-                            if (value) {
-                                url.searchParams.set('unresolved', value);
-                            } else {
-                                url.searchParams.delete('unresolved');
-                            }
-                            window.location.href = url.toString();
-                        }}
-                    >
-                        <option value="">All Alerts</option>
-                        <option value="1">Unresolved Only</option>
-                    </select>
-                </div>
-
-                {/* Alerts List */}
-                {healthAlerts.data.length > 0 ? (
-                    <div className="space-y-4">
-                        {healthAlerts.data.map((alert) => (
-                            <div
-                                key={alert.id}
-                                className={`rounded-lg border ${alert.is_resolved
-                                    ? 'border-gray-200 bg-gray-50'
-                                    : 'border-red-200 bg-red-50'
-                                    } p-6`}
-                            >
-                                <div className="flex items-start justify-between mb-3">
-                                    <div className="flex items-center gap-3">
-                                        <HealthSeverityBadge severity={alert.severity} />
-                                        <h3 className="text-lg font-semibold text-gray-900">
-                                            {alert.title}
-                                        </h3>
-                                        {alert.is_resolved && (
-                                            <span className="inline-flex items-center px-2 py-1 text-xs font-medium rounded-full bg-green-100 text-green-800">
-                                                Resolved
-                                            </span>
-                                        )}
-                                    </div>
-                                    <span className="text-xs text-gray-500">
-                                        {new Date(alert.created_at).toLocaleString('id-ID')}
-                                    </span>
-                                </div>
-
-                                <p className="text-sm text-gray-700 mb-3">{alert.message}</p>
-
-                                <div className="flex items-center gap-4 text-sm text-gray-500 mb-3">
-                                    <div>
-                                        <span className="font-medium">Type:</span> {alertTypeLabels[alert.alert_type] || alert.alert_type}
-                                    </div>
-                                    <div>
-                                        <span className="font-medium">Farm:</span>{' '}
-                                        <Link
-                                            href={route('farms.manage.show', alert.farm.id)}
-                                            className="text-indigo-600 hover:underline"
-                                        >
-                                            {alert.farm.name}
-                                        </Link>
-                                    </div>
-                                    {alert.fruit_crop && (
-                                        <div>
-                                            <span className="font-medium">Crop:</span> {alert.fruit_crop.variant} ({alert.fruit_crop.fruit_type?.name})
-                                        </div>
-                                    )}
-                                </div>
-
-                                {alert.resolved_at && (
-                                    <p className="text-xs text-gray-500">
-                                        Resolved at {new Date(alert.resolved_at).toLocaleString('id-ID')}
-                                    </p>
-                                )}
-                            </div>
-                        ))}
-                    </div>
-                ) : (
-                    <div className="text-center py-12 bg-gray-50 rounded-lg">
-                        <p className="text-gray-500">No health alerts found.</p>
-                        <Link
-                            href={route('investments.health-feed.index')}
-                            className="mt-4 inline-block text-emerald-600 hover:text-emerald-700"
-                        >
+                    {/* Back Navigation */}
+                    <div className="bg-white px-6 pt-4 pb-2">
+                        <Link href={route('investments.health-feed.index')} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
+                            <IconArrowLeft className="w-4 h-4 mr-1" />
                             Back to Health Feed
                         </Link>
                     </div>
-                )}
 
-                {/* Pagination */}
-                {healthAlerts.last_page > 1 && (
-                    <div className="mt-6 flex justify-center">
-                        <nav className="flex gap-2">
-                            {Array.from({ length: healthAlerts.last_page }, (_, i) => i + 1).map((page) => (
-                                <Link
-                                    key={page}
-                                    href={`?page=${page}${filters.severity ? `&severity=${filters.severity}` : ''}${filters.unresolved ? `&unresolved=${filters.unresolved}` : ''}`}
-                                    className={`px-4 py-2 rounded-lg ${page === healthAlerts.current_page
-                                        ? 'bg-emerald-600 text-white'
-                                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                                        }`}
-                                >
-                                    {page}
-                                </Link>
-                            ))}
-                        </nav>
+                    <div className="bg-white px-6 pb-4">
+                        <div className="flex justify-between items-center mb-4">
+                            <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                                <IconFlash className="w-6 h-6 text-amber-500" />
+                                Health Alerts
+                            </h2>
+                            <span className="text-xs font-semibold bg-amber-100 text-amber-800 px-2 py-1 rounded-full">
+                                {healthAlerts.data.filter(a => !a.is_resolved).length} Unresolved
+                            </span>
+                        </div>
+
+                        {/* Filters */}
+                        <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2">
+                            <select
+                                className="rounded-xl border-gray-200 text-sm py-2 pl-3 pr-8 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50"
+                                value={filterSeverity}
+                                onChange={(e) => handleFilterChange('severity', e.target.value)}
+                            >
+                                <option value="">All Severities</option>
+                                <option value="low">Low</option>
+                                <option value="medium">Medium</option>
+                                <option value="high">High</option>
+                                <option value="critical">Critical</option>
+                            </select>
+
+                            <select
+                                className="rounded-xl border-gray-200 text-sm py-2 pl-3 pr-8 focus:border-emerald-500 focus:ring-emerald-500 bg-gray-50"
+                                value={filterUnresolved}
+                                onChange={(e) => handleFilterChange('unresolved', e.target.value)}
+                            >
+                                <option value="">All Statuses</option>
+                                <option value="1">Unresolved Only</option>
+                            </select>
+                        </div>
                     </div>
-                )}
+
+                    <div className="h-3 bg-gray-50" />
+
+                    <div className="bg-white p-6 min-h-[50vh]">
+                        {healthAlerts.data.length > 0 ? (
+                            <div className="space-y-4">
+                                {healthAlerts.data.map((alert) => (
+                                    <div
+                                        key={alert.id}
+                                        className={`rounded-2xl border p-4 shadow-sm transition-shadow ${
+                                            alert.is_resolved
+                                                ? 'bg-white border-gray-100'
+                                                : 'bg-red-50 border-red-100'
+                                        }`}
+                                    >
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div className="flex items-center gap-2">
+                                                <HealthSeverityBadge severity={alert.severity} />
+                                                <span className="text-[10px] font-bold uppercase tracking-wider text-gray-500">
+                                                    {alertTypeLabels[alert.alert_type] || alert.alert_type}
+                                                </span>
+                                            </div>
+                                            {alert.is_resolved ? (
+                                                 <span className="inline-flex items-center px-1.5 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide bg-green-100 text-green-800">
+                                                    <IconCheck className="w-3 h-3 mr-0.5" />
+                                                    Resolved
+                                                </span>
+                                            ) : (
+                                                <span className="text-xs text-red-500 font-bold animate-pulse">Active</span>
+                                            )}
+                                        </div>
+
+                                        <h3 className="text-base font-bold text-gray-900 mb-1">{alert.title}</h3>
+                                        <p className="text-xs text-gray-400 mb-3">{formatDate(alert.created_at)}</p>
+                                        
+                                        <p className="text-sm text-gray-700 mb-4 leading-relaxed bg-white/50 p-2 rounded-lg">
+                                            {alert.message}
+                                        </p>
+
+                                        <div className="flex flex-col gap-2 pt-2 border-t border-gray-100/50">
+                                            <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                <IconMapPin className="w-3.5 h-3.5 text-gray-400" />
+                                                <span className="font-medium text-gray-700">{alert.farm.name}</span>
+                                            </div>
+                                            {alert.fruit_crop && (
+                                                <div className="flex items-center gap-2 text-xs text-gray-500">
+                                                    <IconTree className="w-3.5 h-3.5 text-gray-400" />
+                                                    <span>{alert.fruit_crop.variant} ({alert.fruit_crop.fruit_type?.name})</span>
+                                                </div>
+                                            )}
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                             <div className="text-center py-12">
+                                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                                   <IconFlash className="w-8 h-8 text-gray-300" />
+                                </div>
+                                <p className="text-gray-500 mb-6">No health alerts found.</p>
+                                <Link
+                                  href={route('investments.health-feed.index')}
+                                  className="inline-flex items-center justify-center px-6 py-2.5 bg-emerald-600 rounded-xl font-semibold text-sm text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                                >
+                                  Back to Feed
+                                </Link>
+                              </div>
+                        )}
+
+                        {/* Pagination */}
+                        {healthAlerts.last_page > 1 && (
+                             <div className="mt-8 flex justify-center gap-2">
+                                {healthAlerts.prev_page_url && (
+                                  <Link
+                                    href={healthAlerts.prev_page_url}
+                                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
+                                  >
+                                    Previous
+                                  </Link>
+                                )}
+                                {healthAlerts.next_page_url && (
+                                  <Link
+                                    href={healthAlerts.next_page_url}
+                                    className="px-4 py-2 bg-white border border-gray-200 rounded-xl text-sm font-medium text-gray-700 hover:bg-gray-50 shadow-sm"
+                                  >
+                                    Next
+                                  </Link>
+                                )}
+                              </div>
+                        )}
+                    </div>
+                </div>
+
+                <BottomNav activeTab="portfolio" />
             </div>
-        </AuthenticatedLayout>
+
+            <style>{`
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
+        </AppShellLayout>
     );
 }

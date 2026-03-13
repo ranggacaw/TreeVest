@@ -48,9 +48,13 @@ export const initI18n = async (locale: string = "en") => {
                 "education",
                 "auth",
                 "navigation",
+                "trees",
             ],
             interpolation: {
                 escapeValue: false,
+            },
+            react: {
+                useSuspense: false,
             },
             debug: process.env.NODE_ENV === "development",
         });

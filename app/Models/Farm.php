@@ -77,6 +77,11 @@ class Farm extends Model
         return $this->hasMany(FruitCrop::class);
     }
 
+    public function warehouses(): HasMany
+    {
+        return $this->hasMany(Warehouse::class);
+    }
+
     public function agrotourismEvents(): HasMany
     {
         return $this->hasMany(AgrotourismEvent::class);

@@ -1,176 +1,184 @@
-import { AppLayout } from '@/Layouts';
-import { Head, Link } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { InvestorDashboardProps } from '@/types';
-import StatCard from '@/Components/Dashboard/StatCard';
-import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
-import { Leaf, Calendar, Stethoscope, HandCoins, DollarSign, Sprout, ShieldAlert, FileText, Pickaxe, LineChart } from 'lucide-react';
+import { formatRupiah } from '@/utils/currency';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import {
+    IconPlant,
+    IconTree,
+    IconDollar,
+    IconChart,
+    IconFlash,
+} from '@/Components/Icons/AppIcons';
 
 export default function Dashboard({
     metrics,
     kyc_status,
     upcoming_harvests,
     recent_payouts,
-    recent_investments,
 }: InvestorDashboardProps) {
-    const quickActions = [
-        { label: 'Browse Farms', href: route('farms.index'), icon: <Leaf />, color: 'pine' as const },
-        { label: 'View Portfolio', href: route('portfolio.dashboard'), icon: <Sprout />, color: 'pine' as const },
-        { label: 'Download Reports', href: route('reports.index'), icon: <FileText />, color: 'pine' as const },
-        { label: 'KYC Verification', href: route('kyc.index'), icon: <ShieldAlert />, color: 'pine' as const },
-    ];
-
-    const formatCurrency = (cents: number) => {
-        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    };
+    const page = usePage();
+    const unreadCount = (page.props as any).unread_notifications_count ?? 0;
 
     return (
-        <AppLayout
-            title="Investor Dashboard"
-            header={
-                <div className="flex justify-between items-center">
-                    <div>
-                        <h2 className="text-2xl font-bold leading-tight text-pine-800 tracking-tight">Investor Hub</h2>
-                        <p className="text-sm text-pine-500 mt-1">Track your portfolio, payouts, and upcoming harvests.</p>
-                    </div>
-                </div>
-            }
-        >
-            <div className="py-8">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8 space-y-8">
+        <AppShellLayout>
+            <Head title="Investor Dashboard" />
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unreadCount} />
+
+                    {/* KYC Alert */}
                     {kyc_status !== 'verified' && (
-                        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-4 flex flex-col md:flex-row md:items-center justify-between gap-4">
-                            <div className="flex gap-3">
-                                <ShieldAlert className="text-amber-500 h-6 w-6 shrink-0" />
-                                <div>
-                                    <h4 className="text-sm font-bold text-amber-900">KYC Verification Required</h4>
-                                    <p className="text-sm text-amber-700">You must complete KYC before investing or receiving payouts.</p>
+                        <div className="bg-white px-5 pt-5 pb-6">
+                            <div className="bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                                <div className="flex items-start gap-3">
+                                    <div className="w-8 h-8 rounded-full bg-amber-100 flex items-center justify-center flex-shrink-0 text-amber-600 font-bold">
+                                        !
+                                    </div>
+                                    <div>
+                                        <h3 className="font-bold text-gray-900 text-sm mb-1">Verifikasi KYC Diperlukan</h3>
+                                        <p className="text-xs text-gray-600 mb-3 leading-relaxed">
+                                            Anda harus menyelesaikan verifikasi identitas sebelum mulai berinvestasi.
+                                        </p>
+                                        <Link
+                                            href={route('kyc.index')}
+                                            className="inline-block px-4 py-1.5 bg-amber-500 text-white text-xs font-bold rounded-full shadow-sm hover:bg-amber-600 transition-colors"
+                                        >
+                                            Verifikasi Sekarang
+                                        </Link>
+                                    </div>
                                 </div>
                             </div>
-                            <Link href={route('kyc.index')} className="shrink-0 bg-amber-600 hover:bg-amber-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition">
-                                Complete KYC Now
-                            </Link>
                         </div>
                     )}
+                    {kyc_status !== 'verified' && <div className="h-3 bg-gray-50" />}
 
-                    {metrics?.total_investments_count === 0 ? (
-                        <div className="bg-pine-50 rounded-3xl p-12 text-center border border-pine-200 shadow-sm">
-                            <Sprout className="mx-auto h-12 w-12 text-pine-400 mb-4" />
-                            <h3 className="text-xl font-bold text-pine-900 mb-2">Ready to grow your wealth?</h3>
-                            <p className="text-pine-600 mb-6 max-w-md mx-auto">
-                                You haven't made any investments yet. Browse our tokenized farms to start earning returns.
-                            </p>
-                            <Link
-                                href={route('farms.index')}
-                                className="inline-flex items-center px-6 py-3 bg-pine-600 border border-transparent rounded-xl font-semibold text-white hover:bg-pine-700 transition"
-                            >
-                                Browse Farms
+                    {/* Stats Grid */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h2 className="text-sm font-bold text-gray-900 mb-4">Ringkasan</h2>
+                        <div className="grid grid-cols-2 gap-3">
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-xs text-emerald-600 font-medium mb-1">Total Investasi</p>
+                                <p className="text-sm text-gray-900">
+                                    {formatRupiah(metrics?.total_invested_cents || 0)}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-xs text-emerald-600 font-medium mb-1">Total Payouts</p>
+                                <p className="text-sm text-gray-900">
+                                    {formatRupiah(metrics?.total_payouts_cents || 0)}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-xs text-emerald-600 font-medium mb-1">Pohon Aktif</p>
+                                <p className="text-sm text-gray-900">
+                                    {metrics?.active_trees || 0}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-xs text-emerald-600 font-medium mb-1">Portfolio ROI</p>
+                                <p className="text-sm text-gray-900">
+                                    {(metrics?.portfolio_roi_percent || 0).toFixed(2)}%
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Quick Actions */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h2 className="text-sm font-bold text-gray-900 mb-4">Akses Cepat</h2>
+                        <div className="grid grid-cols-4 gap-2">
+                            {[
+                                { label: 'Farms', href: route('farms.index'), icon: <IconTree className="w-6 h-6 text-emerald-600" />, bg: 'bg-emerald-50' },
+                                { label: 'Portofolio', href: route('portfolio.dashboard'), icon: <IconPlant className="w-6 h-6 text-blue-600" />, bg: 'bg-blue-50' },
+                                { label: 'Laporan', href: route('reports.index'), icon: <IconChart className="w-6 h-6 text-indigo-600" />, bg: 'bg-indigo-50' },
+                                { label: 'KYC', href: route('kyc.index'), icon: <IconFlash className="w-6 h-6 text-orange-600" />, bg: 'bg-orange-50' },
+                            ].map((item, idx) => (
+                                <Link key={idx} href={item.href} className="flex flex-col items-center gap-2">
+                                    <div className={`w-14 h-14 rounded-2xl ${item.bg} flex items-center justify-center`}>
+                                        {item.icon}
+                                    </div>
+                                    <span className="text-[11px] font-medium text-gray-700 text-center leading-tight">{item.label}</span>
+                                </Link>
+                            ))}
+                        </div>
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Upcoming Harvests */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-sm font-bold text-gray-900">Panen Mendatang</h2>
+                        </div>
+                        {upcoming_harvests.length > 0 ? (
+                            <div className="space-y-3">
+                                {upcoming_harvests.map(harvest => (
+                                    <div key={harvest.id} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl shadow-sm">
+                                        <div className="w-10 h-10 rounded-full bg-emerald-50 flex items-center justify-center flex-shrink-0">
+                                            <IconPlant className="w-5 h-5 text-emerald-600" />
+                                        </div>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-gray-900 truncate">{harvest.fruit_type}</p>
+                                            <p className="text-[11px] text-gray-500 truncate">{harvest.farm_name}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className="text-xs font-bold text-gray-900">{new Date(harvest.harvest_date).toLocaleDateString()}</p>
+                                            <p className="text-[10px] text-emerald-600 font-medium">Est. {harvest.estimated_yield_kg} kg</p>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <p className="text-sm text-gray-400 text-center py-4">Belum ada jadwal panen.</p>
+                        )}
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Recent Payouts */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <div className="flex items-center justify-between mb-4">
+                            <h2 className="text-sm font-bold text-gray-900">Payout Terakhir</h2>
+                            <Link href={route('investor.payouts.index')} className="text-emerald-600 text-[13px] font-bold">
+                                Lihat Semua
                             </Link>
                         </div>
-                    ) : (
-                        <>
-                            {/* Quick Actions */}
-                            <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                                <QuickActionGrid actions={quickActions} />
-                            </div>
-
-                            {/* KPIs */}
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6">
-                                <StatCard label="Total Invested" value={formatCurrency(metrics?.total_invested_cents || 0)} icon={<DollarSign />} accent="pine" />
-                                <StatCard label="Active Trees" value={metrics?.active_trees || 0} icon={<Sprout />} accent="pine" />
-                                <StatCard label="Total Payouts" value={formatCurrency(metrics?.total_payouts_cents || 0)} icon={<HandCoins />} accent="amber" />
-                                <StatCard label="Portfolio ROI %" value={`${(metrics?.portfolio_roi_percent || 0).toFixed(2)}%`} icon={<LineChart />} accent="sun" />
-                                <StatCard label="Investments" value={metrics?.total_investments_count || 0} icon={<Leaf />} accent="pine" />
-                            </div>
-
-                            <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                                {/* Upcoming Harvests */}
-                                <div className="lg:col-span-2 bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                                    <div className="flex justify-between items-center mb-6">
-                                        <h3 className="text-lg font-bold text-earth-900">Upcoming Harvests</h3>
-                                    </div>
-                                    {upcoming_harvests.length > 0 ? (
-                                        <div className="space-y-4">
-                                            {upcoming_harvests.map(harvest => (
-                                                <div key={harvest.id} className="flex gap-4 p-4 rounded-2xl bg-sand-50 border border-sand-100 items-center justify-between">
-                                                    <div>
-                                                        <p className="font-semibold text-earth-900">{harvest.fruit_type}</p>
-                                                        <p className="text-sm text-earth-600">{harvest.farm_name}</p>
-                                                    </div>
-                                                    <div className="text-right">
-                                                        <p className="font-medium text-pine-700">{new Date(harvest.harvest_date).toLocaleDateString()}</p>
-                                                        <p className="text-xs text-earth-500 uppercase font-semibold mt-1">
-                                                            {harvest.estimated_yield_kg} kg avg
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            ))}
+                        {recent_payouts.length > 0 ? (
+                            <div className="space-y-3">
+                                {recent_payouts.map(payout => (
+                                    <Link key={payout.id} href={route('investor.payouts.show', payout.id)} className="flex items-center gap-3 p-3 border border-gray-100 rounded-xl shadow-sm hover:bg-gray-50 transition-colors">
+                                        <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                            <IconDollar className="w-5 h-5 text-blue-600" />
                                         </div>
-                                    ) : (
-                                        <p className="text-sand-500 text-sm py-4">No upcoming harvests for your trees.</p>
-                                    )}
-                                </div>
-
-                                {/* Recent Payouts & Investments */}
-                                <div className="space-y-8">
-                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                                        <div className="flex justify-between items-center mb-6">
-                                            <h3 className="text-lg font-bold text-earth-900">Recent Payouts</h3>
-                                            <Link href={route('investor.payouts.index')} className="text-sm font-medium text-pine-600 hover:text-pine-800">
-                                                View All
-                                            </Link>
+                                        <div className="flex-1 min-w-0">
+                                            <p className="text-sm font-bold text-gray-900 truncate">{payout.farm_name}</p>
+                                            <p className="text-[11px] text-gray-500">{new Date(payout.date).toLocaleDateString()}</p>
                                         </div>
-                                        {recent_payouts.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {recent_payouts.map(payout => (
-                                                    <div key={payout.id} className="p-4 rounded-xl border border-sand-100 flex justify-between items-center">
-                                                        <div>
-                                                            <p className="font-semibold text-sm text-earth-800">{payout.farm_name}</p>
-                                                            <p className="text-xs text-sand-500">{new Date(payout.date).toLocaleDateString()}</p>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <p className="font-bold text-amber-600">{formatCurrency(payout.amount_cents)}</p>
-                                                            <p className="text-[10px] uppercase font-bold text-sand-400">{payout.status}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-sand-500 text-sm py-4">No recent payouts.</p>
-                                        )}
-                                    </div>
-
-                                    <div className="bg-white rounded-3xl p-6 shadow-card border border-sand-200">
-                                        <div className="flex justify-between items-center mb-6">
-                                            <h3 className="text-lg font-bold text-earth-900">Recent Investments</h3>
-                                            <Link href={route('investments.index')} className="text-sm font-medium text-pine-600 hover:text-pine-800">
-                                                View All
-                                            </Link>
+                                        <div className="text-right">
+                                            <p className="text-sm font-bold text-gray-900">{formatRupiah(payout.amount_cents)}</p>
+                                            <span className={`text-[9px] px-1.5 py-0.5 rounded-full uppercase font-bold ${payout.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
+                                                {payout.status}
+                                            </span>
                                         </div>
-                                        {recent_investments.length > 0 ? (
-                                            <div className="space-y-4">
-                                                {recent_investments.map(inv => (
-                                                    <div key={inv.id} className="p-4 rounded-xl border border-sand-100 flex justify-between items-center">
-                                                        <div>
-                                                            <p className="font-semibold text-sm text-earth-800">{inv.farm_name}</p>
-                                                            <p className="text-xs text-sand-500">{new Date(inv.date).toLocaleDateString()}</p>
-                                                        </div>
-                                                        <div className="text-right">
-                                                            <p className="font-bold text-pine-700">{formatCurrency(inv.amount_cents)}</p>
-                                                            <p className="text-[10px] uppercase font-bold text-sand-400">{inv.status}</p>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <p className="text-sand-500 text-sm py-4">No recent investments.</p>
-                                        )}
-                                    </div>
-                                </div>
+                                        <svg className="w-4 h-4 text-gray-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                                        </svg>
+                                    </Link>
+                                ))}
                             </div>
-                        </>
-                    )}
+                        ) : (
+                            <p className="text-sm text-gray-400 text-center py-4">Belum ada riwayat payout.</p>
+                        )}
+                    </div>
+
                 </div>
+                <BottomNav />
             </div>
-        </AppLayout>
+            <style>{`::-webkit-scrollbar { display: none; } * { -webkit-tap-highlight-color: transparent; }`}</style>
+        </AppShellLayout>
     );
 }

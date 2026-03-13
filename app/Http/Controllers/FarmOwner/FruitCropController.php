@@ -72,7 +72,6 @@ class FruitCropController extends Controller
 
         $fruitCrop->delete();
 
-        return redirect()->route('farm-owner.crops.index')
-            ->with('success', 'Fruit crop deleted successfully.');
+        return back()->with('success', 'Fruit crop deleted successfully.');
     }
 }

@@ -1,10 +1,15 @@
-import React, { useState } from 'react';
-import { Head, useForm } from '@inertiajs/react';
+import { useState, useMemo } from 'react';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
 import { PageProps, Tree, PaymentMethod } from '@/types';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
-import { usePaymentError } from '@/hooks/useAsyncError';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
+import { IconArrowLeft, IconTree, IconDollar, IconInfoCircle } from '@/Components/Icons/AppIcons';
+import PrimaryButton from '@/Components/PrimaryButton';
+import Modal from '@/Components/Modal';
 
 interface Props extends PageProps {
     tree: Tree;
@@ -14,311 +19,294 @@ interface Props extends PageProps {
     payment_methods: PaymentMethod[];
 }
 
-export default function Configure({ auth, tree, user, payment_methods }: Props) {
-    const [selectedAmount, setSelectedAmount] = useState(tree.min_investment_cents);
-    const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<number | null>(
-        payment_methods.length > 0 ? payment_methods[0].id : null
-    );
-
-    const { error, clearError, handleAsyncError } = usePaymentError();
-    const [isProcessing, setIsProcessing] = useState(false);
+export default function ConfigureEnhanced({ auth, tree, user, payment_methods, unread_notifications_count }: Props) {
     const { t } = useTranslation('investments');
+    const { props } = usePage<any>();
+    const { flash } = props;
 
-    const { data, setData, post, processing, errors: formErrors } = useForm({
+    // Derive min/max trees from investment limits and tree price
+    const minTrees = useMemo(() => {
+        if (!tree.price_cents || tree.price_cents === 0) return 1;
+        return Math.ceil(tree.min_investment_cents / tree.price_cents);
+    }, [tree.min_investment_cents, tree.price_cents]);
+
+    const maxTrees = useMemo(() => {
+        if (!tree.price_cents || tree.price_cents === 0) return 1;
+        return Math.floor(tree.max_investment_cents / tree.price_cents);
+    }, [tree.max_investment_cents, tree.price_cents]);
+
+    const { data, setData, post, processing, errors } = useForm({
         tree_id: tree.id,
-        amount_cents: selectedAmount,
-        payment_method_id: selectedPaymentMethod,
+        quantity: minTrees,
+        acceptance_risk_disclosure: false,
+        acceptance_terms: false,
+        payment_method_id: payment_methods.length > 0 ? payment_methods[0].id : '',
     });
 
-    const handleAmountChange = (amount: number) => {
-        setSelectedAmount(amount);
-        setData('amount_cents', amount);
-        clearError(); // Clear any previous amount-related errors
+    const [showRiskModal, setShowRiskModal] = useState(false);
+
+    const totalCents = data.quantity * tree.price_cents;
+    const isValidQuantity = data.quantity >= minTrees && data.quantity <= maxTrees;
+
+    const decrement = () => {
+        if (data.quantity > minTrees) setData('quantity', data.quantity - 1);
     };
 
-    const handlePaymentMethodChange = (methodId: number) => {
-        setSelectedPaymentMethod(methodId);
-        setData('payment_method_id', methodId);
-        clearError(); // Clear any previous payment method errors
+    const increment = () => {
+        if (data.quantity < maxTrees) setData('quantity', data.quantity + 1);
     };
 
-    const handleSubmit = async (e: React.FormEvent) => {
+    const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
 
-        if (!user.kyc_verified) {
-            handleAsyncError({
-                code: 'kyc_not_verified',
-                message: t('kyc_not_verified'),
-            });
+        if (!isValidQuantity) {
+            alert(t('invalid_amount_message'));
             return;
         }
 
-        if (selectedAmount < tree.min_investment_cents || selectedAmount > tree.max_investment_cents) {
-            handleAsyncError({
-                code: 'investment_limit_exceeded',
-                message: t('investment_limit_exceeded', { min: tree.min_investment_formatted, max: tree.max_investment_formatted }),
-            });
+        if (!data.acceptance_risk_disclosure || !data.acceptance_terms) {
+            alert(t('validation_failed'));
             return;
         }
 
-        if (!selectedPaymentMethod) {
-            handleAsyncError({
-                code: 'payment_method_required',
-                message: t('payment_method_required'),
-            });
-            return;
-        }
-
-        setIsProcessing(true);
-        clearError();
-
-        try {
-            post(route('investments.store'), {
-                onSuccess: () => {
-                    // Success will be handled by redirect
-                    setIsProcessing(false);
-                },
-                onError: (errors) => {
-                    setIsProcessing(false);
-                    // Handle validation errors or other server errors
-                    handleAsyncError({
-                        response: { data: { errors, message: t('validation_failed') } }
-                    });
-                },
-            });
-        } catch (err) {
-            setIsProcessing(false);
-            handleAsyncError(err);
-        }
+        post('/investments');
     };
-
-    const formatCurrency = (cents: number): string => {
-        return 'Rp ' + (cents / 100).toLocaleString('id-ID', {
-            minimumFractionDigits: 2,
-            maximumFractionDigits: 2,
-        });
-    };
-
-    const projectedReturn = (selectedAmount * (tree.expected_roi || 0)) / 100;
 
     return (
-        <FinancialErrorBoundary>
-            <AuthenticatedLayout
-                header={
-                    <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                        {t('configure_investment')}
-                    </h2>
-                }
-            >
-                <Head title={t('invest_in_tree', { identifier: tree.identifier })} />
+        <AppShellLayout>
+            <Head title={t('configure_investment')} />
 
-                <div className="py-12">
-                    <div className="mx-auto max-w-2xl sm:px-6 lg:px-8">
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                            <div className="p-6">
-                                {/* Tree Information */}
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unread_notifications_count} />
+
+                    {/* Back Navigation */}
+                    <div className="bg-white px-6 pt-4 pb-2">
+                        <button onClick={() => window.history.back()} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
+                            <IconArrowLeft className="w-4 h-4 mr-1" />
+                            {t('back')}
+                        </button>
+                    </div>
+
+                    <FinancialErrorBoundary context="investment-purchase-configure">
+                        <div className="bg-white px-6 pb-6 pt-2">
+                            <h2 className="text-xl font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <IconTree className="w-6 h-6 text-emerald-600" />
+                                {t('invest_in_tree', { identifier: tree.identifier })}
+                            </h2>
+
+                            {flash?.error && (
+                                <div className="mb-4 bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-xl text-sm" role="alert">
+                                    {flash.error}
+                                </div>
+                            )}
+
+                             {flash?.success && (
+                                <div className="mb-4 bg-green-50 border border-green-200 text-green-700 px-4 py-3 rounded-xl text-sm" role="alert">
+                                    {flash.success}
+                                </div>
+                            )}
+
+                            {/* Tree Details Card */}
+                            <div className="bg-gray-50 rounded-xl p-4 mb-6 border border-gray-100 space-y-3">
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">{t('farm')}</span>
+                                    <span className="font-semibold text-gray-900">{tree.farm.name}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">{t('fruit_type')}</span>
+                                    <span className="font-semibold text-gray-900">{tree.fruit_crop.fruit_type} ({tree.fruit_crop.variant})</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">{t('price_per_tree')}</span>
+                                    <span className="font-semibold text-emerald-600">{formatRupiah(tree.price_cents)}</span>
+                                </div>
+                                <div className="flex justify-between text-sm">
+                                    <span className="text-gray-500">{t('expected_roi', { roi: '' }).replace('%', '').trim()}</span>
+                                    <span className="font-semibold text-emerald-600">{tree.expected_roi}%</span>
+                                </div>
+                            </div>
+
+                            <form onSubmit={handleSubmit}>
+                                {/* Quantity Stepper */}
                                 <div className="mb-6">
-                                    <h3 className="text-lg font-semibold text-gray-900 mb-2">
-                                        {tree.fruit_crop.fruit_type} - {tree.fruit_crop.variant}
-                                    </h3>
-                                    <p className="text-sm text-gray-600">
-                                        {t('tree_id')}: {tree.identifier} • {tree.farm.name}
+                                    <label className="block text-sm font-medium text-gray-700 mb-3 text-center">
+                                        {t('select_trees', { defaultValue: 'How many trees do you want to invest in?' })}
+                                    </label>
+
+                                    <div className="flex items-center justify-center gap-6">
+                                        <button
+                                            type="button"
+                                            onClick={decrement}
+                                            disabled={data.quantity <= minTrees}
+                                            className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 text-xl font-bold"
+                                        >
+                                            −
+                                        </button>
+
+                                        <div className="text-center w-24">
+                                            <input
+                                                type="number"
+                                                min={minTrees}
+                                                max={maxTrees}
+                                                value={data.quantity}
+                                                onChange={(e) => {
+                                                    const val = parseInt(e.target.value) || minTrees;
+                                                    setData('quantity', Math.min(maxTrees, Math.max(minTrees, val)));
+                                                }}
+                                                className="w-full text-center text-3xl font-bold text-gray-900 border-none focus:ring-0 bg-transparent p-0"
+                                            />
+                                            <p className="text-[10px] text-gray-500 mt-1 uppercase tracking-wide font-medium">Trees</p>
+                                        </div>
+
+                                        <button
+                                            type="button"
+                                            onClick={increment}
+                                            disabled={data.quantity >= maxTrees}
+                                            className="w-12 h-12 rounded-full bg-white border border-gray-200 shadow-sm flex items-center justify-center text-gray-600 hover:border-emerald-500 hover:text-emerald-600 disabled:opacity-40 disabled:cursor-not-allowed transition-all active:scale-95 text-xl font-bold"
+                                        >
+                                            +
+                                        </button>
+                                    </div>
+                                    <p className="text-center text-xs text-gray-400 mt-2">
+                                        {t('trees_range', { min: minTrees, max: maxTrees, defaultValue: 'Min {{min}} — Max {{max}}' })}
                                     </p>
-                                    <p className="text-sm text-gray-600">
-                                        {t('expected_roi', { roi: '' }).replace('%', '').trim()}: {tree.expected_roi}% • {t('risk_rating')}: {tree.risk_rating}
-                                    </p>
+                                    {errors.quantity && <p className="mt-2 text-sm text-red-600 text-center">{errors.quantity}</p>}
                                 </div>
 
-                                {/* Error Display */}
-                                {error && (
-                                    <div className="mb-6 rounded-md bg-red-50 p-4 border border-red-200">
-                                        <div className="flex">
-                                            <div className="flex-shrink-0">
-                                                <svg
-                                                    className="h-5 w-5 text-red-400"
-                                                    xmlns="http://www.w3.org/2000/svg"
-                                                    viewBox="0 0 20 20"
-                                                    fill="currentColor"
-                                                >
-                                                    <path
-                                                        fillRule="evenodd"
-                                                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                                                        clipRule="evenodd"
-                                                    />
-                                                </svg>
-                                            </div>
-                                            <div className="ml-3">
-                                                <h3 className="text-sm font-medium text-red-800">
-                                                    {t('payment_error')}
-                                                </h3>
-                                                <div className="mt-2 text-sm text-red-700">
-                                                    <p>{error.message}</p>
-                                                </div>
-                                                <div className="mt-3">
-                                                    <button
-                                                        type="button"
-                                                        className="text-sm text-red-600 hover:text-red-500 font-medium"
-                                                        onClick={clearError}
-                                                    >
-                                                        {t('dismiss')}
-                                                    </button>
-                                                </div>
+                                {/* Total Price Preview */}
+                                <div className="bg-emerald-600 text-white p-5 rounded-2xl mb-8 shadow-lg shadow-emerald-200">
+                                    <div className="flex justify-between items-center mb-1">
+                                        <span className="text-emerald-100 text-sm font-medium">{t('total_investment', { defaultValue: 'Total Investment' })}</span>
+                                        <IconDollar className="w-5 h-5 text-emerald-200" />
+                                    </div>
+                                    <div className="text-3xl font-bold mb-2">
+                                        {formatRupiah(totalCents)}
+                                    </div>
+                                    <div className="text-emerald-100 text-xs flex justify-between">
+                                        <span>{data.quantity} {t('trees', { defaultValue: 'trees' })} × {formatRupiah(tree.price_cents)}</span>
+                                    </div>
+                                </div>
+
+                                {/* Terms & Risk */}
+                                <div className="space-y-4 mb-8">
+                                    <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer hover:bg-white hover:border-emerald-200 transition-colors">
+                                        <div className="flex items-center h-5 mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={data.acceptance_risk_disclosure}
+                                                onChange={(e) => setData('acceptance_risk_disclosure', e.target.checked)}
+                                                className="h-5 w-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                                            />
+                                        </div>
+                                        <span className="text-sm text-gray-600">
+                                            I have read and accept the{' '}
+                                            <button type="button" onClick={() => setShowRiskModal(true)} className="text-emerald-600 font-semibold hover:underline">
+                                                Risk Disclosure
+                                            </button>
+                                        </span>
+                                    </label>
+
+                                    <label className="flex items-start gap-3 p-3 rounded-xl border border-gray-200 bg-gray-50 cursor-pointer hover:bg-white hover:border-emerald-200 transition-colors">
+                                        <div className="flex items-center h-5 mt-0.5">
+                                            <input
+                                                type="checkbox"
+                                                checked={data.acceptance_terms}
+                                                onChange={(e) => setData('acceptance_terms', e.target.checked)}
+                                                className="h-5 w-5 text-emerald-600 border-gray-300 rounded focus:ring-emerald-500"
+                                            />
+                                        </div>
+                                        <span className="text-sm text-gray-600">
+                                            I agree to the{' '}
+                                            <a href="/legal/terms" target="_blank" className="text-emerald-600 font-semibold hover:underline" onClick={(e) => e.stopPropagation()}>
+                                                Terms & Conditions
+                                            </a>
+                                        </span>
+                                    </label>
+                                </div>
+
+                                {/* Payment Method */}
+                                {payment_methods.length > 0 && (
+                                    <div className="mb-8">
+                                        <label className="block text-sm font-medium text-gray-700 mb-2">
+                                            {t('payment_method_label')}
+                                        </label>
+                                        <div className="relative">
+                                            <select
+                                                value={data.payment_method_id}
+                                                onChange={(e) => setData('payment_method_id', e.target.value)}
+                                                className="w-full pl-3 pr-10 py-3 border border-gray-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 appearance-none bg-white"
+                                            >
+                                                <option value="">{t('select_payment_method')}</option>
+                                                {payment_methods.map((pm) => (
+                                                    <option key={pm.id} value={pm.id}>
+                                                        {pm.brand ? pm.brand.toUpperCase() : 'Card'} •••• {pm.last4}
+                                                    </option>
+                                                ))}
+                                            </select>
+                                            <div className="pointer-events-none absolute inset-y-0 right-0 flex items-center px-4 text-gray-500">
+                                                <svg className="h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 9l-7 7-7-7"></path></svg>
                                             </div>
                                         </div>
                                     </div>
                                 )}
 
-                                <form onSubmit={handleSubmit} className="space-y-6">
-                                    {/* Investment Amount */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            {t('investment_amount')}
-                                        </label>
-                                        <div className="space-y-3">
-                                            <div className="flex items-center justify-between p-3 border border-gray-300 rounded-md">
-                                                <span className="text-sm text-gray-600">{t('range_label')}</span>
-                                                <span className="text-sm font-medium">
-                                                    {tree.min_investment_formatted} - {tree.max_investment_formatted}
-                                                </span>
-                                            </div>
-                                            <input
-                                                type="number"
-                                                min={tree.min_investment_cents}
-                                                max={tree.max_investment_cents}
-                                                value={selectedAmount}
-                                                onChange={(e) => handleAmountChange(parseInt(e.target.value) || 0)}
-                                                className="block w-full rounded-md border-gray-300 shadow-sm focus:border-green-500 focus:ring-green-500"
-                                                placeholder={t('amount_in_cents_placeholder')}
-                                            />
-                                            <div className="text-sm text-gray-600">
-                                                {t('amount_label_simple')} {formatCurrency(selectedAmount)}
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Projected Returns */}
-                                    <div className="bg-green-50 p-4 rounded-md">
-                                        <h4 className="text-sm font-medium text-green-800 mb-2">
-                                            {t('projected_returns')}
-                                        </h4>
-                                        <div className="grid grid-cols-2 gap-4 text-sm">
-                                            <div>
-                                                <span className="text-green-600">{t('expected_return')}</span>
-                                                <div className="font-semibold text-green-800">
-                                                    {formatCurrency(projectedReturn)}
-                                                </div>
-                                            </div>
-                                            <div>
-                                                <span className="text-green-600">{t('roi_label')}</span>
-                                                <div className="font-semibold text-green-800">
-                                                    {tree.expected_roi}%
-                                                </div>
-                                            </div>
-                                        </div>
-                                    </div>
-
-                                    {/* Payment Method */}
-                                    <div>
-                                        <label className="block text-sm font-medium text-gray-700 mb-2">
-                                            {t('payment_method_label')}
-                                        </label>
-                                        {payment_methods.length > 0 ? (
-                                            <div className="space-y-2">
-                                                {payment_methods.map((method) => (
-                                                    <div
-                                                        key={method.id}
-                                                        className={`p-3 border rounded-md cursor-pointer transition-colors ${selectedPaymentMethod === method.id
-                                                            ? 'border-green-500 bg-green-50'
-                                                            : 'border-gray-300 hover:border-gray-400'
-                                                            }`}
-                                                        onClick={() => handlePaymentMethodChange(method.id)}
-                                                    >
-                                                        <div className="flex items-center justify-between">
-                                                            <div>
-                                                                <span className="text-sm font-medium capitalize">
-                                                                    {method.brand} {method.type}
-                                                                </span>
-                                                                <span className="text-sm text-gray-500 ml-2">
-                                                                    •••• {method.last4}
-                                                                </span>
-                                                            </div>
-                                                            <span className="text-xs text-gray-500">
-                                                                {method.exp_month}/{method.exp_year}
-                                                            </span>
-                                                        </div>
-                                                    </div>
-                                                ))}
-                                            </div>
-                                        ) : (
-                                            <div className="text-center py-6 text-gray-500">
-                                                <p>{t('no_payment_methods')}</p>
-                                                <a
-                                                    href="/payment-methods"
-                                                    className="text-green-600 hover:text-green-700 font-medium"
-                                                >
-                                                    {t('add_payment_method')}
-                                                </a>
-                                            </div>
-                                        )}
-                                    </div>
-
-                                    {/* Submit Button */}
-                                    <div className="pt-6">
-                                        <button
-                                            type="submit"
-                                            disabled={processing || isProcessing || !selectedPaymentMethod}
-                                            className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-green-600 hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-green-500 disabled:opacity-50 disabled:cursor-not-allowed"
-                                        >
-                                            {processing || isProcessing ? (
-                                                <div className="flex items-center">
-                                                    <svg
-                                                        className="animate-spin -ml-1 mr-3 h-5 w-5 text-white"
-                                                        xmlns="http://www.w3.org/2000/svg"
-                                                        fill="none"
-                                                        viewBox="0 0 24 24"
-                                                    >
-                                                        <circle
-                                                            className="opacity-25"
-                                                            cx="12"
-                                                            cy="12"
-                                                            r="10"
-                                                            stroke="currentColor"
-                                                            strokeWidth="4"
-                                                        ></circle>
-                                                        <path
-                                                            className="opacity-75"
-                                                            fill="currentColor"
-                                                            d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                                                        ></path>
-                                                    </svg>
-                                                    {t('processing_button')}
-                                                </div>
-                                            ) : (
-                                                t('confirm_investment')
-                                            )}
-                                        </button>
-                                    </div>
-
-                                    {/* Disclaimer */}
-                                    <div className="text-xs text-gray-500 pt-4 border-t">
-                                        <p>
-                                            {t('disclaimer_text')}{' '}
-                                            <a href="/terms" className="text-green-600 hover:text-green-700">
-                                                {t('terms_of_service')}
-                                            </a>{' '}
-                                            {t('and')}{' '}
-                                            <a href="/risk-disclosure" className="text-green-600 hover:text-green-700">
-                                                {t('risk_disclosure_link')}
-                                            </a>
-                                            .
-                                        </p>
-                                    </div>
-                                </form>
-                            </div>
+                                {/* Submit Button */}
+                                <PrimaryButton
+                                    className="w-full justify-center py-4 text-base rounded-xl shadow-lg shadow-emerald-200 mb-4"
+                                    disabled={processing || !isValidQuantity || !data.acceptance_risk_disclosure || !data.acceptance_terms}
+                                >
+                                    {processing ? t('processing_button') : t('proceed_to_payment')}
+                                </PrimaryButton>
+                                
+                                <Link
+                                    href={route('farms.index')}
+                                    className="block text-center text-sm font-medium text-gray-500 hover:text-gray-900 pb-4"
+                                >
+                                    {t('cancel_button')}
+                                </Link>
+                            </form>
                         </div>
-                    </div>
+                    </FinancialErrorBoundary>
                 </div>
-            </AuthenticatedLayout>
-        </FinancialErrorBoundary>
+            </div>
+
+            {/* Risk Disclosure Modal */}
+            <Modal show={showRiskModal} onClose={() => setShowRiskModal(false)}>
+                <div className="p-6">
+                    <div className="flex items-center gap-3 mb-4 text-amber-600">
+                        <IconInfoCircle className="w-6 h-6" />
+                        <h3 className="text-lg font-bold">{t('risk_modal_title')}</h3>
+                    </div>
+                    
+                    <div className="prose prose-sm max-h-[60vh] overflow-y-auto pr-2 mb-6 text-gray-600">
+                        <p className="mb-2">{t('risk_modal_intro')}</p>
+                        <ul className="list-disc pl-5 space-y-1 mb-4">
+                            <li>{t('risk_climate')}</li>
+                            <li>{t('risk_market')}</li>
+                            <li>{t('risk_pest')}</li>
+                            <li>{t('risk_natural_disaster')}</li>
+                            <li>{t('risk_regulatory')}</li>
+                            <li>{t('risk_operator')}</li>
+                        </ul>
+                        <p>{t('risk_modal_outro')}</p>
+                    </div>
+
+                    <PrimaryButton onClick={() => setShowRiskModal(false)} className="w-full justify-center">
+                        {t('i_understand')}
+                    </PrimaryButton>
+                </div>
+            </Modal>
+
+            <style>{`
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
+        </AppShellLayout>
     );
 }

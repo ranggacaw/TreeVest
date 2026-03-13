@@ -22,7 +22,7 @@ class TreeMarketplaceController extends Controller
     {
         $filters = $request->only([
             'fruit_type', 'variant', 'risk_rating',
-            'harvest_cycle', 'price_min', 'price_max',
+            'harvest_cycle', 'price_min', 'price_max', 'search',
         ]);
 
         $query = Tree::investable()
@@ -30,6 +30,16 @@ class TreeMarketplaceController extends Controller
                 'fruitCrop.fruitType',
                 'fruitCrop.farm.images' => fn ($q) => $q->where('is_featured', true)->limit(1),
             ]);
+
+        // Search by farm name, fruit type, or tree identifier
+        if (! empty($filters['search'])) {
+            $search = $filters['search'];
+            $query->where(function ($q) use ($search) {
+                $q->whereHas('fruitCrop.farm', fn ($sq) => $sq->where('name', 'like', '%'.$search.'%'))
+                    ->orWhereHas('fruitCrop.fruitType', fn ($sq) => $sq->where('name', 'like', '%'.$search.'%'))
+                    ->orWhere('tree_identifier', 'like', '%'.$search.'%');
+            });
+        }
 
         if (! empty($filters['variant'])) {
             $query->whereHas('fruitCrop', fn ($q) => $q->where('variant', 'like', '%'.$filters['variant'].'%'));

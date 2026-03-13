@@ -23,6 +23,7 @@ class StoreAgrotourismRegistrationRequest extends FormRequest
                     AgrotourismEventType::Offline->value,
                 ]),
             ],
+            'participants_count' => ['required', 'integer', 'min:1', 'max:20'],
         ];
     }
 }

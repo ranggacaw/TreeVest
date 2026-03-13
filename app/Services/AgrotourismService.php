@@ -56,9 +56,9 @@ class AgrotourismService
      * Capacity is enforced with a pessimistic lock to prevent over-registration
      * under concurrent requests.
      */
-    public function registerInvestor(AgrotourismEvent $event, User $investor, string $type): AgrotourismRegistration
+    public function registerInvestor(AgrotourismEvent $event, User $investor, string $type, int $participantsCount = 1): AgrotourismRegistration
     {
-        return DB::transaction(function () use ($event, $investor, $type) {
+        return DB::transaction(function () use ($event, $investor, $type, $participantsCount) {
             // Re-fetch with lock to serialise concurrent registrations
             $lockedEvent = AgrotourismEvent::lockForUpdate()->findOrFail($event->id);
 
@@ -74,10 +74,13 @@ class AgrotourismService
                 ]);
             }
 
-            if ($lockedEvent->isFull()) {
-                throw ValidationException::withMessages([
-                    'event' => [__('This event has reached its maximum capacity.')],
-                ]);
+            if (! is_null($lockedEvent->max_capacity)) {
+                $currentParticipants = $lockedEvent->confirmedRegistrations()->sum('participants_count');
+                if ($currentParticipants + $participantsCount > $lockedEvent->max_capacity) {
+                    throw ValidationException::withMessages([
+                        'event' => [__('This event has reached its maximum capacity.')],
+                    ]);
+                }
             }
 
             // Guard against duplicate registrations
@@ -96,6 +99,7 @@ class AgrotourismService
                 'event_id' => $lockedEvent->id,
                 'user_id' => $investor->id,
                 'registration_type' => $type,
+                'participants_count' => $participantsCount,
                 'status' => AgrotourismRegistrationStatus::Confirmed,
                 'confirmed_at' => now(),
             ]);

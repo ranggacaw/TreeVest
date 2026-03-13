@@ -9,6 +9,7 @@ use App\Http\Requests\UpdateTreeStatusRequest;
 use App\Models\Tree;
 use App\Services\TreePricingService;
 use Illuminate\Http\RedirectResponse;
+use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Inertia\Response;
 
@@ -98,8 +99,7 @@ class TreeController extends Controller
         $tree->update($validated);
         $this->pricingService->updateTreePrice($tree);
 
-        return redirect()->route('farm-owner.trees.index')
-            ->with('success', 'Tree updated successfully.');
+        return back()->with('success', 'Tree updated successfully.');
     }
 
     public function updateStatus(UpdateTreeStatusRequest $request, Tree $tree): RedirectResponse
@@ -114,7 +114,24 @@ class TreeController extends Controller
     {
         $tree->delete();
 
-        return redirect()->route('farm-owner.trees.index')
-            ->with('success', 'Tree deleted successfully.');
+        return back()->with('success', 'Tree deleted successfully.');
+    }
+
+    public function bulkDestroy(Request $request): RedirectResponse
+    {
+        $request->validate([
+            'trees' => 'required|string',
+        ]);
+
+        $treeIds = array_map('intval', explode(',', $request->trees));
+        
+        $user = auth()->user();
+        $count = Tree::whereIn('id', $treeIds)
+            ->whereHas('fruitCrop.farm', function ($q) use ($user) {
+                $q->where('owner_id', $user->id);
+            })
+            ->delete();
+
+        return back()->with('success', "{$count} tree(s) deleted successfully.");
     }
 }

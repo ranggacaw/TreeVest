@@ -72,6 +72,8 @@ class AgrotourismEvent extends Model
             return false;
         }
 
-        return $this->confirmedRegistrations()->count() >= $this->max_capacity;
+        $totalParticipants = $this->confirmedRegistrations()->sum('participants_count');
+
+        return $totalParticipants >= $this->max_capacity;
     }
 }

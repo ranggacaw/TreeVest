@@ -1,7 +1,14 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import React from 'react';
 import { Head, Link, useForm } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
 import { PageProps } from '@/types';
 import { useTranslation } from 'react-i18next';
+import { IconTree, IconDollar, IconChart, IconCalendar, IconArrowLeft, IconCheck, IconX } from '@/Components/Icons/AppIcons';
+import { formatRupiah } from '@/utils/currency';
+import PrimaryButton from '@/Components/PrimaryButton';
+import SecondaryButton from '@/Components/SecondaryButton';
 
 interface HarvestData {
     id: number;
@@ -81,7 +88,7 @@ interface Props extends PageProps {
     investment: InvestmentData;
 }
 
-export default function Show({ auth, investment }: Props) {
+export default function Show({ auth, investment, unread_notifications_count }: Props) {
     const { t } = useTranslation(['investments', 'translation']);
     const { delete: destroy, processing } = useForm();
 
@@ -92,302 +99,273 @@ export default function Show({ auth, investment }: Props) {
     };
 
     const statusColors: Record<string, string> = {
-        pending_payment: 'bg-yellow-100 text-yellow-800',
-        active: 'bg-green-100 text-green-800',
+        pending_payment: 'bg-amber-100 text-amber-800',
+        active: 'bg-emerald-100 text-emerald-800',
         listed: 'bg-blue-100 text-blue-800',
-        matured: 'bg-blue-100 text-blue-800',
+        matured: 'bg-indigo-100 text-indigo-800',
         sold: 'bg-purple-100 text-purple-800',
         cancelled: 'bg-red-100 text-red-800',
     };
 
-    const formatCurrency = (cents: number) => {
-        return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formatDate = (dateString: string) => {
+        return new Date(dateString).toLocaleDateString('id-ID', {
+            year: 'numeric',
+            month: 'long',
+            day: 'numeric'
+        });
     };
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    {t('investment_details')}
-                </h2>
-            }
-        >
+        <AppShellLayout>
             <Head title={t('investment_number', { id: investment.id })} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <nav className="flex mb-6" aria-label="Breadcrumb">
-                        <ol className="flex items-center space-x-2">
-                            <li>
-                                <Link href="/portfolio" className="text-sm text-gray-500 hover:text-gray-700">
-                                    {t('navigation:portfolio')}
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unread_notifications_count} />
+
+                    {/* Back Navigation */}
+                    <div className="bg-white px-6 pt-4 pb-2">
+                        <Link href={route('portfolio.dashboard')} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
+                            <IconArrowLeft className="w-4 h-4 mr-1" />
+                            {t('back_to_portfolio', 'Back to Portfolio')}
+                        </Link>
+                    </div>
+
+                    {/* Header Section */}
+                    <div className="bg-white px-6 pb-6 pt-2">
+                        <div className="flex justify-between items-start mb-4">
+                            <div>
+                                <h2 className="text-xl font-bold text-gray-900">
+                                    {investment.tree.identifier}
+                                </h2>
+                                <p className="text-sm text-gray-500">{investment.tree.fruit_crop.farm.name}</p>
+                            </div>
+                            <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${statusColors[investment.status] || 'bg-gray-100 text-gray-800'}`}>
+                                {investment.status_label || investment.status.replace('_', ' ')}
+                            </span>
+                        </div>
+
+                        {/* Summary Cards */}
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                <p className="text-xs text-gray-500 mb-1">{t('current_value')}</p>
+                                <p className="font-bold text-gray-900">{formatRupiah(investment.current_value_cents)}</p>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                <p className="text-xs text-gray-500 mb-1">{t('projected_return')}</p>
+                                <p className="font-bold text-emerald-600">{formatRupiah(investment.projected_return_cents)}</p>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                <p className="text-xs text-gray-500 mb-1">{t('amount_invested')}</p>
+                                <p className="font-semibold text-gray-900">{investment.formatted_amount}</p>
+                            </div>
+                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
+                                <p className="text-xs text-gray-500 mb-1">{t('expected_roi', 'ROI')}</p>
+                                <p className="font-semibold text-emerald-600">{investment.tree.expected_roi}%</p>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        {investment.status === 'pending_payment' && (
+                            <PrimaryButton
+                                onClick={handleCancel}
+                                disabled={processing}
+                                className="w-full justify-center bg-red-600 hover:bg-red-700 py-3 rounded-xl"
+                            >
+                                {processing ? t('cancelling') : t('cancel_investment')}
+                            </PrimaryButton>
+                        )}
+
+                        {investment.status === 'active' && (
+                            <div className="flex gap-3">
+                                <Link
+                                    href={`/investments/${investment.id}/top-up`}
+                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-emerald-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                                >
+                                    {t('top_up_investment', 'Top Up')}
                                 </Link>
-                            </li>
-                            <li>
-                                <span className="text-gray-400">/</span>
-                            </li>
-                            <li>
-                                <span className="text-sm text-gray-900 font-medium">
-                                    {t('tree_number', { identifier: investment.tree.identifier })}
+                                <Link
+                                    href={`/secondary-market/create?investment_id=${investment.id}`}
+                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-white border border-gray-200 rounded-xl font-semibold text-sm text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                                >
+                                    {t('list_for_sale', 'Sell')}
+                                </Link>
+                            </div>
+                        )}
+
+                        {investment.status === 'listed' && (
+                            <div className="bg-blue-50 border border-blue-100 rounded-xl p-4 text-center">
+                                <p className="text-sm text-blue-800 font-medium mb-3">
+                                    {t('listed_for_sale_message')}
+                                </p>
+                                <Link
+                                    href="/secondary-market"
+                                    className="inline-flex justify-center items-center px-4 py-2 bg-blue-600 rounded-lg text-xs font-bold text-white uppercase tracking-wider hover:bg-blue-700"
+                                >
+                                    {t('view_listings')}
+                                </Link>
+                            </div>
+                        )}
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Tree Details */}
+                    <div className="bg-white p-6">
+                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <IconTree className="w-5 h-5 text-emerald-600" />
+                            {t('tree_details')}
+                        </h3>
+                        <div className="space-y-3">
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('variant')}</span>
+                                <span className="text-sm font-medium text-gray-900">{investment.tree.fruit_crop.variant}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('fruit_type')}</span>
+                                <span className="text-sm font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type.name}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('age')}</span>
+                                <span className="text-sm font-medium text-gray-900">{investment.tree.age_years} {t('years')}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('risk_rating')}</span>
+                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.tree.risk_rating}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('harvest_cycle')}</span>
+                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.tree.fruit_crop.harvest_cycle}</span>
+                            </div>
+                            <div className="flex justify-between py-2 border-b border-gray-50">
+                                <span className="text-sm text-gray-500">{t('location')}</span>
+                                <span className="text-sm font-medium text-gray-900 text-right max-w-[60%] truncate">
+                                    {investment.tree.fruit_crop.farm.location || investment.tree.fruit_crop.farm.name}
                                 </span>
-                            </li>
-                            <li>
-                                <span className="text-gray-400">/</span>
-                            </li>
-                            <li>
-                                <span className="text-sm text-gray-500">{t('investment_details')}</span>
-                            </li>
-                        </ol>
-                    </nav>
-
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <h3 className="text-lg font-semibold text-gray-900">
-                                        {t('investment_number', { id: investment.id })}
-                                    </h3>
-                                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${statusColors[investment.status]}`}>
-                                        {investment.status_label}
-                                    </span>
-                                </div>
-
-                                <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                                    {t('back_to_portfolio')}
-                                </button>
                             </div>
-
-                            <div className="bg-emerald-50 border border-emerald-100 rounded-lg p-4 mb-6 mt-6">
-                                <h4 className="text-sm font-semibold text-emerald-800">40% Investor Profit Share</h4>
-                                <p className="text-xs text-emerald-700 mt-1">Your projected returns and upcoming payouts are calculated based on your proportional share of the 40% investor pool. The farm owner retains 60% of the net harvest revenue.</p>
-                            </div>
-
-                            <div className="border-t border-gray-200 pt-6">
-                                <h4 className="text-sm font-medium text-gray-500 mb-4">{t('investment_summary')}</h4>
-                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('amount_invested')}</dt>
-                                        <dd className="text-xl font-bold text-gray-900">{investment.formatted_amount}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('current_value')}</dt>
-                                        <dd className="text-xl font-bold text-gray-900">{formatCurrency(investment.current_value_cents)}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('projected_return')}</dt>
-                                        <dd className="text-xl font-bold text-gray-900">{formatCurrency(investment.projected_return_cents)}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('purchased')}</dt>
-                                        <dd className="text-xl font-bold text-gray-900">
-                                            {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
-                                        </dd>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div className="border-t border-gray-200 mt-6 pt-6">
-                                <h4 className="text-sm font-medium text-gray-500 mb-4">{t('tree_details')}</h4>
-                                <dl className="grid grid-cols-2 md:grid-cols-3 gap-4">
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('tree_id')}</dt>
-                                        <dd className="font-medium text-gray-900">#{investment.tree.identifier}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('tree_status')}</dt>
-                                        <dd className="font-medium text-gray-900 capitalize">{investment.tree.status}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('age')}</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.age_years} {t('years')}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('expected_roi', { roi: '' }).replace('%', '').trim()}</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.expected_roi}%</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('risk_rating')}</dt>
-                                        <dd className="font-medium text-gray-900 capitalize">{investment.tree.risk_rating}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('harvest_cycle')}</dt>
-                                        <dd className="font-medium text-gray-900 capitalize">{investment.tree.fruit_crop.harvest_cycle}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('fruit_type')}</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type.name}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('variant')}</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.variant}</dd>
-                                    </div>
-                                    <div>
-                                        <dt className="text-sm text-gray-500">{t('farm')}</dt>
-                                        <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.farm.name}</dd>
-                                    </div>
-                                </dl>
-                                <div className="mt-4">
-                                    <Link
-                                        href={`/farms/${investment.tree.fruit_crop.farm.id}`}
-                                        className="text-sm text-green-600 hover:text-green-700"
-                                    >
-                                        {t('view_full_farm_details')}
-                                    </Link>
-                                </div>
-                            </div>
-
-                            {investment.harvests && (
-                                <>
-                                    {investment.harvests.completed.length > 0 && (
-                                        <div className="border-t border-gray-200 mt-6 pt-6">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-4">{t('harvest_history')}</h4>
-                                            <div className="overflow-x-auto">
-                                                <table className="min-w-full divide-y divide-gray-200">
-                                                    <thead className="bg-gray-50">
-                                                        <tr>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('date')}</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('est_yield')}</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('actual_yield')}</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('quality')}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="bg-white divide-y divide-gray-200">
-                                                        {investment.harvests.completed.map((harvest) => (
-                                                            <tr key={harvest.id}>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
-                                                                </td>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">{harvest.actual_yield_kg ?? '-'}</td>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">{harvest.quality_grade ?? '-'}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {investment.harvests.upcoming.length > 0 && (
-                                        <div className="border-t border-gray-200 mt-6 pt-6">
-                                            <h4 className="text-sm font-medium text-gray-500 mb-4">{t('upcoming_harvests')}</h4>
-                                            <div className="overflow-x-auto">
-                                                <table className="min-w-full divide-y divide-gray-200">
-                                                    <thead className="bg-gray-50">
-                                                        <tr>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('date')}</th>
-                                                            <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('est_yield')}</th>
-                                                        </tr>
-                                                    </thead>
-                                                    <tbody className="bg-white divide-y divide-gray-200">
-                                                        {investment.harvests.upcoming.map((harvest) => (
-                                                            <tr key={harvest.id}>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">
-                                                                    {new Date(harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
-                                                                </td>
-                                                                <td className="px-4 py-3 text-sm text-gray-900">{harvest.estimated_yield_kg}</td>
-                                                            </tr>
-                                                        ))}
-                                                    </tbody>
-                                                </table>
-                                            </div>
-                                        </div>
-                                    )}
-                                </>
-                            )}
-
-                            {investment.payouts && investment.payouts.length > 0 && (
-                                <div className="border-t border-gray-200 mt-6 pt-6">
-                                    <h4 className="text-sm font-medium text-gray-500 mb-4">{t('payout_history')}</h4>
-                                    <div className="overflow-x-auto">
-                                        <table className="min-w-full divide-y divide-gray-200">
-                                            <thead className="bg-gray-50">
-                                                <tr>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('harvest_date')}</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('gross_amount')}</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('platform_fee')}</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('net_amount')}</th>
-                                                    <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase">{t('tree_status')}</th>
-                                                </tr>
-                                            </thead>
-                                            <tbody className="bg-white divide-y divide-gray-200">
-                                                {investment.payouts.map((payout) => (
-                                                    <tr key={payout.id}>
-                                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                                            {payout.harvest
-                                                                ? new Date(payout.harvest.harvest_date).toLocaleDateString(t('common.date_locale', 'en-US'))
-                                                                : '-'}
-                                                        </td>
-                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.gross_amount_formatted}</td>
-                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.platform_fee_formatted}</td>
-                                                        <td className="px-4 py-3 text-sm text-gray-900">{payout.net_amount_formatted}</td>
-                                                        <td className="px-4 py-3 text-sm text-gray-900">
-                                                            <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium ${payout.status === 'completed' ? 'bg-green-100 text-green-800' :
-                                                                payout.status === 'failed' ? 'bg-red-100 text-red-800' :
-                                                                    payout.status === 'processing' ? 'bg-blue-100 text-blue-800' :
-                                                                        'bg-yellow-100 text-yellow-800'
-                                                                }`}>
-                                                                {payout.status_label}
-                                                            </span>
-                                                        </td>
-                                                    </tr>
-                                                ))}
-                                            </tbody>
-                                        </table>
-                                    </div>
-                                </div>
-                            )}
-
-                            {investment.status === 'pending_payment' && (
-                                <div className="border-t border-gray-200 mt-6 pt-6">
-                                    <button
-                                        onClick={handleCancel}
-                                        disabled={processing}
-                                        className="w-full sm:w-auto px-4 py-2 bg-red-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-red-700 disabled:opacity-50"
-                                    >
-                                        {processing ? t('cancelling') : t('cancel_investment')}
-                                    </button>
-                                </div>
-                            )}
-
-                            {investment.status === 'active' && (
-                                <div className="border-t border-gray-200 mt-6 pt-6">
-                                    <div className="flex gap-3">
-                                        <Link
-                                            href={`/investments/${investment.id}/top-up`}
-                                            className="inline-flex items-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700"
-                                        >
-                                            {t('top_up_investment')}
-                                        </Link>
-                                        <Link
-                                            href={`/secondary-market/create?investment_id=${investment.id}`}
-                                            className="inline-flex items-center px-4 py-2 bg-blue-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-blue-700"
-                                        >
-                                            {t('list_for_sale')}
-                                        </Link>
-                                    </div>
-                                </div>
-                            )}
-
-                            {investment.status === 'listed' && (
-                                <div className="border-t border-gray-200 mt-6 pt-6">
-                                    <div className="p-4 bg-blue-50 border border-blue-200 rounded mb-4">
-                                        <p className="text-sm text-blue-800">
-                                            {t('listed_for_sale_message')}
-                                        </p>
-                                    </div>
-                                    <Link
-                                        href="/secondary-market"
-                                        className="inline-flex items-center px-4 py-2 bg-gray-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-gray-700"
-                                    >
-                                        {t('view_listings')}
-                                    </Link>
-                                </div>
-                            )}
+                        </div>
+                        <div className="mt-4 pt-2">
+                             <Link
+                                href={`/farms/${investment.tree.fruit_crop.farm.id}`}
+                                className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-1"
+                            >
+                                {t('view_full_farm_details')}
+                                <IconCheck className="w-4 h-4 rotate-90" /> {/* Using generic icon as placeholder for arrow-right if not available */}
+                            </Link>
                         </div>
                     </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Harvest History & Upcoming */}
+                    {investment.harvests && (
+                        <div className="bg-white p-6">
+                             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <IconCalendar className="w-5 h-5 text-emerald-600" />
+                                {t('harvest_activity', 'Harvest Activity')}
+                            </h3>
+                            
+                            {investment.harvests.upcoming.length > 0 && (
+                                <div className="mb-6">
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t('upcoming_harvests')}</h4>
+                                    <div className="space-y-3">
+                                        {investment.harvests.upcoming.map((harvest) => (
+                                            <div key={harvest.id} className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex justify-between items-center">
+                                                <div>
+                                                    <p className="text-sm font-bold text-gray-900">{formatDate(harvest.harvest_date)}</p>
+                                                    <p className="text-xs text-gray-500">{t('est_yield')}</p>
+                                                </div>
+                                                <div className="text-right">
+                                                    <p className="text-sm font-bold text-emerald-600">{harvest.estimated_yield_kg} kg</p>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                             {investment.harvests.completed.length > 0 && (
+                                <div>
+                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t('harvest_history')}</h4>
+                                    <div className="space-y-3">
+                                        {investment.harvests.completed.map((harvest) => (
+                                            <div key={harvest.id} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
+                                                <div className="flex justify-between mb-2">
+                                                    <span className="text-sm font-bold text-gray-900">{formatDate(harvest.harvest_date)}</span>
+                                                    <span className="text-xs font-semibold bg-green-50 text-green-700 px-2 py-0.5 rounded">
+                                                        {harvest.quality_grade || 'Grade A'}
+                                                    </span>
+                                                </div>
+                                                <div className="flex justify-between text-sm">
+                                                    <span className="text-gray-500">{t('actual_yield')}:</span>
+                                                    <span className="font-medium text-gray-900">{harvest.actual_yield_kg ?? '-'} kg</span>
+                                                </div>
+                                            </div>
+                                        ))}
+                                    </div>
+                                </div>
+                            )}
+
+                            {investment.harvests.upcoming.length === 0 && investment.harvests.completed.length === 0 && (
+                                <p className="text-sm text-gray-500 italic text-center py-4">{t('no_harvest_activity', 'No harvest activity yet.')}</p>
+                            )}
+                        </div>
+                    )}
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Payouts */}
+                    {investment.payouts && investment.payouts.length > 0 && (
+                        <div className="bg-white p-6">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
+                                <IconDollar className="w-5 h-5 text-emerald-600" />
+                                {t('payout_history')}
+                            </h3>
+                            <div className="space-y-3">
+                                {investment.payouts.map((payout) => (
+                                    <div key={payout.id} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                                        <div className="flex justify-between items-start mb-2">
+                                            <div>
+                                                <p className="text-sm font-bold text-gray-900">
+                                                    {payout.harvest ? formatDate(payout.harvest.harvest_date) : 'Unknown Date'}
+                                                </p>
+                                                <p className="text-xs text-gray-500">{t('net_amount')}</p>
+                                            </div>
+                                            <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
+                                                payout.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                                payout.status === 'failed' ? 'bg-red-100 text-red-700' :
+                                                'bg-yellow-100 text-yellow-700'
+                                            }`}>
+                                                {payout.status_label}
+                                            </span>
+                                        </div>
+                                        <div className="text-lg font-bold text-emerald-600">
+                                            {payout.net_amount_formatted}
+                                        </div>
+                                        <div className="mt-2 pt-2 border-t border-gray-50 flex justify-between text-xs text-gray-400">
+                                            <span>{t('gross')}: {payout.gross_amount_formatted}</span>
+                                            <span>{t('fee')}: {payout.platform_fee_formatted}</span>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    )}
+
                 </div>
+
+                <BottomNav />
             </div>
-        </AuthenticatedLayout>
+
+            <style>{`
+                .no-scrollbar::-webkit-scrollbar {
+                    display: none;
+                }
+                .no-scrollbar {
+                    -ms-overflow-style: none;
+                    scrollbar-width: none;
+                }
+            `}</style>
+        </AppShellLayout>
     );
 }

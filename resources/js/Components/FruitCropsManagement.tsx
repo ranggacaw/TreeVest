@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Link } from '@inertiajs/react';
+import { Link, useForm } from '@inertiajs/react';
 import { Farm } from '@/types';
 
 interface Props {
@@ -9,12 +9,51 @@ interface Props {
 
 export default function FruitCropsManagement({ farm, isEditable = false }: Props) {
     const [expandedCrops, setExpandedCrops] = useState<Record<number, boolean>>({});
+    const [selectedTrees, setSelectedTrees] = useState<Record<number, number[]>>({});
+
+    const deleteTreeForm = useForm({});
+    const deleteCropForm = useForm({});
+    const bulkDeleteTreesForm = useForm({});
 
     const toggleCrop = (id: number) => {
         setExpandedCrops(prev => ({
             ...prev,
             [id]: !prev[id]
         }));
+    };
+
+    const toggleSelectAll = (cropId: number, treeIds: number[]) => {
+        setSelectedTrees(prev => {
+            const current = prev[cropId] || [];
+            if (current.length === treeIds.length) {
+                return { ...prev, [cropId]: [] };
+            }
+            return { ...prev, [cropId]: treeIds };
+        });
+    };
+
+    const toggleTreeSelection = (cropId: number, treeId: number) => {
+        setSelectedTrees(prev => {
+            const current = prev[cropId] || [];
+            if (current.includes(treeId)) {
+                return { ...prev, [cropId]: current.filter(id => id !== treeId) };
+            }
+            return { ...prev, [cropId]: [...current, treeId] };
+        });
+    };
+
+    const deleteSelectedTrees = (cropId: number) => {
+        const treeIds = selectedTrees[cropId] || [];
+        if (treeIds.length === 0) return;
+        
+        if (confirm(`Are you sure you want to delete ${treeIds.length} tree(s)?`)) {
+            bulkDeleteTreesForm.delete(`${route('farm-owner.trees.bulk-destroy')}?trees=${treeIds.join(',')}`, {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setSelectedTrees(prev => ({ ...prev, [cropId]: [] }));
+                }
+            });
+        }
     };
 
     const printAllTreeIds = (crop: any) => {
@@ -122,25 +161,56 @@ export default function FruitCropsManagement({ farm, isEditable = false }: Props
                                         <p className="text-sm font-medium text-gray-900">{crop.variant}</p>
                                         <p className="text-xs text-gray-500">{crop.fruit_type?.name} — <span className="capitalize">{crop.harvest_cycle?.replace('_', ' ')}</span></p>
                                         <p className="text-xs text-gray-400 mt-1">
-                                            Inventory: {crop.productive_trees ?? 0} productive / {crop.total_trees ?? 0} total trees
+                                            Inventory: {
+                                                crop.trees
+                                                    ? crop.trees.filter((t: any) => t.status === 'productive').length
+                                                    : (crop.productive_trees ?? 0)
+                                            } productive / {
+                                                crop.trees
+                                                    ? crop.trees.length
+                                                    : (crop.total_trees ?? 0)
+                                            } total trees
                                         </p>
                                     </div>
                                 </div>
                                 <div className="flex items-center gap-2" onClick={e => e.stopPropagation()}>
                                     {isEditable ? (
-                                        <Link
-                                            href={route('farm-owner.crops.edit', crop.id)}
-                                            className="text-xs text-indigo-600 hover:text-indigo-800 font-medium bg-white px-2 py-1 border border-gray-200 rounded shadow-sm hover:shadow"
-                                        >
-                                            Edit Crop
-                                        </Link>
+                                        <>
+                                            <Link
+                                                href={route('farm-owner.crops.edit', crop.id)}
+                                                className="text-xs text-indigo-600 hover:text-indigo-800 font-medium bg-white px-2 py-1 border border-gray-200 rounded shadow-sm hover:shadow"
+                                            >
+                                                Edit Crop
+                                            </Link>
+                                            <button
+                                                type="button"
+                                                onClick={() => {
+                                                    if (confirm('Are you sure you want to delete this crop and all its trees?')) {
+                                                        deleteCropForm.delete(route('farm-owner.crops.destroy', crop.id), {
+                                                            preserveScroll: true
+                                                        });
+                                                    }
+                                                }}
+                                                className="text-xs text-red-600 hover:text-red-800 font-medium bg-white px-2 py-1 border border-gray-200 rounded shadow-sm hover:shadow"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
                                     ) : (
-                                        <button
-                                            disabled
-                                            className="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-1 border border-gray-200 rounded cursor-not-allowed opacity-50"
-                                        >
-                                            Edit Crop
-                                        </button>
+                                        <>
+                                            <button
+                                                disabled
+                                                className="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-1 border border-gray-200 rounded cursor-not-allowed opacity-50"
+                                            >
+                                                Edit Crop
+                                            </button>
+                                            <button
+                                                disabled
+                                                className="text-xs text-gray-400 font-medium bg-gray-50 px-2 py-1 border border-gray-200 rounded cursor-not-allowed opacity-50"
+                                            >
+                                                Delete
+                                            </button>
+                                        </>
                                     )}
                                     <Link
                                         href={`${route('farm-owner.trees.create')}?crop_id=${crop.id}`}
@@ -182,10 +252,32 @@ export default function FruitCropsManagement({ farm, isEditable = false }: Props
                                         
                                         {crop.trees && crop.trees.length > 0 ? (
                                             <div className="overflow-hidden rounded-md border border-gray-200 bg-white">
+                                                {isEditable && selectedTrees[crop.id]?.length > 0 && (
+                                                    <div className="bg-red-50 px-4 py-2 border-b border-red-200 flex items-center justify-between">
+                                                        <span className="text-xs text-red-700">{selectedTrees[crop.id].length} tree(s) selected</span>
+                                                        <button
+                                                            type="button"
+                                                            onClick={() => deleteSelectedTrees(crop.id)}
+                                                            className="text-xs text-white bg-red-600 px-3 py-1 rounded hover:bg-red-700"
+                                                        >
+                                                            Delete Selected
+                                                        </button>
+                                                    </div>
+                                                )}
                                                 <div className="overflow-x-auto">
                                                     <table className="min-w-full text-xs divide-y divide-gray-200">
                                                         <thead className="bg-gray-50">
                                                             <tr className="text-gray-500 uppercase tracking-wider">
+                                                                {isEditable && (
+                                                                    <th className="py-2.5 px-4 text-left font-medium">
+                                                                        <input
+                                                                            type="checkbox"
+                                                                            checked={selectedTrees[crop.id]?.length === crop.trees.length && crop.trees.length > 0}
+                                                                            onChange={() => toggleSelectAll(crop.id, crop.trees.map((t: any) => t.id))}
+                                                                            className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                                        />
+                                                                    </th>
+                                                                )}
                                                                 <th className="py-2.5 px-4 text-left font-medium">Tree ID</th>
                                                                 <th className="py-2.5 px-4 text-left font-medium">Age/Lifespan</th>
                                                                 <th className="py-2.5 px-4 text-left font-medium">Status</th>
@@ -197,6 +289,16 @@ export default function FruitCropsManagement({ farm, isEditable = false }: Props
                                                         <tbody className="divide-y divide-gray-100">
                                                             {crop.trees.map((tree: any) => (
                                                                 <tr key={tree.id} className="text-gray-700 hover:bg-gray-50/80 transition-colors">
+                                                                    {isEditable && (
+                                                                        <td className="py-2 px-4">
+                                                                            <input
+                                                                                type="checkbox"
+                                                                                checked={selectedTrees[crop.id]?.includes(tree.id) || false}
+                                                                                onChange={() => toggleTreeSelection(crop.id, tree.id)}
+                                                                                className="rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+                                                                            />
+                                                                        </td>
+                                                                    )}
                                                                     <td className="py-2 px-4 font-mono">{tree.tree_identifier}</td>
                                                                     <td className="py-2 px-4">{tree.age_years} / {tree.productive_lifespan_years} yrs</td>
                                                                     <td className="py-2 px-4 capitalize">
@@ -214,12 +316,27 @@ export default function FruitCropsManagement({ farm, isEditable = false }: Props
                                                                     </td>
                                                                     <td className="py-2 px-4 text-right">
                                                                         {isEditable ? (
-                                                                            <Link
-                                                                                href={route('farm-owner.trees.edit', tree.id)}
-                                                                                className="text-indigo-600 hover:text-indigo-800 font-medium"
-                                                                            >
-                                                                                Edit
-                                                                            </Link>
+                                                                            <div className="flex items-center justify-end gap-2">
+                                                                                <Link
+                                                                                    href={route('farm-owner.trees.edit', tree.id)}
+                                                                                    className="text-indigo-600 hover:text-indigo-800 font-medium"
+                                                                                >
+                                                                                    Edit
+                                                                                </Link>
+                                                                                <button
+                                                                                    type="button"
+                                                                                    onClick={() => {
+                                                                                        if (confirm('Are you sure you want to delete this tree?')) {
+                                                                                            deleteTreeForm.delete(route('farm-owner.trees.destroy', tree.id), {
+                                                                                                preserveScroll: true
+                                                                                            });
+                                                                                        }
+                                                                                    }}
+                                                                                    className="text-red-600 hover:text-red-800 font-medium"
+                                                                                >
+                                                                                    Delete
+                                                                                </button>
+                                                                            </div>
                                                                         ) : (
                                                                             <span className="text-gray-400 font-medium cursor-not-allowed opacity-50">
                                                                                 Edit

@@ -47,7 +47,7 @@ class ListingController extends Controller
             ->paginate(12)
             ->withQueryString();
 
-        return Inertia::render('SecondaryMarket/Index', [
+        return Inertia::render('Investor/SecondaryMarket/Index', [
             'listings' => $listings,
             'filters' => $filters,
             'canCreateListing' => $request->user()?->hasVerifiedKyc() ?? false,
@@ -66,7 +66,7 @@ class ListingController extends Controller
         $isBuyer = $listing->buyer_id === auth()->id();
         $kycVerified = auth()->user()?->hasVerifiedKyc() ?? false;
 
-        return Inertia::render('SecondaryMarket/Show', [
+        return Inertia::render('Investor/SecondaryMarket/Show', [
             'listing' => $listing,
             'isOwner' => $isOwner,
             'isBuyer' => $isBuyer,

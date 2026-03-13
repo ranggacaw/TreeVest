@@ -12,7 +12,11 @@ class AccountController extends Controller
 {
     public function settings(Request $request): Response
     {
-        return Inertia::render('Profile/AccountSettings', [
+        $view = $request->user()->hasRole('investor')
+            ? 'Investor/Profile/AccountSettings'
+            : 'Profile/AccountSettings';
+
+        return Inertia::render($view, [
             'hasPendingInvestments' => false, // TODO: Implement logic if needed
             'hasPendingPayouts' => false,     // TODO: Implement logic if needed
         ]);

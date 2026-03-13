@@ -75,13 +75,8 @@ export interface ProfileEditProps {
 
 declare module '@inertiajs/core' {
     interface PageProps {
-        auth?: {
-            user?: User & {
-                phone?: string;
-                phone_country_code?: string;
-                avatar_url?: string;
-                two_factor_enabled_at?: string;
-            };
+        auth: {
+            user: User | null;
         };
     }
 }

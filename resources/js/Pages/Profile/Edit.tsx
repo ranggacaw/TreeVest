@@ -1,155 +1,265 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import { Head, Link, router } from '@inertiajs/react';
-import DeleteUserForm from './Partials/DeleteUserForm';
-import UpdatePasswordForm from './Partials/UpdatePasswordForm';
-import UpdateProfileInformationForm from './Partials/UpdateProfileInformationForm';
-import AvatarUpload from '@/Components/Profile/AvatarUpload';
-import PhoneInput from '@/Components/Auth/PhoneInput';
-import { useForm } from '@inertiajs/react';
 import { useTranslation } from 'react-i18next';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import {
+    User,
+    Settings,
+    FileText,
+    MessageSquare,
+    Moon,
+    Building2,
+    Gift,
+    Ticket,
+    Calendar,
+    ChevronRight,
+    Wallet,
+    ShieldCheck,
+    LogOut
+} from 'lucide-react';
+import { useState } from 'react';
+import { formatRupiah } from '@/utils/currency';
 
-export default function Edit({
-    mustVerifyEmail,
-    status,
-    auth,
-}: PageProps<{ mustVerifyEmail: boolean; status?: string; auth: { user: any } }>) {
-    const { t } = useTranslation('profile');
-    const user = auth.user || {};
+interface MenuItemProps {
+    icon: React.ReactNode;
+    label: string;
+    subLabel?: string;
+    href?: string;
+    onClick?: () => void;
+    rightElement?: React.ReactNode;
+    destructive?: boolean;
+    as?: React.ElementType;
+}
 
-    const { data, setData, patch, processing, errors } = useForm({
-        phone: user.phone || '',
-        phone_country_code: user.phone_country_code || 'MY',
-    });
-
-    const handleAvatarUpload = (file: File) => {
-        patch(route('profile.avatar'));
-    };
-
-    const handleAvatarDelete = () => {
-        router.delete(route('profile.avatar'));
-    };
-
-    const handlePhoneUpdate = () => {
-        patch(route('profile.phone.update'));
-    };
-
-    return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    {t('profile')}
-                </h2>
-            }
-        >
-            <Head title={t('profile')} />
-
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl space-y-6 sm:px-6 lg:px-8">
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdateProfileInformationForm
-                            mustVerifyEmail={mustVerifyEmail}
-                            status={status}
-                            className="max-w-xl"
-                        />
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <AvatarUpload
-                            currentAvatar={user.avatar_url}
-                            onUpload={handleAvatarUpload}
-                            onDelete={handleAvatarDelete}
-                        />
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <header>
-                            <h2 className="text-lg font-medium text-gray-900">{t('phone_number')}</h2>
-
-                            <p className="mt-1 text-sm text-gray-600">
-                                {t('phone_desc')}
-                            </p>
-                        </header>
-
-                        <div className="mt-6 space-y-6">
-                            <PhoneInput
-                                id="phone"
-                                label={t('phone_number')}
-                                value={data.phone}
-                                onChange={(value) => {
-                                    setData('phone', value || '');
-                                }}
-                                error={errors.phone}
-                            />
-
-                            {user.phone && (
-                                <div className="flex items-center gap-2">
-                                    {user.phone_verified_at ? (
-                                        <span className="inline-flex items-center rounded-full bg-green-100 px-2 py-0.5 text-xs font-medium text-green-800">
-                                            {t('verified')}
-                                        </span>
-                                    ) : (
-                                        <span className="inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
-                                            {t('not_verified')}
-                                        </span>
-                                    )}
-                                </div>
-                            )}
-
-                            <button
-                                onClick={handlePhoneUpdate}
-                                disabled={processing}
-                                className="rounded-md bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25"
-                            >
-                                {user?.phone ? t('update_phone') : t('add_phone')}
-                            </button>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <header>
-                            <h2 className="text-lg font-medium text-gray-900">
-                                {t('account_security')}
-                            </h2>
-
-                            <p className="mt-1 text-sm text-gray-600">
-                                {t('security_desc')}
-                            </p>
-                        </header>
-
-                        <div className="mt-6 space-y-4">
-                            <Link
-                                href={route('profile.2fa')}
-                                className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-indigo-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                {t('two_factor_auth')}
-                            </Link>
-
-                            <Link
-                                href={route('profile.sessions')}
-                                className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-gray-700 transition hover:border-indigo-500 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                            >
-                                {t('manage_sessions')}
-                            </Link>
-
-                            <Link
-                                href={route('profile.account-settings')}
-                                className="block rounded-md border border-gray-300 px-4 py-3 text-sm font-medium text-red-700 transition hover:border-red-500 hover:bg-red-50 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
-                            >
-                                {t('account_settings_link')}
-                            </Link>
-                        </div>
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <UpdatePasswordForm className="max-w-xl" />
-                    </div>
-
-                    <div className="bg-white p-4 shadow sm:rounded-lg sm:p-8">
-                        <DeleteUserForm className="max-w-xl" />
-                    </div>
+function MenuItem({ icon, label, subLabel, href, onClick, rightElement, destructive, as: Component = 'button' }: MenuItemProps) {
+    const content = (
+        <div className={`flex items-center justify-between py-4 border-b border-gray-50 last:border-0 ${destructive ? 'text-red-500' : 'text-gray-700'}`}>
+            <div className="flex items-center gap-4">
+                <div className={`w-5 h-5 ${destructive ? 'text-red-500' : 'text-gray-400'}`}>
+                    {icon}
+                </div>
+                <div>
+                    <p className={`text-[15px] font-medium leading-tight ${destructive ? 'text-red-600' : 'text-gray-800'}`}>{label}</p>
+                    {subLabel && <p className="text-[12px] text-emerald-600 font-medium mt-0.5">{subLabel}</p>}
                 </div>
             </div>
-        </AuthenticatedLayout>
+            <div className="flex items-center gap-2">
+                {rightElement ? rightElement : <ChevronRight className="w-5 h-5 text-gray-300" />}
+            </div>
+        </div>
+    );
+
+    if (href) {
+        return <Link href={href} className="block active:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg">{content}</Link>;
+    }
+
+    return <Component onClick={onClick} className="w-full text-left active:bg-gray-50 transition-colors px-2 -mx-2 rounded-lg">{content}</Component>;
+}
+
+function ToggleBar({ checked, onChange }: { checked: boolean; onChange: (v: boolean) => void }) {
+    return (
+        <div
+            role="switch"
+            aria-checked={checked}
+            onClick={() => onChange(!checked)}
+            onKeyDown={(e) => {
+                if (e.key === 'Enter' || e.key === ' ') {
+                    e.preventDefault();
+                    onChange(!checked);
+                }
+            }}
+            tabIndex={0}
+            className={`w-11 h-6 rounded-full transition-colors relative cursor-pointer ${checked ? 'bg-emerald-500' : 'bg-gray-200'}`}
+        >
+            <div className={`absolute top-1 left-1 w-4 h-4 bg-white rounded-full transition-transform ${checked ? 'translate-x-5' : ''}`} />
+        </div>
+    );
+}
+
+export default function Edit({ auth }: PageProps) {
+    const { t } = useTranslation('profile');
+    const user = auth.user;
+
+    if (!user) {
+        return null; // Or some fallback UI, but normally this page is protected
+    }
+    const [isSyariah, setIsSyariah] = useState(true);
+    const [isDarkMode, setIsDarkMode] = useState(false);
+
+    return (
+        <AppShellLayout>
+            <Head title="Profil" />
+
+            <div className="relative w-full max-w-md bg-white flex flex-col" style={{ minHeight: '100dvh' }}>
+
+                {/* Scrollable Container */}
+                <div className="flex-1 overflow-y-auto pb-24">
+
+                    {/* Header Title */}
+                    <div className="px-4 py-4 text-center sticky top-0 bg-white z-10">
+                        <h1 className="text-lg font-bold text-gray-900">Profil</h1>
+                    </div>
+
+                    {/* Profile Section */}
+                    <div className="px-5 pt-2 pb-6 flex items-center gap-4">
+                        <div className="w-16 h-16 rounded-full bg-emerald-50 flex items-center justify-center overflow-hidden border-2 border-emerald-100 p-0.5">
+                            {user.avatar_url ? (
+                                <img src={user.avatar_url} alt={user.name} className="w-full h-full rounded-full object-cover" />
+                            ) : (
+                                <div className="w-full h-full rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600 font-bold text-xl uppercase">
+                                    {user.name.charAt(0)}
+                                </div>
+                            )}
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold text-gray-900">{user.name}</h2>
+                            <p className="text-emerald-500 text-sm font-semibold mt-0.5">Investor Agresif</p>
+                        </div>
+                    </div>
+
+                    {/* Top Two Cards */}
+                    <div className="px-5 grid grid-cols-2 gap-3 mb-6">
+                        {/* Membership Card */}
+                        <div className="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex flex-col justify-between">
+                            <div className="flex items-center gap-2 mb-3">
+                                <div className="p-1.5 bg-emerald-50 rounded-lg text-emerald-600">
+                                    <ShieldCheck className="w-4 h-4" />
+                                </div>
+                                <span className="text-[13px] font-bold text-gray-700">TreeVest Plus</span>
+                            </div>
+                            <button className="flex items-center justify-between w-full bg-emerald-50 text-emerald-700 px-3 py-1.5 rounded-lg text-[13px] font-bold mt-2 border border-emerald-100">
+                                Upgrade
+                                <ChevronRight className="w-4 h-4" />
+                            </button>
+                        </div>
+
+                        {/* Wallet Card */}
+                        <div className="bg-white rounded-xl border border-gray-100 p-3 shadow-sm flex flex-col justify-between group">
+                            <Link href={route('investor.payouts.index')} className="h-full flex flex-col justify-between">
+                                <div className="flex items-center justify-between mb-2">
+                                    <div className="p-1.5 bg-blue-50 rounded-lg text-blue-500">
+                                        <Wallet className="w-4 h-4" />
+                                    </div>
+                                    <ChevronRight className="w-4 h-4 text-gray-300 group-hover:text-blue-500" />
+                                </div>
+                                <div>
+                                    <p className="text-lg font-bold text-gray-900 leading-none">Rp 0</p>
+                                    <p className="text-[11px] text-blue-500 font-bold mt-1">Saldo Wallet</p>
+                                </div>
+                            </Link>
+                        </div>
+                    </div>
+
+                    {/* Section Separator */}
+                    <div className="h-2 bg-gray-50 mb-1" />
+
+                    {/* Menu Group 1: General */}
+                    <div className="px-5">
+                        <MenuItem
+                            icon={<User className="w-5 h-5" />}
+                            label="Data Pribadi"
+                            href={route('profile.edit-details')}
+                        />
+                        <MenuItem
+                            icon={<Settings className="w-5 h-5" />}
+                            label="Settings"
+                            href={route('profile.account-settings')}
+                        />
+                        <MenuItem
+                            icon={<FileText className="w-5 h-5" />}
+                            label="E-Statement"
+                            href={route('reports.index')}
+                        />
+                        <MenuItem
+                            icon={<MessageSquare className="w-5 h-5" />}
+                            label="Chat Support"
+                            href={route('investor.support')}
+                        />
+                    </div>
+
+                    {/* Section Separator */}
+                    <div className="h-2 bg-gray-50 my-1" />
+
+                    {/* Menu Group 2: Toggles */}
+                    <div className="px-5">
+                        <MenuItem
+                            icon={<ShieldCheck className="w-5 h-5" />}
+                            label="Keamanan Akun"
+                            href={route('profile.2fa')}
+                        />
+                        <MenuItem
+                            icon={<Moon className="w-5 h-5" />}
+                            label="TreeVest Syariah"
+                            rightElement={<ToggleBar checked={isSyariah} onChange={setIsSyariah} />}
+                        />
+                        <MenuItem
+                            icon={<Building2 className="w-5 h-5" />}
+                            label="Dark Mode"
+                            rightElement={<ToggleBar checked={isDarkMode} onChange={setIsDarkMode} />}
+                        />
+                    </div>
+
+                    {/* Section Separator */}
+                    <div className="h-2 bg-gray-50 my-1" />
+
+                    {/* Menu Group 3: Corporate */}
+                    <div className="px-5">
+                        <MenuItem
+                            icon={<Building2 className="w-5 h-5" />}
+                            label="TreeVest untuk Perusahaan"
+                            subLabel="Buat Akun Bisnis"
+                        />
+                    </div>
+
+                    {/* Section Separator */}
+                    <div className="h-2 bg-gray-50 my-1" />
+
+                    {/* Menu Group 4: Promo & Rewards */}
+                    <div className="px-5">
+                        <MenuItem
+                            icon={<Gift className="w-5 h-5" />}
+                            label="Cashback & Referral"
+                            href={route('investor.wishlist.index')} // Mocked to wishlist for now as it's active
+                        />
+                        <MenuItem
+                            icon={<Ticket className="w-5 h-5" />}
+                            label="Promo & Voucher"
+                        />
+                        <MenuItem
+                            icon={<Calendar className="w-5 h-5" />}
+                            label="Systematic Investment Plan (SIP)"
+                        />
+                    </div>
+
+                    {/* Logout */}
+                    <div className="px-5 mt-4">
+                        <Link
+                            href={route('logout')}
+                            method="post"
+                            as="div"
+                            className="block w-full cursor-pointer"
+                        >
+                            <MenuItem
+                                icon={<LogOut className="w-5 h-5" />}
+                                label="Keluar"
+                                destructive={true}
+                                as="div"
+                            />
+                        </Link>
+                    </div>
+
+                </div>
+
+                {/* Fixed Bottom Navigation */}
+                <BottomNav activeTab="profile" />
+
+            </div>
+
+            <style>{`
+                ::-webkit-scrollbar { display: none; }
+                * { -webkit-tap-highlight-color: transparent; }
+            `}</style>
+        </AppShellLayout>
     );
 }

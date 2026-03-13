@@ -31,7 +31,11 @@ class TwoFactorController extends Controller
             ]);
         }
 
-        return Inertia::render('Profile/TwoFactorAuthentication', [
+        $view = $user->hasRole('investor')
+            ? 'Investor/Profile/TwoFactorAuthentication'
+            : 'Profile/TwoFactorAuthentication';
+
+        return Inertia::render($view, [
             'two_factor_enabled' => $user->two_factor_enabled_at !== null,
             'two_factor_type' => $twoFactorSecret?->type,
             'recovery_codes' => $recoveryCodes,

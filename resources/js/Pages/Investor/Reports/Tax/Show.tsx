@@ -1,7 +1,10 @@
-import { Head, useForm } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, useForm } from '@inertiajs/react';
 import { GeneratedReportStatus } from '@/types';
 import { formatRupiah } from '@/utils/currency';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import { IconArrowLeft, IconDollar, IconPlant } from '@/Components/Icons/AppIcons';
 
 interface TaxSummaryData {
     year: number;
@@ -29,6 +32,7 @@ interface TaxSummaryData {
         totalIncomeCents: number;
         totalInvestedCents: number;
         netCents: number;
+        overallRoiPercent?: number; // Added optional just in case, though not in props
     };
 }
 
@@ -44,8 +48,6 @@ interface Props {
 }
 
 export default function Show({ taxData, year, recentReports }: Props) {
-    const formatCurrency = formatRupiah;
-
     const { post: requestPdf, processing: pdfGenerating } = useForm({ year });
 
     const handlePdfRequest = () => {
@@ -60,300 +62,125 @@ export default function Show({ taxData, year, recentReports }: Props) {
         window.location.href = route('reports.tax.csv', { year });
     };
 
-    const handleDownloadReport = (reportId: number) => {
-        window.location.href = route('reports.download', reportId);
-    };
-
-    const getReportStatusColor = (status: string) => {
-        switch (status) {
-            case 'pending':
-                return 'bg-yellow-100 text-yellow-800';
-            case 'generating':
-                return 'bg-blue-100 text-blue-800';
-            case 'completed':
-                return 'bg-green-100 text-green-800';
-            case 'failed':
-                return 'bg-red-100 text-red-800';
-            default:
-                return 'bg-gray-100 text-gray-800';
-        }
-    };
-
     return (
-        <AuthenticatedLayout
-            header={<h2 className="text-xl font-semibold text-gray-800">Tax Summary - {year}</h2>}
-        >
+        <AppShellLayout>
             <Head title={`Tax Summary - ${year}`} />
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={0} />
 
-            <div className="space-y-6 py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="mb-4 rounded-md bg-yellow-50 p-4">
-                                <h3 className="font-semibold text-yellow-800">Important Disclaimer</h3>
-                                <p className="mt-2 text-sm text-yellow-700">
-                                    This tax summary report is generated for informational purposes only.
-                                    It is NOT official tax advice and should not be used as a substitute for
-                                    professional tax consultation. Please consult with a qualified tax
-                                    professional or accountant to determine your actual tax obligations.
-                                </p>
+                    {/* Header */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <Link href={route('reports.index')} className="text-[13px] text-gray-500 font-bold mb-4 flex items-center gap-2 hover:text-gray-900 transition-colors">
+                            <div className="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center">
+                                <IconArrowLeft className="w-4 h-4" />
                             </div>
+                            Kembali ke Laporan
+                        </Link>
 
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-lg font-medium text-gray-900">
-                                    Tax Summary for {year}
-                                </h3>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={handlePdfRequest}
-                                        disabled={pdfGenerating}
-                                        className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-                                    >
-                                        {pdfGenerating ? 'Generating...' : 'Download PDF'}
-                                    </button>
-                                    <button
-                                        onClick={handleCsvExport}
-                                        className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                    >
-                                        Export CSV
-                                    </button>
-                                </div>
-                            </div>
+                        <h1 className="text-[20px] font-extrabold text-gray-900 mb-2">Tax Summary {year}</h1>
 
-                            <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-3">
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Total Income (Payouts)
-                                    </dt>
-                                    <dd className="mt-1 text-2xl font-semibold text-green-600">
-                                        {formatCurrency(taxData.summary.totalIncomeCents)}
-                                    </dd>
-                                </div>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Total Investments
-                                    </dt>
-                                    <dd className="mt-1 text-2xl font-semibold text-gray-900">
-                                        {formatCurrency(taxData.summary.totalInvestedCents)}
-                                    </dd>
-                                </div>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Net
-                                    </dt>
-                                    <dd
-                                        className={`mt-1 text-2xl font-semibold ${taxData.summary.netCents >= 0
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                            }`}
-                                    >
-                                        {formatCurrency(taxData.summary.netCents)}
-                                    </dd>
-                                </div>
-                            </div>
+                        {/* Disclaimer */}
+                        <div className="bg-amber-50 p-4 rounded-2xl border border-amber-100">
+                            <p className="text-[11px] text-amber-800 leading-relaxed font-medium">
+                                <strong>Disclaimer:</strong> Laporan ini hanya untuk informasi dan bukan saran pajak resmi. Konsultasikan dengan profesional pajak.
+                            </p>
                         </div>
                     </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Summary Cards */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h2 className="text-[15px] font-bold text-gray-900 mb-4">Ringkasan Pajak</h2>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-[11px] text-emerald-600 font-bold mb-1 uppercase tracking-wide">Total Income</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalIncomeCents)}</p>
+                            </div>
+                            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                                <p className="text-[11px] text-blue-600 font-bold mb-1 uppercase tracking-wide">Total Investments</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalInvestedCents)}</p>
+                            </div>
+                            <div className="col-span-2 p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center">
+                                <span className="text-[13px] text-gray-600 font-bold">Net (Pemasukan Bersih)</span>
+                                <span className={`text-[17px] font-extrabold ${taxData.summary.netCents >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                    {formatRupiah(taxData.summary.netCents)}
+                                </span>
+                            </div>
+                        </div>
+
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                            <button onClick={handlePdfRequest} disabled={pdfGenerating} className="flex-1 py-3 bg-emerald-600 text-white text-[13px] font-bold rounded-xl shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-50">
+                                {pdfGenerating ? 'Generating...' : 'Download PDF'}
+                            </button>
+                            <button onClick={handleCsvExport} className="flex-1 py-3 bg-white border border-gray-200 text-gray-700 text-[13px] font-bold rounded-xl hover:bg-gray-50 transition-colors">
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Income List */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h3 className="text-[15px] font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <IconDollar className="w-5 h-5 text-emerald-600" />
+                            Pendapatan (Payouts)
+                        </h3>
+                        <div className="space-y-3">
+                            {taxData.income.rows.map(row => (
+                                <div key={row.payoutId} className="p-4 border border-gray-100 rounded-2xl bg-white shadow-sm hover:border-emerald-100 transition-colors">
+                                    <div className="flex justify-between mb-2">
+                                        <span className="text-[11px] text-gray-500 font-medium bg-gray-50 px-2 py-0.5 rounded-full">{row.date}</span>
+                                        <span className="text-[13px] font-extrabold text-emerald-600">+{formatRupiah(row.netAmountCents)}</span>
+                                    </div>
+                                    <p className="text-[13px] font-bold text-gray-900 mb-1">{row.farmName}</p>
+                                    <div className="flex justify-between text-[11px] text-gray-400 border-t border-gray-50 pt-2 mt-2">
+                                        <span className="font-medium">Gross: {formatRupiah(row.grossAmountCents)}</span>
+                                        <span className="font-medium">Fee: {formatRupiah(row.platformFeeCents)}</span>
+                                    </div>
+                                </div>
+                            ))}
+                            {taxData.income.rows.length === 0 && (
+                                <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                                    <p className="text-[13px] text-gray-400 font-medium">Tidak ada data pendapatan untuk tahun ini.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Investments List */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h3 className="text-[15px] font-bold text-gray-900 mb-4 flex items-center gap-2">
+                             <IconPlant className="w-5 h-5 text-blue-500" />
+                             Investasi Baru
+                        </h3>
+                        <div className="space-y-3">
+                            {taxData.investments.rows.map(row => (
+                                <div key={row.investmentId} className="p-4 border border-gray-100 rounded-2xl bg-white shadow-sm flex justify-between items-center">
+                                    <div>
+                                        <p className="text-[11px] text-gray-500 mb-1 font-medium bg-gray-50 inline-block px-2 py-0.5 rounded-full">{row.date}</p>
+                                        <p className="text-[13px] font-bold text-gray-900">{row.farmName}</p>
+                                    </div>
+                                    <p className="text-[13px] font-extrabold text-gray-900">{formatRupiah(row.amountCents)}</p>
+                                </div>
+                            ))}
+                            {taxData.investments.rows.length === 0 && (
+                                <div className="text-center py-8 bg-gray-50 rounded-2xl border border-dashed border-gray-200">
+                                    <p className="text-[13px] text-gray-400 font-medium">Tidak ada data investasi untuk tahun ini.</p>
+                                </div>
+                            )}
+                        </div>
+                    </div>
+
                 </div>
-
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                Income (Payouts)
-                            </h3>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Date
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Farm Name
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Gross Amount
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Platform Fee
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Net Amount
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                        {taxData.income.rows.map((row) => (
-                                            <tr key={row.payoutId}>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                    {row.date}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                    {row.farmName}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                    {formatCurrency(row.grossAmountCents)}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                    {formatCurrency(row.platformFeeCents)}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-semibold text-green-600">
-                                                    {formatCurrency(row.netAmountCents)}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        <tr className="bg-gray-100 font-semibold">
-                                            <td colSpan={2} className="px-6 py-4 text-sm text-gray-900">
-                                                <strong>Total</strong>
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                {formatCurrency(
-                                                    taxData.income.rows.reduce(
-                                                        (sum, row) => sum + row.grossAmountCents,
-                                                        0,
-                                                    ),
-                                                )}
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                {formatCurrency(
-                                                    taxData.income.rows.reduce(
-                                                        (sum, row) => sum + row.platformFeeCents,
-                                                        0,
-                                                    ),
-                                                )}
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm font-semibold text-green-600">
-                                                {formatCurrency(taxData.income.totalCents)}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                Investment Activity
-                            </h3>
-                            <div className="overflow-x-auto">
-                                <table className="min-w-full divide-y divide-gray-200">
-                                    <thead className="bg-gray-50">
-                                        <tr>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Date
-                                            </th>
-                                            <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Farm Name
-                                            </th>
-                                            <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                Amount
-                                            </th>
-                                        </tr>
-                                    </thead>
-                                    <tbody className="divide-y divide-gray-200 bg-white">
-                                        {taxData.investments.rows.map((row) => (
-                                            <tr key={row.investmentId}>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                    {row.date}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                    {row.farmName}
-                                                </td>
-                                                <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                    {formatCurrency(row.amountCents)}
-                                                </td>
-                                            </tr>
-                                        ))}
-                                        <tr className="bg-gray-100 font-semibold">
-                                            <td colSpan={2} className="px-6 py-4 text-sm text-gray-900">
-                                                <strong>Total</strong>
-                                            </td>
-                                            <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                                {formatCurrency(taxData.investments.totalCents)}
-                                            </td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                {recentReports.length > 0 && (
-                    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                            <div className="p-6">
-                                <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                    Recent Reports
-                                </h3>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    ID
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Created At
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Expires At
-                                                </th>
-                                                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 bg-white">
-                                            {recentReports.map((report) => (
-                                                <tr key={report.id}>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {report.id}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                                                        <span
-                                                            className={`inline-flex rounded-full px-2 text-xs font-semibold uppercase ${getReportStatusColor(report.status)}`}
-                                                        >
-                                                            {report.status}
-                                                        </span>
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {new Date(report.created_at).toLocaleString()}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {report.expires_at
-                                                            ? new Date(report.expires_at).toLocaleString()
-                                                            : '-'}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                                                        {report.status === 'completed' && (
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleDownloadReport(report.id)
-                                                                }
-                                                                className="text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                Download
-                                                            </button>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                )}
+                <BottomNav />
             </div>
-        </AuthenticatedLayout>
+            <style>{`::-webkit-scrollbar { display: none; } * { -webkit-tap-highlight-color: transparent; }`}</style>
+        </AppShellLayout>
     );
 }

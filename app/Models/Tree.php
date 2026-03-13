@@ -17,6 +17,7 @@ class Tree extends Model
 
     protected $fillable = [
         'fruit_crop_id',
+        'lot_id',
         'tree_identifier',
         'price_cents',
         'expected_roi_percent',
@@ -49,6 +50,11 @@ class Tree extends Model
     public function fruitCrop(): BelongsTo
     {
         return $this->belongsTo(FruitCrop::class);
+    }
+
+    public function lot(): BelongsTo
+    {
+        return $this->belongsTo(Lot::class);
     }
 
     public function fruitType(): \Illuminate\Database\Eloquent\Relations\HasOneThrough

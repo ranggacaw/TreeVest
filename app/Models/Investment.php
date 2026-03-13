@@ -15,10 +15,12 @@ class Investment extends Model
     protected $fillable = [
         'user_id',
         'tree_id',
+        'lot_id',
         'amount_cents',
         'quantity',
         'currency',
         'purchase_date',
+        'purchase_month',
         'status',
         'transaction_id',
         'metadata',
@@ -32,6 +34,7 @@ class Investment extends Model
             'amount_cents' => 'integer',
             'quantity' => 'integer',
             'purchase_date' => 'date',
+            'purchase_month' => 'integer',
         ];
     }
 
@@ -43,6 +46,11 @@ class Investment extends Model
     public function tree(): BelongsTo
     {
         return $this->belongsTo(Tree::class);
+    }
+
+    public function lot(): BelongsTo
+    {
+        return $this->belongsTo(Lot::class);
     }
 
     public function transaction(): BelongsTo

@@ -8,9 +8,10 @@ import SecondaryButton from '@/Components/SecondaryButton';
 import TextInput from '@/Components/TextInput';
 import { FormEventHandler } from 'react';
 import { formatRupiah } from '@/utils/currency';
+import { Transition } from '@headlessui/react';
 
 export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops: any[] }>) {
-    const { data, setData, put, processing, errors } = useForm({
+    const { data, setData, put, processing, errors, recentlySuccessful } = useForm({
         fruit_crop_id: tree.fruit_crop_id || '',
         tree_identifier: tree.tree_identifier || '',
         age_years: tree.age_years || 0,
@@ -103,7 +104,9 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
 
     const submit: FormEventHandler = (e) => {
         e.preventDefault();
-        put(route('farm-owner.trees.update', tree.id));
+        put(route('farm-owner.trees.update', tree.id), {
+            preserveScroll: true,
+        });
     };
 
     const estimatedPrice =
@@ -330,10 +333,13 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                         <InputLabel htmlFor="min_investment_cents" value="Min Investment (IDR)" />
                                         <TextInput
                                             id="min_investment_cents"
-                                            type="number"
+                                            type="text"
                                             className="mt-1 block w-full"
-                                            value={data.min_investment_cents}
-                                            onChange={e => setData('min_investment_cents', parseInt(e.target.value) || 0)}
+                                            value={data.min_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.min_investment_cents)}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                setData('min_investment_cents', parseInt(val) || 0);
+                                            }}
                                             required
                                         />
                                         <p className="mt-1 text-xs text-gray-500">{formatRupiah(data.min_investment_cents)}</p>
@@ -343,10 +349,13 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                         <InputLabel htmlFor="max_investment_cents" value="Max Investment (IDR)" />
                                         <TextInput
                                             id="max_investment_cents"
-                                            type="number"
+                                            type="text"
                                             className="mt-1 block w-full"
-                                            value={data.max_investment_cents}
-                                            onChange={e => setData('max_investment_cents', parseInt(e.target.value) || 0)}
+                                            value={data.max_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.max_investment_cents)}
+                                            onChange={e => {
+                                                const val = e.target.value.replace(/\D/g, '');
+                                                setData('max_investment_cents', parseInt(val) || 0);
+                                            }}
                                             required
                                         />
                                         <p className="mt-1 text-xs text-gray-500">{formatRupiah(data.max_investment_cents)}</p>
@@ -354,20 +363,25 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                     </div>
                                 </div>
 
-                                <div className="pt-4 border-t border-gray-200">
+                                <div className="col-span-2 pt-4 border-t border-gray-200">
                                     <h4 className="font-medium text-gray-900 mb-4">Pricing Configuration</h4>
                                     <div className="grid grid-cols-2 gap-4">
                                         <div>
                                             <InputLabel htmlFor="base_price" value="Base Price (IDR)" />
                                             <TextInput
                                                 id="base_price"
-                                                type="number"
+                                                type="text"
                                                 className="mt-1 block w-full"
-                                                value={data.pricing_config.base_price}
-                                                onChange={e => setData('pricing_config', { ...data.pricing_config, base_price: parseInt(e.target.value) || 0 })}
+                                                value={data.pricing_config.base_price === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.pricing_config.base_price)}
+                                                onChange={e => {
+                                                    const val = e.target.value.replace(/\D/g, '');
+                                                    setData('pricing_config', { ...data.pricing_config, base_price: parseInt(val) || 0 });
+                                                }}
                                                 required
                                             />
                                             <p className="mt-1 text-xs text-gray-500">{formatRupiah(data.pricing_config.base_price)}</p>
+                                            {/* @ts-ignore */}
+                                            <InputError message={errors['pricing_config.base_price']} className="mt-2" />
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="age_coefficient" value="Age Coefficient" />
@@ -380,6 +394,8 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                                 onChange={e => setData('pricing_config', { ...data.pricing_config, age_coefficient: parseFloat(e.target.value) })}
                                                 required
                                             />
+                                            {/* @ts-ignore */}
+                                            <InputError message={errors['pricing_config.age_coefficient']} className="mt-2" />
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="crop_premium" value="Crop Premium" />
@@ -392,6 +408,8 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                                 onChange={e => setData('pricing_config', { ...data.pricing_config, crop_premium: parseFloat(e.target.value) })}
                                                 required
                                             />
+                                            {/* @ts-ignore */}
+                                            <InputError message={errors['pricing_config.crop_premium']} className="mt-2" />
                                         </div>
                                         <div>
                                             <InputLabel htmlFor="risk_multiplier" value="Risk Multiplier" />
@@ -404,6 +422,8 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                                 onChange={e => setData('pricing_config', { ...data.pricing_config, risk_multiplier: parseFloat(e.target.value) })}
                                                 required
                                             />
+                                            {/* @ts-ignore */}
+                                            <InputError message={errors['pricing_config.risk_multiplier']} className="mt-2" />
                                         </div>
                                     </div>
                                     <p className="mt-4 text-sm text-gray-600">
@@ -413,8 +433,18 @@ export default function Edit({ auth, tree, crops }: PageProps<{ tree: any, crops
                                     </p>
                                 </div>
 
-                                <div className="flex items-center gap-4">
+                                <div className="col-span-2 flex items-center gap-4">
                                     <PrimaryButton disabled={processing}>Update</PrimaryButton>
+
+                                    <Transition
+                                        show={recentlySuccessful}
+                                        enter="transition ease-in-out"
+                                        enterFrom="opacity-0"
+                                        leave="transition ease-in-out"
+                                        leaveTo="opacity-0"
+                                    >
+                                        <p className="text-sm text-gray-600">Updated.</p>
+                                    </Transition>
                                 </div>
                             </form>
                         </div>

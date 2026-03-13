@@ -1,9 +1,21 @@
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
-import { Head, Link } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps, InvestmentDetail } from '@/types';
 import { useEffect, useState } from 'react';
 import FinancialErrorBoundary from '@/Components/FinancialErrorBoundary';
 import { useTranslation } from 'react-i18next';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import { 
+    IconCheck, 
+    IconX, 
+    IconPlant, 
+    IconTree, 
+    IconMapPin, 
+    IconCalendar, 
+    IconDollar,
+    IconArrowLeft
+} from '@/Components/Icons/AppIcons';
 
 interface Props extends PageProps {
     investment: InvestmentDetail;
@@ -13,6 +25,8 @@ interface Props extends PageProps {
 export default function Confirmation({ auth, investment, is_local }: Props) {
     const { t } = useTranslation(['investments', 'translation']);
     const [paymentStatus, setPaymentStatus] = useState<'pending' | 'processing' | 'completed' | 'failed'>('pending');
+    const page = usePage();
+    const unreadCount = (page.props as any).unread_notifications_count ?? 0;
 
     useEffect(() => {
         if (investment.status === 'active') {
@@ -29,156 +43,207 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
         pending: {
             title: t('awaiting_payment_title'),
             description: t('awaiting_payment_desc'),
-            color: 'text-yellow-600',
-            bgColor: 'bg-yellow-50',
+            color: 'text-amber-600',
+            bgColor: 'bg-amber-50',
+            borderColor: 'border-amber-100',
+            iconBg: 'bg-amber-100',
+            icon: (
+                <svg className="w-8 h-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            )
         },
         processing: {
             title: t('processing_payment_title'),
             description: t('processing_payment_desc'),
             color: 'text-blue-600',
             bgColor: 'bg-blue-50',
+            borderColor: 'border-blue-100',
+            iconBg: 'bg-blue-100',
+            icon: (
+                <svg className="w-8 h-8 text-blue-600 animate-spin" fill="none" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                </svg>
+            )
         },
         completed: {
             title: t('investment_confirmed_title'),
             description: t('investment_confirmed_desc'),
-            color: 'text-green-600',
-            bgColor: 'bg-green-50',
+            color: 'text-emerald-600',
+            bgColor: 'bg-emerald-50',
+            borderColor: 'border-emerald-100',
+            iconBg: 'bg-emerald-100',
+            icon: <IconCheck className="w-8 h-8 text-emerald-600" />
         },
         failed: {
             title: t('payment_failed_title'),
             description: t('payment_failed_desc'),
             color: 'text-red-600',
             bgColor: 'bg-red-50',
+            borderColor: 'border-red-100',
+            iconBg: 'bg-red-100',
+            icon: <IconX className="w-8 h-8 text-red-600" />
         },
     };
 
     const status = statusMessages[paymentStatus];
 
     return (
-        <AuthenticatedLayout
-            header={
-                <h2 className="text-xl font-semibold leading-tight text-gray-800">
-                    {t('investment_confirmation')}
-                </h2>
-            }
-        >
+        <AppShellLayout>
             <Head title={t('investment_confirmation')} />
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unreadCount} />
 
-            <div className="py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-5">
-                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            {t('back')}
-                        </button>
-                    </div>
                     <FinancialErrorBoundary context="investment-purchase-confirmation">
-                        <div className={`overflow-hidden bg-white shadow-sm sm:rounded-lg ${status.bgColor}`}>
-                            <div className="p-8 text-center">
+                        <div className="px-5 pt-5 pb-6">
+                            {/* Back Button (only if not completed) */}
+                            {paymentStatus !== 'completed' && (
                                 <div className="mb-4">
-                                    {paymentStatus === 'completed' ? (
-                                        <svg className="mx-auto h-16 w-16 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    ) : paymentStatus === 'processing' ? (
-                                        <svg className="mx-auto h-16 w-16 text-blue-500 animate-spin" fill="none" viewBox="0 0 24 24">
-                                            <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                                            <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                                        </svg>
-                                    ) : (
-                                        <svg className="mx-auto h-16 w-16 text-yellow-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                        </svg>
-                                    )}
+                                    <button 
+                                        onClick={() => window.history.back()} 
+                                        className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                                    >
+                                        <IconArrowLeft className="w-4 h-4 mr-1" />
+                                        {t('back')}
+                                    </button>
                                 </div>
+                            )}
 
-                                <h3 className={`text-2xl font-bold mb-2 ${status.color}`}>
+                            {/* Status Card */}
+                            <div className={`p-6 rounded-3xl ${status.bgColor} border ${status.borderColor} text-center mb-6`}>
+                                <div className={`w-16 h-16 rounded-full ${status.iconBg} flex items-center justify-center mx-auto mb-4`}>
+                                    {status.icon}
+                                </div>
+                                <h3 className={`text-xl font-bold mb-2 ${status.color}`}>
                                     {status.title}
                                 </h3>
-                                <p className="text-gray-600 mb-8">
+                                <p className="text-sm text-gray-600 leading-relaxed">
                                     {status.description}
                                 </p>
+                            </div>
 
-                                <div className="bg-white rounded-lg shadow-sm p-6 mb-6">
-                                    <h4 className="text-sm font-medium text-gray-500 mb-4">{t('investment_details')}</h4>
-                                    <dl className="space-y-3">
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('investment_id')}</dt>
-                                            <dd className="font-medium text-gray-900">#{investment.id}</dd>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('amount')}</dt>
-                                            <dd className="font-medium text-gray-900">{investment.formatted_amount}</dd>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('tree')}</dt>
-                                            <dd className="font-medium text-gray-900">#{investment.tree.identifier}</dd>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('fruit_type')}</dt>
-                                            <dd className="font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type}</dd>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('farm')}</dt>
-                                            <dd className="font-medium text-gray-900">{investment.tree.farm.name}</dd>
-                                        </div>
-                                        <div className="flex justify-between">
-                                            <dt className="text-gray-500">{t('date')}</dt>
-                                            <dd className="font-medium text-gray-900">
-                                                {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
-                                            </dd>
-                                        </div>
-                                    </dl>
+                            {/* Details Card */}
+                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
+                                <div className="px-5 py-4 border-b border-gray-50 bg-gray-50/50">
+                                    <h4 className="text-sm font-bold text-gray-900">{t('investment_details')}</h4>
                                 </div>
+                                <div className="p-5 space-y-4">
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                                                <span className="text-[10px] font-bold">ID</span>
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('investment_id')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900">#{investment.id}</span>
+                                    </div>
 
-                                <div className="flex gap-4 justify-center">
-                                    {paymentStatus === 'completed' ? (
-                                        <>
-                                            <Link
-                                                href="/investments"
-                                                className="px-6 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700"
-                                            >
-                                                {t('view_my_investments')}
-                                            </Link>
-                                            <Link
-                                                href="/farms"
-                                                className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50"
-                                            >
-                                                {t('continue_investing')}
-                                            </Link>
-                                        </>
-                                    ) : (
-                                        <>
-                                            <Link
-                                                href="/payment-methods"
-                                                className="px-6 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700"
-                                            >
-                                                {t('add_payment_method')}
-                                            </Link>
-                                            <Link
-                                                href="/investments"
-                                                className="px-6 py-2 border border-gray-300 rounded-md font-semibold text-sm text-gray-700 uppercase tracking-widest hover:bg-gray-50 bg-white"
-                                            >
-                                                {t('view_all_investments')}
-                                            </Link>
-                                            {is_local && (
-                                                <Link
-                                                    href={`/investments/${investment.id}/mock-confirm`}
-                                                    method="post"
-                                                    as="button"
-                                                    className="px-6 py-2 bg-purple-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-purple-700"
-                                                >
-                                                    Simulate Payment Match
-                                                </Link>
-                                            )}
-                                        </>
-                                    )}
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                                <IconDollar className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('amount')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-emerald-600">{investment.formatted_amount}</span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                                                <IconPlant className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('fruit_type')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900">{investment.tree.fruit_crop.fruit_type}</span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
+                                                <IconTree className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('tree')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900">#{investment.tree.identifier}</span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
+                                                <IconMapPin className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('farm')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900">{investment.tree.farm.name}</span>
+                                    </div>
+
+                                    <div className="flex items-center justify-between">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                                                <IconCalendar className="w-4 h-4" />
+                                            </div>
+                                            <span className="text-sm text-gray-500">{t('date')}</span>
+                                        </div>
+                                        <span className="text-sm font-bold text-gray-900">
+                                            {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
+                                        </span>
+                                    </div>
                                 </div>
+                            </div>
+
+                            {/* Actions */}
+                            <div className="flex flex-col gap-3">
+                                {paymentStatus === 'completed' ? (
+                                    <>
+                                        <Link
+                                            href="/investments"
+                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all active:scale-[0.98]"
+                                        >
+                                            {t('view_my_investments')}
+                                        </Link>
+                                        <Link
+                                            href="/farms"
+                                            className="w-full py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-sm text-center hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+                                        >
+                                            {t('continue_investing')}
+                                        </Link>
+                                    </>
+                                ) : (
+                                    <>
+                                        <Link
+                                            href="/payment-methods"
+                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all active:scale-[0.98]"
+                                        >
+                                            {t('add_payment_method')}
+                                        </Link>
+                                        <Link
+                                            href="/investments"
+                                            className="w-full py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-sm text-center hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+                                        >
+                                            {t('view_all_investments')}
+                                        </Link>
+                                        {is_local && (
+                                            <Link
+                                                href={`/investments/${investment.id}/mock-confirm`}
+                                                method="post"
+                                                as="button"
+                                                className="w-full py-3 bg-purple-600 text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-purple-200 hover:bg-purple-700 hover:shadow-purple-300 transition-all active:scale-[0.98]"
+                                            >
+                                                Simulate Payment Match (Dev)
+                                            </Link>
+                                        )}
+                                    </>
+                                )}
                             </div>
                         </div>
                     </FinancialErrorBoundary>
                 </div>
+                <BottomNav activeTab="portfolio" />
             </div>
-        </AuthenticatedLayout>
+            <style>{`::-webkit-scrollbar { display: none; } * { -webkit-tap-highlight-color: transparent; }`}</style>
+        </AppShellLayout>
     );
 }

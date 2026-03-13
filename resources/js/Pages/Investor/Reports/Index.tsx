@@ -1,10 +1,13 @@
-import { Head, useForm } from '@inertiajs/react';
-import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, useForm, usePage } from '@inertiajs/react';
+import { formatRupiah } from '@/utils/currency';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
 import ReportFilterForm from '@/Components/ReportFilterForm';
-import ProfitLossTable from '@/Components/ProfitLossTable';
 import PerformanceBarChart from '@/Components/PerformanceBarChart';
 import ReturnsTrendChart from '@/Components/ReturnsTrendChart';
 import { GeneratedReportStatus } from '@/types';
+import { IconChart, IconDollar, IconArrowLeft, IconCheck, IconX, IconFlash } from '@/Components/Icons/AppIcons';
 
 interface Props {
     profitLoss: {
@@ -61,9 +64,8 @@ export default function Index({
     filterOptions,
     recentReports,
 }: Props) {
-    const formatCurrency = (cents: number) => {
-        return `Rp ${(cents / 100).toFixed(2)}`;
-    };
+    const page = usePage();
+    const unreadCount = (page.props as any).unread_notifications_count ?? 0;
 
     const { post: requestPdf, processing: pdfGenerating } = useForm(filters);
 
@@ -86,218 +88,212 @@ export default function Index({
     const getReportStatusColor = (status: string) => {
         switch (status) {
             case 'pending':
-                return 'bg-yellow-100 text-yellow-800';
+                return 'bg-yellow-50 text-yellow-600 border border-yellow-100';
             case 'generating':
-                return 'bg-blue-100 text-blue-800';
+                return 'bg-blue-50 text-blue-600 border border-blue-100';
             case 'completed':
-                return 'bg-green-100 text-green-800';
+                return 'bg-emerald-50 text-emerald-600 border border-emerald-100';
             case 'failed':
-                return 'bg-red-100 text-red-800';
+                return 'bg-red-50 text-red-600 border border-red-100';
             default:
-                return 'bg-gray-100 text-gray-800';
+                return 'bg-gray-50 text-gray-600 border border-gray-100';
         }
     };
 
     return (
-        <AuthenticatedLayout header={<h2 className="text-xl font-semibold text-gray-800">Financial Reports</h2>}>
-            <Head title="Financial Reports" />
+        <AppShellLayout>
+            <Head title="Laporan Keuangan" />
+            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+                <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
+                    <AppTopBar notificationCount={unreadCount} />
 
-            <div className="space-y-6 py-12">
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="mb-5">
-                        <button onClick={() => window.history.back()} className="inline-flex items-center px-4 py-2 bg-white border border-gray-300 rounded-md font-semibold text-xs text-gray-700 uppercase tracking-widest shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 disabled:opacity-25 transition ease-in-out duration-150">
-                            <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" /></svg>
-                            Back to Dashboard
-                        </button>
+                    {/* Header */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <div className="flex items-center justify-between mb-2">
+                            <h1 className="text-[20px] font-extrabold text-gray-900">Laporan Keuangan</h1>
+                            <Link href={route('investor.dashboard')} className="text-[13px] text-emerald-600 font-bold">
+                                Dashboard
+                            </Link>
+                        </div>
+                        <p className="text-[13px] text-gray-500 leading-snug">
+                            Analisis performa investasi dan unduh laporan.
+                        </p>
                     </div>
 
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                Profit & Loss Summary
-                            </h3>
-                            <div className="grid grid-cols-1 gap-4 sm:grid-cols-4">
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Total Invested
-                                    </dt>
-                                    <dd className="mt-1 text-2xl font-semibold text-gray-900">
-                                        {formatCurrency(profitLoss.summary.totalInvestedCents)}
-                                    </dd>
-                                </div>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Total Payouts
-                                    </dt>
-                                    <dd className="mt-1 text-2xl font-semibold text-gray-900">
-                                        {formatCurrency(profitLoss.summary.totalPayoutsCents)}
-                                    </dd>
-                                </div>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Net Return
-                                    </dt>
-                                    <dd
-                                        className={`mt-1 text-2xl font-semibold ${profitLoss.summary.netCents >= 0
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                            }`}
-                                    >
-                                        {formatCurrency(profitLoss.summary.netCents)}
-                                    </dd>
-                                </div>
-                                <div className="rounded-lg bg-gray-50 p-4">
-                                    <dt className="text-sm font-medium text-gray-500">
-                                        Overall ROI
-                                    </dt>
-                                    <dd
-                                        className={`mt-1 text-2xl font-semibold ${profitLoss.summary.overallRoiPercent >= 0
-                                            ? 'text-green-600'
-                                            : 'text-red-600'
-                                            }`}
-                                    >
-                                        {profitLoss.summary.overallRoiPercent.toFixed(2)}%
-                                    </dd>
-                                </div>
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Summary Cards */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                         <h2 className="text-[15px] font-bold text-gray-900 mb-4 flex items-center gap-2">
+                            <IconChart className="w-5 h-5 text-emerald-600" />
+                            Ringkasan Portofolio
+                         </h2>
+                        <div className="grid grid-cols-2 gap-3 mb-6">
+                            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p className="text-[11px] text-gray-500 font-medium mb-1 uppercase tracking-wide">Total Invested</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">
+                                    {formatRupiah(profitLoss.summary.totalInvestedCents)}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
+                                <p className="text-[11px] text-gray-500 font-medium mb-1 uppercase tracking-wide">Total Payouts</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">
+                                    {formatRupiah(profitLoss.summary.totalPayoutsCents)}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
+                                <p className="text-[11px] text-emerald-600 font-bold mb-1 uppercase tracking-wide">Net Return</p>
+                                <p className={`text-[15px] font-extrabold ${profitLoss.summary.netCents >= 0 ? 'text-emerald-700' : 'text-red-600'} truncate`}>
+                                    {formatRupiah(profitLoss.summary.netCents)}
+                                </p>
+                            </div>
+                            <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
+                                <p className="text-[11px] text-blue-600 font-bold mb-1 uppercase tracking-wide">Overall ROI</p>
+                                <p className={`text-[15px] font-extrabold ${profitLoss.summary.overallRoiPercent >= 0 ? 'text-blue-700' : 'text-red-600'} truncate`}>
+                                    {profitLoss.summary.overallRoiPercent.toFixed(2)}%
+                                </p>
                             </div>
                         </div>
-                    </div>
-                </div>
 
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                Filters
-                            </h3>
+                        {/* Actions */}
+                        <div className="flex gap-2">
+                            <button
+                                onClick={handlePdfRequest}
+                                disabled={pdfGenerating}
+                                className="flex-1 py-3 bg-emerald-600 text-white text-[13px] font-bold rounded-xl shadow-sm hover:bg-emerald-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
+                            >
+                                {pdfGenerating ? 'Generating...' : (
+                                    <>Download PDF</>
+                                )}
+                            </button>
+                            <button
+                                onClick={handleCsvExport}
+                                className="flex-1 py-3 bg-white border border-gray-200 text-gray-700 text-[13px] font-bold rounded-xl hover:bg-gray-50 transition-colors flex items-center justify-center gap-2"
+                            >
+                                Export CSV
+                            </button>
+                        </div>
+                    </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Filters */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <div className="bg-gray-50 p-4 rounded-xl border border-gray-100">
+                            <h3 className="text-[11px] font-bold text-gray-500 uppercase mb-3 tracking-wide">Filter Data Laporan</h3>
                             <ReportFilterForm filters={filters} filterOptions={filterOptions} />
                         </div>
                     </div>
-                </div>
 
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <div className="mb-4 flex items-center justify-between">
-                                <h3 className="text-lg font-medium text-gray-900">
-                                    Investment Details
-                                </h3>
-                                <div className="flex gap-2">
-                                    <button
-                                        onClick={handlePdfRequest}
-                                        disabled={pdfGenerating}
-                                        className="inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white hover:bg-indigo-700 disabled:opacity-50"
-                                    >
-                                        {pdfGenerating ? 'Generating...' : 'Download PDF'}
-                                    </button>
-                                    <button
-                                        onClick={handleCsvExport}
-                                        className="inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
-                                    >
-                                        Export CSV
-                                    </button>
-                                </div>
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Charts */}
+                    <div className="bg-white px-5 pt-5 pb-6 space-y-8">
+                        <div>
+                            <h3 className="text-[15px] font-bold text-gray-900 mb-3">Invested vs Payouts</h3>
+                            <div className="h-56 bg-white border border-gray-100 rounded-2xl p-2 shadow-sm">
+                                <PerformanceBarChart data={performance} height={210} />
                             </div>
-                            <ProfitLossTable rows={profitLoss.rows} summary={profitLoss.summary} />
                         </div>
-                    </div>
-                </div>
-
-                <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                    <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                        <div className="p-6">
-                            <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                Performance Analysis
-                            </h3>
-                            <div className="grid grid-cols-1 gap-6 lg:grid-cols-2">
-                                <div>
-                                    <h4 className="mb-2 text-sm font-medium text-gray-700">
-                                        Invested vs Payouts
-                                    </h4>
-                                    <PerformanceBarChart data={performance} height={300} />
-                                </div>
-                                <div>
-                                    <h4 className="mb-2 text-sm font-medium text-gray-700">
-                                        Cumulative Returns Trend
-                                    </h4>
-                                    <ReturnsTrendChart data={performance} height={300} />
-                                </div>
+                        <div>
+                            <h3 className="text-[15px] font-bold text-gray-900 mb-3">Cumulative Trend</h3>
+                            <div className="h-56 bg-white border border-gray-100 rounded-2xl p-2 shadow-sm">
+                                <ReturnsTrendChart data={performance} height={210} />
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {recentReports.length > 0 && (
-                    <div className="mx-auto max-w-7xl sm:px-6 lg:px-8">
-                        <div className="overflow-hidden bg-white shadow-sm sm:rounded-lg">
-                            <div className="p-6">
-                                <h3 className="mb-4 text-lg font-medium text-gray-900">
-                                    Recent Reports
-                                </h3>
-                                <div className="overflow-x-auto">
-                                    <table className="min-w-full divide-y divide-gray-200">
-                                        <thead className="bg-gray-50">
-                                            <tr>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    ID
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Status
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Created At
-                                                </th>
-                                                <th className="px-6 py-3 text-left text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Expires At
-                                                </th>
-                                                <th className="px-6 py-3 text-right text-xs font-medium uppercase tracking-wider text-gray-500">
-                                                    Actions
-                                                </th>
-                                            </tr>
-                                        </thead>
-                                        <tbody className="divide-y divide-gray-200 bg-white">
-                                            {recentReports.map((report) => (
-                                                <tr key={report.id}>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {report.id}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm">
-                                                        <span
-                                                            className={`inline-flex rounded-full px-2 text-xs font-semibold uppercase ${getReportStatusColor(report.status)}`}
-                                                        >
-                                                            {report.status}
-                                                        </span>
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {new Date(report.created_at).toLocaleString()}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-sm text-gray-900">
-                                                        {report.expires_at
-                                                            ? new Date(report.expires_at).toLocaleString()
-                                                            : '-'}
-                                                    </td>
-                                                    <td className="whitespace-nowrap px-6 py-4 text-right text-sm">
-                                                        {report.status === 'completed' && (
-                                                            <button
-                                                                onClick={() =>
-                                                                    handleDownloadReport(report.id)
-                                                                }
-                                                                className="text-indigo-600 hover:text-indigo-900"
-                                                            >
-                                                                Download
-                                                            </button>
-                                                        )}
-                                                    </td>
-                                                </tr>
-                                            ))}
-                                        </tbody>
-                                    </table>
+                    {/* Recent Reports */}
+                    {recentReports.length > 0 && (
+                        <>
+                            <div className="h-3 bg-gray-50" />
+                            <div className="bg-white px-5 pt-5 pb-6">
+                                <h3 className="text-[15px] font-bold text-gray-900 mb-4">Laporan Terakhir</h3>
+                                <div className="space-y-3">
+                                    {recentReports.map((report) => (
+                                        <div key={report.id} className="p-3 bg-white border border-gray-100 rounded-xl shadow-sm flex justify-between items-center">
+                                            <div>
+                                                <div className="flex items-center gap-2 mb-1">
+                                                    <span className="text-[13px] font-bold text-gray-900">Report #{report.id}</span>
+                                                    <span className={`px-1.5 py-0.5 rounded text-[9px] font-bold uppercase ${getReportStatusColor(report.status)}`}>
+                                                        {report.status}
+                                                    </span>
+                                                </div>
+                                                <p className="text-[10px] text-gray-400 font-medium">
+                                                    {new Date(report.created_at).toLocaleString()}
+                                                </p>
+                                            </div>
+                                            {report.status === 'completed' && (
+                                                <button
+                                                    onClick={() => handleDownloadReport(report.id)}
+                                                    className="px-3 py-1.5 bg-indigo-50 text-indigo-600 text-[11px] font-bold rounded-lg hover:bg-indigo-100 transition-colors border border-indigo-100"
+                                                >
+                                                    Download
+                                                </button>
+                                            )}
+                                        </div>
+                                    ))}
                                 </div>
                             </div>
+                        </>
+                    )}
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Detail Table (Card List) */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h3 className="text-[15px] font-bold text-gray-900 mb-4">Detail Investasi</h3>
+                        <div className="space-y-3">
+                            {profitLoss.rows.map((row) => (
+                                <div key={row.investmentId} className="p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-emerald-100 transition-colors">
+                                    <div className="flex justify-between items-start mb-3">
+                                        <div>
+                                            <h4 className="font-bold text-gray-900 text-[13px]">{row.treeIdentifier}</h4>
+                                            <p className="text-[11px] text-gray-500">{row.fruitType} - {row.variant}</p>
+                                            <p className="text-[10px] text-gray-400 mt-0.5">{row.farmName}</p>
+                                        </div>
+                                        <div className="text-right">
+                                            <p className={`font-bold text-[13px] ${row.netCents >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                                                {formatRupiah(row.netCents)}
+                                            </p>
+                                            <p className="text-[10px] text-gray-400 font-medium">Net Profit</p>
+                                        </div>
+                                    </div>
+                                    
+                                    <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-50">
+                                        <div>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase">Invested</p>
+                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.amountInvestedCents)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase">Payouts</p>
+                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.totalPayoutsCents)}</p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase">ROI</p>
+                                            <p className={`text-[11px] font-bold ${row.actualRoiPercent >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                                                {row.actualRoiPercent.toFixed(2)}%
+                                            </p>
+                                        </div>
+                                        <div>
+                                            <p className="text-[10px] text-gray-400 font-bold uppercase">Status</p>
+                                            <p className="text-[11px] font-semibold text-gray-700 capitalize">{row.status}</p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                            {profitLoss.rows.length === 0 && (
+                                <div className="text-center py-8">
+                                    <p className="text-[13px] text-gray-400 font-medium">Tidak ada data investasi untuk periode ini.</p>
+                                </div>
+                            )}
                         </div>
                     </div>
-                )}
+
+                </div>
+                <BottomNav />
             </div>
-        </AuthenticatedLayout>
+            <style>{`::-webkit-scrollbar { display: none; } * { -webkit-tap-highlight-color: transparent; }`}</style>
+        </AppShellLayout>
     );
 }

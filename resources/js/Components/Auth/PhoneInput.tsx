@@ -20,8 +20,7 @@ export default forwardRef<HTMLInputElement, PhoneInputProps>(
                 <div className="relative">
                     <PhoneInput
                         {...props}
-                        international
-                        countryCallingCodeEditable={false}
+                        international={false}
                         value={value}
                         onChange={onChange}
                         defaultCountry="MY"
