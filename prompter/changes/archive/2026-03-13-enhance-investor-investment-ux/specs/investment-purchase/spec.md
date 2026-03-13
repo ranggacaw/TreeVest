@@ -35,7 +35,7 @@ The system SHALL create and track investment records linking users to trees with
 
 ---
 
-### Requirement: Investment Quantity Validation
+### Requirement: Investment Amount Validation
 The system SHALL validate the requested tree quantity against tree-specific minimum and maximum investment limits before allowing purchase.
 
 #### Scenario: Quantity within derived tree limits accepted

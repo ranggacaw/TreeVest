@@ -29,65 +29,83 @@ Authenticated investors SHALL have access to a portfolio dashboard as their defa
 ---
 
 ### Requirement: Portfolio Summary Display
-The portfolio dashboard SHALL display a summary card showing total portfolio value, tree count, average ROI, and total payouts received.
+The portfolio dashboard SHALL display a prominent summary header card showing total invested value, current portfolio value, total gain/loss in both absolute and percentage terms, and total payouts received — modelled after Bibit's and Stockbit's portfolio summary header.
 
-#### Scenario: Portfolio summary card displayed
+#### Scenario: Portfolio summary header displayed with data
 - **WHEN** an investor views the portfolio dashboard with active investments
-- **THEN** the system displays a portfolio summary card with: total portfolio value (sum of all investment amounts in RM), total tree count (number of distinct trees invested in), average expected ROI (mean of all investments' expected ROI), total payouts received (sum of all completed payouts)
-- **AND** values are formatted as currency where applicable (RM format: "RM 12,345.67")
-- **AND** the card uses Tailwind CSS styling with shadow and responsive grid
+- **THEN** the system displays a full-width summary header card containing:
+  - Total Invested (sum of all active `investment.amount_cents`, formatted as currency)
+  - Current Value (total invested + total completed payouts received, formatted as currency)
+  - Total Gain/Loss (current value − total invested, formatted as currency with +/− prefix)
+  - Return Percentage ((gain/loss ÷ total invested) × 100, rounded to 2 decimal places)
+  - Total Payouts Received (sum of completed `Payout.net_amount_cents`)
+- **AND** the gain/loss amount and percentage are displayed in green if positive, red if negative, gray if zero
 
-#### Scenario: Portfolio summary for empty portfolio
+#### Scenario: Portfolio summary header for empty portfolio
 - **WHEN** an investor views the portfolio dashboard with zero investments
-- **THEN** the portfolio summary card displays: total portfolio value = RM 0.00, total tree count = 0, average ROI = 0%, total payouts = RM 0.00
+- **THEN** the summary header displays all values as zero (RM 0.00 / 0.00%)
+- **AND** an empty-state CTA is displayed below the header: "Start your portfolio — Browse Marketplace"
 
 ---
 
 ### Requirement: Investment List Display on Dashboard
-The portfolio dashboard SHALL display a list of the investor's investments with key details.
+The portfolio dashboard SHALL display a holdings list where each investment row shows tree details, quantity, current value, and per-investment gain/loss — modelled after Stockbit's portfolio holdings tab.
 
-#### Scenario: Investment cards displayed on dashboard
-- **WHEN** an investor views the portfolio dashboard with active investments
-- **THEN** the system displays a list of investment cards, each showing: farm featured image (or tree photo), tree identifier and fruit type/variant (e.g., "Tree-042 - Durian Musang King"), investment amount, purchase date, current tree growth stage badge, next scheduled harvest date (or "No harvest scheduled"), ROI progress indicator (actual vs. projected), "View Details" button
-- **AND** investment cards are displayed in a responsive grid (3 columns on desktop, 2 on tablet, 1 on mobile)
-- **AND** the system limits display to 12 investments with "View All" link if more exist
+#### Scenario: Holdings list displayed
+- **WHEN** an investor views the portfolio dashboard "Holdings" tab
+- **THEN** the system displays a scrollable list of investment rows, each showing:
+  - Tree thumbnail (farm featured image)
+  - Tree identifier and fruit type/variant (e.g., "Tree-042 — Durian Musang King")
+  - **Quantity** (number of trees, e.g., "3 trees")
+  - Amount invested (`quantity × price_cents` at purchase time, formatted)
+  - Total payouts received for this investment (sum of completed payout `net_amount_cents`)
+  - Gain/Loss (total payouts − amount invested, with +/− prefix, green/red colouring)
+  - Gain/Loss % ((gain/loss ÷ amount invested) × 100, 2 d.p.)
+  - Tree lifecycle stage badge
+  - "View Details" link to `/investments/{id}`
+- **AND** rows are ordered by `purchase_date DESC` by default
+- **AND** a sort control allows sorting by: Date (default), Gain/Loss %, Investment Amount
 
-#### Scenario: Investment card links to investment detail page
-- **WHEN** an investor clicks the "View Details" button on an investment card
-- **THEN** the system navigates to `/investments/{investment_id}`
+#### Scenario: Performance sparkline per holding
+- **WHEN** a holding row is rendered and the investment has ≥ 2 completed payouts
+- **THEN** a mini sparkline chart is rendered on the row showing cumulative payout value over time
+- **AND** the sparkline uses green colour if total payouts > 0, gray if no payouts yet
+- **AND** the sparkline is rendered using a lightweight Recharts `LineChart` (no axes, no labels, 60×24 px)
 
-#### Scenario: Empty portfolio state
-- **WHEN** an investor views the portfolio dashboard with zero investments
-- **THEN** the system displays an empty state component with: message "You haven't invested in any trees yet", subtitle "Start building your agricultural portfolio today", "Browse Marketplace" button linking to `/trees`
-- **AND** the empty state is centered with illustration or icon
+#### Scenario: Holdings list empty state
+- **WHEN** an investor has no investments
+- **THEN** the holdings list displays: "No holdings yet. Browse available trees to start investing."
+- **AND** a "Browse Marketplace" button is shown linking to `/trees`
+
+#### Scenario: Holdings list pagination
+- **WHEN** an investor has more than 20 holdings
+- **THEN** the holdings list paginates at 20 items per page
+- **AND** pagination controls are displayed at the bottom of the list
+
+---
 
 ---
 
 ### Requirement: Portfolio Diversification Visualization
-The portfolio dashboard SHALL display diversification charts showing investment allocation by fruit type, farm, and risk level.
+The portfolio dashboard SHALL display a donut chart showing portfolio allocation by fruit type, farm, and risk level — modelled after Bibit's allocation chart.
 
-#### Scenario: Diversification chart by fruit type
+#### Scenario: Allocation donut chart displayed
 - **WHEN** an investor views the portfolio dashboard with investments in multiple fruit types
-- **THEN** the system displays a pie chart showing investment value breakdown by fruit type
-- **AND** each segment is labeled with fruit type name and percentage (e.g., "Durian - 45%")
-- **AND** a legend displays all fruit types with corresponding values (e.g., "Durian: RM 15,000 (45%)")
-- **AND** the chart is rendered using Recharts `PieChart` component
+- **THEN** the system displays a donut chart (Recharts `PieChart` with `innerRadius`) showing allocation by fruit type
+- **AND** each segment is colour-coded by fruit type
+- **AND** the chart centre displays the total portfolio value
+- **AND** a legend shows each fruit type with value (formatted) and percentage
 
-#### Scenario: Diversification chart by farm
-- **WHEN** an investor selects the "By Farm" tab on the diversification chart
-- **THEN** the system displays a pie chart showing investment value breakdown by farm
-- **AND** each segment is labeled with farm name and percentage
+#### Scenario: Allocation chart tab switching
+- **WHEN** an investor uses the chart tab control to switch between "By Fruit Type", "By Farm", and "By Risk"
+- **THEN** the donut chart updates to show the selected grouping
+- **AND** the legend updates accordingly
+- **AND** the transition is animated (Recharts built-in animation)
 
-#### Scenario: Diversification chart by risk level
-- **WHEN** an investor selects the "By Risk" tab on the diversification chart
-- **THEN** the system displays a pie chart showing investment value breakdown by risk rating
-- **AND** the chart uses color coding: green for low risk, yellow for medium, red for high
-- **AND** the legend shows risk levels with values and percentages
-
-#### Scenario: Single-category diversification
-- **WHEN** an investor has investments in only one fruit type (or farm, or risk level)
-- **THEN** the system displays a pie chart with a single segment showing 100%
-- **AND** the legend displays the single category with full value
+#### Scenario: Single-category allocation
+- **WHEN** an investor has investments in only one fruit type
+- **THEN** the donut chart shows a single full-circle segment at 100%
+- **AND** the legend shows the single category
 
 ---
 
@@ -144,7 +162,7 @@ Investors SHALL be able to view comprehensive details for a single investment, i
 - **WHEN** an authenticated investor navigates to `/investments/{investment_id}` for an investment they own
 - **THEN** the system displays the investment detail page
 - **AND** breadcrumb navigation shows: "Portfolio > [Tree Name] > Investment Details"
-- **AND** the page displays: investment summary card (purchase date, amount, current value, status), tree details section (tree profile with all attributes), farm profile summary with link to `/farms/{farm_id}`, harvest history table (past harvests with yields and payouts), upcoming harvest schedule, payout history table (dates, amounts, methods), "View Full Tree Details" button linking to `/trees/{tree_id}`, "Back to Portfolio" link
+- **AND** the page displays: investment summary card (purchase date, **quantity (trees)**, total amount invested, current value, status), tree details section, farm profile summary with link to `/farms/{farm_id}`, harvest history table, upcoming harvest schedule, payout history table, "View Full Tree Details" button, "Back to Portfolio" link
 
 #### Scenario: Investor attempts to view another investor's investment
 - **WHEN** an authenticated investor navigates to `/investments/{investment_id}` for an investment they do not own
@@ -167,7 +185,7 @@ The individual investment detail page SHALL display a table of all past harvests
 
 #### Scenario: Harvest history table displayed
 - **WHEN** an investor views an investment detail page for a tree with completed harvests
-- **THEN** the system displays a harvest history table with columns: harvest date, status (e.g., "Completed"), actual yield (kg), quality grade, payout amount (RM), payout status
+- **THEN** the system displays a harvest history table with columns: harvest date, status (e.g., "Completed"), actual yield (kg), quality grade, payout amount (formatted currency), payout status
 - **AND** harvests are ordered by date descending (most recent first)
 - **AND** payout amounts link to corresponding payout detail (if available)
 
@@ -182,7 +200,7 @@ The individual investment detail page SHALL display a table of all payouts recei
 
 #### Scenario: Payout history table displayed
 - **WHEN** an investor views an investment detail page with completed payouts
-- **THEN** the system displays a payout history table with columns: payout date, amount (RM), payment method (bank transfer / digital wallet / reinvestment), status (completed / pending / failed), transaction reference
+- **THEN** the system displays a payout history table with columns: payout date, amount (formatted), payment method, status badge, transaction reference
 - **AND** payouts are ordered by date descending (most recent first)
 
 #### Scenario: No payout history
@@ -197,9 +215,9 @@ Investors SHALL be able to manually refresh portfolio data to see the latest inf
 #### Scenario: Investor clicks refresh button
 - **WHEN** an investor clicks the "Refresh Portfolio" button on the dashboard
 - **THEN** the system reloads portfolio data from the server
-- **AND** the system updates all dashboard components with the latest data
-- **AND** the system displays a brief loading indicator during refresh
-- **AND** the system displays a success toast: "Portfolio data refreshed"
+- **AND** updates all dashboard components with the latest data
+- **AND** displays a brief loading indicator during refresh
+- **AND** displays a success toast: "Portfolio data refreshed"
 
 ---
 
@@ -213,10 +231,9 @@ The portfolio dashboard data queries SHALL be optimized to perform well with por
 - **AND** database indexes exist on foreign keys: `investments.user_id`, `investments.tree_id`
 
 #### Scenario: Large portfolio uses pagination
-- **WHEN** an investor has more than 12 investments
-- **THEN** the dashboard displays only the first 12 investments
-- **AND** the system displays a "View All Investments" link
-- **AND** the full investment list page implements pagination (24 per page)
+- **WHEN** an investor has more than 20 investments in the holdings list
+- **THEN** the holdings list paginates at 20 items per page
+- **AND** the system displays pagination controls
 
 ---
 
@@ -225,9 +242,10 @@ The portfolio dashboard SHALL be fully responsive and usable on mobile devices.
 
 #### Scenario: Portfolio dashboard on mobile device
 - **WHEN** an investor accesses the portfolio dashboard on a device with screen width < 768px
-- **THEN** the system displays a single-column layout for portfolio summary and charts
-- **AND** investment cards display in a single column
+- **THEN** the system displays a single-column layout for the summary header and charts
+- **AND** investment holding rows stack vertically
 - **AND** charts are scaled appropriately for mobile viewport
+- **AND** tabs are horizontally scrollable if needed
 - **AND** navigation and buttons are optimized for touch interaction
 
 ---
@@ -237,31 +255,26 @@ The system SHALL calculate portfolio metrics using the following business rules.
 
 #### Scenario: Total portfolio value calculation
 - **WHEN** the system calculates total portfolio value
-- **THEN** the value equals the sum of all investment amounts (in cents, converted to RM for display)
-- **AND** only investments with status `active` are included
+- **THEN** the value equals the sum of `investment.amount_cents` for all investments with status `active`
 - **AND** investments with status `sold`, `cancelled`, or `matured` are excluded
 
-#### Scenario: Average ROI calculation
-- **WHEN** the system calculates average expected ROI
-- **THEN** the value equals the arithmetic mean of all active investments' `expected_roi_percent` values
-- **AND** the result is rounded to 2 decimal places
+#### Scenario: Current portfolio value calculation
+- **WHEN** the system calculates current portfolio value
+- **THEN** current value = total invested + total completed payouts received (across all active investments)
 
-#### Scenario: Projected returns calculation
-- **WHEN** the system calculates projected returns for an investment
-- **THEN** projected return = investment amount × (expected ROI / 100)
-- **AND** the calculation accounts for the harvest cycle frequency (annual, biannual, seasonal)
-- **AND** partial years prorate the expected return proportionally
+#### Scenario: Total gain/loss calculation
+- **WHEN** the system calculates total gain/loss
+- **THEN** gain/loss = current value − total invested
+- **AND** percentage = (gain/loss ÷ total invested) × 100, rounded to 2 decimal places
+- **AND** if total invested = 0, percentage = 0
 
-#### Scenario: Actual returns calculation
-- **WHEN** the system calculates actual returns for an investment
-- **THEN** actual return = sum of all completed payouts linked to the investment
-- **AND** only payouts with status `completed` are included
+#### Scenario: Actual returns per investment calculation
+- **WHEN** the system calculates actual returns for an individual investment
+- **THEN** actual return = sum of `net_amount_cents` from all `Payout` records with `status = completed` and `investment_id = investment.id`
 
-#### Scenario: Performance difference calculation
-- **WHEN** the system calculates performance difference
-- **THEN** difference = actual return - projected return
-- **AND** percentage = (difference / projected return) × 100
-- **AND** positive values indicate outperformance, negative values indicate underperformance
+#### Scenario: Pending payout value shown in portfolio summary
+- **WHEN** an investor has payouts with `status = pending` or `status = processing`
+- **THEN** the portfolio summary includes a "Pending Payouts" line showing total `net_amount_cents` of all non-completed, non-failed payouts
 
 ---
 
@@ -269,53 +282,53 @@ The system SHALL calculate portfolio metrics using the following business rules.
 The portfolio dashboard SHALL display visual status indicators for each investment's tree growth stage.
 
 #### Scenario: Tree growth stage badge displayed
-- **WHEN** an investment card is displayed on the portfolio dashboard
+- **WHEN** an investment row is displayed on the holdings list
 - **THEN** the system displays a badge indicating the tree's current lifecycle stage
 - **AND** badge colors: `seedling` (gray), `growing` (yellow), `productive` (green), `declining` (orange), `retired` (red)
-- **AND** badge text matches the tree's `lifecycle_stage` value
 
 #### Scenario: Investment status badge displayed
-- **WHEN** an investment card is displayed on the portfolio dashboard
-- **THEN** the system displays a badge indicating the investment's status
+- **WHEN** an investment row is displayed on the holdings list
+- **THEN** the system displays a badge indicating the investment's current status
 - **AND** badge colors: `active` (green), `matured` (blue), `sold` (purple), `cancelled` (red)
 
 ---
 
 ### Requirement: SEO and Metadata for Portfolio Pages
-Portfolio pages SHALL include appropriate meta tags for search engine optimization and social sharing.
+Portfolio pages SHALL include appropriate meta tags.
 
 #### Scenario: Portfolio dashboard meta tags
-- **WHEN** a search engine crawler or social media bot accesses the portfolio dashboard
-- **THEN** the system renders meta tags: title="My Portfolio | Treevest", description="Track your fruit tree investments, monitor harvest schedules, and view portfolio performance.", robots="noindex, nofollow" (private page)
+- **WHEN** a search engine crawler accesses the portfolio dashboard
+- **THEN** the system renders meta tags: `title="My Portfolio | Treevest"`, `description="Track your fruit tree investments, monitor harvest schedules, and view portfolio performance."`, `robots="noindex, nofollow"`
 
 #### Scenario: Investment detail page meta tags
 - **WHEN** a crawler accesses an investment detail page
-- **THEN** the system renders meta tags: title="Investment in [Tree Name] | Treevest", description="View details of your investment in [Fruit Type] [Variant] tree on [Farm Name].", robots="noindex, nofollow" (private page)
+- **THEN** the system renders meta tags: `title="Investment in [Tree Name] | Treevest"`, `robots="noindex, nofollow"`
+
+---
 
 ### Requirement: Harvest Calendar Data from Harvest Records
-The portfolio dashboard harvest calendar SHALL source upcoming harvest data from the `harvests` table (records with `status = scheduled` or `status = in_progress`) for trees the investor has active investments in.
+The portfolio dashboard harvest calendar SHALL source upcoming harvest data from the `harvests` table.
 
 #### Scenario: Harvest calendar displays upcoming scheduled harvests
 - **WHEN** an investor views the portfolio dashboard
 - **THEN** the harvest calendar queries `Harvest` records where `status IN (scheduled, in_progress)` and `tree_id IN` (the investor's active investment tree IDs)
-- **AND** displays up to 10 upcoming harvest events ordered by `scheduled_date` ASC
+- **AND** displays up to 10 upcoming harvest events ordered by `scheduled_date ASC`
 - **AND** each event shows: scheduled date, farm name, fruit type, variant, estimated yield (if set), status badge
 
 #### Scenario: In-progress harvest shown distinctly
 - **WHEN** a harvest has `status = in_progress`
 - **THEN** the calendar entry shows an "In Progress" badge instead of "Scheduled"
-- **AND** the estimated yield is shown if available
 
 ---
 
 ### Requirement: Payout History Sourced from Payouts Table
-The investment detail page payout history table SHALL source data from the `payouts` table, displaying all payouts linked to the investment regardless of status.
+The investment detail page payout history table SHALL source data from the `payouts` table.
 
 #### Scenario: Payout history table shows all payout records
 - **WHEN** an investor views an investment detail page for an investment with payout records
 - **THEN** the payout history table queries `Payout` records where `investment_id = investment.id`
-- **AND** each row shows: harvest date, gross amount (RM), platform fee (RM), net amount (RM), status, completed date (if `status = completed`), transaction reference (if available)
-- **AND** rows are ordered by `created_at` DESC
+- **AND** each row shows: harvest date, gross amount, platform fee, net amount, status, completed date (if `status = completed`), transaction reference
+- **AND** rows are ordered by `created_at DESC`
 
 #### Scenario: Pending payouts shown with "Processing" indicator
 - **WHEN** a payout has `status = pending` or `status = processing`
@@ -325,15 +338,49 @@ The investment detail page payout history table SHALL source data from the `payo
 ---
 
 ### Requirement: Actual Returns Calculation from Completed Payouts
-The portfolio dashboard performance metrics SHALL calculate actual returns by summing completed payouts for each investment.
+The portfolio dashboard performance metrics SHALL calculate actual returns by summing completed payouts.
 
 #### Scenario: Actual returns shown from completed payouts
-- **WHEN** an investor views the performance metrics chart
+- **WHEN** an investor views the holdings list
 - **THEN** the system calculates actual returns for each investment as: `SUM(net_amount_cents) WHERE investment_id = X AND status = completed`
-- **AND** only payouts with `status = completed` are included
-- **AND** pending or processing payouts are shown in a separate "Pending Payouts" summary (total pending payout value)
+- **AND** pending or processing payouts are shown in a separate "Pending Payouts" summary
 
-#### Scenario: Pending payout value shown in portfolio summary
-- **WHEN** an investor has payouts with `status = pending` or `status = processing`
-- **THEN** the portfolio summary card includes a "Pending Payouts" line showing the total `net_amount_cents` of all non-completed, non-failed payouts
+---
+
+### Requirement: Portfolio Tabs Navigation
+The portfolio dashboard SHALL be organized into tabs — Holdings, Watchlist, Transactions — for clear information hierarchy.
+
+#### Scenario: Portfolio page renders with tabs
+- **WHEN** an investor views the portfolio dashboard
+- **THEN** the page displays three tabs: "Holdings", "Watchlist", "Transactions"
+- **AND** the "Holdings" tab is active by default
+- **AND** the active tab is visually indicated (underline or filled style)
+- **AND** switching tabs does not trigger a full page reload (client-side tab state)
+
+#### Scenario: Watchlist tab shows saved items
+- **WHEN** an investor clicks the "Watchlist" tab
+- **THEN** the system displays the investor's saved wishlist items (trees, farms, fruit crops)
+- **AND** the wishlist content matches the investor's `/investor/wishlist` data, fetched as part of the portfolio Inertia props
+- **AND** each item shows: entity name, price or key metric, "Invest Now" or "View" action, "Remove from Watchlist" icon
+
+---
+
+### Requirement: Portfolio Transaction History Tab
+The portfolio dashboard SHALL include a "Transactions" tab that displays a complete chronological record of the investor's investment-related financial activity.
+
+#### Scenario: Transactions tab displays full history
+- **WHEN** an investor clicks the "Transactions" tab on the portfolio page
+- **THEN** the system queries all `Transaction` records where `user_id = authenticated investor's id`
+- **AND** displays rows ordered by `created_at DESC`
+- **AND** each row shows: date, transaction type label, entity name (tree identifier + fruit type), direction arrow and amount (formatted), status badge
+
+#### Scenario: Transactions tab filter by type
+- **WHEN** an investor selects a filter ("Purchases", "Payouts", "Top-Ups", or "All")
+- **THEN** the system filters the transaction list to the selected type
+- **AND** the row count updates accordingly
+
+#### Scenario: Transactions tab pagination
+- **WHEN** an investor has more than 25 transactions
+- **THEN** the transactions list paginates at 25 per page
+- **AND** pagination controls are displayed at the bottom
 

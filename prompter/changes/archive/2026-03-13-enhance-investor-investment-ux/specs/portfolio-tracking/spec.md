@@ -25,7 +25,7 @@ Authenticated investors SHALL have access to a portfolio dashboard as their defa
 
 ---
 
-### Requirement: Portfolio Summary Header
+### Requirement: Portfolio Summary Display
 The portfolio dashboard SHALL display a prominent summary header card showing total invested value, current portfolio value, total gain/loss in both absolute and percentage terms, and total payouts received — modelled after Bibit's and Stockbit's portfolio summary header.
 
 #### Scenario: Portfolio summary header displayed with data
@@ -45,7 +45,7 @@ The portfolio dashboard SHALL display a prominent summary header card showing to
 
 ---
 
-### Requirement: Holdings List with P&L Per Investment
+### Requirement: Investment List Display on Dashboard
 The portfolio dashboard SHALL display a holdings list where each investment row shows tree details, quantity, current value, and per-investment gain/loss — modelled after Stockbit's portfolio holdings tab.
 
 #### Scenario: Holdings list displayed
@@ -81,33 +81,9 @@ The portfolio dashboard SHALL display a holdings list where each investment row 
 
 ---
 
-### Requirement: Portfolio Tabs Navigation
-The portfolio dashboard SHALL be organized into tabs — Holdings, Watchlist, Transactions — for clear information hierarchy.
-
-#### Scenario: Portfolio page renders with tabs
-- **WHEN** an investor views the portfolio dashboard
-- **THEN** the page displays three tabs: "Holdings", "Watchlist", "Transactions"
-- **AND** the "Holdings" tab is active by default
-- **AND** the active tab is visually indicated (underline or filled style)
-- **AND** switching tabs does not trigger a full page reload (client-side tab state)
-
-#### Scenario: Watchlist tab shows saved items
-- **WHEN** an investor clicks the "Watchlist" tab
-- **THEN** the system displays the investor's saved wishlist items (trees, farms, fruit crops)
-- **AND** the wishlist content matches the investor's `/investor/wishlist` data, fetched as part of the portfolio Inertia props
-- **AND** each item shows: entity name, price or key metric, "Invest Now" or "View" action, "Remove from Watchlist" icon
-
-#### Scenario: Transactions tab shows full transaction history
-- **WHEN** an investor clicks the "Transactions" tab
-- **THEN** the system displays a chronological list of all investment-related transactions
-- **AND** each transaction row shows: date, type (Investment Purchase / Top-Up / Payout / Refund), tree/entity name, amount (formatted currency with direction arrow), status badge
-- **AND** transactions are ordered by `created_at DESC`
-- **AND** pagination is applied at 25 transactions per page
-- **AND** a filter control allows filtering by: All, Purchases, Payouts, Top-Ups
-
 ---
 
-### Requirement: Asset Allocation Donut Chart
+### Requirement: Portfolio Diversification Visualization
 The portfolio dashboard SHALL display a donut chart showing portfolio allocation by fruit type, farm, and risk level — modelled after Bibit's allocation chart.
 
 #### Scenario: Allocation donut chart displayed
@@ -343,6 +319,24 @@ The portfolio dashboard performance metrics SHALL calculate actual returns by su
 ---
 
 ## ADDED Requirements
+
+### Requirement: Portfolio Tabs Navigation
+The portfolio dashboard SHALL be organized into tabs — Holdings, Watchlist, Transactions — for clear information hierarchy.
+
+#### Scenario: Portfolio page renders with tabs
+- **WHEN** an investor views the portfolio dashboard
+- **THEN** the page displays three tabs: "Holdings", "Watchlist", "Transactions"
+- **AND** the "Holdings" tab is active by default
+- **AND** the active tab is visually indicated (underline or filled style)
+- **AND** switching tabs does not trigger a full page reload (client-side tab state)
+
+#### Scenario: Watchlist tab shows saved items
+- **WHEN** an investor clicks the "Watchlist" tab
+- **THEN** the system displays the investor's saved wishlist items (trees, farms, fruit crops)
+- **AND** the wishlist content matches the investor's `/investor/wishlist` data, fetched as part of the portfolio Inertia props
+- **AND** each item shows: entity name, price or key metric, "Invest Now" or "View" action, "Remove from Watchlist" icon
+
+---
 
 ### Requirement: Portfolio Transaction History Tab
 The portfolio dashboard SHALL include a "Transactions" tab that displays a complete chronological record of the investor's investment-related financial activity.

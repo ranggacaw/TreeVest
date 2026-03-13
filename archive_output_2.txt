@@ -1,0 +1,21 @@
+
+Proposal warnings in proposal.md (non-blocking):
+  ⚠ Consider splitting changes with more than 10 deltas
+Task status: No tasks
+
+Specs to update:
+  investment-purchase: update
+  investor-wishlist: create
+  portfolio-tracking: update
+Applying changes to prompter/specs/investment-purchase/spec.md:
+  + 1 added
+  ~ 12 modified
+Applying changes to prompter/specs/investor-wishlist/spec.md:
+  + 7 added
+Applying changes to prompter/specs/portfolio-tracking/spec.md:
+  + 2 added
+  ~ 17 modified
+Totals: + 10, ~ 29, - 0, → 0
+Specs updated successfully.
+
+✖ Error: EPERM: operation not permitted, rename 'C:\laragon\www\treevest\prompter\changes\enhance-investor-investment-ux' -> 'C:\laragon\www\treevest\prompter\changes\archive\2026-03-13-enhance-investor-investment-ux'

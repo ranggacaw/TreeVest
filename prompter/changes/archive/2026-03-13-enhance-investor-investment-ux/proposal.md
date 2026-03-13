@@ -8,11 +8,18 @@ This change introduces three related investor-facing improvements that collectiv
 2. **Quantity-Based Investment Purchases** — The investment purchase flow is refactored so that investors select a **number of trees** (integer quantity) instead of entering a monetary amount. The total cost is derived as `quantity × tree.price_cents`.
 3. **Portfolio Redesign (Stockbit/Bibit-inspired)** — The portfolio dashboard is significantly enhanced: a total-return summary header, a holdings list with per-investment P&L and performance sparklines, a three-tab layout (Holdings, Watchlist, Transactions), an asset allocation donut chart, and a full transaction history tab.
 
-## Motivation
+## Why
 
 - **Wishlist:** Investors browsing the marketplace need a way to track trees or farms they are interested in without immediately committing to a purchase. This reduces decision friction and drives return visits.
 - **Quantity-based purchases:** The current monetary-amount input is unintuitive for a per-tree investment model. Asking "how many trees?" is far clearer and aligns with the core business concept of trees as individual investable units.
 - **Portfolio redesign:** The current `portfolio-tracking` spec describes a functional but basic dashboard. Users familiar with Stockbit (holdings list with P&L per stock) or Bibit (allocation donut chart, transaction history) expect a richer portfolio view. Adopting these patterns improves clarity and investor confidence.
+
+## What Changes
+
+1. **Specs:** Added `investor-wishlist`, modified `investment-purchase` and `portfolio-tracking`.
+2. **Database:** Added `quantity` column to `investments` table; added `wishlist_items` polymorphic table.
+3. **Logic:** Refactored `InvestmentService` to use quantity for cost calculation; implemented wishlist toggle and notification triggers.
+4. **UI:** Redesigned portfolio with tabs and charts; updated purchase wizard for quantity selection.
 
 ## Affected Specs
 

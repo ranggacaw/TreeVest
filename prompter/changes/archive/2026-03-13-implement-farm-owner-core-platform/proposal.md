@@ -4,20 +4,21 @@
 
 This proposal introduces the **core farm-owner-side investment platform mechanics** — the foundational layer that transforms Treevest from a basic farm listing tool into a complete agricultural investment engine. It covers 10 tightly-coupled capabilities that must be delivered together to enable the full investment lifecycle.
 
-## Motivation
+## Why
 
-The current specs define farms, trees, harvest scheduling, payouts, and agrotourism events at a high level, but are missing:
+This proposal introduces core farm-owner investment mechanics:
+1. Spatial tree organisation (Warehouse → Rack → Lot → Tree).
+2. Lot-based investment model.
+3. Monthly time-gated dynamic pricing.
+4. Investment cycle restrictions.
+5. Progress → Harvest → Selling lifecycle.
+6. Revenue-based profit sharing (70/30 + 10% fee).
+7. In-platform wallet system.
+8. Enhanced agrotourism visit registration.
 
-1. **Spatial tree organisation** — no Warehouse → Rack → Lot → Tree hierarchy exists
-2. **Lot-based investment model** — investments are currently per-tree; the platform needs a LOT package system
-3. **Monthly time-gated pricing** — dynamic price escalation as harvest approaches is unspecified
-4. **Investment cycle restrictions** — the concept of a "last investment month" cutoff is absent
-5. **Harvest + Selling status workflow** — the Progress → Harvest → Selling three-stage lifecycle is missing from current specs
-6. **Revenue-based profit sharing** — today's `profit-calculation` spec covers yield × market price; this adds selling revenue input + split formula (70/30 + 10% platform fee)
-7. **Wallet system** — there is no in-platform wallet; payouts currently go directly to bank accounts via EPIC-010
-8. **Agrotourism farm visit registration** — the existing `agrotourism-events` spec covers creation/cancellation; investor registration with online/offline modes and participant counts is partially specified but the data capture specified here (number of participants, offline pending flow) needs to be formalised
+These features enable the full investment lifecycle and platform revenue model.
 
-## Scope
+## What Changes
 
 | # | Capability | New Spec | Modifies Existing Spec |
 |---|-----------|----------|----------------------|
@@ -127,4 +128,4 @@ The existing spec already covers online/offline registration types and `status =
 ---
 
 *Proposal prepared: 2026-03-13*
-*Status: AWAITING REVIEW*
+*Status: APPROVED*
