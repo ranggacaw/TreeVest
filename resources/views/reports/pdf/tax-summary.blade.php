@@ -122,18 +122,18 @@
                 <tr>
                     <td>{{ $row['date'] }}</td>
                     <td>{{ $row['farmName'] }}</td>
-                    <td>{{ number_format($row['grossAmountCents'] / 100, 2) }}</td>
-                    <td>{{ number_format($row['platformFeeCents'] / 100, 2) }}</td>
-                    <td>{{ number_format($row['netAmountCents'] / 100, 2) }}</td>
+                    <td>{{ number_format($row['grossAmountIdr'] / 100, 2) }}</td>
+                    <td>{{ number_format($row['platformFeeIdr'] / 100, 2) }}</td>
+                    <td>{{ number_format($row['netAmountIdr'] / 100, 2) }}</td>
                 </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2"><strong>Total Income</strong></td>
-                <td>{{ number_format(array_sum(array_column($data['taxSummary']['income']['rows'], 'grossAmountCents')) / 100, 2) }}
+                <td>{{ number_format(array_sum(array_column($data['taxSummary']['income']['rows'], 'grossAmountIdr')) / 100, 2) }}
                 </td>
-                <td>{{ number_format(array_sum(array_column($data['taxSummary']['income']['rows'], 'platformFeeCents')) / 100, 2) }}
+                <td>{{ number_format(array_sum(array_column($data['taxSummary']['income']['rows'], 'platformFeeIdr')) / 100, 2) }}
                 </td>
-                <td>{{ number_format($data['taxSummary']['income']['totalCents'] / 100, 2) }}</td>
+                <td>{{ number_format($data['taxSummary']['income']['totalIdr'] / 100, 2) }}</td>
             </tr>
         </tbody>
     </table>
@@ -152,12 +152,12 @@
                 <tr>
                     <td>{{ $row['date'] }}</td>
                     <td>{{ $row['farmName'] }}</td>
-                    <td>{{ number_format($row['amountCents'] / 100, 2) }}</td>
+                    <td>{{ number_format($row['amountIdr'] / 100, 2) }}</td>
                 </tr>
             @endforeach
             <tr class="total-row">
                 <td colspan="2"><strong>Total Investments</strong></td>
-                <td>{{ number_format($data['taxSummary']['investments']['totalCents'] / 100, 2) }}</td>
+                <td>{{ number_format($data['taxSummary']['investments']['totalIdr'] / 100, 2) }}</td>
             </tr>
         </tbody>
     </table>
@@ -166,16 +166,16 @@
         <h2>Summary</h2>
         <div class="summary-row">
             <span class="summary-label">Total Income (Payouts):</span>
-            <span>Rp {{ number_format($data['taxSummary']['summary']['totalIncomeCents'] / 100, 2) }}</span>
+            <span>Rp {{ number_format($data['taxSummary']['summary']['totalIncomeIdr'] / 100, 2) }}</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Total Investments:</span>
-            <span>Rp {{ number_format($data['taxSummary']['summary']['totalInvestedCents'] / 100, 2) }}</span>
+            <span>Rp {{ number_format($data['taxSummary']['summary']['totalInvestedIdr'] / 100, 2) }}</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Net:</span>
-            <span class="{{ $data['taxSummary']['summary']['netCents'] >= 0 ? 'positive' : 'negative' }}">
-                Rp {{ number_format($data['taxSummary']['summary']['netCents'] / 100, 2) }}
+            <span class="{{ $data['taxSummary']['summary']['netIdr'] >= 0 ? 'positive' : 'negative' }}">
+                Rp {{ number_format($data['taxSummary']['summary']['netIdr'] / 100, 2) }}
             </span>
         </div>
     </div>

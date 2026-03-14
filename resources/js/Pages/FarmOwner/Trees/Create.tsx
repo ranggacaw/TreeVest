@@ -21,8 +21,8 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
         age_years: 0,
         productive_lifespan_years: 10,
         risk_rating: 'medium',
-        min_investment_cents: 500000,
-        max_investment_cents: 50000000,
+        min_investment_idr: 500000,
+        max_investment_idr: 50000000,
         status: 'growing',
         pricing_config: {
             base_price: 100000,
@@ -338,40 +338,40 @@ export default function Create({ auth, crops }: PageProps<{ crops: any[] }>) {
 
                                 <div className="grid grid-cols-2 gap-4">
                                     <div>
-                                        <InputLabel htmlFor="min_investment_cents" value="Min Investment (IDR)" />
+                                        <InputLabel htmlFor="min_investment_idr" value="Min Investment (IDR)" />
                                         <TextInput
-                                            id="min_investment_cents"
+                                            id="min_investment_idr"
                                             type="text"
                                             className="mt-1 block w-full"
-                                            value={data.min_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.min_investment_cents)}
+                                            value={data.min_investment_idr === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.min_investment_idr)}
                                             onChange={e => {
                                                 const val = e.target.value.replace(/\D/g, '');
-                                                setData('min_investment_cents', parseInt(val) || 0);
+                                                setData('min_investment_idr', parseInt(val) || 0);
                                             }}
                                             required
                                         />
                                         <p className="mt-1 text-xs text-gray-500">
-                                            {formatRupiah(data.min_investment_cents)}
+                                            {formatRupiah(data.min_investment_idr)}
                                         </p>
-                                        <InputError message={errors.min_investment_cents} className="mt-2" />
+                                        <InputError message={errors.min_investment_idr} className="mt-2" />
                                     </div>
                                     <div>
-                                        <InputLabel htmlFor="max_investment_cents" value="Max Investment (IDR)" />
+                                        <InputLabel htmlFor="max_investment_idr" value="Max Investment (IDR)" />
                                         <TextInput
-                                            id="max_investment_cents"
+                                            id="max_investment_idr"
                                             type="text"
                                             className="mt-1 block w-full"
-                                            value={data.max_investment_cents === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.max_investment_cents)}
+                                            value={data.max_investment_idr === 0 ? '' : new Intl.NumberFormat('id-ID').format(data.max_investment_idr)}
                                             onChange={e => {
                                                 const val = e.target.value.replace(/\D/g, '');
-                                                setData('max_investment_cents', parseInt(val) || 0);
+                                                setData('max_investment_idr', parseInt(val) || 0);
                                             }}
                                             required
                                         />
                                         <p className="mt-1 text-xs text-gray-500">
-                                            {formatRupiah(data.max_investment_cents)}
+                                            {formatRupiah(data.max_investment_idr)}
                                         </p>
-                                        <InputError message={errors.max_investment_cents} className="mt-2" />
+                                        <InputError message={errors.max_investment_idr} className="mt-2" />
                                     </div>
                                 </div>
 

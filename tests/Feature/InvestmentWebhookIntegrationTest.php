@@ -41,15 +41,15 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // Step 2: Initiate investment via HTTP
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -63,7 +63,7 @@ class InvestmentWebhookIntegrationTest extends TestCase
 
         $this->assertNotNull($investment);
         $this->assertEquals(InvestmentStatus::PendingPayment, $investment->status);
-        $this->assertEquals(50000, $investment->amount_cents);
+        $this->assertEquals(50000, $investment->amount_idr);
 
         // Verify transaction created
         $this->assertNotNull($investment->transaction_id);
@@ -114,15 +114,15 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // Step 2: Initiate investment
         $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -165,15 +165,15 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // Create investment
         $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -224,14 +224,14 @@ class InvestmentWebhookIntegrationTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);

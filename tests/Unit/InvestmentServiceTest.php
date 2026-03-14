@@ -52,8 +52,8 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // quantity=5 → amount=50000 cents (5 × 10000), within min_trees=1 and max_trees=10
@@ -71,8 +71,8 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $result = $this->service->validateInvestmentEligibility($user, $tree, 5);
@@ -92,8 +92,8 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $result = $this->service->validateInvestmentEligibility($user, $tree, 5);
@@ -112,8 +112,8 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::RETIRED,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $result = $this->service->validateInvestmentEligibility($user, $tree, 5);
@@ -133,9 +133,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 50000, // min_trees = ceil(50000/10000) = 5
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 50000, // min_trees = ceil(50000/10000) = 5
+            'max_investment_idr' => 100000,
         ]);
 
         // quantity=2 is below min_trees=5
@@ -156,9 +156,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000, // max_trees = floor(100000/10000) = 10
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000, // max_trees = floor(100000/10000) = 10
         ]);
 
         // quantity=15 is above max_trees=10
@@ -179,9 +179,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 50000, // min_trees = 5
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 50000, // min_trees = 5
+            'max_investment_idr' => 100000,
         ]);
 
         // quantity=4 is one below min_trees=5
@@ -201,9 +201,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 50000, // min_trees = 5
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 50000, // min_trees = 5
+            'max_investment_idr' => 100000,
         ]);
 
         // quantity=5 equals min_trees=5 exactly
@@ -223,9 +223,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000, // max_trees = 10
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000, // max_trees = 10
         ]);
 
         // quantity=10 equals max_trees=10 exactly
@@ -245,9 +245,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000, // max_trees = 10
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000, // max_trees = 10
         ]);
 
         // quantity=11 is one above max_trees=10
@@ -265,15 +265,15 @@ class InvestmentServiceTest extends TestCase
             'kyc_expires_at' => now()->addYear(),
         ]);
 
-        // price_cents=10000, min=10000 (min_trees=1), max=100000 (max_trees=10)
+        // price_idr=10000, min=10000 (min_trees=1), max=100000 (max_trees=10)
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
-        // quantity=5 → amount_cents = 5 × 10000 = 50000
+        // quantity=5 → amount_idr = 5 × 10000 = 50000
         $transaction = Transaction::factory()->create([
             'user_id' => $user->id,
             'status' => TransactionStatus::Pending,
@@ -311,7 +311,7 @@ class InvestmentServiceTest extends TestCase
         $this->assertInstanceOf(Investment::class, $investment);
         $this->assertEquals($user->id, $investment->user_id);
         $this->assertEquals($tree->id, $investment->tree_id);
-        $this->assertEquals(50000, $investment->amount_cents);
+        $this->assertEquals(50000, $investment->amount_idr);
         $this->assertEquals(5, $investment->quantity);
         $this->assertEquals('IDR', $investment->currency);
         $this->assertEquals(InvestmentStatus::PendingPayment, $investment->status);
@@ -319,7 +319,7 @@ class InvestmentServiceTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $user->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
             'quantity' => 5,
             'status' => InvestmentStatus::PendingPayment->value,
         ]);
@@ -333,9 +333,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->expectException(KycNotVerifiedException::class);
@@ -353,9 +353,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::RETIRED,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->expectException(TreeNotInvestableException::class);
@@ -375,9 +375,9 @@ class InvestmentServiceTest extends TestCase
         // min_trees = ceil(50000/10000) = 5; passing quantity=2 triggers InvalidInvestmentAmountException
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 50000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 50000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->expectException(InvalidInvestmentAmountException::class);
@@ -396,9 +396,9 @@ class InvestmentServiceTest extends TestCase
         // max_trees = floor(100000/10000) = 10; passing quantity=15 triggers InvestmentLimitExceededException
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->expectException(InvestmentLimitExceededException::class);
@@ -416,9 +416,9 @@ class InvestmentServiceTest extends TestCase
 
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'price_cents' => 10000,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $this->paymentService
@@ -582,14 +582,14 @@ class InvestmentServiceTest extends TestCase
     {
         // price=10000, max=100000 → max_trees=10
         $tree = Tree::factory()->create([
-            'price_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
-        // existing investment: quantity=5, amount_cents=50000
+        // existing investment: quantity=5, amount_idr=50000
         $investment = Investment::factory()->create([
             'status' => InvestmentStatus::Active,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
             'quantity' => 5,
             'tree_id' => $tree->id,
         ]);
@@ -632,11 +632,11 @@ class InvestmentServiceTest extends TestCase
 
         $result = $this->service->topUpInvestment($investment->id, 2);
 
-        $this->assertEquals(70000, $result->amount_cents);
+        $this->assertEquals(70000, $result->amount_idr);
         $this->assertEquals(7, $result->quantity);
         $this->assertDatabaseHas('investments', [
             'id' => $investment->id,
-            'amount_cents' => 70000,
+            'amount_idr' => 70000,
             'quantity' => 7,
         ]);
     }
@@ -657,14 +657,14 @@ class InvestmentServiceTest extends TestCase
     {
         // price=10000, max=100000 → max_trees=10
         $tree = Tree::factory()->create([
-            'price_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
-        // existing investment: quantity=8, amount_cents=80000
+        // existing investment: quantity=8, amount_idr=80000
         $investment = Investment::factory()->create([
             'status' => InvestmentStatus::Active,
-            'amount_cents' => 80000,
+            'amount_idr' => 80000,
             'quantity' => 8,
             'tree_id' => $tree->id,
         ]);
@@ -679,14 +679,14 @@ class InvestmentServiceTest extends TestCase
     {
         // price=10000, max=100000 → max_trees=10
         $tree = Tree::factory()->create([
-            'price_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'price_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
-        // existing investment: quantity=8, amount_cents=80000
+        // existing investment: quantity=8, amount_idr=80000
         $investment = Investment::factory()->create([
             'status' => InvestmentStatus::Active,
-            'amount_cents' => 80000,
+            'amount_idr' => 80000,
             'quantity' => 8,
             'tree_id' => $tree->id,
         ]);
@@ -708,7 +708,7 @@ class InvestmentServiceTest extends TestCase
 
         $result = $this->service->topUpInvestment($investment->id, 2);
 
-        $this->assertEquals(100000, $result->amount_cents);
+        $this->assertEquals(100000, $result->amount_idr);
         $this->assertEquals(10, $result->quantity);
     }
 
@@ -806,17 +806,17 @@ class InvestmentServiceTest extends TestCase
         Investment::factory()
             ->for($user)
             ->active()
-            ->create(['amount_cents' => 50000]);
+            ->create(['amount_idr' => 50000]);
 
         Investment::factory()
             ->for($user)
             ->active()
-            ->create(['amount_cents' => 30000]);
+            ->create(['amount_idr' => 30000]);
 
         Investment::factory()
             ->for($user)
             ->cancelled()
-            ->create(['amount_cents' => 20000]);
+            ->create(['amount_idr' => 20000]);
 
         $total = $this->service->getTotalInvestmentValue($user);
 

@@ -39,9 +39,8 @@ class LotController extends Controller
             'priceTable' => $priceTable,
             'currentCycleMonth' => $currentMonth,
             'isInvestmentOpen' => $isOpen,
-            'totalCostCents' => $lot->current_price_per_tree_cents * $lot->total_trees,
-            'existingInvestment' => $existingInvestment,
-            'walletBalance' => $this->walletService->getOrCreateWallet($user)->balance_cents,
+            'monthlyRatePercentage' => $lot->monthly_increase_rate * 100,
+            'myInvestment' => $existingInvestment,
         ]);
     }
 

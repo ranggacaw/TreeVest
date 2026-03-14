@@ -119,7 +119,7 @@ export default function Show({ harvest }: Props) {
                                     <div>
                                         <dt className="text-sm text-gray-500">Price</dt>
                                         <dd className="text-sm font-medium text-gray-900">
-                                            {formatCurrency(harvest.tree.price_cents)}
+                                            {formatCurrency(harvest.tree.price_idr)}
                                         </dd>
                                     </div>
                                     <div>
@@ -146,7 +146,7 @@ export default function Show({ harvest }: Props) {
                                     <div>
                                         <dt className="text-sm text-gray-500">Price per kg</dt>
                                         <dd className="text-sm font-medium text-gray-900">
-                                            {formatCurrency(harvest.market_price.price_per_kg_cents)}
+                                            {formatCurrency(harvest.market_price.price_per_kg_idr)}
                                         </dd>
                                     </div>
                                     <div>

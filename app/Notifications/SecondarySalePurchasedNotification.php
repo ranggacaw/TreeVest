@@ -51,7 +51,7 @@ class SecondarySalePurchasedNotification extends Notification implements ShouldQ
             'listing_id' => $this->listing->id,
             'investment_id' => $this->listing->investment_id,
             'seller_id' => $this->seller->id,
-            'transfer_price_cents' => $this->transfer->transfer_price_cents,
+            'transfer_price_idr' => $this->transfer->transfer_price_idr,
         ];
     }
 }

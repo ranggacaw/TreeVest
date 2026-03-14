@@ -29,21 +29,21 @@ class LotInvestmentService
         $this->validateCycleOpen($lot);
         $this->validateKyc($investor);
 
-        $totalCents = $lot->current_price_per_tree_cents * $lot->total_trees;
+        $totalIdr = $lot->current_price_per_tree_idr * $lot->total_trees;
         $currentMonth = $this->pricingService->currentCycleMonth($lot);
 
-        return DB::transaction(function () use ($investor, $lot, $totalCents, $currentMonth) {
+        return DB::transaction(function () use ($investor, $lot, $totalIdr, $currentMonth) {
             $investment = Investment::create([
                 'user_id' => $investor->id,
                 'lot_id' => $lot->id,
                 'tree_id' => null,
-                'amount_cents' => $totalCents,
+                'amount_idr' => $totalIdr,
                 'currency' => 'IDR',
                 'purchase_date' => now()->toDateString(),
                 'purchase_month' => $currentMonth,
                 'status' => InvestmentStatus::Active,
                 'metadata' => [
-                    'price_per_tree_cents' => $lot->current_price_per_tree_cents,
+                    'price_per_tree_idr' => $lot->current_price_per_tree_idr,
                     'total_trees' => $lot->total_trees,
                     'cycle_month_at_purchase' => $currentMonth,
                 ],
@@ -53,7 +53,7 @@ class LotInvestmentService
                 'investment_id' => $investment->id,
                 'investor_id' => $investor->id,
                 'lot_id' => $lot->id,
-                'amount_cents' => $totalCents,
+                'amount_idr' => $totalIdr,
                 'purchase_month' => $currentMonth,
             ]);
 
@@ -105,13 +105,13 @@ class LotInvestmentService
         $this->validateCycleOpen($lot);
         $this->validateKyc($investor);
 
-        $totalCents = $lot->current_price_per_tree_cents * $lot->total_trees;
+        $totalIdr = $lot->current_price_per_tree_idr * $lot->total_trees;
 
-        return DB::transaction(function () use ($investor, $lot, $totalCents, $walletService) {
+        return DB::transaction(function () use ($investor, $lot, $totalIdr, $walletService) {
             $investment = $this->purchase($investor, $lot);
             $walletService->debit(
                 $investor,
-                $totalCents,
+                $totalIdr,
                 \App\Enums\WalletTransactionType::Reinvestment,
                 $investment
             );

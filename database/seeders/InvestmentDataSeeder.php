@@ -72,13 +72,13 @@ class InvestmentDataSeeder extends Seeder
                 $tree = Tree::create([
                     'fruit_crop_id' => $crop1->id,
                     'tree_identifier' => 'MK-DUR-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(150000, 250000), // Rp 1,500 - Rp 2,500
+                    'price_idr' => rand(150000, 250000), // Rp 1,500 - Rp 2,500
                     'expected_roi_percent' => rand(12, 18) + (rand(0, 99) / 100),
                     'age_years' => 8,
                     'productive_lifespan_years' => 25,
                     'risk_rating' => $i <= 10 ? RiskRating::LOW : RiskRating::MEDIUM,
-                    'min_investment_cents' => 50000, // Rp 500
-                    'max_investment_cents' => 250000, // Rp 2,500
+                    'min_investment_idr' => 50000, // Rp 500
+                    'max_investment_idr' => 250000, // Rp 2,500
                     'status' => TreeLifecycleStage::PRODUCTIVE,
                     'historical_yield_json' => [
                         'average_fruits_per_year' => rand(400, 600),
@@ -113,13 +113,13 @@ class InvestmentDataSeeder extends Seeder
                 Tree::create([
                     'fruit_crop_id' => $crop2->id,
                     'tree_identifier' => 'BT-DUR-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(120000, 200000), // RM 1,200 - RM 2,000
+                    'price_idr' => rand(120000, 200000), // RM 1,200 - RM 2,000
                     'expected_roi_percent' => rand(10, 16) + (rand(0, 99) / 100),
                     'age_years' => 6,
                     'productive_lifespan_years' => 25,
                     'risk_rating' => RiskRating::MEDIUM,
-                    'min_investment_cents' => 50000, // Rp 500
-                    'max_investment_cents' => 200000, // RM 2,000
+                    'min_investment_idr' => 50000, // Rp 500
+                    'max_investment_idr' => 200000, // RM 2,000
                     'status' => TreeLifecycleStage::GROWING,
                     'historical_yield_json' => [
                         'average_fruits_per_year' => rand(300, 450),
@@ -159,13 +159,13 @@ class InvestmentDataSeeder extends Seeder
                 Tree::create([
                     'fruit_crop_id' => $crop3->id,
                     'tree_identifier' => 'ALP-MAN-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(80000, 150000), // RM 800 - RM 1,500
+                    'price_idr' => rand(80000, 150000), // RM 800 - RM 1,500
                     'expected_roi_percent' => rand(10, 15) + (rand(0, 99) / 100),
                     'age_years' => 7,
                     'productive_lifespan_years' => 20,
                     'risk_rating' => RiskRating::LOW,
-                    'min_investment_cents' => 30000, // RM 300
-                    'max_investment_cents' => 150000, // RM 1,500
+                    'min_investment_idr' => 30000, // RM 300
+                    'max_investment_idr' => 150000, // RM 1,500
                     'status' => TreeLifecycleStage::PRODUCTIVE,
                     'historical_yield_json' => [
                         'average_fruits_per_year' => rand(250, 350),
@@ -182,13 +182,13 @@ class InvestmentDataSeeder extends Seeder
                 Tree::create([
                     'fruit_crop_id' => $crop4->id,
                     'tree_identifier' => 'NDM-MAN-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(70000, 130000), // RM 700 - RM 1,300
+                    'price_idr' => rand(70000, 130000), // RM 700 - RM 1,300
                     'expected_roi_percent' => rand(9, 14) + (rand(0, 99) / 100),
                     'age_years' => 5,
                     'productive_lifespan_years' => 20,
                     'risk_rating' => RiskRating::MEDIUM,
-                    'min_investment_cents' => 30000, // RM 300
-                    'max_investment_cents' => 130000, // RM 1,300
+                    'min_investment_idr' => 30000, // RM 300
+                    'max_investment_idr' => 130000, // RM 1,300
                     'status' => TreeLifecycleStage::PRODUCTIVE,
                     'historical_yield_json' => [
                         'average_fruits_per_year' => rand(220, 300),
@@ -218,13 +218,13 @@ class InvestmentDataSeeder extends Seeder
                 Tree::create([
                     'fruit_crop_id' => $crop5->id,
                     'tree_identifier' => 'SM-GRP-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(50000, 100000), // RM 500 - RM 1,000
+                    'price_idr' => rand(50000, 100000), // RM 500 - RM 1,000
                     'expected_roi_percent' => rand(15, 22) + (rand(0, 99) / 100),
                     'age_years' => 4,
                     'productive_lifespan_years' => 15,
                     'risk_rating' => RiskRating::MEDIUM,
-                    'min_investment_cents' => 20000, // RM 200
-                    'max_investment_cents' => 100000, // RM 1,000
+                    'min_investment_idr' => 20000, // RM 200
+                    'max_investment_idr' => 100000, // RM 1,000
                     'status' => TreeLifecycleStage::PRODUCTIVE,
                     'historical_yield_json' => [
                         'average_kg_per_cycle' => rand(12, 18),
@@ -254,13 +254,13 @@ class InvestmentDataSeeder extends Seeder
                 Tree::create([
                     'fruit_crop_id' => $crop6->id,
                     'tree_identifier' => 'VO-CIT-'.str_pad($i, 4, '0', STR_PAD_LEFT),
-                    'price_cents' => rand(60000, 110000), // RM 600 - RM 1,100
+                    'price_idr' => rand(60000, 110000), // RM 600 - RM 1,100
                     'expected_roi_percent' => rand(11, 16) + (rand(0, 99) / 100),
                     'age_years' => 6,
                     'productive_lifespan_years' => 18,
                     'risk_rating' => RiskRating::LOW,
-                    'min_investment_cents' => 25000, // RM 250
-                    'max_investment_cents' => 110000, // RM 1,100
+                    'min_investment_idr' => 25000, // RM 250
+                    'max_investment_idr' => 110000, // RM 1,100
                     'status' => TreeLifecycleStage::PRODUCTIVE,
                     'historical_yield_json' => [
                         'average_kg_per_cycle' => rand(40, 60),
@@ -281,7 +281,7 @@ class InvestmentDataSeeder extends Seeder
                 Investment::create([
                     'user_id' => $investor->id,
                     'tree_id' => $tree->id,
-                    'amount_cents' => $tree->price_cents,
+                    'amount_idr' => $tree->price_idr,
                     'currency' => 'IDR',
                     'purchase_date' => now()->subDays(rand(30, 180)),
                     'status' => InvestmentStatus::Active,
@@ -296,7 +296,7 @@ class InvestmentDataSeeder extends Seeder
                 Investment::create([
                     'user_id' => $johnInvestor->id,
                     'tree_id' => $tree->id,
-                    'amount_cents' => $tree->price_cents,
+                    'amount_idr' => $tree->price_idr,
                     'currency' => 'IDR',
                     'purchase_date' => now()->subDays(rand(10, 90)),
                     'status' => InvestmentStatus::Active,

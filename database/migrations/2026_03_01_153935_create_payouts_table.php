@@ -16,9 +16,9 @@ return new class extends Migration
             $table->foreignId('investment_id')->constrained('investments')->onDelete('cascade');
             $table->foreignId('harvest_id')->constrained('harvests')->onDelete('cascade');
             $table->foreignId('investor_id')->constrained('users')->onDelete('cascade');
-            $table->unsignedBigInteger('gross_amount_cents');
-            $table->unsignedBigInteger('platform_fee_cents');
-            $table->unsignedBigInteger('net_amount_cents');
+            $table->unsignedBigInteger('gross_amount_idr');
+            $table->unsignedBigInteger('platform_fee_idr');
+            $table->unsignedBigInteger('net_amount_idr');
             $table->char('currency', 3);
             $table->enum('status', ['pending', 'processing', 'completed', 'failed'])->default('pending');
             $table->enum('payout_method', ['bank_transfer', 'digital_wallet'])->nullable();

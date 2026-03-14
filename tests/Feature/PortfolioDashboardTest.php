@@ -56,12 +56,12 @@ class PortfolioDashboardTest extends TestCase
             fn (Assert $page) => $page
                 ->component('Portfolio/Dashboard')
                 ->has('summaryHeader')
-                ->has('summaryHeader.total_invested_cents')
-                ->has('summaryHeader.current_value_cents')
-                ->has('summaryHeader.gain_loss_cents')
+                ->has('summaryHeader.total_invested_idr')
+                ->has('summaryHeader.current_value_idr')
+                ->has('summaryHeader.gain_loss_idr')
                 ->has('summaryHeader.gain_loss_percent')
-                ->has('summaryHeader.total_payouts_cents')
-                ->has('summaryHeader.pending_payouts_cents')
+                ->has('summaryHeader.total_payouts_idr')
+                ->has('summaryHeader.pending_payouts_idr')
                 ->has('holdings')
                 ->has('allocation')
                 ->has('watchlist')
@@ -74,12 +74,12 @@ class PortfolioDashboardTest extends TestCase
     public function test_summary_header_includes_invested_amount(): void
     {
         $investor = User::factory()->create(['role' => 'investor']);
-        $tree = Tree::factory()->create(['price_cents' => 10_000]);
+        $tree = Tree::factory()->create(['price_idr' => 10_000]);
 
         Investment::factory()->active()->create([
             'user_id' => $investor->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50_000,
+            'amount_idr' => 50_000,
             'quantity' => 5,
         ]);
 
@@ -87,7 +87,7 @@ class PortfolioDashboardTest extends TestCase
 
         $response->assertInertia(
             fn (Assert $page) => $page
-                ->where('summaryHeader.total_invested_cents', 50_000)
+                ->where('summaryHeader.total_invested_idr', 50_000)
         );
     }
 

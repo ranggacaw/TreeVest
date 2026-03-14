@@ -21,7 +21,7 @@ class WalletService
         return Wallet::firstOrCreate(
             ['user_id' => $user->id],
             [
-                'balance_cents' => 0,
+                'balance_idr' => 0,
                 'currency' => 'IDR',
                 'is_platform' => false,
             ]
@@ -36,7 +36,7 @@ class WalletService
         return Wallet::firstOrCreate(
             ['user_id' => null, 'is_platform' => true],
             [
-                'balance_cents' => 0,
+                'balance_idr' => 0,
                 'currency' => 'IDR',
                 'is_platform' => true,
             ]
@@ -48,23 +48,23 @@ class WalletService
      */
     public function credit(
         User $user,
-        int $amountCents,
+        int $amountIdr,
         WalletTransactionType $transactionType,
         Model $reference
     ): WalletTransaction {
-        return DB::transaction(function () use ($user, $amountCents, $transactionType, $reference) {
+        return DB::transaction(function () use ($user, $amountIdr, $transactionType, $reference) {
             $wallet = $this->getOrCreateWallet($user);
             $wallet = Wallet::lockForUpdate()->find($wallet->id);
 
-            $wallet->balance_cents += $amountCents;
+            $wallet->balance_idr += $amountIdr;
             $wallet->save();
 
             return WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'type' => 'credit',
                 'transaction_type' => $transactionType->value,
-                'amount_cents' => $amountCents,
-                'balance_after_cents' => $wallet->balance_cents,
+                'amount_idr' => $amountIdr,
+                'balance_after_idr' => $wallet->balance_idr,
                 'reference_type' => class_basename($reference),
                 'reference_id' => $reference->getKey(),
             ]);
@@ -75,23 +75,23 @@ class WalletService
      * Credits the platform wallet.
      */
     public function creditPlatform(
-        int $amountCents,
+        int $amountIdr,
         WalletTransactionType $transactionType,
         Model $reference
     ): WalletTransaction {
-        return DB::transaction(function () use ($amountCents, $transactionType, $reference) {
+        return DB::transaction(function () use ($amountIdr, $transactionType, $reference) {
             $wallet = $this->getPlatformWallet();
             $wallet = Wallet::lockForUpdate()->find($wallet->id);
 
-            $wallet->balance_cents += $amountCents;
+            $wallet->balance_idr += $amountIdr;
             $wallet->save();
 
             return WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'type' => 'credit',
                 'transaction_type' => $transactionType->value,
-                'amount_cents' => $amountCents,
-                'balance_after_cents' => $wallet->balance_cents,
+                'amount_idr' => $amountIdr,
+                'balance_after_idr' => $wallet->balance_idr,
                 'reference_type' => class_basename($reference),
                 'reference_id' => $reference->getKey(),
             ]);
@@ -105,31 +105,31 @@ class WalletService
      */
     public function debit(
         User $user,
-        int $amountCents,
+        int $amountIdr,
         WalletTransactionType $transactionType,
         Model $reference
     ): WalletTransaction {
-        return DB::transaction(function () use ($user, $amountCents, $transactionType, $reference) {
+        return DB::transaction(function () use ($user, $amountIdr, $transactionType, $reference) {
             $wallet = $this->getOrCreateWallet($user);
 
             // Lock the row to prevent concurrent debits causing negative balance
             $wallet = Wallet::lockForUpdate()->find($wallet->id);
 
-            if ($wallet->balance_cents < $amountCents) {
+            if ($wallet->balance_idr < $amountIdr) {
                 throw new InsufficientWalletBalanceException(
                     "Insufficient wallet balance. Available: {$wallet->getFormattedBalanceAttribute()}."
                 );
             }
 
-            $wallet->balance_cents -= $amountCents;
+            $wallet->balance_idr -= $amountIdr;
             $wallet->save();
 
             return WalletTransaction::create([
                 'wallet_id' => $wallet->id,
                 'type' => 'debit',
                 'transaction_type' => $transactionType->value,
-                'amount_cents' => $amountCents,
-                'balance_after_cents' => $wallet->balance_cents,
+                'amount_idr' => $amountIdr,
+                'balance_after_idr' => $wallet->balance_idr,
                 'reference_type' => class_basename($reference),
                 'reference_id' => $reference->getKey(),
             ]);
@@ -141,10 +141,10 @@ class WalletService
      *
      * @throws \App\Exceptions\InsufficientWalletBalanceException
      */
-    public function initiateWithdrawal(User $user, int $amountCents): WalletTransaction
+    public function initiateWithdrawal(User $user, int $amountIdr): WalletTransaction
     {
-        if ($amountCents < 1000) {
-            throw new \InvalidArgumentException('Minimum withdrawal amount is Rp 10.00 (1000 cents).');
+        if ($amountIdr < 1000) {
+            throw new \InvalidArgumentException('Minimum withdrawal amount is Rp 1.00 (1000 IDR).');
         }
 
         // Create a temporary placeholder model for the reference
@@ -152,19 +152,19 @@ class WalletService
 
         $tx = $this->debit(
             $user,
-            $amountCents,
+            $amountIdr,
             WalletTransactionType::Withdrawal,
             $wallet
         );
 
         Log::info('Withdrawal initiated', [
             'user_id' => $user->id,
-            'amount_cents' => $amountCents,
+            'amount_idr' => $amountIdr,
             'wallet_transaction_id' => $tx->id,
         ]);
 
         // TODO: Dispatch bank transfer job via EPIC-010 payment integration
-        // \App\Jobs\ProcessBankWithdrawal::dispatch($user, $amountCents, $tx->id);
+        // \App\Jobs\ProcessBankWithdrawal::dispatch($user, $amountIdr, $tx->id);
 
         return $tx;
     }

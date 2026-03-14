@@ -26,8 +26,8 @@ class InvestmentController extends Controller
 
         // Optimized query with eager loading
         $investments = Investment::forUser($user->id)
-            ->with(['tree:id,tree_identifier,price_cents,expected_roi_percent', 'transaction:id,status'])
-            ->select(['id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
+            ->with(['tree:id,tree_identifier,price_idr,expected_roi_percent', 'transaction:id,status'])
+            ->select(['id', 'amount_idr', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -35,7 +35,7 @@ class InvestmentController extends Controller
 
         return Inertia::render('Investments/Index', [
             'investments' => $investments->map(fn ($inv) => InvestmentResource::basic($inv)),
-            'total_value_cents' => $totalValue,
+            'total_value_idr' => $totalValue,
             'total_value_formatted' => 'Rp '.number_format($totalValue / 100, 2),
         ]);
     }
@@ -44,12 +44,12 @@ class InvestmentController extends Controller
     {
         // Optimized query with specific eager loading for detail view
         $investment = Investment::with([
-            'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id',
+            'tree:id,tree_identifier,price_idr,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id',
             'tree.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
             'tree.fruitCrop.farm:id,name,city,state',
             'tree.fruitCrop.fruitType:id,name',
             'transaction:id,status,stripe_payment_intent_id',
-            'payouts:id,investment_id,gross_amount_cents,platform_fee_cents,net_amount_cents,status,currency,completed_at,failed_at,failed_reason,harvest_id',
+            'payouts:id,investment_id,gross_amount_idr,platform_fee_idr,net_amount_idr,status,currency,completed_at,failed_at,failed_reason,harvest_id',
             'payouts.harvest:id,scheduled_date',
         ])
             ->findOrFail($investment);
@@ -116,8 +116,8 @@ class InvestmentController extends Controller
             'fruitCrop.fruitType:id,name',
         ])
             ->select([
-                'id', 'tree_identifier', 'price_cents', 'expected_roi_percent', 'risk_rating',
-                'min_investment_cents', 'max_investment_cents', 'status', 'fruit_crop_id',
+                'id', 'tree_identifier', 'price_idr', 'expected_roi_percent', 'risk_rating',
+                'min_investment_idr', 'max_investment_idr', 'status', 'fruit_crop_id',
             ])
             ->findOrFail($treeId);
 
@@ -157,7 +157,7 @@ class InvestmentController extends Controller
     public function store(StoreInvestmentRequest $request)
     {
         // Use select to only load necessary fields for validation
-        $tree = Tree::select(['id', 'status', 'min_investment_cents', 'max_investment_cents', 'fruit_crop_id'])
+        $tree = Tree::select(['id', 'status', 'min_investment_idr', 'max_investment_idr', 'fruit_crop_id'])
             ->findOrFail($request->input('tree_id'));
         $user = $request->user();
 
@@ -165,7 +165,7 @@ class InvestmentController extends Controller
             $investment = $this->investmentService->initiateInvestment(
                 $user,
                 $tree,
-                $request->input('amount_cents'),
+                $request->input('amount_idr'),
                 $request->input('payment_method_id')
             );
 
@@ -195,7 +195,7 @@ class InvestmentController extends Controller
             'tree.fruitCrop.fruitType:id,name',
             'transaction:id,stripe_payment_intent_id,metadata',
         ])
-            ->select(['id', 'amount_cents', 'currency', 'status', 'purchase_date', 'user_id', 'tree_id', 'transaction_id'])
+            ->select(['id', 'amount_idr', 'currency', 'status', 'purchase_date', 'user_id', 'tree_id', 'transaction_id'])
             ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
@@ -205,7 +205,7 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/Purchase/Confirmation', [
             'investment' => [
                 'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'formatted_amount' => $investment->formatted_amount,
                 'status' => $investment->status->value,
                 'status_label' => $investment->status->getLabel(),
@@ -254,9 +254,9 @@ class InvestmentController extends Controller
     public function topUpForm(Request $request, int $investment)
     {
         $investment = Investment::with([
-            'tree:id,tree_identifier,max_investment_cents',
+            'tree:id,tree_identifier,max_investment_idr',
         ])
-            ->select(['id', 'amount_cents', 'currency', 'user_id', 'tree_id'])
+            ->select(['id', 'amount_idr', 'currency', 'user_id', 'tree_id'])
             ->findOrFail($investment);
 
         if ($investment->user_id !== Auth::id()) {
@@ -271,11 +271,11 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/TopUp', [
             'investment' => [
                 'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'formatted_amount' => $investment->formatted_amount,
                 'tree' => [
                     'identifier' => $investment->tree->tree_identifier,
-                    'max_investment_cents' => $investment->tree->max_investment_cents,
+                    'max_investment_idr' => $investment->tree->max_investment_idr,
                 ],
             ],
             'payment_methods' => $paymentMethods->map(fn ($pm) => [
@@ -298,7 +298,7 @@ class InvestmentController extends Controller
         try {
             $this->investmentService->topUpInvestment(
                 $investment->id,
-                $request->input('top_up_cents'),
+                $request->input('top_up_idr'),
                 $request->input('payment_method_id')
             );
 

@@ -27,9 +27,9 @@ class InvestmentPurchaseFlowTest extends TestCase
     {
         return Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
-            'price_cents' => 50000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
+            'price_idr' => 50000,
         ]);
     }
 
@@ -78,8 +78,8 @@ class InvestmentPurchaseFlowTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::RETIRED,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         $response = $this->actingAs($user)
@@ -97,7 +97,7 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -108,7 +108,7 @@ class InvestmentPurchaseFlowTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $user->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
             'status' => InvestmentStatus::PendingPayment->value,
         ]);
     }
@@ -120,7 +120,7 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), []);
 
-        $response->assertSessionHasErrors(['tree_id', 'amount_cents', 'acceptance_risk_disclosure', 'acceptance_terms']);
+        $response->assertSessionHasErrors(['tree_id', 'amount_idr', 'acceptance_risk_disclosure', 'acceptance_terms']);
     }
 
     public function test_investment_creation_validates_minimum_amount()
@@ -131,12 +131,12 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 5000, // Below min of 10000
+                'amount_idr' => 5000, // Below min of 10000
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
 
-        $response->assertSessionHasErrors('amount_cents');
+        $response->assertSessionHasErrors('amount_idr');
     }
 
     public function test_investment_creation_validates_maximum_amount()
@@ -147,12 +147,12 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 150000, // Above max of 100000
+                'amount_idr' => 150000, // Above max of 100000
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
 
-        $response->assertSessionHasErrors('amount_cents');
+        $response->assertSessionHasErrors('amount_idr');
     }
 
     public function test_investment_creation_requires_risk_disclosure_acceptance()
@@ -163,7 +163,7 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => false,
                 'acceptance_terms' => true,
             ]);
@@ -179,7 +179,7 @@ class InvestmentPurchaseFlowTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => false,
             ]);
@@ -345,19 +345,19 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->for($tree)
             ->create([
                 'status' => InvestmentStatus::Active,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
             ]);
 
         $response = $this->actingAs($user)
             ->post(route('investments.topUp', $investment->id), [
-                'top_up_cents' => 20000,
+                'top_up_idr' => 20000,
             ]);
 
         $response->assertSessionHas('success');
 
         $this->assertDatabaseHas('investments', [
             'id' => $investment->id,
-            'amount_cents' => 70000,
+            'amount_idr' => 70000,
         ]);
     }
 
@@ -371,12 +371,12 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->for($tree)
             ->create([
                 'status' => InvestmentStatus::PendingPayment,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
             ]);
 
         $response = $this->actingAs($user)
             ->post(route('investments.topUp', $investment->id), [
-                'top_up_cents' => 20000,
+                'top_up_idr' => 20000,
             ]);
 
         $response->assertSessionHas('error');
@@ -392,19 +392,19 @@ class InvestmentPurchaseFlowTest extends TestCase
             ->for($tree)
             ->create([
                 'status' => InvestmentStatus::Active,
-                'amount_cents' => 90000,
+                'amount_idr' => 90000,
             ]);
 
         $response = $this->actingAs($user)
             ->post(route('investments.topUp', $investment->id), [
-                'top_up_cents' => 20000, // Would exceed 100000 max
+                'top_up_idr' => 20000, // Would exceed 100000 max
             ]);
 
         $response->assertSessionHas('error');
 
         $this->assertDatabaseHas('investments', [
             'id' => $investment->id,
-            'amount_cents' => 90000,
+            'amount_idr' => 90000,
         ]);
     }
 }

@@ -4,9 +4,9 @@ interface ProfitLossRow {
     fruitType: string;
     variant: string;
     farmName: string;
-    amountInvestedCents: number;
-    totalPayoutsCents: number;
-    netCents: number;
+    amountInvestedIdr: number;
+    totalPayoutsIdr: number;
+    netIdr: number;
     actualRoiPercent: number;
     status: string;
     purchaseDate: string;
@@ -15,16 +15,16 @@ interface ProfitLossRow {
 interface ProfitLossTableProps {
     rows: ProfitLossRow[];
     summary: {
-        totalInvestedCents: number;
-        totalPayoutsCents: number;
-        netCents: number;
+        totalInvestedIdr: number;
+        totalPayoutsIdr: number;
+        netIdr: number;
         overallRoiPercent: number;
     };
 }
 
 export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps) {
-    const formatCurrency = (cents: number) => {
-        return `Rp ${(cents / 100).toFixed(2)}`;
+    const formatCurrency = (idr: number) => {
+        return `Rp ${idr.toLocaleString('id-ID')}`;
     };
 
     const formatPercent = (value: number) => {
@@ -85,18 +85,18 @@ export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps)
                                 {row.farmName}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                {formatCurrency(row.amountInvestedCents)}
+                                {formatCurrency(row.amountInvestedIdr)}
                             </td>
                             <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                                {formatCurrency(row.totalPayoutsCents)}
+                                {formatCurrency(row.totalPayoutsIdr)}
                             </td>
                             <td
-                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${row.netCents >= 0
+                                className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${row.netIdr >= 0
                                         ? 'text-green-600'
                                         : 'text-red-600'
                                     }`}
                             >
-                                {formatCurrency(row.netCents)}
+                                {formatCurrency(row.netIdr)}
                             </td>
                             <td
                                 className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${row.actualRoiPercent >= 0
@@ -124,18 +124,18 @@ export default function ProfitLossTable({ rows, summary }: ProfitLossTableProps)
                             <strong>Total</strong>
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                            {formatCurrency(summary.totalInvestedCents)}
+                            {formatCurrency(summary.totalInvestedIdr)}
                         </td>
                         <td className="whitespace-nowrap px-6 py-4 text-right text-sm text-gray-900">
-                            {formatCurrency(summary.totalPayoutsCents)}
+                            {formatCurrency(summary.totalPayoutsIdr)}
                         </td>
                         <td
-                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${summary.netCents >= 0
+                            className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${summary.netIdr >= 0
                                     ? 'text-green-600'
                                     : 'text-red-600'
                                 }`}
                         >
-                            {formatCurrency(summary.netCents)}
+                            {formatCurrency(summary.netIdr)}
                         </td>
                         <td
                             className={`whitespace-nowrap px-6 py-4 text-right text-sm font-medium ${summary.overallRoiPercent >= 0

@@ -35,7 +35,7 @@ class WalletServiceTest extends TestCase
 
         $this->assertNotNull($wallet->id);
         $this->assertEquals($user->id, $wallet->user_id);
-        $this->assertEquals(0, $wallet->balance_cents);
+        $this->assertEquals(0, $wallet->balance_idr);
         $this->assertEquals('IDR', $wallet->currency);
         $this->assertFalse($wallet->is_platform);
     }
@@ -48,7 +48,7 @@ class WalletServiceTest extends TestCase
         $wallet = $this->service->getOrCreateWallet($user);
 
         $this->assertEquals($existing->id, $wallet->id);
-        $this->assertEquals(50_000, $wallet->balance_cents);
+        $this->assertEquals(50_000, $wallet->balance_idr);
     }
 
     // -------------------------------------------------------------------------
@@ -63,7 +63,7 @@ class WalletServiceTest extends TestCase
         $this->service->credit($user, 100_000, WalletTransactionType::PayoutCredit, $lot);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $this->assertEquals(100_000, $wallet->balance_cents);
+        $this->assertEquals(100_000, $wallet->balance_idr);
     }
 
     public function test_credit_creates_wallet_transaction_record(): void
@@ -75,8 +75,8 @@ class WalletServiceTest extends TestCase
 
         $this->assertEquals('credit', $tx->type);
         $this->assertEquals(WalletTransactionType::PayoutCredit, $tx->transaction_type);
-        $this->assertEquals(200_000, $tx->amount_cents);
-        $this->assertEquals(200_000, $tx->balance_after_cents);
+        $this->assertEquals(200_000, $tx->amount_idr);
+        $this->assertEquals(200_000, $tx->balance_after_idr);
     }
 
     public function test_credit_accumulates_multiple_credits(): void
@@ -88,7 +88,7 @@ class WalletServiceTest extends TestCase
         $this->service->credit($user, 50_000, WalletTransactionType::PayoutCredit, $lot);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $this->assertEquals(150_000, $wallet->balance_cents);
+        $this->assertEquals(150_000, $wallet->balance_idr);
     }
 
     // -------------------------------------------------------------------------
@@ -104,7 +104,7 @@ class WalletServiceTest extends TestCase
         $this->service->debit($user, 200_000, WalletTransactionType::Reinvestment, $lot);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $this->assertEquals(300_000, $wallet->balance_cents);
+        $this->assertEquals(300_000, $wallet->balance_idr);
     }
 
     public function test_debit_creates_wallet_transaction_record(): void
@@ -117,8 +117,8 @@ class WalletServiceTest extends TestCase
 
         $this->assertEquals('debit', $tx->type);
         $this->assertEquals(WalletTransactionType::Reinvestment, $tx->transaction_type);
-        $this->assertEquals(100_000, $tx->amount_cents);
-        $this->assertEquals(400_000, $tx->balance_after_cents);
+        $this->assertEquals(100_000, $tx->amount_idr);
+        $this->assertEquals(400_000, $tx->balance_after_idr);
     }
 
     public function test_debit_throws_insufficient_balance_exception(): void
@@ -143,7 +143,7 @@ class WalletServiceTest extends TestCase
         }
 
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $this->assertEquals(1_000, $wallet->balance_cents); // unchanged
+        $this->assertEquals(1_000, $wallet->balance_idr); // unchanged
     }
 
     // -------------------------------------------------------------------------
@@ -158,7 +158,7 @@ class WalletServiceTest extends TestCase
         $this->service->initiateWithdrawal($user, 500_000);
 
         $wallet = Wallet::where('user_id', $user->id)->first();
-        $this->assertEquals(500_000, $wallet->balance_cents);
+        $this->assertEquals(500_000, $wallet->balance_idr);
     }
 
     public function test_initiate_withdrawal_throws_for_amount_below_minimum(): void
@@ -191,7 +191,7 @@ class WalletServiceTest extends TestCase
 
         $platformWallet = Wallet::where('is_platform', true)->whereNull('user_id')->first();
         $this->assertNotNull($platformWallet);
-        $this->assertEquals(100_000, $platformWallet->balance_cents);
+        $this->assertEquals(100_000, $platformWallet->balance_idr);
     }
 
     public function test_credit_platform_accumulates_fees(): void
@@ -202,7 +202,7 @@ class WalletServiceTest extends TestCase
         $this->service->creditPlatform(30_000, WalletTransactionType::PlatformFee, $lot);
 
         $platformWallet = Wallet::where('is_platform', true)->first();
-        $this->assertEquals(80_000, $platformWallet->balance_cents);
+        $this->assertEquals(80_000, $platformWallet->balance_idr);
     }
 
     // -------------------------------------------------------------------------
@@ -216,12 +216,12 @@ class WalletServiceTest extends TestCase
 
         $response = $this->actingAs($investor)->post(
             route('investor.wallet.withdraw'),
-            ['amount_cents' => 200_000]
+            ['amount_idr' => 200_000]
         );
 
         $response->assertRedirect();
         $wallet = Wallet::where('user_id', $investor->id)->first();
-        $this->assertEquals(800_000, $wallet->balance_cents);
+        $this->assertEquals(800_000, $wallet->balance_idr);
     }
 
     public function test_withdrawal_fails_validation_when_amount_below_1000(): void
@@ -231,10 +231,10 @@ class WalletServiceTest extends TestCase
 
         $response = $this->actingAs($investor)->post(
             route('investor.wallet.withdraw'),
-            ['amount_cents' => 500]
+            ['amount_idr' => 500]
         );
 
-        $response->assertSessionHasErrors('amount_cents');
+        $response->assertSessionHasErrors('amount_idr');
     }
 
     public function test_withdrawal_returns_error_when_balance_insufficient(): void
@@ -244,17 +244,17 @@ class WalletServiceTest extends TestCase
 
         $response = $this->actingAs($investor)->post(
             route('investor.wallet.withdraw'),
-            ['amount_cents' => 100_000]
+            ['amount_idr' => 100_000]
         );
 
-        $response->assertSessionHasErrors('amount_cents');
+        $response->assertSessionHasErrors('amount_idr');
     }
 
     public function test_unauthenticated_user_cannot_withdraw(): void
     {
         $response = $this->post(
             route('investor.wallet.withdraw'),
-            ['amount_cents' => 10_000]
+            ['amount_idr' => 10_000]
         );
 
         $response->assertRedirect(route('login'));

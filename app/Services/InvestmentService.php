@@ -40,9 +40,9 @@ class InvestmentService
         if ($quantity < 1) {
             $errors['quantity_min'] = 'You must invest in at least 1 tree.';
         } else {
-            $amountCents = $quantity * $tree->price_cents;
-            $minTrees = (int) ceil($tree->min_investment_cents / $tree->price_cents);
-            $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+            $amountIdr = $quantity * $tree->price_idr;
+            $minTrees = (int) ceil($tree->min_investment_idr / $tree->price_idr);
+            $maxTrees = (int) floor($tree->max_investment_idr / $tree->price_idr);
 
             if ($quantity < $minTrees) {
                 $errors['quantity_min'] = "Minimum investment is {$minTrees} trees.";
@@ -79,24 +79,24 @@ class InvestmentService
             }
 
             if (isset($eligibility['errors']['quantity_min'])) {
-                $minTrees = (int) ceil($tree->min_investment_cents / $tree->price_cents);
-                throw new InvalidInvestmentAmountException($quantity * $tree->price_cents, $tree->min_investment_cents);
+                $minTrees = (int) ceil($tree->min_investment_idr / $tree->price_idr);
+                throw new InvalidInvestmentAmountException($quantity * $tree->price_idr, $tree->min_investment_idr);
             }
 
             if (isset($eligibility['errors']['quantity_max'])) {
-                $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
-                throw new InvestmentLimitExceededException($quantity * $tree->price_cents, $tree->max_investment_cents);
+                $maxTrees = (int) floor($tree->max_investment_idr / $tree->price_idr);
+                throw new InvestmentLimitExceededException($quantity * $tree->price_idr, $tree->max_investment_idr);
             }
 
             throw new \InvalidArgumentException($firstError);
         }
 
-        $amountCents = $quantity * $tree->price_cents;
+        $amountIdr = $quantity * $tree->price_idr;
 
-        return TransactionHelper::smart(function () use ($user, $tree, $quantity, $amountCents, $paymentMethodId) {
+        return TransactionHelper::smart(function () use ($user, $tree, $quantity, $amountIdr, $paymentMethodId) {
             $transaction = $this->paymentService->initiatePayment(
                 $user->id,
-                $amountCents,
+                $amountIdr,
                 'IDR',
                 TransactionType::InvestmentPurchase,
                 $paymentMethodId
@@ -105,7 +105,7 @@ class InvestmentService
             $investment = Investment::create([
                 'user_id' => $user->id,
                 'tree_id' => $tree->id,
-                'amount_cents' => $amountCents,
+                'amount_idr' => $amountIdr,
                 'quantity' => $quantity,
                 'currency' => 'IDR',
                 'purchase_date' => now()->toDateString(),
@@ -124,7 +124,7 @@ class InvestmentService
                     'investment_id' => $investment->id,
                     'tree_id' => $tree->id,
                     'quantity' => $quantity,
-                    'amount' => $amountCents,
+                    'amount' => $amountIdr,
                     'transaction_id' => $transaction->id,
                     'payment_intent_id' => $transaction->stripe_payment_intent_id,
                     'event' => 'investment_initiated',
@@ -134,7 +134,7 @@ class InvestmentService
             // Dispatch notification
             $user->notify(new InvestmentPurchasedNotification([
                 'tree_identifier' => $tree->tree_identifier,
-                'formatted_amount' => 'Rp '.number_format($amountCents / 100, 2),
+                'formatted_amount' => 'Rp '.number_format($amountIdr, 0),
                 'investment_url' => route('investments.confirmation', $investment->id),
             ]));
 
@@ -223,32 +223,32 @@ class InvestmentService
         }
 
         $tree = $investment->tree;
-        $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+        $maxTrees = (int) floor($tree->max_investment_idr / $tree->price_idr);
         $newQuantity = $investment->quantity + $topUpQuantity;
 
         if ($newQuantity > $maxTrees) {
             throw new InvestmentLimitExceededException(
-                $newQuantity * $tree->price_cents,
-                $tree->max_investment_cents
+                $newQuantity * $tree->price_idr,
+                $tree->max_investment_idr
             );
         }
 
-        $topUpAmountCents = $topUpQuantity * $tree->price_cents;
-        $newTotalAmount = $investment->amount_cents + $topUpAmountCents;
+        $topUpAmountIdr = $topUpQuantity * $tree->price_idr;
+        $newTotalAmount = $investment->amount_idr + $topUpAmountIdr;
 
-        return TransactionHelper::smart(function () use ($investment, $topUpQuantity, $topUpAmountCents, $paymentMethodId, $newQuantity, $newTotalAmount) {
-            $originalAmount = $investment->amount_cents;
+        return TransactionHelper::smart(function () use ($investment, $topUpQuantity, $topUpAmountIdr, $paymentMethodId, $newQuantity, $newTotalAmount) {
+            $originalAmount = $investment->amount_idr;
             $originalQuantity = $investment->quantity;
 
             $transaction = $this->paymentService->initiatePayment(
                 $investment->user_id,
-                $topUpAmountCents,
+                $topUpAmountIdr,
                 'IDR',
                 TransactionType::TopUp,
                 $paymentMethodId
             );
 
-            $investment->amount_cents = $newTotalAmount;
+            $investment->amount_idr = $newTotalAmount;
             $investment->quantity = $newQuantity;
             $investment->transaction_id = $transaction->id;
             $investment->save();
@@ -261,7 +261,7 @@ class InvestmentService
                     'original_amount' => $originalAmount,
                     'original_quantity' => $originalQuantity,
                     'top_up_quantity' => $topUpQuantity,
-                    'top_up_amount' => $topUpAmountCents,
+                    'top_up_amount' => $topUpAmountIdr,
                     'new_total' => $newTotalAmount,
                     'new_quantity' => $newQuantity,
                     'transaction_id' => $transaction->id,
@@ -293,6 +293,6 @@ class InvestmentService
     {
         return Investment::forUser($user->id)
             ->active()
-            ->sum('amount_cents');
+            ->sum('amount_idr');
     }
 }

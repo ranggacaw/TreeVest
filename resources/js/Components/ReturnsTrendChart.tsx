@@ -11,9 +11,9 @@ import {
 
 interface PerformanceDataPoint {
     month: string;
-    investedCents: number;
-    payoutsCents: number;
-    cumulativeCents: number;
+    investedIdr: number;
+    payoutsIdr: number;
+    cumulativeIdr: number;
 }
 
 interface ReturnsTrendChartProps {
@@ -44,7 +44,7 @@ export default function ReturnsTrendChart({ data, height = 300 }: ReturnsTrendCh
                 <Legend />
                 <Line
                     type="monotone"
-                    dataKey="cumulativeCents"
+                    dataKey="cumulativeIdr"
                     stroke="#6366F1"
                     strokeWidth={2}
                     name="Cumulative Returns"

@@ -22,14 +22,14 @@ class StoreWithdrawalRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'amount_cents' => ['required', 'integer', 'min:1000'],
+            'amount_idr' => ['required', 'integer', 'min:1000'],
         ];
     }
 
     public function messages(): array
     {
         return [
-            'amount_cents.min' => 'Minimum withdrawal amount is Rp 10.00 (1,000 cents).',
+            'amount_idr.min' => 'Minimum withdrawal amount is Rp 1.000 (1,000 IDR).',
         ];
     }
 }

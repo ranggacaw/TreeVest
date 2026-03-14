@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('lot_id')->constrained('lots')->onDelete('cascade');
             $table->unsignedTinyInteger('cycle_month');
-            $table->unsignedBigInteger('price_per_tree_cents');
+            $table->unsignedBigInteger('price_per_tree_idr');
             $table->timestamp('recorded_at');
 
             $table->index(['lot_id', 'cycle_month']);

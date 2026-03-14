@@ -39,7 +39,7 @@ class PortfolioDashboardController extends Controller
                     'wishlist_id' => $item->id,
                     'id' => $tree->id,
                     'identifier' => $tree->tree_identifier,
-                    'price_cents' => $tree->price_cents,
+                    'price_idr' => $tree->price_idr,
                     'expected_roi_percent' => (float) $tree->expected_roi_percent,
                     'risk_rating' => $tree->risk_rating?->value ?? $tree->risk_rating,
                     'status' => $tree->status?->value ?? $tree->status,

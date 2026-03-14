@@ -13,25 +13,25 @@ interface TaxSummaryData {
             payoutId: number;
             date: string;
             farmName: string;
-            grossAmountCents: number;
-            platformFeeCents: number;
-            netAmountCents: number;
+            grossAmountIdr: number;
+            platformFeeIdr: number;
+            netAmountIdr: number;
         }>;
-        totalCents: number;
+        totalIdr: number;
     };
     investments: {
         rows: Array<{
             investmentId: number;
             date: string;
             farmName: string;
-            amountCents: number;
+            amountIdr: number;
         }>;
-        totalCents: number;
+        totalIdr: number;
     };
     summary: {
-        totalIncomeCents: number;
-        totalInvestedCents: number;
-        netCents: number;
+        totalIncomeIdr: number;
+        totalInvestedIdr: number;
+        netIdr: number;
         overallRoiPercent?: number; // Added optional just in case, though not in props
     };
 }
@@ -96,16 +96,16 @@ export default function Show({ taxData, year, recentReports }: Props) {
                         <div className="grid grid-cols-2 gap-3 mb-6">
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                                 <p className="text-[11px] text-emerald-600 font-bold mb-1 uppercase tracking-wide">Total Income</p>
-                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalIncomeCents)}</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalIncomeIdr)}</p>
                             </div>
                             <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
                                 <p className="text-[11px] text-blue-600 font-bold mb-1 uppercase tracking-wide">Total Investments</p>
-                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalInvestedCents)}</p>
+                                <p className="text-[15px] font-extrabold text-gray-900 truncate">{formatRupiah(taxData.summary.totalInvestedIdr)}</p>
                             </div>
                             <div className="col-span-2 p-4 bg-gray-50 rounded-2xl border border-gray-100 flex justify-between items-center">
                                 <span className="text-[13px] text-gray-600 font-bold">Net (Pemasukan Bersih)</span>
-                                <span className={`text-[17px] font-extrabold ${taxData.summary.netCents >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
-                                    {formatRupiah(taxData.summary.netCents)}
+                                <span className={`text-[17px] font-extrabold ${taxData.summary.netIdr >= 0 ? 'text-emerald-600' : 'text-red-600'}`}>
+                                    {formatRupiah(taxData.summary.netIdr)}
                                 </span>
                             </div>
                         </div>
@@ -134,12 +134,12 @@ export default function Show({ taxData, year, recentReports }: Props) {
                                 <div key={row.payoutId} className="p-4 border border-gray-100 rounded-2xl bg-white shadow-sm hover:border-emerald-100 transition-colors">
                                     <div className="flex justify-between mb-2">
                                         <span className="text-[11px] text-gray-500 font-medium bg-gray-50 px-2 py-0.5 rounded-full">{row.date}</span>
-                                        <span className="text-[13px] font-extrabold text-emerald-600">+{formatRupiah(row.netAmountCents)}</span>
+                                        <span className="text-[13px] font-extrabold text-emerald-600">+{formatRupiah(row.netAmountIdr)}</span>
                                     </div>
                                     <p className="text-[13px] font-bold text-gray-900 mb-1">{row.farmName}</p>
                                     <div className="flex justify-between text-[11px] text-gray-400 border-t border-gray-50 pt-2 mt-2">
-                                        <span className="font-medium">Gross: {formatRupiah(row.grossAmountCents)}</span>
-                                        <span className="font-medium">Fee: {formatRupiah(row.platformFeeCents)}</span>
+                                        <span className="font-medium">Gross: {formatRupiah(row.grossAmountIdr)}</span>
+                                        <span className="font-medium">Fee: {formatRupiah(row.platformFeeIdr)}</span>
                                     </div>
                                 </div>
                             ))}
@@ -166,7 +166,7 @@ export default function Show({ taxData, year, recentReports }: Props) {
                                         <p className="text-[11px] text-gray-500 mb-1 font-medium bg-gray-50 inline-block px-2 py-0.5 rounded-full">{row.date}</p>
                                         <p className="text-[13px] font-bold text-gray-900">{row.farmName}</p>
                                     </div>
-                                    <p className="text-[13px] font-extrabold text-gray-900">{formatRupiah(row.amountCents)}</p>
+                                    <p className="text-[13px] font-extrabold text-gray-900">{formatRupiah(row.amountIdr)}</p>
                                 </div>
                             ))}
                             {taxData.investments.rows.length === 0 && (

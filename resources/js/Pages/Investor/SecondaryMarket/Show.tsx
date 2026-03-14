@@ -66,7 +66,7 @@ export default function Show({ listing, isOwner, isBuyer, canPurchase, canCancel
                             <div>
                                 <p className="text-[11px] text-gray-400 font-bold uppercase tracking-wide mb-1">Harga Jual</p>
                                 <p className="text-2xl font-black text-emerald-600">
-                                    {formatRupiah(listing.ask_price_cents)}
+                                    {formatRupiah(listing.ask_price_idr)}
                                 </p>
                             </div>
                             <div className={`px-4 py-2 rounded-2xl text-xs font-bold uppercase ${listing.status === 'active' ? 'bg-emerald-100 text-emerald-700 border border-emerald-200' : 'bg-gray-100 text-gray-500'}`}>
@@ -77,12 +77,12 @@ export default function Show({ listing, isOwner, isBuyer, canPurchase, canCancel
                         <div className="bg-gray-50 rounded-3xl p-5 space-y-4">
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-500 font-medium">Platform Fee ({(listing.platform_fee_rate * 100).toFixed(0)}%)</span>
-                                <span className="text-sm text-gray-900 font-bold">-{formatRupiah(listing.platform_fee_cents)}</span>
+                                <span className="text-sm text-gray-900 font-bold">-{formatRupiah(listing.platform_fee_idr)}</span>
                             </div>
                             <div className="h-px bg-gray-200" />
                             <div className="flex justify-between items-center">
                                 <span className="text-sm text-gray-900 font-bold">Net Proceeds</span>
-                                <span className="text-lg text-emerald-700 font-black">{formatRupiah(listing.net_proceeds_cents)}</span>
+                                <span className="text-lg text-emerald-700 font-black">{formatRupiah(listing.net_proceeds_idr)}</span>
                             </div>
                         </div>
                     </div>

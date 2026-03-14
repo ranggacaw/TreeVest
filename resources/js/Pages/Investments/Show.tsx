@@ -24,11 +24,11 @@ interface HarvestData {
 
 interface PayoutData {
     id: number;
-    gross_amount_cents: number;
+    gross_amount_idr: number;
     gross_amount_formatted: string;
-    platform_fee_cents: number;
+    platform_fee_idr: number;
     platform_fee_formatted: string;
-    net_amount_cents: number;
+    net_amount_idr: number;
     net_amount_formatted: string;
     status: string;
     status_label: string;
@@ -44,18 +44,18 @@ interface PayoutData {
 
 interface InvestmentData {
     id: number;
-    amount_cents: number;
+    amount_idr: number;
     formatted_amount: string;
     status: string;
     status_label?: string;
     purchase_date: string;
     created_at?: string;
-    current_value_cents: number;
-    projected_return_cents: number;
+    current_value_idr: number;
+    projected_return_idr: number;
     tree: {
         id: number;
         identifier: string;
-        price_cents?: number;
+        price_idr?: number;
         price_formatted?: string;
         expected_roi: number;
         risk_rating: string;
@@ -176,11 +176,11 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         <div className="grid grid-cols-2 gap-3 mb-6">
                             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <p className="text-xs text-gray-500 mb-1">{t('current_value')}</p>
-                                <p className="font-bold text-gray-900">{formatRupiah(investment.current_value_cents)}</p>
+                                <p className="font-bold text-gray-900">{formatRupiah(investment.current_value_idr)}</p>
                             </div>
                             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <p className="text-xs text-gray-500 mb-1">{t('projected_return')}</p>
-                                <p className="font-bold text-emerald-600">{formatRupiah(investment.projected_return_cents)}</p>
+                                <p className="font-bold text-emerald-600">{formatRupiah(investment.projected_return_idr)}</p>
                             </div>
                             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
                                 <p className="text-xs text-gray-500 mb-1">{t('amount_invested')}</p>

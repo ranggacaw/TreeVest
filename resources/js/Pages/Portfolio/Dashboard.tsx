@@ -52,7 +52,7 @@ interface Props extends PageProps {
 
 // ─── Portfolio Holding Card (for horizontal slider) ───────────────────────────
 function HoldingCard({ holding }: { holding: HoldingWithSparkline }) {
-  const positive = (holding.gain_loss_cents ?? 0) >= 0;
+  const positive = (holding.gain_loss_idr ?? 0) >= 0;
 
   return (
     <Link
@@ -71,13 +71,13 @@ function HoldingCard({ holding }: { holding: HoldingWithSparkline }) {
       </div>
 
       <p className="text-[11px] text-gray-400 mb-0.5">Investasi</p>
-      <p className="font-bold text-gray-900 text-sm">{formatRupiah(holding.amount_cents)}</p>
+      <p className="font-bold text-gray-900 text-sm">{formatRupiah(holding.amount_idr)}</p>
 
       <div className="mt-3 pt-3 border-t border-gray-50 flex items-center justify-between">
         <div>
           <p className="text-[11px] text-gray-400 mb-0.5">Keuntungan</p>
           <p className={`font-semibold text-sm ${positive ? 'text-emerald-500' : 'text-red-500'}`}>
-            {positive ? '+' : '-'}{formatRupiah(Math.abs(holding.gain_loss_cents ?? 0))}
+            {positive ? '+' : '-'}{formatRupiah(Math.abs(holding.gain_loss_idr ?? 0))}
           </p>
         </div>
         <span className={`text-[10px] px-2 py-1 rounded-full font-bold ${positive ? 'bg-emerald-50 text-emerald-600' : 'bg-red-50 text-red-500'}`}>
@@ -99,7 +99,7 @@ export default function Dashboard({
   const { t } = useTranslation('investments');
   const page = usePage<Props>();
   const unreadCount = page.props.unread_notifications_count ?? 0;
-  const gainPositive = (summaryHeader.gain_loss_cents ?? 0) >= 0;
+  const gainPositive = (summaryHeader.gain_loss_idr ?? 0) >= 0;
 
   // Derive available crop filters dynamically from topTrees keys
   const cropFilters = Object.keys(topTrees) as string[];
@@ -127,7 +127,7 @@ export default function Dashboard({
             <div className="flex items-start justify-between mb-5">
               <div>
                 <h1 className="text-[30px] font-extrabold text-gray-900 tracking-tight leading-none">
-                  {formatRupiah(summaryHeader.current_value_cents)}
+                  {formatRupiah(summaryHeader.current_value_idr)}
                 </h1>
               </div>
               <div className="flex bg-gray-100 rounded-full px-3 py-1.5 items-center gap-1.5 mt-1">
@@ -140,7 +140,7 @@ export default function Dashboard({
               <div>
                 <p className="text-gray-500 text-xs mb-0.5">{t('profit', { defaultValue: 'Keuntungan' })}</p>
                 <p className={`font-semibold text-[15px] ${gainPositive ? 'text-emerald-500' : 'text-red-500'}`}>
-                  {gainPositive ? '' : '-'}{formatRupiah(Math.abs(summaryHeader.gain_loss_cents ?? 0))}
+                  {gainPositive ? '' : '-'}{formatRupiah(Math.abs(summaryHeader.gain_loss_idr ?? 0))}
                 </p>
               </div>
               <div>
@@ -297,7 +297,7 @@ export default function Dashboard({
           </div>
 
           {/* ── Pending Payouts Banner (conditional) ─────────────── */}
-          {(summaryHeader.pending_payouts_cents ?? 0) > 0 && (
+          {(summaryHeader.pending_payouts_idr ?? 0) > 0 && (
             <>
               <div className="h-3 bg-gray-50" />
               <div className="bg-white px-5 pt-5 pb-6">
@@ -308,7 +308,7 @@ export default function Dashboard({
                       Tersedia untuk Dicairkan ✨
                     </p>
                     <p className="text-white font-extrabold text-xl mt-0.5">
-                      {formatRupiah(summaryHeader.pending_payouts_cents ?? 0)}
+                      {formatRupiah(summaryHeader.pending_payouts_idr ?? 0)}
                     </p>
                   </div>
                   <Link
@@ -343,7 +343,7 @@ export default function Dashboard({
                         <p className="text-[11px] text-gray-500">{item.farm?.name}</p>
                       </div>
                       <div className="text-right flex-shrink-0 ml-3">
-                        <p className="text-sm font-bold text-gray-900">{formatRupiah(item.price_cents)}</p>
+                        <p className="text-sm font-bold text-gray-900">{formatRupiah(item.price_idr)}</p>
                         <p className="text-[11px] text-emerald-600 font-semibold">{item.expected_roi_percent}% ROI</p>
                       </div>
                     </div>

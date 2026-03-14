@@ -61,13 +61,13 @@ export default function Dashboard({
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                                 <p className="text-xs text-emerald-600 font-medium mb-1">Total Investasi</p>
                                 <p className="text-sm text-gray-900">
-                                    {formatRupiah(metrics?.total_invested_cents || 0)}
+                                    {formatRupiah(metrics?.total_invested_idr || 0)}
                                 </p>
                             </div>
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                                 <p className="text-xs text-emerald-600 font-medium mb-1">Total Payouts</p>
                                 <p className="text-sm text-gray-900">
-                                    {formatRupiah(metrics?.total_payouts_cents || 0)}
+                                    {formatRupiah(metrics?.total_payouts_idr || 0)}
                                 </p>
                             </div>
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
@@ -159,7 +159,7 @@ export default function Dashboard({
                                             <p className="text-[11px] text-gray-500">{new Date(payout.date).toLocaleDateString()}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className="text-sm font-bold text-gray-900">{formatRupiah(payout.amount_cents)}</p>
+                                            <p className="text-sm font-bold text-gray-900">{formatRupiah(payout.amount_idr)}</p>
                                             <span className={`text-[9px] px-1.5 py-0.5 rounded-full uppercase font-bold ${payout.status === 'completed' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-600'}`}>
                                                 {payout.status}
                                             </span>

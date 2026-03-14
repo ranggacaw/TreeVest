@@ -46,7 +46,7 @@ export default function Show({ payout }: Props) {
                              
                              <p className="text-[13px] font-medium text-gray-500 mb-1 uppercase tracking-wide">Total Payout</p>
                              <h1 className="text-[32px] font-extrabold text-gray-900 tracking-tight leading-none mb-3">
-                                {formatRupiah(payout.net_amount_cents)}
+                                {formatRupiah(payout.net_amount_idr)}
                              </h1>
                              <span className={`inline-block px-3 py-1 rounded-full text-[11px] font-bold uppercase tracking-wide border ${
                                  payout.status === 'completed' ? 'bg-emerald-50 text-emerald-700 border-emerald-200' :
@@ -92,20 +92,20 @@ export default function Show({ payout }: Props) {
                                  <div className="flex justify-between items-center text-[13px]">
                                      <span className="text-gray-500">Gross Amount</span>
                                      <span className="font-medium text-gray-900">
-                                         {formatRupiah(payout.gross_amount_cents)}
+                                         {formatRupiah(payout.gross_amount_idr)}
                                      </span>
                                  </div>
                                  <div className="flex justify-between items-center text-[13px]">
                                      <span className="text-gray-500">Platform Fee</span>
                                      <span className="font-medium text-red-500">
-                                         -{formatRupiah(payout.platform_fee_cents)}
+                                         -{formatRupiah(payout.platform_fee_idr)}
                                      </span>
                                  </div>
                                  
                                  <div className="border-t border-gray-300 pt-3 flex justify-between items-center">
                                      <span className="text-[13px] font-bold text-gray-900">Net Amount</span>
                                      <span className="text-[15px] font-extrabold text-emerald-600">
-                                         {formatRupiah(payout.net_amount_cents)}
+                                         {formatRupiah(payout.net_amount_idr)}
                                      </span>
                                  </div>
                              </div>

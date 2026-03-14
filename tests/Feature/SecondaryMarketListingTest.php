@@ -70,15 +70,15 @@ class SecondaryMarketListingTest extends TestCase
 
     public function test_browse_listings_filters_by_price_range()
     {
-        MarketListing::factory()->active()->create(['ask_price_cents' => 5000]);
-        MarketListing::factory()->active()->create(['ask_price_cents' => 15000]);
-        MarketListing::factory()->active()->create(['ask_price_cents' => 25000]);
+        MarketListing::factory()->active()->create(['ask_price_idr' => 5000]);
+        MarketListing::factory()->active()->create(['ask_price_idr' => 15000]);
+        MarketListing::factory()->active()->create(['ask_price_idr' => 25000]);
 
         $response = $this
             ->actingAs($this->user)
             ->get(route('secondary-market.index', [
-                'min_price_cents' => 10000,
-                'max_price_cents' => 20000,
+                'min_price_idr' => 10000,
+                'max_price_idr' => 20000,
             ]));
 
         $response->assertStatus(200);
@@ -169,7 +169,7 @@ class SecondaryMarketListingTest extends TestCase
             ->actingAs($unverifiedUser)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 15000,
+                'ask_price_idr' => 15000,
             ]);
 
         $response->assertStatus(403);
@@ -179,14 +179,14 @@ class SecondaryMarketListingTest extends TestCase
     {
         $investment = Investment::factory()->active()->create([
             'user_id' => $this->user->id,
-            'amount_cents' => 10000,
+            'amount_idr' => 10000,
         ]);
 
         $response = $this
             ->actingAs($this->user)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 15000,
+                'ask_price_idr' => 15000,
                 'notes' => 'Reason for selling',
             ]);
 
@@ -196,7 +196,7 @@ class SecondaryMarketListingTest extends TestCase
         $this->assertDatabaseHas('market_listings', [
             'investment_id' => $investment->id,
             'seller_id' => $this->user->id,
-            'ask_price_cents' => 15000,
+            'ask_price_idr' => 15000,
             'status' => ListingStatus::Active,
         ]);
 
@@ -207,14 +207,14 @@ class SecondaryMarketListingTest extends TestCase
     {
         $investment = Investment::factory()->active()->create([
             'user_id' => $this->user->id,
-            'amount_cents' => 10000,
+            'amount_idr' => 10000,
         ]);
 
         $response = $this
             ->actingAs($this->user)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 5000,
+                'ask_price_idr' => 5000,
             ]);
 
         $response->assertSessionHasErrors();
@@ -229,7 +229,7 @@ class SecondaryMarketListingTest extends TestCase
             ->actingAs($this->user)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 15000,
+                'ask_price_idr' => 15000,
             ]);
 
         $response->assertRedirect();
@@ -246,7 +246,7 @@ class SecondaryMarketListingTest extends TestCase
             ->actingAs($this->user)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 15000,
+                'ask_price_idr' => 15000,
             ]);
 
         $response->assertRedirect();
@@ -330,7 +330,7 @@ class SecondaryMarketListingTest extends TestCase
             ->actingAs($this->user)
             ->post(route('secondary-market.store'), [
                 'investment_id' => $investment->id,
-                'ask_price_cents' => 15000,
+                'ask_price_idr' => 15000,
             ]);
 
         $response->assertRedirect();

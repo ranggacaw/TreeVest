@@ -47,11 +47,11 @@ class AdminDashboardService
             'total_users' => User::count(),
             'kyc_verified' => User::where('kyc_status', KycStatus::VERIFIED)->count(),
             'active_investments' => $investmentQuery->count(),
-            'investment_volume' => (int) $investmentQuery->sum('amount_cents'),
+            'investment_volume_idr' => (int) $investmentQuery->sum('amount_idr'),
             'pending_kyc' => KycVerification::where('status', KycStatus::SUBMITTED)->count(),
             'pending_farms' => Farm::where('status', FarmStatus::PENDING_APPROVAL)->count(),
             'completed_harvests' => Harvest::where('status', HarvestStatus::Completed)->count(),
-            'total_payouts' => (int) $payoutQuery->sum('net_amount_cents'),
+            'total_payouts_idr' => (int) $payoutQuery->sum('net_amount_idr'),
         ];
     }
 

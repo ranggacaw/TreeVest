@@ -27,14 +27,14 @@ export default function Configure({ auth, tree, user, payment_methods, unread_no
 
     // Derive min/max trees from investment limits and tree price
     const minTrees = useMemo(() => {
-        if (!tree.price_cents || tree.price_cents === 0) return 1;
-        return Math.ceil(tree.min_investment_cents / tree.price_cents);
-    }, [tree.min_investment_cents, tree.price_cents]);
+        if (!tree.price_idr || tree.price_idr === 0) return 1;
+        return Math.ceil(tree.min_investment_idr / tree.price_idr);
+    }, [tree.min_investment_idr, tree.price_idr]);
 
     const maxTrees = useMemo(() => {
-        if (!tree.price_cents || tree.price_cents === 0) return 1;
-        return Math.floor(tree.max_investment_cents / tree.price_cents);
-    }, [tree.max_investment_cents, tree.price_cents]);
+        if (!tree.price_idr || tree.price_idr === 0) return 1;
+        return Math.floor(tree.max_investment_idr / tree.price_idr);
+    }, [tree.max_investment_idr, tree.price_idr]);
 
     const { data, setData, post, processing, errors } = useForm({
         tree_id: tree.id,
@@ -46,7 +46,7 @@ export default function Configure({ auth, tree, user, payment_methods, unread_no
 
     const [showRiskModal, setShowRiskModal] = useState(false);
 
-    const totalCents = data.quantity * tree.price_cents;
+    const totalIdr = data.quantity * tree.price_idr;
     const isValidQuantity = data.quantity >= minTrees && data.quantity <= maxTrees;
 
     const decrement = () => {
@@ -120,7 +120,7 @@ export default function Configure({ auth, tree, user, payment_methods, unread_no
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">{t('price_per_tree')}</span>
-                                    <span className="font-semibold text-emerald-600">{formatRupiah(tree.price_cents)}</span>
+                                    <span className="font-semibold text-emerald-600">{formatRupiah(tree.price_idr)}</span>
                                 </div>
                                 <div className="flex justify-between text-sm">
                                     <span className="text-gray-500">{t('expected_roi', { roi: '' }).replace('%', '').trim()}</span>
@@ -182,10 +182,10 @@ export default function Configure({ auth, tree, user, payment_methods, unread_no
                                         <IconDollar className="w-5 h-5 text-emerald-200" />
                                     </div>
                                     <div className="text-3xl font-bold mb-2">
-                                        {formatRupiah(totalCents)}
+                                        {formatRupiah(totalIdr)}
                                     </div>
                                     <div className="text-emerald-100 text-xs flex justify-between">
-                                        <span>{data.quantity} {t('trees', { defaultValue: 'trees' })} × {formatRupiah(tree.price_cents)}</span>
+                                        <span>{data.quantity} {t('trees', { defaultValue: 'trees' })} × {formatRupiah(tree.price_idr)}</span>
                                     </div>
                                 </div>
 

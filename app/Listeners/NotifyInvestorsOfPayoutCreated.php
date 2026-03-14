@@ -22,7 +22,7 @@ class NotifyInvestorsOfPayoutCreated
                     'message' => "A payout of {$payout->net_amount_formatted} has been created from harvest on {$payout->harvest->scheduled_date->format('F j, Y')}.",
                     'payout_id' => $payout->id,
                     'harvest_id' => $payout->harvest_id,
-                    'amount_cents' => $payout->net_amount_cents,
+                    'amount_idr' => $payout->net_amount_idr,
                 ]
             );
         }

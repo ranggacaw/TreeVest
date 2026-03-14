@@ -20,6 +20,6 @@ export function formatRupiah(amount: number | string): string {
  * Used where the DB/API stores values in 1/100th units.
  * Example (cents): 5000000 → "Rp 50.000"
  */
-export function formatRupiahFromCents(cents: number): string {
+export function formatRupiahFromIdr(cents: number): string {
     return formatRupiah(Math.round(cents / 100));
 }

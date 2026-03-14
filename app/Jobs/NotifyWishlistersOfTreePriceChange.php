@@ -17,8 +17,8 @@ class NotifyWishlistersOfTreePriceChange implements ShouldQueue
 
     public function __construct(
         public readonly Tree $tree,
-        public readonly int $oldPriceCents,
-        public readonly int $newPriceCents,
+        public readonly int $oldPriceIdr,
+        public readonly int $newPriceIdr,
     ) {}
 
     public function handle(): void
@@ -30,7 +30,7 @@ class NotifyWishlistersOfTreePriceChange implements ShouldQueue
             ->with('user')
             ->each(function (WishlistItem $item) use ($tree) {
                 $item->user?->notify(
-                    new WishlistTreePriceChangedNotification($tree, $this->oldPriceCents, $this->newPriceCents)
+                    new WishlistTreePriceChangedNotification($tree, $this->oldPriceIdr, $this->newPriceIdr)
                 );
             });
     }

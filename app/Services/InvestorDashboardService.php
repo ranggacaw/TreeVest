@@ -19,7 +19,7 @@ class InvestorDashboardService
             $investments = Investment::where('user_id', $userId)->get();
             $activeInvestments = $investments->where('status', InvestmentStatus::Active);
 
-            $totalInvestedCents = $activeInvestments->sum('amount_cents');
+            $totalInvestedIdr = $activeInvestments->sum('amount_idr');
             $totalInvestmentsCount = $investments->count();
             $activeTrees = $activeInvestments->count();
 
@@ -30,9 +30,9 @@ class InvestorDashboardService
 
             $completedPayouts = $payouts->where('status', \App\Enums\PayoutStatus::Completed);
 
-            $totalPayoutsCents = $completedPayouts->sum('net_amount_cents');
+            $totalPayoutsIdr = $completedPayouts->sum('net_amount_idr');
 
-            $portfolioRoiPercent = $totalInvestedCents > 0 ? ($totalPayoutsCents / $totalInvestedCents) * 100 : 0;
+            $portfolioRoiPercent = $totalInvestedIdr > 0 ? ($totalPayoutsIdr / $totalInvestedIdr) * 100 : 0;
 
             $upcomingHarvests = Harvest::with('tree.fruitCrop.farm', 'fruitCrop.farm')
                 ->whereHas('tree.investments', function ($q) use ($userId) {
@@ -73,7 +73,7 @@ class InvestorDashboardService
                 return [
                     'id' => $p->id,
                     'date' => $p->created_at->toIso8601String(),
-                    'amount_cents' => (int) $p->net_amount_cents,
+                    'amount_idr' => (int) $p->net_amount_idr,
                     'farm_name' => $farmName,
                     'status' => $p->status->value,
                 ];
@@ -93,7 +93,7 @@ class InvestorDashboardService
                     return [
                         'id' => $i->id,
                         'date' => $i->created_at->toIso8601String(),
-                        'amount_cents' => (int) $i->amount_cents,
+                        'amount_idr' => (int) $i->amount_idr,
                         'farm_name' => $farmName,
                         'status' => $i->status->value,
                     ];
@@ -106,9 +106,9 @@ class InvestorDashboardService
 
             return [
                 'metrics' => [
-                    'total_invested_cents' => (int) $totalInvestedCents,
+                    'total_invested_idr' => (int) $totalInvestedIdr,
                     'active_trees' => $activeTrees,
-                    'total_payouts_cents' => (int) $totalPayoutsCents,
+                    'total_payouts_idr' => (int) $totalPayoutsIdr,
                     'portfolio_roi_percent' => (float) $portfolioRoiPercent,
                     'total_investments_count' => $totalInvestmentsCount,
                 ],

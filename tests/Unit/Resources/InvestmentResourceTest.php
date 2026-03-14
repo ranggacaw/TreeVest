@@ -19,7 +19,7 @@ class InvestmentResourceTest extends TestCase
     public function test_investment_resource_transforms_basic_data()
     {
         $investment = Investment::factory()->create([
-            'amount_cents' => 150000, // Rp 1,500
+            'amount_idr' => 150000, // Rp 1,500
             'currency' => 'IDR',
         ]);
 
@@ -27,7 +27,7 @@ class InvestmentResourceTest extends TestCase
         $array = $resource->toArray(request());
 
         $this->assertEquals($investment->id, $array['id']);
-        $this->assertEquals(150000, $array['amount_cents']);
+        $this->assertEquals(150000, $array['amount_idr']);
         $this->assertEquals('Rp 1,500.00', $array['formatted_amount']);
         $this->assertEquals('IDR', $array['currency']);
         $this->assertEquals($investment->status->value, $array['status']);
@@ -38,13 +38,13 @@ class InvestmentResourceTest extends TestCase
     {
         $tree = Tree::factory()->create([
             'tree_identifier' => 'TREE001',
-            'price_cents' => 200000,
+            'price_idr' => 200000,
             'expected_roi_percent' => 15,
         ]);
 
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
-            'amount_cents' => 150000,
+            'amount_idr' => 150000,
         ]);
 
         $investment->load('tree');
@@ -52,7 +52,7 @@ class InvestmentResourceTest extends TestCase
         $result = InvestmentResource::basic($investment);
 
         $this->assertEquals($investment->id, $result['id']);
-        $this->assertEquals(150000, $result['amount_cents']);
+        $this->assertEquals(150000, $result['amount_idr']);
         $this->assertEquals('Rp 1,500.00', $result['formatted_amount']);
         $this->assertEquals('TREE001', $result['tree']['identifier']);
     }
@@ -77,7 +77,7 @@ class InvestmentResourceTest extends TestCase
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
             'transaction_id' => $transaction->id,
-            'amount_cents' => 250000,
+            'amount_idr' => 250000,
         ]);
 
         $investment->load(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType', 'transaction']);
@@ -97,12 +97,12 @@ class InvestmentResourceTest extends TestCase
     {
         $tree = Tree::factory()->create([
             'tree_identifier' => 'TREE002',
-            'max_investment_cents' => 1000000, // Rp 10,000
+            'max_investment_idr' => 1000000, // Rp 10,000
         ]);
 
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
-            'amount_cents' => 500000, // Rp 5,000
+            'amount_idr' => 500000, // Rp 5,000
         ]);
 
         $investment->load('tree');
@@ -111,10 +111,10 @@ class InvestmentResourceTest extends TestCase
         $result = $resource->forTopUp();
 
         $this->assertEquals($investment->id, $result['id']);
-        $this->assertEquals(500000, $result['amount_cents']);
+        $this->assertEquals(500000, $result['amount_idr']);
         $this->assertEquals('Rp 5,000.00', $result['formatted_amount']);
         $this->assertEquals('TREE002', $result['tree']['identifier']);
-        $this->assertEquals(1000000, $result['tree']['max_investment_cents']);
+        $this->assertEquals(1000000, $result['tree']['max_investment_idr']);
     }
 
     public function test_resource_calculates_projected_return()
@@ -125,7 +125,7 @@ class InvestmentResourceTest extends TestCase
 
         $investment = Investment::factory()->create([
             'tree_id' => $tree->id,
-            'amount_cents' => 100000, // Rp 1,000
+            'amount_idr' => 100000, // Rp 1,000
         ]);
 
         $investment->load('tree');
@@ -134,6 +134,6 @@ class InvestmentResourceTest extends TestCase
         $array = $resource->toArray(request());
 
         // 20% of 100,000 = 20,000
-        $this->assertEquals(20000, $array['projected_return_cents']);
+        $this->assertEquals(20000, $array['projected_return_idr']);
     }
 }

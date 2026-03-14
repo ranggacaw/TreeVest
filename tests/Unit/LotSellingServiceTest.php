@@ -85,7 +85,7 @@ class LotSellingServiceTest extends TestCase
 
         $lot->refresh();
         $this->assertEquals(LotStatus::Selling, $lot->status);
-        $this->assertEquals(5_000_000, $lot->selling_revenue_cents);
+        $this->assertEquals(5_000_000, $lot->selling_revenue_idr);
         $this->assertEquals('lot-selling-proofs/proof.jpg', $lot->selling_proof_photo);
         $this->assertNotNull($lot->selling_submitted_at);
         \Illuminate\Support\Facades\Queue::assertPushed(\App\Jobs\DistributeLotProfits::class);
@@ -119,7 +119,7 @@ class LotSellingServiceTest extends TestCase
 
         // Platform wallet should have 1_000_000
         $platformWallet = Wallet::where('is_platform', true)->first();
-        $this->assertEquals(1_000_000, $platformWallet->balance_cents);
+        $this->assertEquals(1_000_000, $platformWallet->balance_idr);
     }
 
     public function test_distribute_profits_credits_farm_owner_30_percent_of_remaining(): void
@@ -133,7 +133,7 @@ class LotSellingServiceTest extends TestCase
 
         // Farm owner gets 30% of remaining (9_000_000 × 0.30 = 2_700_000)
         $farmOwnerWallet = Wallet::where('user_id', $farmOwner->id)->first();
-        $this->assertEquals(2_700_000, $farmOwnerWallet->balance_cents);
+        $this->assertEquals(2_700_000, $farmOwnerWallet->balance_idr);
     }
 
     public function test_distribute_profits_credits_investor_pool_proportionally(): void
@@ -156,8 +156,8 @@ class LotSellingServiceTest extends TestCase
         $wallet1 = Wallet::where('user_id', $investor1->id)->first();
         $wallet2 = Wallet::where('user_id', $investor2->id)->first();
 
-        $this->assertEquals(4_725_000, $wallet1->balance_cents);
-        $this->assertEquals(1_575_000, $wallet2->balance_cents);
+        $this->assertEquals(4_725_000, $wallet1->balance_idr);
+        $this->assertEquals(1_575_000, $wallet2->balance_idr);
     }
 
     public function test_distribute_profits_gives_rounding_residual_to_largest_investor(): void
@@ -187,8 +187,8 @@ class LotSellingServiceTest extends TestCase
 
         // investor1 = 41 + 1 residual = 42
         // investor2 = 20
-        $this->assertEquals(42, $wallet1->balance_cents);
-        $this->assertEquals(20, $wallet2->balance_cents);
+        $this->assertEquals(42, $wallet1->balance_idr);
+        $this->assertEquals(20, $wallet2->balance_idr);
     }
 
     public function test_distribute_profits_transitions_lot_to_completed(): void
@@ -254,7 +254,7 @@ class LotSellingServiceTest extends TestCase
     /**
      * Create a selling-status lot owned by the given farm owner with preset revenue.
      */
-    private function makeLotWithRevenue(User $farmOwner, int $revenueCents): Lot
+    private function makeLotWithRevenue(User $farmOwner, int $revenueIdr): Lot
     {
         $farm = \App\Models\Farm::factory()->create(['owner_id' => $farmOwner->id]);
         $warehouse = \App\Models\Warehouse::factory()->create(['farm_id' => $farm->id]);
@@ -262,20 +262,20 @@ class LotSellingServiceTest extends TestCase
 
         return Lot::factory()->selling()->create([
             'rack_id' => $rack->id,
-            'selling_revenue_cents' => $revenueCents,
+            'selling_revenue_idr' => $revenueIdr,
         ]);
     }
 
     /**
      * Create an active lot investment for the given investor.
      */
-    private function makeInvestment(Lot $lot, User $investor, int $amountCents): Investment
+    private function makeInvestment(Lot $lot, User $investor, int $amountIdr): Investment
     {
         return Investment::factory()->active()->create([
             'lot_id' => $lot->id,
             'tree_id' => null,
             'user_id' => $investor->id,
-            'amount_cents' => $amountCents,
+            'amount_idr' => $amountIdr,
         ]);
     }
 }

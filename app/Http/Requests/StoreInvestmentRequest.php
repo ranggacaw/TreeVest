@@ -17,12 +17,12 @@ class StoreInvestmentRequest extends FormRequest
         $treeId = $this->input('tree_id');
         $tree = $treeId ? Tree::find($treeId) : null;
 
-        $minInvestment = $tree?->min_investment_cents ?? 1;
-        $maxInvestment = $tree?->max_investment_cents ?? 999999999;
+        $minInvestment = $tree?->min_investment_idr ?? 1;
+        $maxInvestment = $tree?->max_investment_idr ?? 99999999999;
 
         return [
             'tree_id' => 'required|exists:trees,id',
-            'amount_cents' => [
+            'amount_idr' => [
                 'required',
                 'integer',
                 "min:{$minInvestment}",
@@ -37,8 +37,8 @@ class StoreInvestmentRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'amount_cents.min' => 'The investment amount is below the minimum allowed for this tree.',
-            'amount_cents.max' => 'The investment amount exceeds the maximum allowed for this tree.',
+            'amount_idr.min' => 'The investment amount is below the minimum allowed for this tree.',
+            'amount_idr.max' => 'The investment amount exceeds the maximum allowed for this tree.',
             'acceptance_risk_disclosure.required' => 'You must accept the risk disclosure to proceed.',
             'acceptance_risk_disclosure.accepted' => 'You must accept the risk disclosure to proceed.',
             'acceptance_terms.required' => 'You must accept the terms and conditions to proceed.',

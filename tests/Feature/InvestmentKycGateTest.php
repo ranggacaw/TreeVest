@@ -16,8 +16,8 @@ class InvestmentKycGateTest extends TestCase
     {
         return Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
     }
 
@@ -98,7 +98,7 @@ class InvestmentKycGateTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -126,7 +126,7 @@ class InvestmentKycGateTest extends TestCase
         $response = $this->actingAs($user)
             ->post(route('investments.store'), [
                 'tree_id' => $tree->id,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
                 'acceptance_risk_disclosure' => true,
                 'acceptance_terms' => true,
             ]);
@@ -138,7 +138,7 @@ class InvestmentKycGateTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $user->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
         ]);
     }
 

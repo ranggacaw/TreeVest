@@ -15,11 +15,11 @@ return new class extends Migration
             $table->id();
             $table->foreignId('investment_id')->constrained()->onDelete('cascade');
             $table->foreignId('seller_id')->constrained('users')->onDelete('cascade');
-            $table->unsignedBigInteger('ask_price_cents');
+            $table->unsignedBigInteger('ask_price_idr');
             $table->char('currency', 3)->default('IDR');
             $table->decimal('platform_fee_rate', 5, 4);
-            $table->unsignedBigInteger('platform_fee_cents');
-            $table->unsignedBigInteger('net_proceeds_cents');
+            $table->unsignedBigInteger('platform_fee_idr');
+            $table->unsignedBigInteger('net_proceeds_idr');
             $table->enum('status', ['active', 'sold', 'cancelled'])->default('active');
             $table->foreignId('buyer_id')->nullable()->constrained('users')->onDelete('set null');
             $table->timestamp('purchased_at')->nullable();

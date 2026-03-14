@@ -37,13 +37,13 @@ class SecondaryMarketPurchaseTest extends TestCase
 
         $this->investment = Investment::factory()->active()->create([
             'user_id' => $this->seller->id,
-            'amount_cents' => 10000,
+            'amount_idr' => 10000,
         ]);
 
         $this->listing = MarketListing::factory()->active()->create([
             'investment_id' => $this->investment->id,
             'seller_id' => $this->seller->id,
-            'ask_price_cents' => 15000,
+            'ask_price_idr' => 15000,
         ]);
     }
 
@@ -72,7 +72,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this
@@ -88,7 +88,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'listing_id' => $this->listing->id,
             'from_user_id' => $this->seller->id,
             'to_user_id' => $this->buyer->id,
-            'transfer_price_cents' => $this->listing->ask_price_cents,
+            'transfer_price_idr' => $this->listing->ask_price_idr,
         ]);
     }
 
@@ -98,7 +98,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this
@@ -119,7 +119,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this
@@ -149,7 +149,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this
@@ -173,7 +173,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $otherBuyer = User::factory()->create(['kyc_status' => 'verified', 'kyc_verified_at' => now()]);
@@ -181,7 +181,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $otherBuyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this->travelBack();
@@ -216,7 +216,7 @@ class SecondaryMarketPurchaseTest extends TestCase
             'user_id' => $this->buyer->id,
             'type' => TransactionType::SecondaryPurchase,
             'status' => TransactionStatus::Pending,
-            'amount_cents' => $this->listing->ask_price_cents,
+            'amount_idr' => $this->listing->ask_price_idr,
         ]);
 
         $this

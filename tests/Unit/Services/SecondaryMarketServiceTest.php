@@ -79,7 +79,7 @@ class SecondaryMarketServiceTest extends TestCase
         $seller = User::factory()->create(['kyc_status' => 'verified', 'kyc_verified_at' => now()]);
         $investment = Investment::factory()->active()->create([
             'user_id' => $seller->id,
-            'amount_cents' => 10000,
+            'amount_idr' => 10000,
         ]);
 
         $this->expectException(\Exception::class);
@@ -93,23 +93,23 @@ class SecondaryMarketServiceTest extends TestCase
         $seller = User::factory()->create(['kyc_status' => 'verified', 'kyc_verified_at' => now()]);
         $investment = Investment::factory()->active()->create([
             'user_id' => $seller->id,
-            'amount_cents' => 10000,
+            'amount_idr' => 10000,
         ]);
 
-        $askPriceCents = 15000;
-        $expectedFeeCents = (int) ceil($askPriceCents * 0.02);
-        $expectedNetProceedsCents = $askPriceCents - $expectedFeeCents;
+        $askPriceIdr = 15000;
+        $expectedFeeIdr = (int) ceil($askPriceIdr * 0.02);
+        $expectedNetProceedsIdr = $askPriceIdr - $expectedFeeIdr;
 
-        $listing = $this->service->createListing($seller, $investment, $askPriceCents);
+        $listing = $this->service->createListing($seller, $investment, $askPriceIdr);
 
-        $this->assertEquals($expectedFeeCents, $listing->platform_fee_cents);
-        $this->assertEquals($expectedNetProceedsCents, $listing->net_proceeds_cents);
+        $this->assertEquals($expectedFeeIdr, $listing->platform_fee_idr);
+        $this->assertEquals($expectedNetProceedsIdr, $listing->net_proceeds_idr);
     }
 
     public function test_create_listing_creates_audit_log()
     {
         $seller = User::factory()->create(['kyc_status' => 'verified', 'kyc_verified_at' => now()]);
-        $investment = Investment::factory()->active()->create(['user_id' => $seller->id, 'amount_cents' => 10000]);
+        $investment = Investment::factory()->active()->create(['user_id' => $seller->id, 'amount_idr' => 10000]);
 
         $this->service->createListing($seller, $investment, 15000);
 
@@ -122,7 +122,7 @@ class SecondaryMarketServiceTest extends TestCase
     public function test_create_listing_transitions_investment_to_listed()
     {
         $seller = User::factory()->create(['kyc_status' => 'verified', 'kyc_verified_at' => now()]);
-        $investment = Investment::factory()->active()->create(['user_id' => $seller->id, 'amount_cents' => 10000]);
+        $investment = Investment::factory()->active()->create(['user_id' => $seller->id, 'amount_idr' => 10000]);
 
         $this->service->createListing($seller, $investment, 15000);
 

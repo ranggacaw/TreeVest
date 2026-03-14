@@ -32,17 +32,17 @@ class PayoutSeeder extends Seeder
             foreach ($investments as $investment) {
                 $status = $this->getRandomPayoutStatus();
 
-                $grossAmountCents = $this->calculateGrossAmount($harvest, $investment);
-                $platformFeeCents = (int) ($grossAmountCents * $harvest->platform_fee_rate);
-                $netAmountCents = $grossAmountCents - $platformFeeCents;
+                $grossAmountIdr = $this->calculateGrossAmount($harvest, $investment);
+                $platformFeeIdr = (int) ($grossAmountIdr * $harvest->platform_fee_rate);
+                $netAmountIdr = $grossAmountIdr - $platformFeeIdr;
 
                 Payout::create([
                     'investment_id' => $investment->id,
                     'harvest_id' => $harvest->id,
                     'investor_id' => $investment->user_id,
-                    'gross_amount_cents' => $grossAmountCents,
-                    'platform_fee_cents' => $platformFeeCents,
-                    'net_amount_cents' => $netAmountCents,
+                    'gross_amount_idr' => $grossAmountIdr,
+                    'platform_fee_idr' => $platformFeeIdr,
+                    'net_amount_idr' => $netAmountIdr,
                     'currency' => 'IDR',
                     'status' => $status,
                     'payout_method' => $this->getPayoutMethod(),
@@ -85,12 +85,12 @@ class PayoutSeeder extends Seeder
 
     private function calculateGrossAmount(Harvest $harvest, Investment $investment): int
     {
-        $marketPriceCentsPerKg = $harvest->marketPrice?->price_per_kg_cents ?? 5000;
+        $marketPriceIdrPerKg = $harvest->marketPrice?->price_per_kg_idr ?? 5000;
         $actualYieldKg = $harvest->actual_yield_kg ?? 100;
 
-        $investorShare = $investment->amount_cents / $harvest->tree->price_cents;
+        $investorShare = $investment->amount_idr / $harvest->tree->price_idr;
 
-        return (int) ($marketPriceCentsPerKg * $actualYieldKg * $investorShare);
+        return (int) ($marketPriceIdrPerKg * $actualYieldKg * $investorShare);
     }
 
     private function getPayoutMethod(): string

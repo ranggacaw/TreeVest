@@ -86,7 +86,7 @@ export default function PayoutsIndex({ payouts }: Props) {
                              <p className="text-[11px] text-gray-500 mt-0.5">Via {payout.payout_method?.replace('_', ' ') ?? 'Transfer'}</p>
                         </div>
                         <div className="text-right">
-                             <p className="text-[15px] font-extrabold text-emerald-600">+{formatRupiah(payout.net_amount_cents)}</p>
+                             <p className="text-[15px] font-extrabold text-emerald-600">+{formatRupiah(payout.net_amount_idr)}</p>
                         </div>
                     </div>
                   </Link>

@@ -17,25 +17,25 @@ interface Props {
             fruitType: string;
             variant: string;
             farmName: string;
-            amountInvestedCents: number;
-            totalPayoutsCents: number;
-            netCents: number;
+            amountInvestedIdr: number;
+            totalPayoutsIdr: number;
+            netIdr: number;
             actualRoiPercent: number;
             status: string;
             purchaseDate: string;
         }>;
         summary: {
-            totalInvestedCents: number;
-            totalPayoutsCents: number;
-            netCents: number;
+            totalInvestedIdr: number;
+            totalPayoutsIdr: number;
+            netIdr: number;
             overallRoiPercent: number;
         };
     };
     performance: Array<{
         month: string;
-        investedCents: number;
-        payoutsCents: number;
-        cumulativeCents: number;
+        investedIdr: number;
+        payoutsIdr: number;
+        cumulativeIdr: number;
     }>;
     filters: {
         from?: string;
@@ -132,19 +132,19 @@ export default function Index({
                             <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <p className="text-[11px] text-gray-500 font-medium mb-1 uppercase tracking-wide">Total Invested</p>
                                 <p className="text-[15px] font-extrabold text-gray-900 truncate">
-                                    {formatRupiah(profitLoss.summary.totalInvestedCents)}
+                                    {formatRupiah(profitLoss.summary.totalInvestedIdr)}
                                 </p>
                             </div>
                             <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">
                                 <p className="text-[11px] text-gray-500 font-medium mb-1 uppercase tracking-wide">Total Payouts</p>
                                 <p className="text-[15px] font-extrabold text-gray-900 truncate">
-                                    {formatRupiah(profitLoss.summary.totalPayoutsCents)}
+                                    {formatRupiah(profitLoss.summary.totalPayoutsIdr)}
                                 </p>
                             </div>
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                                 <p className="text-[11px] text-emerald-600 font-bold mb-1 uppercase tracking-wide">Net Return</p>
-                                <p className={`text-[15px] font-extrabold ${profitLoss.summary.netCents >= 0 ? 'text-emerald-700' : 'text-red-600'} truncate`}>
-                                    {formatRupiah(profitLoss.summary.netCents)}
+                                <p className={`text-[15px] font-extrabold ${profitLoss.summary.netIdr >= 0 ? 'text-emerald-700' : 'text-red-600'} truncate`}>
+                                    {formatRupiah(profitLoss.summary.netIdr)}
                                 </p>
                             </div>
                             <div className="p-4 bg-blue-50 rounded-2xl border border-blue-100">
@@ -253,8 +253,8 @@ export default function Index({
                                             <p className="text-[10px] text-gray-400 mt-0.5">{row.farmName}</p>
                                         </div>
                                         <div className="text-right">
-                                            <p className={`font-bold text-[13px] ${row.netCents >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
-                                                {formatRupiah(row.netCents)}
+                                            <p className={`font-bold text-[13px] ${row.netIdr >= 0 ? 'text-emerald-600' : 'text-red-500'}`}>
+                                                {formatRupiah(row.netIdr)}
                                             </p>
                                             <p className="text-[10px] text-gray-400 font-medium">Net Profit</p>
                                         </div>
@@ -263,11 +263,11 @@ export default function Index({
                                     <div className="grid grid-cols-2 gap-4 pt-3 border-t border-gray-50">
                                         <div>
                                             <p className="text-[10px] text-gray-400 font-bold uppercase">Invested</p>
-                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.amountInvestedCents)}</p>
+                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.amountInvestedIdr)}</p>
                                         </div>
                                         <div>
                                             <p className="text-[10px] text-gray-400 font-bold uppercase">Payouts</p>
-                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.totalPayoutsCents)}</p>
+                                            <p className="text-[11px] font-semibold text-gray-700">{formatRupiah(row.totalPayoutsIdr)}</p>
                                         </div>
                                         <div>
                                             <p className="text-[10px] text-gray-400 font-bold uppercase">ROI</p>

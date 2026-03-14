@@ -18,11 +18,11 @@ class PayoutResource extends JsonResource
         /** @var Payout $this */
         return [
             'id' => $this->id,
-            'gross_amount_cents' => $this->gross_amount_cents,
+            'gross_amount_idr' => $this->gross_amount_idr,
             'gross_amount_formatted' => $this->gross_amount_formatted,
-            'platform_fee_cents' => $this->platform_fee_cents,
+            'platform_fee_idr' => $this->platform_fee_idr,
             'platform_fee_formatted' => $this->platform_fee_formatted,
-            'net_amount_cents' => $this->net_amount_cents,
+            'net_amount_idr' => $this->net_amount_idr,
             'net_amount_formatted' => $this->net_amount_formatted,
             'status' => $this->status->value,
             'status_label' => $this->status->getLabel(),

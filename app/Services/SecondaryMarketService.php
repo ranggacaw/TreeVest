@@ -17,7 +17,7 @@ use Illuminate\Support\Facades\DB;
 
 class SecondaryMarketService
 {
-    public function createListing(User $seller, Investment $investment, int $askPriceCents, ?string $notes = null, ?string $expiresAt = null): MarketListing
+    public function createListing(User $seller, Investment $investment, int $askPriceIdr, ?string $notes = null, ?string $expiresAt = null): MarketListing
     {
         if (! $seller->hasVerifiedKyc()) {
             throw new Exception('Seller must have verified KYC to create a listing.');
@@ -36,23 +36,23 @@ class SecondaryMarketService
             throw new Exception('This investment already has an active listing.');
         }
 
-        if ($askPriceCents < $investment->amount_cents) {
+        if ($askPriceIdr < $investment->amount_idr) {
             throw new Exception('Ask price cannot be less than the original investment amount.');
         }
 
         $feeRate = config('treevest.secondary_market_fee_rate', 0.02);
-        $platformFeeCents = (int) ceil($askPriceCents * $feeRate);
-        $netProceedsCents = $askPriceCents - $platformFeeCents;
+        $platformFeeIdr = (int) ceil($askPriceIdr * $feeRate);
+        $netProceedsIdr = $askPriceIdr - $platformFeeIdr;
 
-        $listing = DB::transaction(function () use ($seller, $investment, $askPriceCents, $feeRate, $platformFeeCents, $netProceedsCents, $notes, $expiresAt) {
+        $listing = DB::transaction(function () use ($seller, $investment, $askPriceIdr, $feeRate, $platformFeeIdr, $netProceedsIdr, $notes, $expiresAt) {
             $listing = MarketListing::create([
                 'investment_id' => $investment->id,
                 'seller_id' => $seller->id,
-                'ask_price_cents' => $askPriceCents,
+                'ask_price_idr' => $askPriceIdr,
                 'currency' => $investment->currency,
                 'platform_fee_rate' => $feeRate,
-                'platform_fee_cents' => $platformFeeCents,
-                'net_proceeds_cents' => $netProceedsCents,
+                'platform_fee_idr' => $platformFeeIdr,
+                'net_proceeds_idr' => $netProceedsIdr,
                 'status' => ListingStatus::Active,
                 'notes' => $notes,
                 'expires_at' => $expiresAt ? now()->parse($expiresAt) : null,
@@ -69,8 +69,8 @@ class SecondaryMarketService
                 'event_data' => [
                     'listing_id' => $listing->id,
                     'investment_id' => $investment->id,
-                    'ask_price_cents' => $askPriceCents,
-                    'net_proceeds_cents' => $netProceedsCents,
+                    'ask_price_idr' => $askPriceIdr,
+                    'net_proceeds_idr' => $netProceedsIdr,
                 ],
             ]);
 
@@ -153,7 +153,7 @@ class SecondaryMarketService
                 'user_id' => $buyer->id,
                 'type' => \App\Enums\TransactionType::SecondaryPurchase,
                 'status' => \App\Enums\TransactionStatus::Pending,
-                'amount_cents' => $listing->ask_price_cents,
+                'amount' => $listing->ask_price_idr,
                 'currency' => $listing->currency,
                 'metadata' => [
                     'type' => 'secondary_purchase',
@@ -196,8 +196,8 @@ class SecondaryMarketService
                 'listing_id' => $lockedListing->id,
                 'from_user_id' => $lockedListing->seller_id,
                 'to_user_id' => $transaction->user_id,
-                'transfer_price_cents' => $lockedListing->ask_price_cents,
-                'platform_fee_cents' => $lockedListing->platform_fee_cents,
+                'transfer_price_idr' => $lockedListing->ask_price_idr,
+                'platform_fee_idr' => $lockedListing->platform_fee_idr,
                 'transaction_id' => $transaction->id,
                 'transferred_at' => now(),
             ]);
@@ -216,7 +216,7 @@ class SecondaryMarketService
                     'investment_id' => $investment->id,
                     'buyer_id' => $transaction->user_id,
                     'seller_id' => $lockedListing->seller_id,
-                    'transfer_price_cents' => $lockedListing->ask_price_cents,
+                    'transfer_price_idr' => $lockedListing->ask_price_idr,
                     'transaction_id' => $transaction->id,
                 ],
             ]);

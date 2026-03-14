@@ -30,7 +30,7 @@ class TreeFilterServiceTest extends TestCase
         $quoteChar = in_array(config('database.default'), ['sqlite', 'mysql']) ?
             (config('database.default') === 'mysql' ? '`' : '"') : '"';
         $this->assertStringContainsString($quoteChar.'risk_rating'.$quoteChar, $sql);
-        $this->assertStringContainsString($quoteChar.'price_cents'.$quoteChar, $sql);
+        $this->assertStringContainsString($quoteChar.'price_idr'.$quoteChar, $sql);
         $this->assertStringContainsString('between', $sql);
     }
 }

@@ -31,7 +31,7 @@ class DynamicPricingService
     public function priceForMonth(Lot $lot, int $month): int
     {
         $rate = (float) $lot->monthly_increase_rate;
-        $base = (int) $lot->base_price_per_tree_cents;
+        $base = (int) $lot->base_price_per_tree_idr;
 
         return (int) round($base * (1 + $rate) ** ($month - 1));
     }
@@ -53,14 +53,14 @@ class DynamicPricingService
         $month = $this->currentCycleMonth($lot);
         $newPrice = $this->priceForMonth($lot, $month);
 
-        $lot->current_price_per_tree_cents = $newPrice;
+        $lot->current_price_per_tree_idr = $newPrice;
         $lot->save();
 
         // Only create snapshot if one doesn't exist for this month yet
         LotPriceSnapshot::firstOrCreate(
             ['lot_id' => $lot->id, 'cycle_month' => $month],
             [
-                'price_per_tree_cents' => $newPrice,
+                'price_per_tree_idr' => $newPrice,
                 'recorded_at' => now(),
             ]
         );
@@ -78,7 +78,7 @@ class DynamicPricingService
         for ($m = 1; $m <= $lot->cycle_months; $m++) {
             $table[$m] = [
                 'month' => $m,
-                'price_cents' => $this->priceForMonth($lot, $m),
+                'price_idr' => $this->priceForMonth($lot, $m),
                 'is_current' => $m === $currentMonth,
                 'is_open' => $m <= $lot->last_investment_month,
             ];

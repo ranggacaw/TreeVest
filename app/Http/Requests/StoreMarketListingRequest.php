@@ -15,7 +15,7 @@ class StoreMarketListingRequest extends FormRequest
     {
         return [
             'investment_id' => ['required', 'exists:investments,id'],
-            'ask_price_cents' => ['required', 'integer', 'min:1'],
+            'ask_price_idr' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string', 'max:1000'],
             'expires_at' => ['nullable', 'date', 'after:now'],
         ];

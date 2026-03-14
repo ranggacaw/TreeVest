@@ -106,7 +106,7 @@ return [
     'url' => '',
     'uuid' => '',
     'custom' => [
-        'ask_price_cents' => [
+        'ask_price_idr' => [
             'required' => '',
             'integer' => '',
             'min' => '',
@@ -167,7 +167,7 @@ return [
         'password_confirmation' => '',
         'phone' => '',
         'locale' => '',
-        'ask_price_cents' => '',
+        'ask_price_idr' => '',
         'investment_id' => '',
         'tree_identifier' => '',
         'fruit_crop_id' => '',

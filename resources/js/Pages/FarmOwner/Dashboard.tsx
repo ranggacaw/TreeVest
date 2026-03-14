@@ -7,6 +7,7 @@ import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 import { Leaf, Calendar, Stethoscope, LineChart, HandCoins, Users, Sprout, Warehouse, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 
 export default function Dashboard({
     metrics,
@@ -27,8 +28,8 @@ export default function Dashboard({
         { label: t('farm_owner.dashboard.view_analytics'), href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
     ];
 
-    const formatCurrency = (cents: number) => {
-        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formatCurrency = (idr: number) => {
+        return formatRupiah(idr);
     };
 
     return (
@@ -72,7 +73,7 @@ export default function Dashboard({
                                 <StatCard label={t('farm_owner.dashboard.total_farms')} value={metrics?.active_farms || 0} icon={<Leaf />} accent="sage" />
                                 <StatCard label={t('farm_owner.dashboard.total_trees')} value={metrics?.total_trees || 0} icon={<Sprout />} accent="sage" />
                                 <StatCard label={t('farm_owner.dashboard.total_investors')} value={metrics?.total_investors || 0} icon={<Users />} accent="sage" />
-                                <StatCard label={t('farm_owner.dashboard.total_earnings')} value={formatCurrency(metrics?.total_earnings_cents || 0)} icon={<HandCoins />} accent="amber" />
+                                <StatCard label={t('farm_owner.dashboard.total_earnings')} value={formatCurrency(metrics?.total_earnings_idr || 0)} icon={<HandCoins />} accent="amber" />
                             </div>
 
                             <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">

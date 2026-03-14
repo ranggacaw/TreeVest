@@ -56,6 +56,7 @@ export interface Rack {
     warehouse_id: number;
     name: string;
     description: string | null;
+    label?: string;
     created_at?: string;
     updated_at?: string;
     lots?: Lot[];
@@ -65,11 +66,16 @@ export interface Rack {
 export interface Lot {
     id: number;
     rack_id: number;
+    fruit_crop_id?: number;
     name: string;
     status: LotStatus;
     total_trees: number;
-    current_price_per_tree_cents: number;
+    base_price_per_tree_idr?: number;
+    current_price_per_tree_idr: number;
+    monthly_increase_rate: number;
     cycle_months: number;
+    last_investment_month?: number;
+    cycle_started_at?: string;
     created_at?: string;
     updated_at?: string;
     rack?: Rack;
@@ -204,10 +210,10 @@ export interface Farm {
             id: number;
             identifier: string;
             tree_identifier: string;
-            price_cents: number;
+            price_idr: number;
             expected_roi_percent: number;
-            min_investment_cents: number;
-            max_investment_cents: number;
+            min_investment_idr: number;
+            max_investment_idr: number;
         }>;
     }>;
 }
@@ -248,13 +254,13 @@ export type PageProps<
 export interface Tree {
     id: number;
     identifier: string;
-    price_cents: number;
+    price_idr: number;
     price_formatted: string;
     expected_roi: number;
     expected_roi_formatted: string;
     risk_rating: string;
-    min_investment_cents: number;
-    max_investment_cents: number;
+    min_investment_idr: number;
+    max_investment_idr: number;
     min_investment_formatted: string;
     max_investment_formatted: string;
     age_years?: number;
@@ -273,7 +279,7 @@ export interface Tree {
 export interface Investment {
     id: number;
     quantity: number;
-    amount_cents: number;
+    amount_idr: number;
     formatted_amount: string;
     status: InvestmentStatus;
     status_label?: string;
@@ -332,17 +338,17 @@ export interface PaymentMethod {
 }
 
 export interface PortfolioSummary {
-    total_value_cents: number;
+    total_value_idr: number;
     tree_count: number;
-    total_invested_cents: number;
+    total_invested_idr: number;
     average_roi_percent: number;
-    total_payouts_cents: number;
+    total_payouts_idr: number;
     tree_count_by_status: Record<string, number>;
 }
 
 export interface DiversificationData {
     category: string;
-    value_cents: number;
+    value_idr: number;
     count: number;
 }
 
@@ -361,27 +367,27 @@ export interface HarvestEvent {
 export interface PerformanceInvestment {
     investment_id: number;
     tree_identifier: string;
-    amount_cents: number;
-    projected_return_cents: number;
-    actual_return_cents: number;
-    difference_cents: number;
+    amount_idr: number;
+    projected_return_idr: number;
+    actual_return_idr: number;
+    difference_idr: number;
 }
 
 export interface PerformanceMetrics {
-    projected_returns_cents: number;
-    actual_returns_cents: number;
-    difference_cents: number;
+    projected_returns_idr: number;
+    actual_returns_idr: number;
+    difference_idr: number;
     percentage_gain_loss: number;
     investments: PerformanceInvestment[];
 }
 
 export interface PortfolioInvestment {
     id: number;
-    amount_cents: number;
+    amount_idr: number;
     purchase_date: string;
-    current_value_cents: number;
-    projected_return_cents: number;
-    actual_return_cents: number;
+    current_value_idr: number;
+    projected_return_idr: number;
+    actual_return_idr: number;
     status: string;
     tree: {
         id: number;
@@ -406,12 +412,12 @@ export interface PaginatedInvestments {
 
 export interface InvestmentWithDetails {
     id: number;
-    amount_cents: number;
+    amount_idr: number;
     purchase_date: string;
     status: string;
-    current_value_cents: number;
-    projected_return_cents: number;
-    actual_return_cents: number;
+    current_value_idr: number;
+    projected_return_idr: number;
+    actual_return_idr: number;
     tree: {
         id: number;
         identifier: string;
@@ -464,7 +470,7 @@ export interface Harvest {
     tree?: {
         id: number;
         tree_identifier: string;
-        price_cents: number;
+        price_idr: number;
         expected_roi_percent: number;
         risk_rating: string;
     };
@@ -500,7 +506,7 @@ export interface HarvestWithRelations extends Harvest {
     tree: {
         id: number;
         tree_identifier: string;
-        price_cents: number;
+        price_idr: number;
         expected_roi_percent: number;
         risk_rating: string;
         fruit_crop?: {
@@ -526,7 +532,7 @@ export interface PaginatedHarvests {
 export interface MarketPrice {
     id: number;
     fruit_type_id: number;
-    price_per_kg_cents: number;
+    price_per_kg_idr: number;
     currency: string;
     effective_date: string;
     created_by: number;
@@ -546,9 +552,9 @@ export interface Payout {
     investment_id: number;
     harvest_id: number;
     investor_id: number;
-    gross_amount_cents: number;
-    platform_fee_cents: number;
-    net_amount_cents: number;
+    gross_amount_idr: number;
+    platform_fee_idr: number;
+    net_amount_idr: number;
     currency: string;
     status: PayoutStatus;
     payout_method: PayoutMethod | null;
@@ -565,7 +571,7 @@ export interface Payout {
     net_amount_formatted: string;
     investment?: {
         id: number;
-        amount_cents: number;
+        amount_idr: number;
         formatted_amount: string;
         purchase_date: string;
         tree: {
@@ -588,26 +594,26 @@ export interface ProfitLossRow {
     fruitType: string;
     variant: string;
     farmName: string;
-    amountInvestedCents: number;
-    totalPayoutsCents: number;
-    netCents: number;
+    amountInvestedIdr: number;
+    totalPayoutsIdr: number;
+    netIdr: number;
     actualRoiPercent: number;
     status: string;
     purchaseDate: string;
 }
 
 export interface ProfitLossSummary {
-    totalInvestedCents: number;
-    totalPayoutsCents: number;
-    netCents: number;
+    totalInvestedIdr: number;
+    totalPayoutsIdr: number;
+    netIdr: number;
     overallRoiPercent: number;
 }
 
 export interface PerformanceDataPoint {
     month: string;
-    investedCents: number;
-    payoutsCents: number;
-    cumulativeCents: number;
+    investedIdr: number;
+    payoutsIdr: number;
+    cumulativeIdr: number;
 }
 
 export interface GeneratedReport {
@@ -628,45 +634,45 @@ export interface TaxSummaryPayoutRow {
     payoutId: number;
     date: string;
     farmName: string;
-    grossAmountCents: number;
-    platformFeeCents: number;
-    netAmountCents: number;
+    grossAmountIdr: number;
+    platformFeeIdr: number;
+    netAmountIdr: number;
 }
 
 export interface TaxSummaryInvestmentRow {
     investmentId: number;
     date: string;
     farmName: string;
-    amountCents: number;
+    amountIdr: number;
 }
 
 export interface TaxSummaryData {
     year: number;
     income: {
         rows: TaxSummaryPayoutRow[];
-        totalCents: number;
+        totalIdr: number;
     };
     investments: {
         rows: TaxSummaryInvestmentRow[];
-        totalCents: number;
+        totalIdr: number;
     };
     summary: {
-        totalIncomeCents: number;
-        totalInvestedCents: number;
-        netCents: number;
+        totalIncomeIdr: number;
+        totalInvestedIdr: number;
+        netIdr: number;
     };
 }
 export interface MarketListing {
     id: number;
     investment_id: number;
     seller_id: number;
-    ask_price_cents: number;
+    ask_price_idr: number;
     formatted_ask_price: string;
     currency: string;
     platform_fee_rate: number;
-    platform_fee_cents: number;
+    platform_fee_idr: number;
     formatted_platform_fee: string;
-    net_proceeds_cents: number;
+    net_proceeds_idr: number;
     formatted_net_proceeds: string;
     status: ListingStatus;
     buyer_id: number | null;
@@ -679,12 +685,12 @@ export interface MarketListing {
     updated_at: string;
     investment: {
         id: number;
-        amount_cents: number;
+        amount_idr: number;
         purchase_date: string;
         tree: {
             id: number;
             identifier: string;
-            price_cents: number;
+            price_idr: number;
             price_formatted: string;
             expected_roi_percent: number;
             risk_rating: string;
@@ -729,9 +735,9 @@ export interface InvestmentTransfer {
     listing_id: number;
     from_user_id: number;
     to_user_id: number;
-    transfer_price_cents: number;
+    transfer_price_idr: number;
     formatted_transfer_price: string;
-    platform_fee_cents: number;
+    platform_fee_idr: number;
     formatted_platform_fee: string;
     transaction_id: number | null;
     transferred_at: string;
@@ -745,7 +751,7 @@ export interface InvestmentTransfer {
     };
     listing?: {
         id: number;
-        ask_price_cents: number;
+        ask_price_idr: number;
         formatted_ask_price: string;
     };
     fromUser?: User;
@@ -761,11 +767,11 @@ export interface AdminDashboardProps {
         total_users: number;
         kyc_verified: number;
         active_investments: number;
-        investment_volume: number;
+        investment_volume_idr: number;
         pending_kyc: number;
         pending_farms: number;
         completed_harvests: number;
-        total_payouts: number;
+        total_payouts_idr: number;
     };
     recentActivity: Array<{
         type: string;
@@ -783,7 +789,7 @@ export interface FarmOwnerDashboardProps {
         active_farms: number;
         total_trees: number;
         total_investors: number;
-        total_earnings_cents: number;
+        total_earnings_idr: number;
     };
     farms: Array<{
         id: number;
@@ -808,9 +814,9 @@ export interface FarmOwnerDashboardProps {
 
 export interface InvestorDashboardProps {
     metrics: {
-        total_invested_cents: number;
+        total_invested_idr: number;
         active_trees: number;
-        total_payouts_cents: number;
+        total_payouts_idr: number;
         portfolio_roi_percent: number;
         total_investments_count: number;
     };
@@ -825,14 +831,14 @@ export interface InvestorDashboardProps {
     recent_payouts: Array<{
         id: number;
         date: string;
-        amount_cents: number;
+        amount_idr: number;
         farm_name: string;
         status: string;
     }>;
     recent_investments: Array<{
         id: number;
         date: string;
-        amount_cents: number;
+        amount_idr: number;
         farm_name: string;
         status: string;
     }>;
@@ -873,7 +879,7 @@ export interface WishlistItem {
     wishlist_id: number;
     id: number;
     identifier: string;
-    price_cents: number;
+    price_idr: number;
     expected_roi_percent: number;
     risk_rating: string;
     status: string;
@@ -892,24 +898,24 @@ export interface WishlistItem {
 // ─── Portfolio Dashboard (redesigned) ────────────────────────────────────────
 
 export interface PortfolioSummaryHeader {
-    total_invested_cents: number;
-    current_value_cents: number;
-    gain_loss_cents: number;
+    total_invested_idr: number;
+    current_value_idr: number;
+    gain_loss_idr: number;
     gain_loss_percent: number;
-    total_payouts_cents: number;
-    pending_payouts_cents: number;
+    total_payouts_idr: number;
+    pending_payouts_idr: number;
     total_trees?: number;
 }
 
 export interface HoldingWithSparkline {
     id: number;
     quantity: number;
-    amount_cents: number;
+    amount_idr: number;
     purchase_date: string;
     status: string;
-    actual_return_cents: number;
-    projected_return_cents: number;
-    gain_loss_cents: number;
+    actual_return_idr: number;
+    projected_return_idr: number;
+    gain_loss_idr: number;
     gain_loss_percent: number;
     sparkline: number[];
     tree: {

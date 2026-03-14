@@ -41,7 +41,7 @@ class TransactionSeeder extends Seeder
                 'user_id' => $investment->user_id,
                 'type' => TransactionType::InvestmentPurchase,
                 'status' => $status,
-                'amount' => $investment->amount_cents,
+                'amount' => $investment->amount_idr,
                 'currency' => 'IDR',
                 'related_investment_id' => $investment->id,
                 'stripe_payment_intent_id' => 'pi_'.fake()->unique()->lexify('??????????????????'),
@@ -71,7 +71,7 @@ class TransactionSeeder extends Seeder
                 'user_id' => $payout->investor_id,
                 'type' => TransactionType::Payout,
                 'status' => TransactionStatus::Completed,
-                'amount' => $payout->net_amount_cents,
+                'amount' => $payout->net_amount_idr,
                 'currency' => 'IDR',
                 'related_investment_id' => $payout->investment_id,
                 'stripe_payment_intent_id' => null,
@@ -79,8 +79,8 @@ class TransactionSeeder extends Seeder
                 'related_payout_id' => $payout->id,
                 'metadata' => [
                     'harvest_id' => $payout->harvest_id,
-                    'gross_amount' => $payout->gross_amount_cents,
-                    'platform_fee' => $payout->platform_fee_cents,
+                    'gross_amount' => $payout->gross_amount_idr,
+                    'platform_fee' => $payout->platform_fee_idr,
                     'payout_method' => $payout->payout_method,
                 ],
                 'stripe_metadata' => [],
@@ -101,13 +101,13 @@ class TransactionSeeder extends Seeder
 
             for ($i = 0; $i < $numDeposits; $i++) {
                 $status = $this->getRandomTransactionStatus(TransactionType::TopUp);
-                $amountCents = rand(500000, 10000000);
+                $amountIdr = rand(500000, 10000000);
 
                 Transaction::create([
                     'user_id' => $user->id,
                     'type' => TransactionType::TopUp,
                     'status' => $status,
-                    'amount' => $amountCents,
+                    'amount' => $amountIdr,
                     'currency' => 'IDR',
                     'related_investment_id' => null,
                     'stripe_payment_intent_id' => 'pi_'.fake()->unique()->lexify('??????????????????'),

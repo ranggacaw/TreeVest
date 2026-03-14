@@ -3,7 +3,7 @@ import { PortfolioInvestment } from '@/types';
 
 interface Props {
     investment: PortfolioInvestment;
-    formatCurrency: (cents: number) => string;
+    formatCurrency: (idr: number) => string;
 }
 
 function getStatusColor(status: string): string {
@@ -20,8 +20,8 @@ function getStatusColor(status: string): string {
 }
 
 export default function InvestmentCard({ investment, formatCurrency }: Props) {
-    const roiProgress = investment.projected_return_cents > 0
-        ? Math.min((investment.actual_return_cents / investment.projected_return_cents) * 100, 100)
+    const roiProgress = investment.projected_return_idr > 0
+        ? Math.min((investment.actual_return_idr / investment.projected_return_idr) * 100, 100)
         : 0;
 
     return (
@@ -45,7 +45,7 @@ export default function InvestmentCard({ investment, formatCurrency }: Props) {
                     <div className="flex justify-between">
                         <span className="text-gray-500">Investment</span>
                         <span className="font-medium text-gray-900">
-                            {formatCurrency(investment.amount_cents)}
+                            {formatCurrency(investment.amount_idr)}
                         </span>
                     </div>
                     <div className="flex justify-between">

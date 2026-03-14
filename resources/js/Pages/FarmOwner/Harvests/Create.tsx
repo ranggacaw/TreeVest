@@ -21,7 +21,7 @@ interface FruitCrop {
 interface Tree {
   id: number;
   tree_identifier: string;
-  price_cents: number;
+  price_idr: number;
   expected_roi_percent: number;
   risk_rating: string;
   fruit_crop: FruitCrop;

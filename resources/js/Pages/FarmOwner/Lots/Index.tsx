@@ -49,18 +49,26 @@ export default function Index({ lots }: Props) {
                                         </td>
                                         <td className="px-4 py-2">{lot.total_trees}</td>
                                         <td className="px-4 py-2">
-                                            {lot.current_price_per_tree_cents.toLocaleString('id-ID', {
+                                            {lot.current_price_per_tree_idr?.toLocaleString('id-ID', {
                                                 style: 'currency', currency: 'IDR', maximumFractionDigits: 0,
-                                            })}
+                                            }) || '-'}
                                         </td>
                                         <td className="px-4 py-2">{lot.cycle_months} mo</td>
                                         <td className="px-4 py-2">
                                             <Link
                                                 href={route('farm-owner.lots.show', lot.id)}
-                                                className="text-green-600 hover:underline text-xs"
+                                                className="text-green-600 hover:underline text-xs mr-3"
                                             >
                                                 View
                                             </Link>
+                                            {lot.status === 'active' && (
+                                                <Link
+                                                    href={route('farm-owner.lots.edit', lot.id)}
+                                                    className="text-blue-600 hover:underline text-xs"
+                                                >
+                                                    Edit
+                                                </Link>
+                                            )}
                                         </td>
                                     </tr>
                                 ))}

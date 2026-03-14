@@ -11,9 +11,9 @@ import {
 
 interface PerformanceDataPoint {
     month: string;
-    investedCents: number;
-    payoutsCents: number;
-    cumulativeCents: number;
+    investedIdr: number;
+    payoutsIdr: number;
+    cumulativeIdr: number;
 }
 
 interface PerformanceBarChartProps {
@@ -25,8 +25,8 @@ export default function PerformanceBarChart({
     data,
     height = 300,
 }: PerformanceBarChartProps) {
-    const formatCurrency = (cents: number) => {
-        return `Rp ${(cents / 100).toFixed(2)}`;
+    const formatCurrency = (idr: number) => {
+        return `Rp ${idr.toLocaleString('id-ID')}`;
     };
 
     return (
@@ -46,13 +46,13 @@ export default function PerformanceBarChart({
                 />
                 <Legend />
                 <Bar
-                    dataKey="investedCents"
+                    dataKey="investedIdr"
                     fill="#EF4444"
                     name="Invested"
                     radius={[4, 4, 0, 0]}
                 />
                 <Bar
-                    dataKey="payoutsCents"
+                    dataKey="payoutsIdr"
                     fill="#10B981"
                     name="Payouts"
                     radius={[4, 4, 0, 0]}

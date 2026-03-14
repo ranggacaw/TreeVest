@@ -10,11 +10,11 @@ import { formatRupiah } from '@/utils/currency';
 
 interface Props extends PageProps {
     investments: Investment[];
-    total_value_cents: number;
+    total_value_idr: number;
     total_value_formatted: string;
 }
 
-export default function Index({ auth, investments, total_value_cents, total_value_formatted, unread_notifications_count }: Props) {
+export default function Index({ auth, investments, total_value_idr, total_value_formatted, unread_notifications_count }: Props) {
     const { t } = useTranslation('investments');
 
     return (
@@ -36,7 +36,7 @@ export default function Index({ auth, investments, total_value_cents, total_valu
                             <div className="p-4 bg-emerald-50 rounded-2xl border border-emerald-100">
                                 <p className="text-xs font-medium text-emerald-600 mb-1">{t('total_value', 'Total Value')}</p>
                                 <p className="text-lg font-bold text-gray-900 truncate">
-                                    {total_value_formatted || formatRupiah(total_value_cents)}
+                                    {total_value_formatted || formatRupiah(total_value_idr)}
                                 </p>
                             </div>
                             <div className="p-4 bg-gray-50 rounded-2xl border border-gray-100">

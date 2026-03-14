@@ -54,7 +54,7 @@ class LotSellingService
      */
     public function submitSellingRevenue(
         Lot $lot,
-        int $revenueCents,
+        int $revenueIdr,
         string $proofPhotoPath
     ): void {
         if ($lot->status !== LotStatus::Harvest) {
@@ -64,7 +64,7 @@ class LotSellingService
         }
 
         $lot->update([
-            'selling_revenue_cents' => $revenueCents,
+            'selling_revenue_idr' => $revenueIdr,
             'selling_proof_photo' => $proofPhotoPath,
             'selling_submitted_at' => now(),
         ]);
@@ -73,7 +73,7 @@ class LotSellingService
 
         Log::info('Lot selling revenue submitted', [
             'lot_id' => $lot->id,
-            'revenue_cents' => $revenueCents,
+            'revenue_idr' => $revenueIdr,
         ]);
 
         // Dispatch queued job to distribute profits
@@ -101,20 +101,20 @@ class LotSellingService
             return;
         }
 
-        $revenueCents = (int) $lot->selling_revenue_cents;
+        $revenueIdr = (int) $lot->selling_revenue_idr;
 
-        DB::transaction(function () use ($lot, $revenueCents) {
+        DB::transaction(function () use ($lot, $revenueIdr) {
             // 1. Platform fee (10%)
-            $platformFeeCents = (int) floor($revenueCents * 0.10);
-            $remainingCents = $revenueCents - $platformFeeCents;
+            $platformFeeIdr = (int) floor($revenueIdr * 0.10);
+            $remainingIdr = $revenueIdr - $platformFeeIdr;
 
             // 2. Split remaining: 70% investors, 30% farm owner
-            $investorPoolCents = (int) floor($remainingCents * 0.70);
-            $farmOwnerShareCents = $remainingCents - $investorPoolCents;
+            $investorPoolIdr = (int) floor($remainingIdr * 0.70);
+            $farmOwnerShareIdr = $remainingIdr - $investorPoolIdr;
 
             // 3. Load active investments
             $investments = $lot->activeInvestments()->with('user')->get();
-            $totalInvestedCents = $investments->sum('amount_cents');
+            $totalInvestedIdr = $investments->sum('amount_idr');
 
             // 4. Distribute investor pool proportionally
             $distributed = 0;
@@ -122,8 +122,8 @@ class LotSellingService
             $largestAmount = 0;
 
             foreach ($investments as $investment) {
-                $share = ($totalInvestedCents > 0)
-                    ? (int) floor($investorPoolCents * $investment->amount_cents / $totalInvestedCents)
+                $share = ($totalInvestedIdr > 0)
+                    ? (int) floor($investorPoolIdr * $investment->amount_idr / $totalInvestedIdr)
                     : 0;
 
                 $this->walletService->credit(
@@ -135,14 +135,14 @@ class LotSellingService
 
                 $distributed += $share;
 
-                if ($investment->amount_cents > $largestAmount) {
-                    $largestAmount = $investment->amount_cents;
+                if ($investment->amount_idr > $largestAmount) {
+                    $largestAmount = $investment->amount_idr;
                     $largestInvestment = $investment;
                 }
             }
 
             // 5. Rounding residual → largest investor
-            $residual = $investorPoolCents - $distributed;
+            $residual = $investorPoolIdr - $distributed;
             if ($residual > 0 && $largestInvestment !== null) {
                 $this->walletService->credit(
                     $largestInvestment->user,
@@ -156,14 +156,14 @@ class LotSellingService
             $farmOwner = $lot->rack->warehouse->farm->owner;
             $this->walletService->credit(
                 $farmOwner,
-                $farmOwnerShareCents,
+                $farmOwnerShareIdr,
                 WalletTransactionType::PayoutCredit,
                 $lot
             );
 
             // 7. Platform fee → platform wallet
             $this->walletService->creditPlatform(
-                $platformFeeCents,
+                $platformFeeIdr,
                 WalletTransactionType::PlatformFee,
                 $lot
             );
@@ -173,15 +173,15 @@ class LotSellingService
 
             Log::info('Lot profits distributed', [
                 'lot_id' => $lot->id,
-                'revenue_cents' => $revenueCents,
-                'platform_fee_cents' => $platformFeeCents,
-                'investor_pool_cents' => $investorPoolCents,
-                'farm_owner_share_cents' => $farmOwnerShareCents,
+                'revenue_idr' => $revenueIdr,
+                'platform_fee_idr' => $platformFeeIdr,
+                'investor_pool_idr' => $investorPoolIdr,
+                'farm_owner_share_idr' => $farmOwnerShareIdr,
                 'investor_count' => $investments->count(),
             ]);
 
             // 9. Dispatch event for notifications
-            event(new LotProfitsDistributed($lot, $investorPoolCents, $farmOwnerShareCents, $platformFeeCents));
+            event(new LotProfitsDistributed($lot, $investorPoolIdr, $farmOwnerShareIdr, $platformFeeIdr));
         });
     }
 }

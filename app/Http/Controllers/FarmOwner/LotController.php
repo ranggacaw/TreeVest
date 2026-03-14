@@ -59,7 +59,7 @@ class LotController extends Controller
             'name' => ['required', 'string', 'max:100'],
             'total_trees' => ['required', 'integer', 'min:1'],
             'base_price_per_tree_idr' => ['required', 'integer', 'min:1'],
-            'monthly_increase_rate' => ['required', 'numeric', 'min:0', 'max:1'],
+            'monthly_increase_rate' => ['required', 'numeric', 'min:0', 'max:100'],
             'cycle_months' => ['required', 'integer', 'min:1', 'max:120'],
             'last_investment_month' => ['required', 'integer', 'min:1'],
             'cycle_started_at' => ['nullable', 'date'],
@@ -67,17 +67,21 @@ class LotController extends Controller
 
         if ($validated['last_investment_month'] >= $validated['cycle_months']) {
             throw \Illuminate\Validation\ValidationException::withMessages([
-                'last_investment_month' => 'Last investment month must be less than the total cycle duration.',
+                'last_investment_month' => 'Last investment month must be less than total cycle duration.',
             ]);
         }
 
-        // Verify rack belongs to this farm owner via warehouse→farm
-        $rack = Rack::with('warehouse.farm')->findOrFail($validated['rack_id']);
-        abort_unless($rack->warehouse->farm->owner_id === auth()->id(), 403);
-
         $lot = Lot::create([
-            ...$validated,
+            'rack_id' => $validated['rack_id'],
+            'fruit_crop_id' => $validated['fruit_crop_id'],
+            'name' => $validated['name'],
+            'total_trees' => $validated['total_trees'],
+            'base_price_per_tree_idr' => $validated['base_price_per_tree_idr'],
             'current_price_per_tree_idr' => $validated['base_price_per_tree_idr'],
+            'monthly_increase_rate' => $validated['monthly_increase_rate'] / 100,
+            'cycle_months' => $validated['cycle_months'],
+            'last_investment_month' => $validated['last_investment_month'],
+            'cycle_started_at' => $validated['cycle_started_at'],
             'status' => 'active',
         ]);
 
@@ -96,6 +100,7 @@ class LotController extends Controller
             'lot' => $lot,
             'priceTable' => $priceTable,
             'currentCycleMonth' => $this->pricingService->currentCycleMonth($lot),
+            'monthlyRatePercentage' => $lot->monthly_increase_rate * 100,
         ]);
     }
 
@@ -104,8 +109,21 @@ class LotController extends Controller
         $this->authorizeLot($lot);
         abort_unless($lot->status->isInvestable(), 422, 'Only active lots can be edited.');
 
+        $racks = Rack::with('warehouse.farm')
+            ->whereHas('warehouse.farm', fn ($q) => $q->where('owner_id', auth()->id()))
+            ->get()
+            ->map(fn ($rack) => [
+                'id' => $rack->id,
+                'label' => "{$rack->warehouse->farm->name} → {$rack->warehouse->name} → {$rack->name}",
+            ]);
+
+        $fruitCrops = \App\Models\FruitCrop::whereHas('farm', fn ($q) => $q->where('owner_id', auth()->id()))
+            ->get(['id', 'variant']);
+
         return Inertia::render('FarmOwner/Lots/Edit', [
             'lot' => $lot,
+            'racks' => $racks,
+            'fruitCrops' => $fruitCrops,
         ]);
     }
 
@@ -115,11 +133,35 @@ class LotController extends Controller
         abort_unless($lot->status->isInvestable(), 422, 'Only active lots can be edited.');
 
         $validated = $request->validate([
+            'rack_id' => ['required', 'integer', 'exists:racks,id'],
+            'fruit_crop_id' => ['required', 'integer', 'exists:fruit_crops,id'],
             'name' => ['required', 'string', 'max:100'],
+            'total_trees' => ['required', 'integer', 'min:1'],
+            'base_price_per_tree_idr' => ['required', 'integer', 'min:1'],
+            'monthly_increase_rate' => ['required', 'numeric', 'min:0', 'max:100'],
+            'cycle_months' => ['required', 'integer', 'min:1', 'max:120'],
+            'last_investment_month' => ['required', 'integer', 'min:1'],
             'cycle_started_at' => ['nullable', 'date'],
         ]);
 
-        $lot->update($validated);
+        if ($validated['last_investment_month'] >= $validated['cycle_months']) {
+            throw \Illuminate\Validation\ValidationException::withMessages([
+                'last_investment_month' => 'Last investment month must be less than total cycle duration.',
+            ]);
+        }
+
+        $lot->update([
+            'rack_id' => $validated['rack_id'],
+            'fruit_crop_id' => $validated['fruit_crop_id'],
+            'name' => $validated['name'],
+            'total_trees' => $validated['total_trees'],
+            'base_price_per_tree_idr' => $validated['base_price_per_tree_idr'],
+            'current_price_per_tree_idr' => $validated['base_price_per_tree_idr'],
+            'monthly_increase_rate' => $validated['monthly_increase_rate'] / 100,
+            'cycle_months' => $validated['cycle_months'],
+            'last_investment_month' => $validated['last_investment_month'],
+            'cycle_started_at' => $validated['cycle_started_at'],
+        ]);
 
         return redirect()->route('farm-owner.lots.show', $lot)
             ->with('success', 'Lot updated.');
@@ -128,8 +170,12 @@ class LotController extends Controller
     public function destroy(Lot $lot)
     {
         $this->authorizeLot($lot);
-        abort_unless($lot->status->isInvestable(), 422, 'Only active lots with no investments can be deleted.');
-        abort_unless($lot->investments()->doesntExist(), 422, 'Cannot delete a lot that already has investments.');
+
+        $lot->loadCount('investments');
+
+        if ($lot->investments_count > 0) {
+            return back()->with('error', 'Cannot delete a lot that has investments.');
+        }
 
         $lot->delete();
 

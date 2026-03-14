@@ -292,14 +292,14 @@ export default function Show({ farm }: Props) {
                                                         )}
                                                         <div className="mb-4">
                                                             <div className="text-2xl font-bold text-gray-900">
-                                                                {formatRupiah(tree.price_cents)}
+                                                                {formatRupiah(tree.price_idr)}
                                                             </div>
                                                             <div className="text-sm text-gray-500 mt-1 flex justify-between">
                                                                 <span>
-                                                                    {t('min')} {formatRupiah(tree.min_investment_cents)}
+                                                                    {t('min')} {formatRupiah(tree.min_investment_idr)}
                                                                 </span>
                                                                 <span>
-                                                                    {t('max')} {formatRupiah(tree.max_investment_cents)}
+                                                                    {t('max')} {formatRupiah(tree.max_investment_idr)}
                                                                 </span>
                                                             </div>
                                                         </div>

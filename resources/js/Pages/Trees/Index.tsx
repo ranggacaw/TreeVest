@@ -335,7 +335,7 @@ export default function Index({ trees, filters = {}, auth, wishlistedTreeIds = [
                                                     <div>
                                                         <div className="text-[10px] text-gray-400 font-medium mb-1">Harga / Pohon</div>
                                                         <div className="text-sm font-bold text-gray-700">
-                                                            {formatRupiah(tree.price_cents)}
+                                                            {formatRupiah(tree.price_idr)}
                                                         </div>
                                                     </div>
                                                 </div>

@@ -22,9 +22,9 @@ export default function Show({ tree, auth, isWishlisted, healthStatus, recentUpd
     const fruitType = crop?.fruit_type;
     const fruitTypeName = typeof fruitType === 'string' ? fruitType : fruitType?.name;
 
-    const price = formatRupiah(tree?.price_cents ?? 0);
-    const minInv = formatRupiah(tree?.min_investment_cents ?? 0);
-    const maxInv = formatRupiah(tree?.max_investment_cents ?? 0);
+    const price = formatRupiah(tree?.price_idr ?? 0);
+    const minInv = formatRupiah(tree?.min_investment_idr ?? 0);
+    const maxInv = formatRupiah(tree?.max_investment_idr ?? 0);
     const authenticated = !!auth?.user;
 
     return (

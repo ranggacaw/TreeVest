@@ -22,7 +22,7 @@ class NotifyBuyerOfPurchase
             'data' => [
                 'listing_id' => $listing->id,
                 'investment_id' => $listing->investment_id,
-                'transfer_price_cents' => $transfer->transfer_price_cents,
+                'transfer_price_idr' => $transfer->transfer_price_idr,
                 'seller_id' => $event->seller->id,
             ],
         ]);

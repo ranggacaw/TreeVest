@@ -109,7 +109,7 @@ export default function Index({ listings, filters, canCreateListing }: Props) {
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-[16px] font-extrabold text-gray-900">
-                                                    {formatRupiah(listing.ask_price_cents)}
+                                                    {formatRupiah(listing.ask_price_idr)}
                                                 </p>
                                                 <p className="text-[10px] text-gray-400 font-bold uppercase tracking-wide">Ask Price</p>
                                             </div>

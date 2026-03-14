@@ -17,7 +17,7 @@ class UpdateMarketPriceRequest extends FormRequest
     public function rules(): array
     {
         return [
-            'price_per_kg_cents' => ['required', 'integer', 'min:1'],
+            'price_per_kg_idr' => ['required', 'integer', 'min:1'],
             'notes' => ['nullable', 'string'],
         ];
     }

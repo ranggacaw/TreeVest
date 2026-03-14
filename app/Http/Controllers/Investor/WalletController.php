@@ -24,7 +24,7 @@ class WalletController extends Controller
         return Inertia::render('Investor/Wallet/Index', [
             'wallet' => [
                 'id' => $wallet->id,
-                'balance_cents' => $wallet->balance_cents,
+                'balance_idr' => $wallet->balance_idr,
                 'formatted_balance' => $wallet->formatted_balance,
                 'currency' => $wallet->currency,
             ],
@@ -37,13 +37,13 @@ class WalletController extends Controller
         $validated = $request->validated();
 
         try {
-            $this->walletService->initiateWithdrawal(auth()->user(), $validated['amount_cents']);
+            $this->walletService->initiateWithdrawal(auth()->user(), $validated['amount_idr']);
 
             return back()->with('success', 'Withdrawal submitted. Processing time: 1–3 business days.');
         } catch (\App\Exceptions\InsufficientWalletBalanceException $e) {
-            return back()->withErrors(['amount_cents' => $e->getMessage()]);
+            return back()->withErrors(['amount_idr' => $e->getMessage()]);
         } catch (\InvalidArgumentException $e) {
-            return back()->withErrors(['amount_cents' => $e->getMessage()]);
+            return back()->withErrors(['amount_idr' => $e->getMessage()]);
         }
     }
 }

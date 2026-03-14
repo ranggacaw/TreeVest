@@ -47,7 +47,7 @@ class LotInvestmentTest extends TestCase
     public function test_investment_amount_matches_lot_price_times_trees(): void
     {
         $lot = Lot::factory()->cycleOpen()->create([
-            'current_price_per_tree_cents' => 100_000,
+            'current_price_per_tree_idr' => 100_000,
             'total_trees' => 5,
         ]);
 
@@ -57,7 +57,7 @@ class LotInvestmentTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $this->investor->id,
             'lot_id' => $lot->id,
-            'amount_cents' => 500_000,
+            'amount_idr' => 500_000,
         ]);
     }
 
@@ -126,14 +126,14 @@ class LotInvestmentTest extends TestCase
     public function test_investor_can_reinvest_from_wallet(): void
     {
         $lot = Lot::factory()->cycleOpen()->create([
-            'current_price_per_tree_cents' => 100_000,
+            'current_price_per_tree_idr' => 100_000,
             'total_trees' => 2,
         ]);
 
         // Fund the wallet
         Wallet::factory()->create([
             'user_id' => $this->investor->id,
-            'balance_cents' => 500_000,
+            'balance_idr' => 500_000,
         ]);
 
         $response = $this->actingAs($this->investor)
@@ -143,21 +143,21 @@ class LotInvestmentTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $this->investor->id,
             'lot_id' => $lot->id,
-            'amount_cents' => 200_000,
+            'amount_idr' => 200_000,
         ]);
     }
 
     public function test_reinvest_fails_with_insufficient_wallet_balance(): void
     {
         $lot = Lot::factory()->cycleOpen()->create([
-            'current_price_per_tree_cents' => 500_000,
+            'current_price_per_tree_idr' => 500_000,
             'total_trees' => 10,
         ]);
 
         // Wallet with too little balance
         Wallet::factory()->create([
             'user_id' => $this->investor->id,
-            'balance_cents' => 1_000,
+            'balance_idr' => 1_000,
         ]);
 
         $response = $this->actingAs($this->investor)

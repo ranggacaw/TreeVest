@@ -118,7 +118,7 @@ return [
     */
 
     'custom' => [
-        'ask_price_cents' => [
+        'ask_price_idr' => [
             'required' => 'Harga yang diminta wajib diisi.',
             'integer' => 'Harga yang diminta harus berupa jumlah yang valid.',
             'min' => 'Harga yang diminta minimal :min.',
@@ -191,7 +191,7 @@ return [
         'password_confirmation' => 'konfirmasi kata sandi',
         'phone' => 'nomor telepon',
         'locale' => 'bahasa',
-        'ask_price_cents' => 'harga yang diminta',
+        'ask_price_idr' => 'harga yang diminta',
         'investment_id' => 'investasi',
         'tree_identifier' => 'identifikasi pohon',
         'fruit_crop_id' => 'jenis tanaman buah',

@@ -15,12 +15,12 @@ interface Props {
 
 export default function Selling({ lot }: Props) {
     const { data, setData, post, processing, errors } = useForm<{
-        selling_revenue_cents: string;
+        selling_revenue_idr: string;
         sold_at: string;
         notes: string;
         proof_photo: File | null;
     }>({
-        selling_revenue_cents: '',
+        selling_revenue_idr: '',
         sold_at: '',
         notes: '',
         proof_photo: null,
@@ -45,15 +45,15 @@ export default function Selling({ lot }: Props) {
 
                 <form onSubmit={submit} className="space-y-5 bg-white border border-gray-200 rounded-lg p-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Total Revenue (IDR cents)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">Total Revenue (IDR)</label>
                         <input
                             type="number" min="1"
                             className="w-full border-gray-300 rounded-md text-sm"
-                            value={data.selling_revenue_cents}
-                            onChange={(e) => setData('selling_revenue_cents', e.target.value)}
+                            value={data.selling_revenue_idr}
+                            onChange={(e) => setData('selling_revenue_idr', e.target.value)}
                             placeholder="e.g. 10000000"
                         />
-                        {errors.selling_revenue_cents && <p className="text-red-500 text-xs mt-1">{errors.selling_revenue_cents}</p>}
+                        {errors.selling_revenue_idr && <p className="text-red-500 text-xs mt-1">{errors.selling_revenue_idr}</p>}
                     </div>
 
                     <div>

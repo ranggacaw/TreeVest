@@ -112,16 +112,16 @@
         <h2>Portfolio Summary</h2>
         <div class="summary-row">
             <span class="summary-label">Total Invested:</span>
-            <span>Rp {{ number_format($data['profitLoss']['summary']['totalInvestedCents'] / 100, 2) }}</span>
+            <span>Rp {{ number_format($data['profitLoss']['summary']['totalInvestedIdr'] / 100, 2) }}</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Total Payouts Received:</span>
-            <span>Rp {{ number_format($data['profitLoss']['summary']['totalPayoutsCents'] / 100, 2) }}</span>
+            <span>Rp {{ number_format($data['profitLoss']['summary']['totalPayoutsIdr'] / 100, 2) }}</span>
         </div>
         <div class="summary-row">
             <span class="summary-label">Net Return:</span>
-            <span class="{{ $data['profitLoss']['summary']['netCents'] >= 0 ? 'positive' : 'negative' }}">
-                Rp {{ number_format($data['profitLoss']['summary']['netCents'] / 100, 2) }}
+            <span class="{{ $data['profitLoss']['summary']['netIdr'] >= 0 ? 'positive' : 'negative' }}">
+                Rp {{ number_format($data['profitLoss']['summary']['netIdr'] / 100, 2) }}
             </span>
         </div>
         <div class="summary-row">
@@ -157,10 +157,10 @@
                     <td>{{ $row['fruitType'] }}</td>
                     <td>{{ $row['variant'] }}</td>
                     <td>{{ $row['farmName'] }}</td>
-                    <td>{{ number_format($row['amountInvestedCents'] / 100, 2) }}</td>
-                    <td>{{ number_format($row['totalPayoutsCents'] / 100, 2) }}</td>
-                    <td class="{{ $row['netCents'] >= 0 ? 'positive' : 'negative' }}">
-                        {{ number_format($row['netCents'] / 100, 2) }}
+                    <td>{{ number_format($row['amountInvestedIdr'] / 100, 2) }}</td>
+                    <td>{{ number_format($row['totalPayoutsIdr'] / 100, 2) }}</td>
+                    <td class="{{ $row['netIdr'] >= 0 ? 'positive' : 'negative' }}">
+                        {{ number_format($row['netIdr'] / 100, 2) }}
                     </td>
                     <td class="{{ $row['actualRoiPercent'] >= 0 ? 'positive' : 'negative' }}">
                         {{ number_format($row['actualRoiPercent'], 2) }}%

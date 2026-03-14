@@ -24,7 +24,7 @@ class PurchaseController extends Controller
             $transaction = $this->service->initiatePurchase($listing, $request->user());
 
             $paymentIntent = $this->stripeService->createPaymentIntent(
-                $listing->ask_price_cents,
+                $listing->ask_price_idr,
                 strtolower($listing->currency),
                 [
                     'type' => 'secondary_purchase',

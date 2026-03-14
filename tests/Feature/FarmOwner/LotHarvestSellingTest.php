@@ -173,7 +173,7 @@ class LotHarvestSellingTest extends TestCase
         $response = $this->actingAs($farmOwner)->post(
             route('farm-owner.lots.submit-selling', $lot),
             [
-                'selling_revenue_cents' => 5_000_000,
+                'selling_revenue_idr' => 5_000_000,
                 'proof_photo' => $photo,
             ]
         );
@@ -182,7 +182,7 @@ class LotHarvestSellingTest extends TestCase
 
         $lot->refresh();
         $this->assertEquals(LotStatus::Selling, $lot->status);
-        $this->assertEquals(5_000_000, $lot->selling_revenue_cents);
+        $this->assertEquals(5_000_000, $lot->selling_revenue_idr);
         Queue::assertPushed(DistributeLotProfits::class);
     }
 
@@ -196,7 +196,7 @@ class LotHarvestSellingTest extends TestCase
             []
         );
 
-        $response->assertSessionHasErrors(['selling_revenue_cents', 'proof_photo']);
+        $response->assertSessionHasErrors(['selling_revenue_idr', 'proof_photo']);
     }
 
     public function test_farm_owner_cannot_submit_selling_on_lot_not_in_harvest_status(): void
@@ -209,7 +209,7 @@ class LotHarvestSellingTest extends TestCase
         $response = $this->actingAs($farmOwner)->post(
             route('farm-owner.lots.submit-selling', $lot),
             [
-                'selling_revenue_cents' => 5_000_000,
+                'selling_revenue_idr' => 5_000_000,
                 'proof_photo' => $photo,
             ]
         );
@@ -228,7 +228,7 @@ class LotHarvestSellingTest extends TestCase
         $response = $this->actingAs($farmOwner2)->post(
             route('farm-owner.lots.submit-selling', $lot),
             [
-                'selling_revenue_cents' => 5_000_000,
+                'selling_revenue_idr' => 5_000_000,
                 'proof_photo' => $photo,
             ]
         );
@@ -248,7 +248,7 @@ class LotHarvestSellingTest extends TestCase
         $this->actingAs($farmOwner)->post(
             route('farm-owner.lots.submit-selling', $lot),
             [
-                'selling_revenue_cents' => 3_000_000,
+                'selling_revenue_idr' => 3_000_000,
                 'proof_photo' => $photo,
             ]
         );

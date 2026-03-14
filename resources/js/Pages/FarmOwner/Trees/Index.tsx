@@ -75,7 +75,7 @@ export default function Index({ auth, trees, filters }: PageProps<{ trees: any, 
                         {tree.fruit_crop?.fruit_type?.name} ({tree.fruit_crop?.farm?.name})
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                        Rp {tree.price_cents.toLocaleString('id-ID')}
+                        Rp {tree.price_idr.toLocaleString('id-ID')}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                         <select

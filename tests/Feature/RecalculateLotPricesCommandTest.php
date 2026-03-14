@@ -14,7 +14,7 @@ class RecalculateLotPricesCommandTest extends TestCase
     public function test_command_updates_price_for_active_lot(): void
     {
         $lot = Lot::factory()->cycleOpen()->create([
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
             // cycleOpen state sets cycle_started_at = now()-5 days, so month = 1
         ]);
@@ -24,7 +24,7 @@ class RecalculateLotPricesCommandTest extends TestCase
 
         $lot->refresh();
         // month 1: price = 100000 × 1.05^0 = 100000
-        $this->assertSame(100_000, $lot->current_price_per_tree_cents);
+        $this->assertSame(100_000, $lot->current_price_per_tree_idr);
     }
 
     public function test_command_creates_price_snapshot(): void

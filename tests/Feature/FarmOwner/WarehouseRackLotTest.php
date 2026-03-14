@@ -138,7 +138,7 @@ class WarehouseRackLotTest extends TestCase
                 'fruit_crop_id' => $crop->id,
                 'name' => 'L001',
                 'total_trees' => 10,
-                'base_price_per_tree_cents' => 1000,
+                'base_price_per_tree_idr' => 1000,
                 'monthly_increase_rate' => 0.05,
                 'cycle_months' => 6,
                 'last_investment_month' => 5,
@@ -153,11 +153,11 @@ class WarehouseRackLotTest extends TestCase
         ]);
 
         $lot = Lot::where('name', 'L001')->first();
-        $this->assertEquals(1000, $lot->base_price_per_tree_cents);
-        $this->assertEquals(1000, $lot->current_price_per_tree_cents);
+        $this->assertEquals(1000, $lot->base_price_per_tree_idr);
+        $this->assertEquals(1000, $lot->current_price_per_tree_idr);
     }
 
-    public function test_base_price_converts_idr_to_cents(): void
+    public function test_base_price_converts_idr_to_idr(): void
     {
         $warehouse = Warehouse::factory()->create(['farm_id' => $this->farm->id]);
         $rack = Rack::factory()->create(['warehouse_id' => $warehouse->id]);
@@ -169,7 +169,7 @@ class WarehouseRackLotTest extends TestCase
                 'fruit_crop_id' => $crop->id,
                 'name' => 'L003',
                 'total_trees' => 10,
-                'base_price_per_tree_cents' => 1500000,
+                'base_price_per_tree_idr' => 1500000,
                 'monthly_increase_rate' => 0.05,
                 'cycle_months' => 6,
                 'last_investment_month' => 5,
@@ -177,8 +177,8 @@ class WarehouseRackLotTest extends TestCase
 
         $response->assertRedirect();
         $lot = Lot::where('name', 'L003')->first();
-        $this->assertEquals(1500000, $lot->base_price_per_tree_cents);
-        $this->assertEquals(1500000, $lot->current_price_per_tree_cents);
+        $this->assertEquals(1500000, $lot->base_price_per_tree_idr);
+        $this->assertEquals(1500000, $lot->current_price_per_tree_idr);
     }
 
     public function test_farm_owner_cannot_create_lot_with_invalid_last_investment_month(): void
@@ -193,7 +193,7 @@ class WarehouseRackLotTest extends TestCase
                 'fruit_crop_id' => $crop->id,
                 'name' => 'L002',
                 'total_trees' => 10,
-                'base_price_per_tree_cents' => 1000,
+                'base_price_per_tree_idr' => 1000,
                 'monthly_increase_rate' => 0.05,
                 'cycle_months' => 6,
                 'last_investment_month' => 6, // equal to cycle_months — invalid
@@ -214,7 +214,7 @@ class WarehouseRackLotTest extends TestCase
                 'fruit_crop_id' => $crop->id,
                 'name' => 'L-illegal',
                 'total_trees' => 10,
-                'base_price_per_tree_cents' => 1000,
+                'base_price_per_tree_idr' => 1000,
                 'monthly_increase_rate' => 0.05,
                 'cycle_months' => 6,
                 'last_investment_month' => 5,

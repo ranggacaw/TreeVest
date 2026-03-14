@@ -41,9 +41,9 @@ class CsvReportService
                     $row['fruitType'],
                     $row['variant'],
                     $row['farmName'],
-                    $row['amountInvestedCents'],
-                    $row['totalPayoutsCents'],
-                    $row['netCents'],
+                    $row['amountInvestedIdr'],
+                    $row['totalPayoutsIdr'],
+                    $row['netIdr'],
                     $row['actualRoiPercent'],
                     $row['status'],
                     $row['purchaseDate'],
@@ -51,7 +51,7 @@ class CsvReportService
             }
 
             fputcsv($handle, []);
-            fputcsv($handle, ['Total', '', '', '', '', $data['summary']['totalInvestedCents'], $data['summary']['totalPayoutsCents'], $data['summary']['netCents'], $data['summary']['overallRoiPercent'], '', '']);
+            fputcsv($handle, ['Total', '', '', '', '', $data['summary']['totalInvestedIdr'], $data['summary']['totalPayoutsIdr'], $data['summary']['netIdr'], $data['summary']['overallRoiPercent'], '', '']);
 
             fclose($handle);
         };
@@ -81,13 +81,13 @@ class CsvReportService
                 fputcsv($handle, [
                     $row['date'],
                     $row['farmName'],
-                    $row['grossAmountCents'],
-                    $row['platformFeeCents'],
-                    $row['netAmountCents'],
+                    $row['grossAmountIdr'],
+                    $row['platformFeeIdr'],
+                    $row['netAmountIdr'],
                 ]);
             }
 
-            fputcsv($handle, ['Total', '', $data['income']['totalCents'], '', $data['income']['totalCents']]);
+            fputcsv($handle, ['Total', '', $data['income']['totalIdr'], '', $data['income']['totalIdr']]);
             fputcsv($handle, []);
             fputcsv($handle, ['INVESTMENTS']);
             fputcsv($handle, ['Date', 'Farm Name', 'Amount (cents)']);
@@ -96,16 +96,16 @@ class CsvReportService
                 fputcsv($handle, [
                     $row['date'],
                     $row['farmName'],
-                    $row['amountCents'],
+                    $row['amountIdr'],
                 ]);
             }
 
-            fputcsv($handle, ['Total', '', $data['investments']['totalCents']]);
+            fputcsv($handle, ['Total', '', $data['investments']['totalIdr']]);
             fputcsv($handle, []);
             fputcsv($handle, ['SUMMARY']);
-            fputcsv($handle, ['Total Income', $data['summary']['totalIncomeCents']]);
-            fputcsv($handle, ['Total Investments', $data['summary']['totalInvestedCents']]);
-            fputcsv($handle, ['Net', $data['summary']['netCents']]);
+            fputcsv($handle, ['Total Income', $data['summary']['totalIncomeIdr']]);
+            fputcsv($handle, ['Total Investments', $data['summary']['totalInvestedIdr']]);
+            fputcsv($handle, ['Net', $data['summary']['netIdr']]);
 
             fclose($handle);
         };

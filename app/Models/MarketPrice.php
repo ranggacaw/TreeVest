@@ -12,7 +12,7 @@ class MarketPrice extends Model
 
     protected $fillable = [
         'fruit_type_id',
-        'price_per_kg_cents',
+        'price_per_kg_idr',
         'currency',
         'effective_date',
         'created_by',
@@ -23,7 +23,7 @@ class MarketPrice extends Model
     {
         return [
             'effective_date' => 'date',
-            'price_per_kg_cents' => 'integer',
+            'price_per_kg_idr' => 'integer',
         ];
     }
 

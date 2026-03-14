@@ -29,8 +29,8 @@ class InvestmentController extends Controller
 
         // Optimized query with eager loading
         $investments = Investment::forUser($user->id)
-            ->with(['tree:id,tree_identifier,price_cents,expected_roi_percent', 'transaction:id,status'])
-            ->select(['id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
+            ->with(['tree:id,tree_identifier,price_idr,expected_roi_percent', 'transaction:id,status'])
+            ->select(['id', 'amount_idr', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
             ->orderBy('created_at', 'desc')
             ->get();
 
@@ -38,8 +38,8 @@ class InvestmentController extends Controller
 
         return Inertia::render('Investments/Index', [
             'investments' => $investments->map(fn ($inv) => InvestmentResource::basic($inv)),
-            'total_value_cents' => $totalValue,
-            'total_value_formatted' => 'Rp '.number_format($totalValue / 100, 2),
+            'total_value_idr' => $totalValue,
+            'total_value_formatted' => 'Rp '.number_format($totalValue, 0),
         ]);
     }
 
@@ -47,7 +47,7 @@ class InvestmentController extends Controller
     {
         // Find the investment and authorize access using policy
         $investment = Investment::with([
-            'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id,lot_id,latitude,longitude,qr_code',
+            'tree:id,tree_identifier,price_idr,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id,lot_id,latitude,longitude,qr_code',
             'tree.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
             'tree.fruitCrop.farm:id,name,city,state,country',
             'tree.fruitCrop.fruitType:id,name',
@@ -55,7 +55,7 @@ class InvestmentController extends Controller
             'tree.lot.rack:id,name,description,warehouse_id',
             'tree.lot.rack.warehouse:id,name,description,farm_id',
             'transaction:id,status,stripe_payment_intent_id',
-            'payouts:id,investment_id,gross_amount_cents,platform_fee_cents,net_amount_cents,status,currency,completed_at,failed_at,failed_reason,harvest_id',
+            'payouts:id,investment_id,gross_amount_idr,platform_fee_idr,net_amount_idr,status,currency,completed_at,failed_at,failed_reason,harvest_id',
             'payouts.harvest:id,scheduled_date',
         ])
             ->findOrFail($investment);
@@ -96,19 +96,19 @@ class InvestmentController extends Controller
         // Build a flat, explicit data array to avoid cascading resource memory issues
         $investmentData = [
             'id' => $investment->id,
-            'amount_cents' => $investment->amount_cents,
+            'amount_idr' => $investment->amount_idr,
             'formatted_amount' => $investment->formatted_amount,
             'status' => $investment->status->value,
             'status_label' => $investment->status->getLabel(),
             'purchase_date' => $investment->purchase_date->toIso8601String(),
             'created_at' => $investment->created_at?->toIso8601String(),
             'currency' => $investment->currency,
-            'current_value_cents' => $investment->amount_cents,
-            'projected_return_cents' => (int) ($investment->amount_cents * ($tree->expected_roi_percent ?? 0) / 100),
+            'current_value_idr' => $investment->amount_idr,
+            'projected_return_idr' => (int) ($investment->amount_idr * ($tree->expected_roi_percent ?? 0) / 100),
             'tree' => [
                 'id' => $tree->id,
                 'identifier' => $tree->tree_identifier,
-                'price_cents' => $tree->price_cents,
+                'price_idr' => $tree->price_idr,
                 'price_formatted' => $tree->price_formatted,
                 'expected_roi' => $tree->expected_roi_percent,
                 'risk_rating' => $tree->risk_rating?->value ?? $tree->risk_rating,
@@ -143,12 +143,12 @@ class InvestmentController extends Controller
             ] : null,
             'payouts' => $investment->payouts->map(fn ($p) => [
                 'id' => $p->id,
-                'gross_amount_cents' => $p->gross_amount_cents,
-                'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_cents, 0),
-                'platform_fee_cents' => $p->platform_fee_cents,
-                'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_cents, 0),
-                'net_amount_cents' => $p->net_amount_cents,
-                'net_amount_formatted' => 'Rp '.number_format($p->net_amount_cents, 0),
+                'gross_amount_idr' => $p->gross_amount_idr,
+                'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_idr, 0),
+                'platform_fee_idr' => $p->platform_fee_idr,
+                'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_idr, 0),
+                'net_amount_idr' => $p->net_amount_idr,
+                'net_amount_formatted' => 'Rp '.number_format($p->net_amount_idr, 0),
                 'status' => $p->status?->value ?? $p->status,
                 'status_label' => method_exists($p->status, 'getLabel') ? $p->status->getLabel() : (method_exists($p->status, 'label') ? $p->status->label() : ucfirst($p->status?->value ?? $p->status)),
                 'currency' => $p->currency,
@@ -255,7 +255,7 @@ class InvestmentController extends Controller
             'fruitCrop.farm:id,name,city,state',
             'fruitCrop.fruitType:id,name',
         ])
-            ->select(['id', 'tree_identifier', 'price_cents', 'expected_roi_percent', 'risk_rating', 'min_investment_cents', 'max_investment_cents', 'fruit_crop_id', 'status', 'age_years', 'productive_lifespan_years'])
+            ->select(['id', 'tree_identifier', 'price_idr', 'expected_roi_percent', 'risk_rating', 'min_investment_idr', 'max_investment_idr', 'fruit_crop_id', 'status', 'age_years', 'productive_lifespan_years'])
             ->findOrFail($treeId);
 
         if (! $tree->isInvestable()) {
@@ -298,18 +298,18 @@ class InvestmentController extends Controller
         try {
             $investment = DB::transaction(function () use ($user, $tree, $request) {
                 // Additional server-side validation for financial amounts
-                $amountCents = (int) $request->input('amount_cents');
-                if ($amountCents < $tree->min_investment_cents || $amountCents > $tree->max_investment_cents) {
+                $amountIdr = (int) $request->input('amount_idr');
+                if ($amountIdr < $tree->min_investment_idr || $amountIdr > $tree->max_investment_idr) {
                     throw new \App\Exceptions\InvalidInvestmentAmountException(
-                        $amountCents,
-                        $tree->min_investment_cents
+                        $amountIdr,
+                        $tree->min_investment_idr
                     );
                 }
 
                 return $this->investmentService->initiateInvestment(
                     $user,
                     $tree,
-                    $amountCents,
+                    $amountIdr,
                     $request->input('payment_method_id')
                 );
             });
@@ -319,7 +319,7 @@ class InvestmentController extends Controller
                 'user_id' => $user->id,
                 'investment_id' => $investment->id,
                 'tree_id' => $tree->id,
-                'amount_cents' => $request->input('amount_cents'),
+                'amount_idr' => $request->input('amount_idr'),
                 'ip_address' => $request->ip(),
                 'user_agent' => $request->userAgent(),
             ]);
@@ -357,7 +357,7 @@ class InvestmentController extends Controller
             Log::warning('Investment limit exceeded', [
                 'user_id' => $user->id,
                 'tree_id' => $tree->id,
-                'amount_cents' => $request->input('amount_cents'),
+                'amount_idr' => $request->input('amount_idr'),
                 'error' => $e->getMessage(),
                 'ip_address' => $request->ip(),
             ]);
@@ -367,7 +367,7 @@ class InvestmentController extends Controller
             Log::warning('Invalid investment amount', [
                 'user_id' => $user->id,
                 'tree_id' => $tree->id,
-                'amount_cents' => $request->input('amount_cents'),
+                'amount_idr' => $request->input('amount_idr'),
                 'error' => $e->getMessage(),
                 'ip_address' => $request->ip(),
             ]);
@@ -396,7 +396,7 @@ class InvestmentController extends Controller
             'tree.fruitCrop.fruitType:id,name',
             'transaction:id,status,stripe_payment_intent_id,metadata',
         ])
-            ->select(['id', 'user_id', 'amount_cents', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
+            ->select(['id', 'user_id', 'amount_idr', 'currency', 'status', 'purchase_date', 'tree_id', 'transaction_id'])
             ->findOrFail($investment);
 
         // Use policy for authorization
@@ -450,10 +450,10 @@ class InvestmentController extends Controller
     {
         // Optimized query for top-up form data
         $investment = Investment::with([
-            'tree:id,tree_identifier,max_investment_cents,fruit_crop_id',
+            'tree:id,tree_identifier,max_investment_idr,fruit_crop_id',
             'tree.fruitCrop:id,variant',
         ])
-            ->select(['id', 'user_id', 'amount_cents', 'currency', 'tree_id'])
+            ->select(['id', 'user_id', 'amount_idr', 'currency', 'tree_id'])
             ->findOrFail($investment);
 
         // Use policy for authorization
@@ -485,7 +485,7 @@ class InvestmentController extends Controller
             $result = DB::transaction(function () use ($investment, $request) {
                 return $this->investmentService->topUpInvestment(
                     $investment->id,
-                    $request->input('top_up_cents'),
+                    $request->input('top_up_idr'),
                     $request->input('payment_method_id')
                 );
             });
@@ -494,7 +494,7 @@ class InvestmentController extends Controller
             Log::info('Investment topped up successfully', [
                 'user_id' => $request->user()->id,
                 'investment_id' => $investment->id,
-                'top_up_cents' => $request->input('top_up_cents'),
+                'top_up_idr' => $request->input('top_up_idr'),
                 'ip_address' => $request->ip(),
             ]);
 
@@ -512,7 +512,7 @@ class InvestmentController extends Controller
             Log::warning('Investment limit exceeded during top-up', [
                 'user_id' => $request->user()->id,
                 'investment_id' => $investment->id,
-                'top_up_cents' => $request->input('top_up_cents'),
+                'top_up_idr' => $request->input('top_up_idr'),
                 'error' => $e->getMessage(),
                 'ip_address' => $request->ip(),
             ]);

@@ -39,8 +39,8 @@ class InvestmentServiceEnhanced extends InvestmentService
         if ($quantity < 1) {
             $errors['quantity_min'] = 'You must invest in at least 1 tree.';
         } else {
-            $minTrees = (int) ceil($tree->min_investment_cents / $tree->price_cents);
-            $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+            $minTrees = (int) ceil($tree->min_investment_idr / $tree->price_idr);
+            $maxTrees = (int) floor($tree->max_investment_idr / $tree->price_idr);
 
             if ($quantity < $minTrees) {
                 $errors['quantity_min'] = "Minimum investment is {$minTrees} trees.";
@@ -77,19 +77,19 @@ class InvestmentServiceEnhanced extends InvestmentService
             }
 
             if (isset($eligibility['errors']['quantity_min'])) {
-                throw new InvalidInvestmentAmountException($quantity * $tree->price_cents, $tree->min_investment_cents);
+                throw new InvalidInvestmentAmountException($quantity * $tree->price_idr, $tree->min_investment_idr);
             }
 
             if (isset($eligibility['errors']['quantity_max'])) {
-                throw new InvestmentLimitExceededException($quantity * $tree->price_cents, $tree->max_investment_cents);
+                throw new InvestmentLimitExceededException($quantity * $tree->price_idr, $tree->max_investment_idr);
             }
 
             throw new \InvalidArgumentException($firstError);
         }
 
-        $amountCents = $quantity * $tree->price_cents;
+        $amountIdr = $quantity * $tree->price_idr;
 
-        return TransactionHelper::smart(function () use ($user, $tree, $quantity, $amountCents, $paymentMethodId) {
+        return TransactionHelper::smart(function () use ($user, $tree, $quantity, $amountIdr, $paymentMethodId) {
             $transaction = null;
             $investment = null;
 
@@ -97,7 +97,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                 // Enhanced error handling for payment initiation
                 $transaction = $this->paymentService->initiatePayment(
                     $user->id,
-                    $amountCents,
+                    $amountIdr,
                     'IDR',
                     TransactionType::InvestmentPurchase,
                     $paymentMethodId
@@ -110,7 +110,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                 $investment = Investment::create([
                     'user_id' => $user->id,
                     'tree_id' => $tree->id,
-                    'amount_cents' => $amountCents,
+                    'amount_idr' => $amountIdr,
                     'quantity' => $quantity,
                     'currency' => 'IDR',
                     'purchase_date' => now()->toDateString(),
@@ -130,7 +130,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                         'investment_id' => $investment->id,
                         'tree_id' => $tree->id,
                         'quantity' => $quantity,
-                        'amount' => $amountCents,
+                        'amount' => $amountIdr,
                         'transaction_id' => $transaction->id,
                         'payment_intent_id' => $transaction->stripe_payment_intent_id,
                         'event' => 'investment_initiated',
@@ -141,7 +141,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                 try {
                     $user->notify(new InvestmentPurchasedNotification([
                         'tree_identifier' => $tree->tree_identifier,
-                        'formatted_amount' => 'Rp '.number_format($amountCents / 100, 2),
+                        'formatted_amount' => 'Rp '.number_format($amountIdr / 100, 2),
                         'investment_url' => route('investments.confirmation', $investment->id),
                     ]));
                 } catch (Throwable $e) {
@@ -160,7 +160,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                     'user_id' => $user->id,
                     'tree_id' => $tree->id,
                     'quantity' => $quantity,
-                    'amount_cents' => $amountCents,
+                    'amount_idr' => $amountIdr,
                     'error' => $e->getMessage(),
                     'provider_code' => $e->getProviderCode() ?? null,
                 ]);
@@ -181,7 +181,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                     'user_id' => $user->id,
                     'tree_id' => $tree->id,
                     'quantity' => $quantity,
-                    'amount_cents' => $amountCents,
+                    'amount_idr' => $amountIdr,
                     'error' => $e->getMessage(),
                     'stripe_error_code' => $e->getError()->code ?? null,
                     'stripe_error_type' => $e->getError()->type ?? null,
@@ -208,7 +208,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                     'user_id' => $user->id,
                     'tree_id' => $tree->id,
                     'quantity' => $quantity,
-                    'amount_cents' => $amountCents,
+                    'amount_idr' => $amountIdr,
                     'error' => $e->getMessage(),
                     'trace' => $e->getTraceAsString(),
                 ]);
@@ -353,28 +353,28 @@ class InvestmentServiceEnhanced extends InvestmentService
         }
 
         $tree = $investment->tree;
-        $maxTrees = (int) floor($tree->max_investment_cents / $tree->price_cents);
+        $maxTrees = (int) floor($tree->max_investment_idr / $tree->price_idr);
         $newQuantity = $investment->quantity + $topUpQuantity;
 
         if ($newQuantity > $maxTrees) {
             throw new InvestmentLimitExceededException(
-                $newQuantity * $tree->price_cents,
-                $tree->max_investment_cents
+                $newQuantity * $tree->price_idr,
+                $tree->max_investment_idr
             );
         }
 
-        $topUpAmountCents = $topUpQuantity * $tree->price_cents;
-        $newTotalAmount = $investment->amount_cents + $topUpAmountCents;
+        $topUpAmountIdr = $topUpQuantity * $tree->price_idr;
+        $newTotalAmount = $investment->amount_idr + $topUpAmountIdr;
 
-        return TransactionHelper::smart(function () use ($investment, $topUpQuantity, $topUpAmountCents, $paymentMethodId, $newQuantity, $newTotalAmount) {
-            $originalAmount = $investment->amount_cents;
+        return TransactionHelper::smart(function () use ($investment, $topUpQuantity, $topUpAmountIdr, $paymentMethodId, $newQuantity, $newTotalAmount) {
+            $originalAmount = $investment->amount_idr;
             $originalQuantity = $investment->quantity;
             $transaction = null;
 
             try {
                 $transaction = $this->paymentService->initiatePayment(
                     $investment->user_id,
-                    $topUpAmountCents,
+                    $topUpAmountIdr,
                     'IDR',
                     TransactionType::TopUp,
                     $paymentMethodId
@@ -384,7 +384,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                     throw new PaymentConfigurationException('Failed to create top-up payment transaction');
                 }
 
-                $investment->amount_cents = $newTotalAmount;
+                $investment->amount_idr = $newTotalAmount;
                 $investment->quantity = $newQuantity;
                 $investment->transaction_id = $transaction->id;
                 $investment->save();
@@ -397,7 +397,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                         'original_amount' => $originalAmount,
                         'original_quantity' => $originalQuantity,
                         'top_up_quantity' => $topUpQuantity,
-                        'top_up_amount' => $topUpAmountCents,
+                        'top_up_amount' => $topUpAmountIdr,
                         'new_total' => $newTotalAmount,
                         'new_quantity' => $newQuantity,
                         'transaction_id' => $transaction->id,
@@ -411,7 +411,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                 Log::error('Payment provider error during investment top-up', [
                     'investment_id' => $investment->id,
                     'top_up_quantity' => $topUpQuantity,
-                    'top_up_amount' => $topUpAmountCents,
+                    'top_up_amount' => $topUpAmountIdr,
                     'error' => $e->getMessage(),
                 ]);
 
@@ -424,7 +424,7 @@ class InvestmentServiceEnhanced extends InvestmentService
                 Log::error('Unexpected error during investment top-up', [
                     'investment_id' => $investment->id,
                     'top_up_quantity' => $topUpQuantity,
-                    'top_up_amount' => $topUpAmountCents,
+                    'top_up_amount' => $topUpAmountIdr,
                     'error' => $e->getMessage(),
                 ]);
 
@@ -457,6 +457,6 @@ class InvestmentServiceEnhanced extends InvestmentService
     {
         return Investment::forUser($user->id)
             ->active()
-            ->sum('amount_cents');
+            ->sum('amount_idr');
     }
 }

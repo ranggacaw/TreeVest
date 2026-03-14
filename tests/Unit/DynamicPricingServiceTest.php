@@ -25,7 +25,7 @@ class DynamicPricingServiceTest extends TestCase
     public function test_price_for_month_1_equals_base_price(): void
     {
         $lot = Lot::factory()->make([
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
         ]);
 
@@ -35,7 +35,7 @@ class DynamicPricingServiceTest extends TestCase
     public function test_price_for_month_2_applies_compound_rate(): void
     {
         $lot = Lot::factory()->make([
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
         ]);
 
@@ -46,7 +46,7 @@ class DynamicPricingServiceTest extends TestCase
     public function test_price_for_month_3_compounds_correctly(): void
     {
         $lot = Lot::factory()->make([
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
         ]);
 
@@ -57,7 +57,7 @@ class DynamicPricingServiceTest extends TestCase
     public function test_price_for_month_with_zero_rate_stays_flat(): void
     {
         $lot = Lot::factory()->make([
-            'base_price_per_tree_cents' => 200_000,
+            'base_price_per_tree_idr' => 200_000,
             'monthly_increase_rate' => '0.0000',
         ]);
 
@@ -140,7 +140,7 @@ class DynamicPricingServiceTest extends TestCase
         $lot = Lot::factory()->make([
             'cycle_months' => 4,
             'last_investment_month' => 3,
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
             'cycle_started_at' => now()->toDateString(),
         ]);
@@ -155,7 +155,7 @@ class DynamicPricingServiceTest extends TestCase
         $lot = Lot::factory()->make([
             'cycle_months' => 4,
             'last_investment_month' => 3,
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
             'cycle_started_at' => now()->toDateString(), // month 1
         ]);
@@ -171,7 +171,7 @@ class DynamicPricingServiceTest extends TestCase
         $lot = Lot::factory()->make([
             'cycle_months' => 4,
             'last_investment_month' => 2,
-            'base_price_per_tree_cents' => 100_000,
+            'base_price_per_tree_idr' => 100_000,
             'monthly_increase_rate' => '0.0500',
             'cycle_started_at' => now()->toDateString(),
         ]);
@@ -195,7 +195,7 @@ class DynamicPricingServiceTest extends TestCase
         $expectedPrice = $this->service->priceForMonth($lot, $this->service->currentCycleMonth($lot));
 
         $lot->refresh();
-        $this->assertSame($expectedPrice, $lot->current_price_per_tree_cents);
+        $this->assertSame($expectedPrice, $lot->current_price_per_tree_idr);
         $this->assertDatabaseHas('lot_price_snapshots', [
             'lot_id' => $lot->id,
             'cycle_month' => $this->service->currentCycleMonth($lot),

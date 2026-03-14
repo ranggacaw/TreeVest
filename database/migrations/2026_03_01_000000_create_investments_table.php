@@ -12,7 +12,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
             $table->foreignId('tree_id')->constrained('trees')->onDelete('cascade');
-            $table->unsignedBigInteger('amount_cents');
+            $table->unsignedBigInteger('amount_idr');
             $table->string('currency', 3)->default('IDR');
             $table->date('purchase_date');
             $table->string('status', 50);

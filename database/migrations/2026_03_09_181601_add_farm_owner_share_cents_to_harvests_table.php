@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::table('harvests', function (Blueprint $table) {
             // Audit field tracking the 60% farm owner share from each harvest (cents)
-            $table->unsignedBigInteger('farm_owner_share_cents')->nullable()->after('platform_fee_rate');
+            $table->unsignedBigInteger('farm_owner_share_idr')->nullable()->after('platform_fee_rate');
         });
     }
 
@@ -23,7 +23,7 @@ return new class extends Migration
     public function down(): void
     {
         Schema::table('harvests', function (Blueprint $table) {
-            $table->dropColumn('farm_owner_share_cents');
+            $table->dropColumn('farm_owner_share_idr');
         });
     }
 };

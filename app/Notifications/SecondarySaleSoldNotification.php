@@ -52,9 +52,9 @@ class SecondarySaleSoldNotification extends Notification implements ShouldQueue
             'listing_id' => $this->listing->id,
             'investment_id' => $this->listing->investment_id,
             'buyer_id' => $this->buyer->id,
-            'transfer_price_cents' => $this->transfer->transfer_price_cents,
-            'platform_fee_cents' => $this->transfer->platform_fee_cents,
-            'net_proceeds_cents' => $this->listing->net_proceeds_cents,
+            'transfer_price_idr' => $this->transfer->transfer_price_idr,
+            'platform_fee_idr' => $this->transfer->platform_fee_idr,
+            'net_proceeds_idr' => $this->listing->net_proceeds_idr,
         ];
     }
 }

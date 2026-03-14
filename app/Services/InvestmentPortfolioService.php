@@ -17,16 +17,16 @@ class InvestmentPortfolioService
 
         if ($investments->isEmpty()) {
             return [
-                'total_value_cents' => 0,
+                'total_value_idr' => 0,
                 'tree_count' => 0,
-                'total_invested_cents' => 0,
+                'total_invested_idr' => 0,
                 'average_roi_percent' => 0,
-                'total_payouts_cents' => 0,
+                'total_payouts_idr' => 0,
                 'tree_count_by_status' => [],
             ];
         }
 
-        $totalValue = $investments->sum('amount_cents');
+        $totalValue = $investments->sum('amount_idr');
         $totalInvested = $totalValue;
         $averageRoi = $investments->avg('tree.expected_roi_percent') ?? 0;
 
@@ -37,11 +37,11 @@ class InvestmentPortfolioService
         $totalPayouts = $this->getTotalPayouts($userId);
 
         return [
-            'total_value_cents' => $totalValue,
+            'total_value_idr' => $totalValue,
             'tree_count' => $investments->count(),
-            'total_invested_cents' => $totalInvested,
+            'total_invested_idr' => $totalInvested,
             'average_roi_percent' => round($averageRoi, 2),
-            'total_payouts_cents' => $totalPayouts,
+            'total_payouts_idr' => $totalPayouts,
             'tree_count_by_status' => $treeCountByStatus,
         ];
     }
@@ -60,7 +60,7 @@ class InvestmentPortfolioService
         })->map(function ($group) {
             return [
                 'count' => $group->count(),
-                'total_value_cents' => $group->sum('amount_cents'),
+                'total_value_idr' => $group->sum('amount_idr'),
             ];
         });
     }
@@ -98,37 +98,37 @@ class InvestmentPortfolioService
 
         if ($investments->isEmpty()) {
             return [
-                'projected_returns_cents' => 0,
-                'actual_returns_cents' => 0,
-                'difference_cents' => 0,
+                'projected_returns_idr' => 0,
+                'actual_returns_idr' => 0,
+                'difference_idr' => 0,
                 'percentage_gain_loss' => 0,
                 'investments' => [],
             ];
         }
 
         $investmentMetrics = $investments->map(function ($investment) {
-            $projectedReturn = (int) ($investment->amount_cents * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+            $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
             $actualReturn = $this->calculateActualReturns($investment);
 
             return [
                 'investment_id' => $investment->id,
                 'tree_identifier' => $investment->tree?->tree_identifier,
-                'amount_cents' => $investment->amount_cents,
-                'projected_return_cents' => $projectedReturn,
-                'actual_return_cents' => $actualReturn,
-                'difference_cents' => $actualReturn - $projectedReturn,
+                'amount_idr' => $investment->amount_idr,
+                'projected_return_idr' => $projectedReturn,
+                'actual_return_idr' => $actualReturn,
+                'difference_idr' => $actualReturn - $projectedReturn,
             ];
         });
 
-        $projectedTotal = $investmentMetrics->sum('projected_return_cents');
-        $actualTotal = $investmentMetrics->sum('actual_return_cents');
+        $projectedTotal = $investmentMetrics->sum('projected_return_idr');
+        $actualTotal = $investmentMetrics->sum('actual_return_idr');
         $difference = $actualTotal - $projectedTotal;
         $percentageGainLoss = $projectedTotal > 0 ? round(($difference / $projectedTotal) * 100, 2) : 0;
 
         return [
-            'projected_returns_cents' => $projectedTotal,
-            'actual_returns_cents' => $actualTotal,
-            'difference_cents' => $difference,
+            'projected_returns_idr' => $projectedTotal,
+            'actual_returns_idr' => $actualTotal,
+            'difference_idr' => $difference,
             'percentage_gain_loss' => $percentageGainLoss,
             'investments' => $investmentMetrics->toArray(),
         ];
@@ -149,17 +149,17 @@ class InvestmentPortfolioService
         }
 
         $currentValue = $this->calculateCurrentValue($investment);
-        $projectedReturn = (int) ($investment->amount_cents * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+        $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
         $actualReturn = $this->calculateActualReturns($investment);
 
         return [
             'id' => $investment->id,
-            'amount_cents' => $investment->amount_cents,
+            'amount_idr' => $investment->amount_idr,
             'purchase_date' => $investment->purchase_date?->format('Y-m-d'),
             'status' => $investment->status->value,
-            'current_value_cents' => $currentValue,
-            'projected_return_cents' => $projectedReturn,
-            'actual_return_cents' => $actualReturn,
+            'current_value_idr' => $currentValue,
+            'projected_return_idr' => $projectedReturn,
+            'actual_return_idr' => $actualReturn,
             'tree' => $this->formatTreeDetails($investment->tree),
             'farm' => $investment->tree?->fruitCrop?->farm ? $this->formatFarmDetails($investment->tree->fruitCrop->farm) : null,
             'harvests' => $investment->tree?->harvests?->map(fn ($h) => [
@@ -192,11 +192,11 @@ class InvestmentPortfolioService
             'data' => $investments->map(function ($investment) {
                 return [
                     'id' => $investment->id,
-                    'amount_cents' => $investment->amount_cents,
+                    'amount_idr' => $investment->amount_idr,
                     'purchase_date' => $investment->purchase_date?->format('Y-m-d'),
-                    'current_value_cents' => $this->calculateCurrentValue($investment),
-                    'projected_return_cents' => (int) ($investment->amount_cents * ($investment->tree?->expected_roi_percent ?? 0) / 100),
-                    'actual_return_cents' => $this->calculateActualReturns($investment),
+                    'current_value_idr' => $this->calculateCurrentValue($investment),
+                    'projected_return_idr' => (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100),
+                    'actual_return_idr' => $this->calculateActualReturns($investment),
                     'status' => $investment->status->value,
                     'tree' => $this->formatTreeSummary($investment->tree),
                     'next_harvest' => $investment->tree?->harvests
@@ -216,21 +216,21 @@ class InvestmentPortfolioService
         $byFruitType = $this->getInvestmentsByCategory($userId, 'fruit_type')
             ->map(fn ($data, $category) => [
                 'category' => $category,
-                'value_cents' => $data['total_value_cents'],
+                'value_idr' => $data['total_value_idr'],
                 'count' => $data['count'],
             ])->values();
 
         $byFarm = $this->getInvestmentsByCategory($userId, 'farm')
             ->map(fn ($data, $category) => [
                 'category' => $category,
-                'value_cents' => $data['total_value_cents'],
+                'value_idr' => $data['total_value_idr'],
                 'count' => $data['count'],
             ])->values();
 
         $byRisk = $this->getInvestmentsByCategory($userId, 'risk')
             ->map(fn ($data, $category) => [
                 'category' => $category,
-                'value_cents' => $data['total_value_cents'],
+                'value_idr' => $data['total_value_idr'],
                 'count' => $data['count'],
             ])->values();
 
@@ -251,7 +251,7 @@ class InvestmentPortfolioService
 
     private function calculateCurrentValue(Investment $investment): int
     {
-        return $investment->amount_cents;
+        return $investment->amount_idr;
     }
 
     private function calculateActualReturns(Investment $investment): int
@@ -265,7 +265,7 @@ class InvestmentPortfolioService
         }
 
         $totalYield = $completedHarvests->sum('actual_yield_kg');
-        $investmentAmount = $investment->amount_cents;
+        $investmentAmount = $investment->amount_idr;
 
         return (int) ($investmentAmount * ($totalYield / 100));
     }
@@ -335,34 +335,34 @@ class InvestmentPortfolioService
     {
         $investments = $this->getUserActiveInvestments($userId);
 
-        $totalInvestedCents = $investments->sum('amount_cents');
+        $totalInvestedIdr = $investments->sum('amount_idr');
 
         $completedPayouts = Payout::where('investor_id', $userId)
             ->where('status', \App\Enums\PayoutStatus::Completed)
             ->get();
 
-        $totalPayoutsCents = $completedPayouts->sum('net_amount_cents');
+        $totalPayoutsIdr = $completedPayouts->sum('net_amount_idr');
 
-        $pendingPayoutsCents = Payout::where('investor_id', $userId)
+        $pendingPayoutsIdr = Payout::where('investor_id', $userId)
             ->whereIn('status', [
                 \App\Enums\PayoutStatus::Pending,
                 \App\Enums\PayoutStatus::Processing,
             ])
-            ->sum('net_amount_cents');
+            ->sum('net_amount_idr');
 
-        $currentValueCents = $totalInvestedCents; // Simplified; no real-time pricing yet
-        $gainLossCents = $totalPayoutsCents;
-        $gainLossPercent = $totalInvestedCents > 0
-            ? round(($gainLossCents / $totalInvestedCents) * 100, 2)
+        $currentValueIdr = $totalInvestedIdr; // Simplified; no real-time pricing yet
+        $gainLossIdr = $totalPayoutsIdr;
+        $gainLossPercent = $totalInvestedIdr > 0
+            ? round(($gainLossIdr / $totalInvestedIdr) * 100, 2)
             : 0.0;
 
         return [
-            'total_invested_cents' => (int) $totalInvestedCents,
-            'current_value_cents' => (int) $currentValueCents,
-            'gain_loss_cents' => (int) $gainLossCents,
+            'total_invested_idr' => (int) $totalInvestedIdr,
+            'current_value_idr' => (int) $currentValueIdr,
+            'gain_loss_idr' => (int) $gainLossIdr,
             'gain_loss_percent' => $gainLossPercent,
-            'total_payouts_cents' => (int) $totalPayoutsCents,
-            'pending_payouts_cents' => (int) $pendingPayoutsCents,
+            'total_payouts_idr' => (int) $totalPayoutsIdr,
+            'pending_payouts_idr' => (int) $pendingPayoutsIdr,
         ];
     }
 
@@ -386,22 +386,22 @@ class InvestmentPortfolioService
         $data = $paginator->map(function (Investment $investment) {
             $sparkline = $investment->payouts
                 ->sortBy('created_at')
-                ->map(fn ($p) => (int) $p->net_amount_cents)
+                ->map(fn ($p) => (int) $p->net_amount_idr)
                 ->values()
                 ->toArray();
 
-            $actualReturn = $investment->payouts->sum('net_amount_cents');
-            $projectedReturn = (int) ($investment->amount_cents * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+            $actualReturn = $investment->payouts->sum('net_amount_idr');
+            $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
 
             return [
                 'id' => $investment->id,
                 'quantity' => $investment->quantity,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'purchase_date' => $investment->purchase_date?->format('Y-m-d'),
                 'status' => $investment->status->value,
-                'actual_return_cents' => (int) $actualReturn,
-                'projected_return_cents' => $projectedReturn,
-                'gain_loss_cents' => (int) $actualReturn - $projectedReturn,
+                'actual_return_idr' => (int) $actualReturn,
+                'projected_return_idr' => $projectedReturn,
+                'gain_loss_idr' => (int) $actualReturn - $projectedReturn,
                 'sparkline' => $sparkline,
                 'tree' => $this->formatTreeSummary($investment->tree),
             ];

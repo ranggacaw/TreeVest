@@ -53,13 +53,13 @@ class TaxReportControllerTest extends TestCase
         $this->investment = Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 1000000,
+            'amount_idr' => 1000000,
             'purchase_date' => '2024-06-15',
         ]);
 
         Payout::factory()->create([
             'investment_id' => $this->investment->id,
-            'net_amount_cents' => 500000,
+            'net_amount_idr' => 500000,
             'status' => 'completed',
             'completed_at' => '2024-12-01',
         ]);
@@ -111,9 +111,9 @@ class TaxReportControllerTest extends TestCase
         $response->assertInertia(
             fn ($page) => $page
                 ->where('year', 2024)
-                ->where('taxData.summary.totalIncomeCents', 500000)
-                ->where('taxData.summary.totalInvestedCents', 1000000)
-                ->where('taxData.summary.netCents', -500000)
+                ->where('taxData.summary.totalIncomeIdr', 500000)
+                ->where('taxData.summary.totalInvestedIdr', 1000000)
+                ->where('taxData.summary.netIdr', -500000)
         );
     }
 
@@ -122,7 +122,7 @@ class TaxReportControllerTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 2000000,
+            'amount_idr' => 2000000,
             'purchase_date' => '2023-06-15',
         ]);
 
@@ -132,7 +132,7 @@ class TaxReportControllerTest extends TestCase
 
         $response->assertInertia(
             fn ($page) => $page
-                ->where('taxData.summary.totalInvestedCents', 1000000)
+                ->where('taxData.summary.totalInvestedIdr', 1000000)
         );
     }
 
@@ -140,7 +140,7 @@ class TaxReportControllerTest extends TestCase
     {
         Payout::factory()->create([
             'investment_id' => $this->investment->id,
-            'net_amount_cents' => 600000,
+            'net_amount_idr' => 600000,
             'status' => 'pending',
             'completed_at' => '2024-12-01',
         ]);
@@ -151,7 +151,7 @@ class TaxReportControllerTest extends TestCase
 
         $response->assertInertia(
             fn ($page) => $page
-                ->where('taxData.summary.totalIncomeCents', 500000)
+                ->where('taxData.summary.totalIncomeIdr', 500000)
         );
     }
 
@@ -234,7 +234,7 @@ class TaxReportControllerTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 2000000,
+            'amount_idr' => 2000000,
             'purchase_date' => '2023-06-15',
         ]);
 

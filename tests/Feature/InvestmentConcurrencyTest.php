@@ -30,8 +30,8 @@ class InvestmentConcurrencyTest extends TestCase
         $user2 = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // Simulate concurrent investment creation
@@ -42,7 +42,7 @@ class InvestmentConcurrencyTest extends TestCase
             $response = $this->actingAs($user1)
                 ->post(route('investments.store'), [
                     'tree_id' => $tree->id,
-                    'amount_cents' => 50000,
+                    'amount_idr' => 50000,
                     'acceptance_risk_disclosure' => true,
                     'acceptance_terms' => true,
                 ]);
@@ -56,7 +56,7 @@ class InvestmentConcurrencyTest extends TestCase
             $response = $this->actingAs($user2)
                 ->post(route('investments.store'), [
                     'tree_id' => $tree->id,
-                    'amount_cents' => 50000,
+                    'amount_idr' => 50000,
                     'acceptance_risk_disclosure' => true,
                     'acceptance_terms' => true,
                 ]);
@@ -74,13 +74,13 @@ class InvestmentConcurrencyTest extends TestCase
         $this->assertDatabaseHas('investments', [
             'user_id' => $user1->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
         ]);
 
         $this->assertDatabaseHas('investments', [
             'user_id' => $user2->id,
             'tree_id' => $tree->id,
-            'amount_cents' => 50000,
+            'amount_idr' => 50000,
         ]);
 
         $investmentCount = Investment::where('tree_id', $tree->id)->count();
@@ -92,8 +92,8 @@ class InvestmentConcurrencyTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 200000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 200000,
         ]);
 
         $investment = Investment::factory()
@@ -101,7 +101,7 @@ class InvestmentConcurrencyTest extends TestCase
             ->for($tree)
             ->create([
                 'status' => InvestmentStatus::Active,
-                'amount_cents' => 50000,
+                'amount_idr' => 50000,
             ]);
 
         // Simulate rapid successive top-ups
@@ -111,7 +111,7 @@ class InvestmentConcurrencyTest extends TestCase
         DB::transaction(function () use ($user, $investment, &$topUp1Success) {
             $response = $this->actingAs($user)
                 ->post(route('investments.topUp', $investment->id), [
-                    'top_up_cents' => 20000,
+                    'top_up_idr' => 20000,
                 ]);
 
             if ($response->isRedirection() && $response->getSession()->has('success')) {
@@ -125,7 +125,7 @@ class InvestmentConcurrencyTest extends TestCase
         DB::transaction(function () use ($user, $investment, &$topUp2Success) {
             $response = $this->actingAs($user)
                 ->post(route('investments.topUp', $investment->id), [
-                    'top_up_cents' => 30000,
+                    'top_up_idr' => 30000,
                 ]);
 
             if ($response->isRedirection() && $response->getSession()->has('success')) {
@@ -139,7 +139,7 @@ class InvestmentConcurrencyTest extends TestCase
 
         // Verify final amount is correct
         $investment->refresh();
-        $this->assertEquals(100000, $investment->amount_cents); // 50000 + 20000 + 30000
+        $this->assertEquals(100000, $investment->amount_idr); // 50000 + 20000 + 30000
     }
 
     public function test_investment_rollback_on_payment_service_failure()
@@ -147,8 +147,8 @@ class InvestmentConcurrencyTest extends TestCase
         $user = $this->createVerifiedUserWithKyc();
         $tree = Tree::factory()->create([
             'status' => TreeLifecycleStage::PRODUCTIVE,
-            'min_investment_cents' => 10000,
-            'max_investment_cents' => 100000,
+            'min_investment_idr' => 10000,
+            'max_investment_idr' => 100000,
         ]);
 
         // This test verifies that if payment service fails,
@@ -162,7 +162,7 @@ class InvestmentConcurrencyTest extends TestCase
             $this->actingAs($user)
                 ->post(route('investments.store'), [
                     'tree_id' => $tree->id,
-                    'amount_cents' => 50000,
+                    'amount_idr' => 50000,
                     'acceptance_risk_disclosure' => true,
                     'acceptance_terms' => true,
                 ]);

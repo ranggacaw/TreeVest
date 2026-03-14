@@ -20,28 +20,28 @@ interface PaymentMethod {
 interface Props extends PageProps {
     investment: {
         id: number;
-        amount_cents: number;
+        amount_idr: number;
         formatted_amount: string;
         tree: {
             identifier: string;
-            max_investment_cents: number;
+            max_investment_idr: number;
         };
     };
     payment_methods: PaymentMethod[];
 }
 
 export default function TopUp({ auth, investment, payment_methods, unread_notifications_count }: Props) {
-    const minTopUp = 100; // 1 Rp (just using logic from original file, though unlikely 1Rp)
-    const maxTopUp = Math.max(0, investment.tree.max_investment_cents - investment.amount_cents);
+    const minTopUp = 1000; // 1,000 Rp min
+    const maxTopUp = Math.max(0, investment.tree.max_investment_idr - investment.amount_idr);
 
     const { data, setData, post, processing, errors } = useForm({
-        top_up_cents: '' as string | number,
+        top_up_idr: '' as string | number,
         payment_method_id: '',
     });
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        // ensure top_up_cents is sent as number if possible, or string. 
+        // ensure top_up_idr is sent as number if possible, or string. 
         // Inertia will send what's in data.
         post(route('investments.top-up', investment.id));
     };
@@ -49,21 +49,19 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
     const handleAmountChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         if (!val) {
-            setData('top_up_cents', '');
+            setData('top_up_idr', '');
             return;
         }
-        // Input is in Rupiah units (not cents), so multiply by 100 for cents
-        // But storing as string in state to allow user typing
-        setData('top_up_cents', val); 
+        setData('top_up_idr', val); 
     };
 
     // Helper to get cents value for submission
     // Note: The original file was doing: 
-    // value={data.top_up_cents / 100}
-    // onChange={(e) => setData('top_up_cents', Math.round(parseFloat(e.target.value) * 100))}
-    // This implies data.top_up_cents in the form state holds the CENTS value.
+    // value={data.top_up_idr / 100}
+    // onChange={(e) => setData('top_up_idr', Math.round(parseFloat(e.target.value) * 100))}
+    // This implies data.top_up_idr in the form state holds the CENTS value.
     
-    // Let's stick to the original logic: data.top_up_cents stores CENTS.
+    // Let's stick to the original logic: data.top_up_idr stores CENTS.
     // The input displays UNITS (Rp).
 
     return (
@@ -114,17 +112,17 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
                                     <TextInput
                                         id="amount"
                                         type="number"
-                                        step="1" // Assuming whole Rupiah usually
-                                        min={minTopUp / 100}
-                                        max={maxTopUp / 100}
+                                        step="1"
+                                        min={minTopUp}
+                                        max={maxTopUp}
                                         className="pl-10 block w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
-                                        value={data.top_up_cents ? Number(data.top_up_cents) / 100 : ''}
-                                        onChange={(e) => setData('top_up_cents', e.target.value ? Math.round(parseFloat(e.target.value) * 100) : '')}
+                                        value={data.top_up_idr}
+                                        onChange={(e) => setData('top_up_idr', e.target.value)}
                                         required
                                         placeholder="0"
                                     />
                                 </div>
-                                <InputError message={errors.top_up_cents} className="mt-2" />
+                                <InputError message={errors.top_up_idr} className="mt-2" />
                             </div>
 
                             <div>

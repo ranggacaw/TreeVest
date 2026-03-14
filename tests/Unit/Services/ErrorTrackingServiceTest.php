@@ -45,7 +45,7 @@ class ErrorTrackingServiceTest extends TestCase
                     return $context['category'] === 'financial'
                         && $context['operation'] === 'investment_purchase'
                         && $context['component'] === 'payment_system'
-                        && isset($context['amount_cents']);
+                        && isset($context['amount_idr']);
                 })
             );
 
@@ -53,7 +53,7 @@ class ErrorTrackingServiceTest extends TestCase
         $this->service->reportFinancialError(
             $exception,
             'investment_purchase',
-            ['amount_cents' => 500000],
+            ['amount_idr' => 500000],
             'user456'
         );
     }

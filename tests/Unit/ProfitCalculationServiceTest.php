@@ -19,13 +19,13 @@ use Tests\TestCase;
 /**
  * Snapshot of OLD calculation (pre-60/40 split) kept for regression reference:
  *
- *   OLD: grossAmountCents = ROUND((investmentCents / totalInvestedCents) * totalYieldCents)
+ *   OLD: grossAmountIdr = ROUND((investmentIdr / totalInvestedIdr) * totalYieldIdr)
  *
  * NEW calculation with 60/40 split:
  *
- *   investorPoolCents   = ROUND(totalYieldCents * 0.40)
- *   grossAmountCents    = ROUND((investmentCents / totalInvestedCents) * investorPoolCents)
- *   farmOwnerShareCents = totalYieldCents - investorPoolCents  (stored on harvest, not paid out here)
+ *   investorPoolIdr   = ROUND(totalYieldIdr * 0.40)
+ *   grossAmountIdr    = ROUND((investmentIdr / totalInvestedIdr) * investorPoolIdr)
+ *   farmOwnerShareIdr = totalYieldIdr - investorPoolIdr  (stored on harvest, not paid out here)
  */
 class ProfitCalculationServiceTest extends TestCase
 {
@@ -60,7 +60,7 @@ class ProfitCalculationServiceTest extends TestCase
 
         $this->marketPrice = MarketPrice::factory()->create([
             'fruit_type_id' => $fruitType->id,
-            'price_per_kg_cents' => 1000, // $10.00 per kg
+            'price_per_kg_idr' => 1000, // $10.00 per kg
             'currency' => 'USD',
             'created_by' => User::factory()->create()->id,
         ]);
@@ -76,13 +76,13 @@ class ProfitCalculationServiceTest extends TestCase
     /** @test */
     public function it_distributes_40_percent_of_yield_to_investors(): void
     {
-        // totalYieldCents = 100 kg * 1000 cents = 100_000 cents ($1,000)
-        // investorPoolCents = ROUND(100_000 * 0.40) = 40_000 cents ($400)
+        // totalYieldIdr = 100 kg * 1000 cents = 100_000 cents ($1,000)
+        // investorPoolIdr = ROUND(100_000 * 0.40) = 40_000 cents ($400)
 
         $investment = Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 100_000,
+            'amount_idr' => 100_000,
             'status' => InvestmentStatus::Active,
         ]);
 
@@ -93,32 +93,32 @@ class ProfitCalculationServiceTest extends TestCase
         $payout = $payouts->first();
         // Single investor owns 100% of invested capital → receives 100% of investorPool
         // gross = 40_000; platform fee = ROUND(40_000 * 0.05) = 2_000; net = 38_000
-        $this->assertEquals(40_000, $payout->gross_amount_cents);
-        $this->assertEquals(2_000, $payout->platform_fee_cents);
-        $this->assertEquals(38_000, $payout->net_amount_cents);
+        $this->assertEquals(40_000, $payout->gross_amount_idr);
+        $this->assertEquals(2_000, $payout->platform_fee_idr);
+        $this->assertEquals(38_000, $payout->net_amount_idr);
     }
 
     /** @test */
-    public function it_stores_farm_owner_share_cents_on_harvest(): void
+    public function it_stores_farm_owner_share_idr_on_harvest(): void
     {
-        // totalYieldCents = 100_000; investorPool = 40_000; farmOwner = 60_000
+        // totalYieldIdr = 100_000; investorPool = 40_000; farmOwner = 60_000
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 100_000,
+            'amount_idr' => 100_000,
             'status' => InvestmentStatus::Active,
         ]);
 
         $this->service->calculate($this->harvest);
 
         $this->harvest->refresh();
-        $this->assertEquals(60_000, $this->harvest->farm_owner_share_cents);
+        $this->assertEquals(60_000, $this->harvest->farm_owner_share_idr);
     }
 
     /** @test */
     public function it_splits_investor_pool_proportionally_among_multiple_investors(): void
     {
-        // totalYieldCents = 100_000; investorPool = 40_000
+        // totalYieldIdr = 100_000; investorPool = 40_000
         // Investor A: 75_000 / 100_000 = 75% → 30_000 gross
         // Investor B: 25_000 / 100_000 = 25% → 10_000 gross
 
@@ -128,13 +128,13 @@ class ProfitCalculationServiceTest extends TestCase
         Investment::factory()->create([
             'user_id' => $investorA->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 75_000,
+            'amount_idr' => 75_000,
             'status' => InvestmentStatus::Active,
         ]);
         Investment::factory()->create([
             'user_id' => $investorB->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 25_000,
+            'amount_idr' => 25_000,
             'status' => InvestmentStatus::Active,
         ]);
 
@@ -145,8 +145,8 @@ class ProfitCalculationServiceTest extends TestCase
         $payoutA = $payouts->firstWhere('investor_id', $investorA->id);
         $payoutB = $payouts->firstWhere('investor_id', $investorB->id);
 
-        $this->assertEquals(30_000, $payoutA->gross_amount_cents);
-        $this->assertEquals(10_000, $payoutB->gross_amount_cents);
+        $this->assertEquals(30_000, $payoutA->gross_amount_idr);
+        $this->assertEquals(10_000, $payoutB->gross_amount_idr);
     }
 
     /** @test */
@@ -155,7 +155,7 @@ class ProfitCalculationServiceTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 100_000,
+            'amount_idr' => 100_000,
             'status' => InvestmentStatus::Active,
         ]);
 
@@ -211,7 +211,7 @@ class ProfitCalculationServiceTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 100_000,
+            'amount_idr' => 100_000,
             'status' => InvestmentStatus::Active,
         ]);
 

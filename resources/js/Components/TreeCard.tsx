@@ -52,7 +52,7 @@ export default function TreeCard({ tree, isWishlisted = false, authenticated = t
                     <div className="flex justify-between items-end">
                         <div>
                             <div className="text-xs text-gray-500">Price / tree</div>
-                            <div className="text-xl font-bold text-gray-900">{formatRupiah(tree.price_cents)}</div>
+                            <div className="text-xl font-bold text-gray-900">{formatRupiah(tree.price_idr)}</div>
                         </div>
                         <Link
                             href={route('trees.show', tree.id)}

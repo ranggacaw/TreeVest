@@ -20,11 +20,11 @@ class TreeObserver
         }
 
         // Notify wishlisted users if the price changed
-        if ($tree->wasChanged('price_cents')) {
+        if ($tree->wasChanged('price_idr')) {
             NotifyWishlistersOfTreePriceChange::dispatch(
                 $tree,
-                (int) $tree->getOriginal('price_cents'),
-                (int) $tree->price_cents,
+                (int) $tree->getOriginal('price_idr'),
+                (int) $tree->price_idr,
             );
         }
     }

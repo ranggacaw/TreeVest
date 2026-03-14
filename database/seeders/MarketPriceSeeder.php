@@ -34,16 +34,16 @@ class MarketPriceSeeder extends Seeder
             $range = $priceRanges[$fruitType->slug] ?? [500, 2000];
 
             for ($i = 0; $i < 60; $i++) {
-                $pricePerKgCents = rand($range[0] * 10, $range[1] * 10);
+                $pricePerKgIdr = rand($range[0] * 10, $range[1] * 10);
                 $effectiveDate = now()->subDays($i);
 
                 MarketPrice::create([
                     'fruit_type_id' => $fruitType->id,
-                    'price_per_kg_cents' => $pricePerKgCents,
+                    'price_per_kg_idr' => $pricePerKgIdr,
                     'currency' => 'IDR',
                     'effective_date' => $effectiveDate->toDateString(),
                     'created_by' => $admin->id,
-                    'notes' => $this->getPriceNote($fruitType->name, $pricePerKgCents),
+                    'notes' => $this->getPriceNote($fruitType->name, $pricePerKgIdr),
                 ]);
             }
         }
@@ -51,9 +51,9 @@ class MarketPriceSeeder extends Seeder
         $this->command->info('Market prices seeded successfully!');
     }
 
-    private function getPriceNote(string $fruitName, int $pricePerKgCents): string
+    private function getPriceNote(string $fruitName, int $pricePerKgIdr): string
     {
-        $pricePerKg = $pricePerKgCents / 100;
+        $pricePerKg = $pricePerKgIdr / 100;
         $trend = rand(0, 100);
 
         if ($trend < 35) {

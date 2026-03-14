@@ -23,7 +23,7 @@ class TreePricingService
 
     public function updateTreePrice(Tree $tree): void
     {
-        $tree->price_cents = $this->calculatePrice($tree);
+        $tree->price_idr = $this->calculatePrice($tree);
         $tree->expected_roi_percent = $this->calculateRoi($tree);
         $tree->save();
     }

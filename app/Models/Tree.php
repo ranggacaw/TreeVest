@@ -118,12 +118,12 @@ class Tree extends Model
 
     public function scopeByPriceRange($query, int $min, int $max)
     {
-        return $query->whereBetween('price_cents', [$min, $max]);
+        return $query->whereBetween('price_idr', [$min, $max]);
     }
 
     public function getPriceFormattedAttribute(): string
     {
-        return 'Rp '.number_format($this->price_cents, 0, ',', '.');
+        return 'Rp '.number_format($this->price_idr, 0, ',', '.');
     }
 
     public function getExpectedRoiFormattedAttribute(): string

@@ -64,7 +64,7 @@ export default function Wishlist({ items }: Props) {
                                         <div className="flex items-center justify-between py-2 border-t border-gray-50 mt-2">
                                             <div>
                                                 <p className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">Harga</p>
-                                                <p className="text-sm font-bold text-gray-900">{formatRupiah(item.price_cents)}</p>
+                                                <p className="text-sm font-bold text-gray-900">{formatRupiah(item.price_idr)}</p>
                                             </div>
                                             <div className="text-right">
                                                 <p className="text-[10px] text-gray-400 uppercase font-bold mb-0.5">ROI</p>

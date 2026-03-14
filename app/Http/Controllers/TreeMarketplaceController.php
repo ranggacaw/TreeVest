@@ -54,11 +54,11 @@ class TreeMarketplaceController extends Controller
         }
 
         if (! empty($filters['price_min'])) {
-            $query->where('price_cents', '>=', (int) $filters['price_min']);
+            $query->where('price_idr', '>=', (int) $filters['price_min']);
         }
 
         if (! empty($filters['price_max'])) {
-            $query->where('price_cents', '<=', (int) $filters['price_max']);
+            $query->where('price_idr', '<=', (int) $filters['price_max']);
         }
 
         $trees = $query->orderBy('expected_roi_percent', 'desc')->paginate(12)->through(function (Tree $tree) {
@@ -69,12 +69,12 @@ class TreeMarketplaceController extends Controller
             return [
                 'id' => $tree->id,
                 'tree_identifier' => $tree->tree_identifier,
-                'price_cents' => $tree->price_cents,
+                'price_idr' => $tree->price_idr,
                 'expected_roi_percent' => (float) $tree->expected_roi_percent,
                 'risk_rating' => $tree->risk_rating?->value ?? $tree->risk_rating,
                 'status' => $tree->status?->value ?? $tree->status,
-                'min_investment_cents' => $tree->min_investment_cents,
-                'max_investment_cents' => $tree->max_investment_cents,
+                'min_investment_idr' => $tree->min_investment_idr,
+                'max_investment_idr' => $tree->max_investment_idr,
                 'age_years' => $tree->age_years,
                 'productive_lifespan_years' => $tree->productive_lifespan_years,
                 'fruit_crop' => [
@@ -173,12 +173,12 @@ class TreeMarketplaceController extends Controller
             'tree' => [
                 'id' => $tree->id,
                 'tree_identifier' => $tree->tree_identifier,
-                'price_cents' => $tree->price_cents,
+                'price_idr' => $tree->price_idr,
                 'expected_roi_percent' => (float) $tree->expected_roi_percent,
                 'risk_rating' => $tree->risk_rating?->value ?? $tree->risk_rating,
                 'status' => $tree->status?->value ?? $tree->status,
-                'min_investment_cents' => $tree->min_investment_cents,
-                'max_investment_cents' => $tree->max_investment_cents,
+                'min_investment_idr' => $tree->min_investment_idr,
+                'max_investment_idr' => $tree->max_investment_idr,
                 'age_years' => $tree->age_years,
                 'productive_lifespan_years' => $tree->productive_lifespan_years,
                 'fruit_crop' => [

@@ -26,21 +26,21 @@ export default function DiversificationChart({ data }: Props) {
             case 'fruit_type':
                 return data.by_fruit_type.map((item, index) => ({
                     name: item.category,
-                    value: item.value_cents,
+                    value: item.value_idr,
                     count: item.count,
                     color: COLORS[index % COLORS.length],
                 }));
             case 'farm':
                 return data.by_farm.map((item, index) => ({
                     name: item.category,
-                    value: item.value_cents,
+                    value: item.value_idr,
                     count: item.count,
                     color: COLORS[index % COLORS.length],
                 }));
             case 'risk':
                 return data.by_risk.map((item) => ({
                     name: item.category,
-                    value: item.value_cents,
+                    value: item.value_idr,
                     count: item.count,
                     color: RISK_COLORS[item.category.toLowerCase()] || COLORS[0],
                 }));
@@ -52,8 +52,8 @@ export default function DiversificationChart({ data }: Props) {
     const chartData = getChartData();
     const total = chartData.reduce((sum, item) => sum + item.value, 0);
 
-    const formatCurrency = (cents: number) => {
-        return 'Rp ' + (cents / 100).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+    const formatCurrency = (idr: number) => {
+        return 'Rp ' + idr.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
     };
 
     return (

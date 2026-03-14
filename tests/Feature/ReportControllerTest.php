@@ -58,12 +58,12 @@ class ReportControllerTest extends TestCase
         $this->investment = Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 1000000,
+            'amount_idr' => 1000000,
         ]);
 
         Payout::factory()->create([
             'investment_id' => $this->investment->id,
-            'net_amount_cents' => 500000,
+            'net_amount_idr' => 500000,
             'status' => 'completed',
         ]);
     }
@@ -111,9 +111,9 @@ class ReportControllerTest extends TestCase
         $response->assertInertia(
             fn ($page) => $page
                 ->component('Investor/Reports/Index')
-                ->where('profitLoss.summary.totalInvestedCents', 1000000)
-                ->where('profitLoss.summary.totalPayoutsCents', 500000)
-                ->where('profitLoss.summary.netCents', -500000)
+                ->where('profitLoss.summary.totalInvestedIdr', 1000000)
+                ->where('profitLoss.summary.totalPayoutsIdr', 500000)
+                ->where('profitLoss.summary.netIdr', -500000)
         );
     }
 
@@ -122,7 +122,7 @@ class ReportControllerTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 2000000,
+            'amount_idr' => 2000000,
             'purchase_date' => '2025-01-01',
         ]);
 
@@ -136,7 +136,7 @@ class ReportControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertInertia(
             fn ($page) => $page
-                ->where('profitLoss.summary.totalInvestedCents', 1000000)
+                ->where('profitLoss.summary.totalInvestedIdr', 1000000)
         );
     }
 
@@ -189,7 +189,7 @@ class ReportControllerTest extends TestCase
         Investment::factory()->create([
             'user_id' => $this->investor->id,
             'tree_id' => $this->tree->id,
-            'amount_cents' => 2000000,
+            'amount_idr' => 2000000,
             'purchase_date' => '2025-01-01',
         ]);
 

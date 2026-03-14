@@ -14,7 +14,7 @@ class ProfitCalculationService
     /**
      * The fraction of total harvest revenue distributed to investors.
      * The remaining 60% is retained by the farm owner and tracked via
-     * `farm_owner_share_cents` on the harvest record.
+     * `farm_owner_share_idr` on the harvest record.
      */
     public const INVESTOR_SHARE_RATE = 0.40;
 
@@ -22,10 +22,10 @@ class ProfitCalculationService
      * Calculate and create payout records for a completed harvest.
      *
      * Split logic:
-     *   investorPoolCents  = ROUND(totalYieldCents * INVESTOR_SHARE_RATE)   [40%]
-     *   farmOwnerShareCents = totalYieldCents - investorPoolCents            [60%]
+     *   investorPoolIdr  = ROUND(totalYieldIdr * INVESTOR_SHARE_RATE)   [40%]
+     *   farmOwnerShareIdr = totalYieldIdr - investorPoolIdr            [60%]
      *
-     * Each investor receives a proportion of investorPoolCents equal to their
+     * Each investor receives a proportion of investorPoolIdr equal to their
      * share of total invested capital in the tree, minus the platform fee.
      *
      * @return Collection<int, Payout>
@@ -45,16 +45,16 @@ class ProfitCalculationService
 
         return DB::transaction(function () use ($harvest) {
             $marketPrice = $harvest->marketPrice;
-            $totalYieldCents = $harvest->actual_yield_kg * $marketPrice->price_per_kg_cents;
+            $totalYieldIdr = $harvest->actual_yield_kg * $marketPrice->price_per_kg_idr;
 
             // 60/40 split: investors receive 40% of total yield revenue
-            $investorPoolCents = (int) round($totalYieldCents * self::INVESTOR_SHARE_RATE);
-            $farmOwnerShareCents = (int) ($totalYieldCents - $investorPoolCents);
+            $investorPoolIdr = (int) round($totalYieldIdr * self::INVESTOR_SHARE_RATE);
+            $farmOwnerShareIdr = (int) ($totalYieldIdr - $investorPoolIdr);
 
             // Store farm owner's 60% share on the harvest for financial audit purposes.
             // The farm owner payout pipeline is handled separately and is out of scope
             // for this change (design.md §Non-Goals).
-            $harvest->update(['farm_owner_share_cents' => $farmOwnerShareCents]);
+            $harvest->update(['farm_owner_share_idr' => $farmOwnerShareIdr]);
 
             $activeInvestments = Investment::where('tree_id', $harvest->tree_id)
                 ->where('status', InvestmentStatus::Active)
@@ -64,29 +64,29 @@ class ProfitCalculationService
                 return collect();
             }
 
-            $totalInvestedCents = $activeInvestments->sum('amount_cents');
+            $totalInvestedIdr = $activeInvestments->sum('amount_idr');
 
             $payouts = collect();
 
             foreach ($activeInvestments as $investment) {
                 // Proportional share of the 40% investor pool
-                $grossAmountCents = (int) round(
-                    ($investment->amount_cents / $totalInvestedCents) * $investorPoolCents
+                $grossAmountIdr = (int) round(
+                    ($investment->amount_idr / $totalInvestedIdr) * $investorPoolIdr
                 );
 
-                $platformFeeCents = (int) round(
-                    $grossAmountCents * $harvest->platform_fee_rate
+                $platformFeeIdr = (int) round(
+                    $grossAmountIdr * $harvest->platform_fee_rate
                 );
 
-                $netAmountCents = $grossAmountCents - $platformFeeCents;
+                $netAmountIdr = $grossAmountIdr - $platformFeeIdr;
 
                 $payout = Payout::create([
                     'investment_id' => $investment->id,
                     'harvest_id' => $harvest->id,
                     'investor_id' => $investment->user_id,
-                    'gross_amount_cents' => $grossAmountCents,
-                    'platform_fee_cents' => $platformFeeCents,
-                    'net_amount_cents' => $netAmountCents,
+                    'gross_amount_idr' => $grossAmountIdr,
+                    'platform_fee_idr' => $platformFeeIdr,
+                    'net_amount_idr' => $netAmountIdr,
                     'currency' => $marketPrice->currency,
                     'status' => \App\Enums\PayoutStatus::Pending,
                 ]);

@@ -18,7 +18,7 @@ interface Farm {
 interface Tree {
     id: number;
     tree_identifier: string;
-    price_cents: number;
+    price_idr: number;
     expected_roi_percent: number;
     risk_rating: string;
     fruit_crop: {
@@ -30,7 +30,7 @@ interface Tree {
 
 interface Transaction {
     id: number;
-    amount_cents: number;
+    amount_idr: number;
     currency: string;
     status: string;
     completed_at: string | null;
@@ -38,9 +38,9 @@ interface Transaction {
 
 interface Payout {
     id: number;
-    gross_amount_cents: number;
-    platform_fee_cents: number;
-    net_amount_cents: number;
+    gross_amount_idr: number;
+    platform_fee_idr: number;
+    net_amount_idr: number;
     currency: string;
     status: string;
     created_at: string;
@@ -51,7 +51,7 @@ interface Investment {
     id: number;
     user_id: number;
     tree_id: number;
-    amount_cents: number;
+    amount_idr: number;
     currency: string;
     purchase_date: string;
     status: string;
@@ -90,11 +90,11 @@ export default function Show() {
         }
     };
 
-    const formatAmount = (amountCents: number, currency: string) => {
-        return `${currency} ${(amountCents / 100).toFixed(2)}`;
+    const formatAmount = (amount: number, currency: string) => {
+        return `${currency} ${(amount).toLocaleString('id-ID')}`;
     };
 
-    const totalPayouts = investment.payouts.reduce((sum, payout) => sum + payout.net_amount_cents, 0);
+    const totalPayouts = investment.payouts.reduce((sum, payout) => sum + payout.net_amount_idr, 0);
 
     return (
         <AppLayout title="Investment Details">
@@ -120,7 +120,7 @@ export default function Show() {
                                     </div>
                                     <div className="flex justify-between">
                                         <dt className="text-sm font-medium text-gray-500">Amount</dt>
-                                        <dd className="text-sm text-gray-900">{formatAmount(investment.amount_cents, investment.currency)}</dd>
+                                        <dd className="text-sm text-gray-900">{formatAmount(investment.amount_idr, investment.currency)}</dd>
                                     </div>
                                     <div className="flex justify-between">
                                         <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -140,7 +140,7 @@ export default function Show() {
                                     </div>
                                     <div className="flex justify-between">
                                         <dt className="text-sm font-medium text-gray-500">Net Returns</dt>
-                                        <dd className="text-sm text-gray-900">{formatAmount(totalPayouts - investment.amount_cents, investment.currency)}</dd>
+                                        <dd className="text-sm text-gray-900">{formatAmount(totalPayouts - investment.amount_idr, investment.currency)}</dd>
                                     </div>
                                 </dl>
                             </div>
@@ -219,7 +219,7 @@ export default function Show() {
                                         </div>
                                         <div className="flex justify-between">
                                             <dt className="text-sm font-medium text-gray-500">Amount</dt>
-                                            <dd className="text-sm text-gray-900">{formatAmount(investment.transaction.amount_cents, investment.transaction.currency)}</dd>
+                                            <dd className="text-sm text-gray-900">{formatAmount(investment.transaction.amount_idr, investment.transaction.currency)}</dd>
                                         </div>
                                         <div className="flex justify-between">
                                             <dt className="text-sm font-medium text-gray-500">Status</dt>
@@ -264,13 +264,13 @@ export default function Show() {
                                                     <tr key={payout.id}>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{payout.id}</td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {formatAmount(payout.gross_amount_cents, payout.currency)}
+                                                            {formatAmount(payout.gross_amount_idr, payout.currency)}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                            {formatAmount(payout.platform_fee_cents, payout.currency)}
+                                                            {formatAmount(payout.platform_fee_idr, payout.currency)}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                                                            {formatAmount(payout.net_amount_cents, payout.currency)}
+                                                            {formatAmount(payout.net_amount_idr, payout.currency)}
                                                         </td>
                                                         <td className="px-6 py-4 whitespace-nowrap text-sm">
                                                             <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${getStatusBadge(payout.status)}`}>

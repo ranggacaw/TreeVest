@@ -28,8 +28,8 @@ class FarmOwnerTreeTest extends TestCase
             'age_years' => 5,
             'productive_lifespan_years' => 20,
             'risk_rating' => 'medium',
-            'min_investment_cents' => 1000,
-            'max_investment_cents' => 10000,
+            'min_investment_idr' => 1000,
+            'max_investment_idr' => 10000,
             'status' => 'growing',
             'pricing_config' => [
                 'base_price' => 10000,
@@ -43,7 +43,7 @@ class FarmOwnerTreeTest extends TestCase
         $this->assertDatabaseHas('trees', [
             'fruit_crop_id' => $crop->id,
             'tree_identifier' => 'TREE-001',
-            'price_cents' => 15000, // 10000 * 1.5 * 1 * 1
+            'price_idr' => 15000, // 10000 * 1.5 * 1 * 1
         ]);
     }
 
@@ -63,8 +63,8 @@ class FarmOwnerTreeTest extends TestCase
             'age_years' => 5,
             'productive_lifespan_years' => 20,
             'risk_rating' => 'medium',
-            'min_investment_cents' => 1000,
-            'max_investment_cents' => 10000,
+            'min_investment_idr' => 1000,
+            'max_investment_idr' => 10000,
             'status' => 'growing',
             'pricing_config' => [
                 'base_price' => 10000,
@@ -93,7 +93,7 @@ class FarmOwnerTreeTest extends TestCase
                 'crop_premium' => 1.0,
                 'risk_multiplier' => 1.0,
             ],
-            'price_cents' => 15000,
+            'price_idr' => 15000,
         ]);
 
         $response = $this->actingAs($user)->put(route('farm-owner.trees.update', $tree), [
@@ -103,8 +103,8 @@ class FarmOwnerTreeTest extends TestCase
             'age_years' => 10, // Changed age
             'productive_lifespan_years' => $tree->productive_lifespan_years,
             'risk_rating' => $tree->risk_rating->value,
-            'min_investment_cents' => $tree->min_investment_cents,
-            'max_investment_cents' => $tree->max_investment_cents,
+            'min_investment_idr' => $tree->min_investment_idr,
+            'max_investment_idr' => $tree->max_investment_idr,
             'status' => $tree->status->value,
             'pricing_config' => $tree->pricing_config_json,
         ]);
@@ -113,7 +113,7 @@ class FarmOwnerTreeTest extends TestCase
         $this->assertDatabaseHas('trees', [
             'id' => $tree->id,
             'age_years' => 10,
-            'price_cents' => 20000, // 10000 * 2.0 * 1 * 1
+            'price_idr' => 20000, // 10000 * 2.0 * 1 * 1
         ]);
     }
 }

@@ -13,8 +13,8 @@ return new class extends Migration
             $table->foreignId('wallet_id')->constrained('wallets')->onDelete('cascade');
             $table->string('type', 10); // credit | debit
             $table->string('transaction_type', 30); // payout_credit | reinvestment | withdrawal | platform_fee
-            $table->unsignedBigInteger('amount_cents');
-            $table->bigInteger('balance_after_cents');
+            $table->unsignedBigInteger('amount_idr');
+            $table->bigInteger('balance_after_idr');
             $table->string('reference_type', 100)->nullable();
             $table->unsignedBigInteger('reference_id')->nullable();
             $table->text('notes')->nullable();

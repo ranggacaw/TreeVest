@@ -12,7 +12,7 @@ class MarketPriceService
     {
         return MarketPrice::create([
             'fruit_type_id' => $data['fruit_type_id'],
-            'price_per_kg_cents' => $data['price_per_kg_cents'],
+            'price_per_kg_idr' => $data['price_per_kg_idr'],
             'currency' => $data['currency'] ?? 'IDR',
             'effective_date' => Carbon::parse($data['effective_date']),
             'created_by' => $admin->id,
@@ -23,7 +23,7 @@ class MarketPriceService
     public function updatePrice(MarketPrice $price, array $data, User $admin): MarketPrice
     {
         $price->update([
-            'price_per_kg_cents' => $data['price_per_kg_cents'],
+            'price_per_kg_idr' => $data['price_per_kg_idr'],
             'notes' => $data['notes'] ?? $price->notes,
         ]);
 

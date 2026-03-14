@@ -2,7 +2,7 @@ import { PortfolioSummary } from '@/types';
 
 interface Props {
     summary: PortfolioSummary;
-    formatCurrency: (cents: number) => string;
+    formatCurrency: (idr: number) => string;
 }
 
 export default function PortfolioSummaryCard({ summary, formatCurrency }: Props) {
@@ -12,7 +12,7 @@ export default function PortfolioSummaryCard({ summary, formatCurrency }: Props)
                 <div className="p-6">
                     <p className="text-sm text-gray-500">Total Portfolio Value</p>
                     <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(summary.total_value_cents)}
+                        {formatCurrency(summary.total_value_idr)}
                     </p>
                 </div>
             </div>
@@ -39,7 +39,7 @@ export default function PortfolioSummaryCard({ summary, formatCurrency }: Props)
                 <div className="p-6">
                     <p className="text-sm text-gray-500">Total Payouts</p>
                     <p className="text-2xl font-bold text-gray-900">
-                        {formatCurrency(summary.total_payouts_cents)}
+                        {formatCurrency(summary.total_payouts_idr)}
                     </p>
                 </div>
             </div>

@@ -10,7 +10,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('investments', function (Blueprint $table) {
-            $table->unsignedInteger('quantity')->default(1)->after('amount_cents');
+            $table->unsignedInteger('quantity')->default(1)->after('amount_idr');
         });
 
         DB::statement('UPDATE investments SET quantity = 1');

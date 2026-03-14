@@ -18,7 +18,7 @@ class StoreMarketPriceRequest extends FormRequest
     {
         return [
             'fruit_type_id' => ['required', 'exists:fruit_types,id'],
-            'price_per_kg_cents' => ['required', 'integer', 'min:1'],
+            'price_per_kg_idr' => ['required', 'integer', 'min:1'],
             'currency' => ['nullable', 'string', 'size:3'],
             'effective_date' => ['required', 'date'],
             'notes' => ['nullable', 'string'],

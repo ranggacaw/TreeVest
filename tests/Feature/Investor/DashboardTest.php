@@ -33,7 +33,7 @@ class DashboardTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function test_response_includes_total_invested_cents()
+    public function test_response_includes_total_invested_idr()
     {
         $investor = User::factory()->create(['role' => 'investor']);
 
@@ -43,7 +43,7 @@ class DashboardTest extends TestCase
         $response->assertInertia(
             fn (Assert $page) => $page
                 ->component('Investor/Dashboard')
-                ->has('metrics.total_invested_cents')
+                ->has('metrics.total_invested_idr')
         );
     }
 

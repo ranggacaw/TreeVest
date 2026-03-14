@@ -42,7 +42,7 @@ class ReportController extends Controller
 
         $investments = Investment::where('user_id', $user->id)
             ->with('tree.fruitCrop.farm')
-            ->get(['id', 'tree_id', 'amount_cents', 'purchase_date'])
+            ->get(['id', 'tree_id', 'amount_idr', 'purchase_date'])
             ->map(function ($inv) {
                 return [
                     'id' => $inv->id,
@@ -50,7 +50,7 @@ class ReportController extends Controller
                         '%s - %s (%s)',
                         $inv->tree->fruitCrop->farm->name ?? 'Unknown Farm',
                         $inv->tree->tree_identifier,
-                        number_format($inv->amount_cents, 0)
+                        number_format($inv->amount_idr, 0)
                     ),
                 ];
             });

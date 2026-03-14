@@ -17,7 +17,7 @@ interface Investment {
     id: number;
     user_id: number;
     tree_id: number;
-    amount_cents: number;
+    amount_idr: number;
     currency: string;
     purchase_date: string;
     status: string;
@@ -71,8 +71,8 @@ export default function Index({ investments, farms, filters }: Props) {
         }
     };
 
-    const formatAmount = (amountCents: number, currency: string) => {
-        return `${currency} ${(amountCents / 100).toFixed(2)}`;
+    const formatAmount = (amount: number, currency: string) => {
+        return `${currency} ${(amount).toLocaleString('id-ID')}`;
     };
 
     return (
@@ -149,8 +149,8 @@ export default function Index({ investments, farms, filters }: Props) {
                                                 <div className="text-gray-900">{investment.user.name}</div>
                                                 <div className="text-gray-500 text-xs">{investment.user.email}</div>
                                             </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {formatAmount(investment.amount_cents, investment.currency)}
+                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                                                {formatAmount(investment.amount_idr, investment.currency)}
                                             </td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{t('investments.tree_id', { id: investment.tree_id })}</td>
                                             <td className="px-6 py-4 whitespace-nowrap text-sm">

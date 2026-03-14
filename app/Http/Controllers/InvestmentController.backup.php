@@ -26,7 +26,7 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/Index', [
             'investments' => $investments->map(fn ($inv) => [
                 'id' => $inv->id,
-                'amount_cents' => $inv->amount_cents,
+                'amount_idr' => $inv->amount_idr,
                 'formatted_amount' => $inv->formatted_amount,
                 'status' => $inv->status->value,
                 'purchase_date' => $inv->purchase_date->toIso8601String(),
@@ -37,7 +37,7 @@ class InvestmentController extends Controller
                     'expected_roi' => $inv->tree->expected_roi_percent,
                 ],
             ]),
-            'total_value_cents' => $totalValue,
+            'total_value_idr' => $totalValue,
             'total_value_formatted' => 'Rp '.number_format($totalValue / 100, 2),
         ]);
     }
@@ -62,18 +62,18 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/Show', [
             'investment' => [
                 'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'formatted_amount' => $investment->formatted_amount,
                 'status' => $investment->status->value,
                 'status_label' => $investment->status->getLabel(),
                 'purchase_date' => $investment->purchase_date->toIso8601String(),
                 'created_at' => $investment->created_at->toIso8601String(),
-                'current_value_cents' => $investment->amount_cents,
-                'projected_return_cents' => (int) ($investment->amount_cents * ($investment->tree->expected_roi_percent ?? 0) / 100),
+                'current_value_idr' => $investment->amount_idr,
+                'projected_return_idr' => (int) ($investment->amount_idr * ($investment->tree->expected_roi_percent ?? 0) / 100),
                 'tree' => [
                     'id' => $investment->tree->id,
                     'identifier' => $investment->tree->tree_identifier,
-                    'price_cents' => $investment->tree->price_cents,
+                    'price_idr' => $investment->tree->price_idr,
                     'price_formatted' => $investment->tree->price_formatted,
                     'expected_roi' => $investment->tree->expected_roi_percent,
                     'risk_rating' => $investment->tree->risk_rating->value,
@@ -108,11 +108,11 @@ class InvestmentController extends Controller
                 ],
                 'payouts' => $investment->payouts->map(fn ($p) => [
                     'id' => $p->id,
-                    'gross_amount_cents' => $p->gross_amount_cents,
+                    'gross_amount_idr' => $p->gross_amount_idr,
                     'gross_amount_formatted' => $p->gross_amount_formatted,
-                    'platform_fee_cents' => $p->platform_fee_cents,
+                    'platform_fee_idr' => $p->platform_fee_idr,
                     'platform_fee_formatted' => $p->platform_fee_formatted,
-                    'net_amount_cents' => $p->net_amount_cents,
+                    'net_amount_idr' => $p->net_amount_idr,
                     'net_amount_formatted' => $p->net_amount_formatted,
                     'status' => $p->status->value,
                     'status_label' => $p->status->getLabel(),
@@ -154,15 +154,15 @@ class InvestmentController extends Controller
             'tree' => [
                 'id' => $tree->id,
                 'identifier' => $tree->tree_identifier,
-                'price_cents' => $tree->price_cents,
+                'price_idr' => $tree->price_idr,
                 'price_formatted' => $tree->price_formatted,
                 'expected_roi' => $tree->expected_roi_percent,
                 'expected_roi_formatted' => $tree->expected_roi_formatted,
                 'risk_rating' => $tree->risk_rating->value,
-                'min_investment_cents' => $tree->min_investment_cents,
-                'max_investment_cents' => $tree->max_investment_cents,
-                'min_investment_formatted' => 'Rp '.number_format($tree->min_investment_cents / 100, 2),
-                'max_investment_formatted' => 'Rp '.number_format($tree->max_investment_cents / 100, 2),
+                'min_investment_idr' => $tree->min_investment_idr,
+                'max_investment_idr' => $tree->max_investment_idr,
+                'min_investment_formatted' => 'Rp '.number_format($tree->min_investment_idr / 100, 2),
+                'max_investment_formatted' => 'Rp '.number_format($tree->max_investment_idr / 100, 2),
                 'fruit_crop' => [
                     'variant' => $tree->fruitCrop->variant,
                     'fruit_type' => $tree->fruitCrop->fruitType->name,
@@ -195,7 +195,7 @@ class InvestmentController extends Controller
             $investment = $this->investmentService->initiateInvestment(
                 $user,
                 $tree,
-                $request->input('amount_cents'),
+                $request->input('amount_idr'),
                 $request->input('payment_method_id')
             );
 
@@ -227,7 +227,7 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/Purchase/Confirmation', [
             'investment' => [
                 'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'formatted_amount' => $investment->formatted_amount,
                 'status' => $investment->status->value,
                 'status_label' => $investment->status->getLabel(),
@@ -287,11 +287,11 @@ class InvestmentController extends Controller
         return Inertia::render('Investments/TopUp', [
             'investment' => [
                 'id' => $investment->id,
-                'amount_cents' => $investment->amount_cents,
+                'amount_idr' => $investment->amount_idr,
                 'formatted_amount' => $investment->formatted_amount,
                 'tree' => [
                     'identifier' => $investment->tree->tree_identifier,
-                    'max_investment_cents' => $investment->tree->max_investment_cents,
+                    'max_investment_idr' => $investment->tree->max_investment_idr,
                 ],
             ],
             'payment_methods' => $user->paymentMethods->map(fn ($pm) => [
@@ -313,7 +313,7 @@ class InvestmentController extends Controller
         try {
             $this->investmentService->topUpInvestment(
                 $investment->id,
-                $request->input('top_up_cents'),
+                $request->input('top_up_idr'),
                 $request->input('payment_method_id')
             );
 

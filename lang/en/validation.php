@@ -118,7 +118,7 @@ return [
     */
 
     'custom' => [
-        'ask_price_cents' => [
+        'ask_price_idr' => [
             'required' => 'The asking price is required.',
             'integer' => 'The asking price must be a valid amount.',
             'min' => 'The asking price must be at least :min.',
@@ -191,7 +191,7 @@ return [
         'password_confirmation' => 'password confirmation',
         'phone' => 'phone number',
         'locale' => 'language',
-        'ask_price_cents' => 'asking price',
+        'ask_price_idr' => 'asking price',
         'investment_id' => 'investment',
         'tree_identifier' => 'tree identifier',
         'fruit_crop_id' => 'fruit crop',

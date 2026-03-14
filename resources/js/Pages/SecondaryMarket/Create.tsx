@@ -10,7 +10,7 @@ interface Props extends PageProps {
 export default function Create({ auth, activeInvestments }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         investment_id: '',
-        ask_price_cents: '',
+        ask_price_idr: '',
         notes: '',
         expires_at: '',
     });
@@ -64,27 +64,27 @@ export default function Create({ auth, activeInvestments }: Props) {
                                 </div>
 
                                 <div className="mb-4">
-                                    <label htmlFor="ask_price_cents" className="block text-sm font-medium text-gray-700">
+                                    <label htmlFor="ask_price_idr" className="block text-sm font-medium text-gray-700">
                                         Ask Price (IDR)
                                     </label>
                                     <input
                                         type="number"
-                                        id="ask_price_cents"
-                                        value={data.ask_price_cents}
-                                        onChange={(e) => setData('ask_price_cents', e.target.value)}
+                                        id="ask_price_idr"
+                                        value={data.ask_price_idr}
+                                        onChange={(e) => setData('ask_price_idr', e.target.value)}
                                         className="mt-1 block w-full border border-gray-300 rounded-md shadow-sm py-2 px-3 focus:outline-none focus:ring-green-500 focus:border-green-500 sm:text-sm"
                                         min="1"
                                     />
-                                    {errors.ask_price_cents && (
-                                        <p className="mt-1 text-sm text-red-600">{errors.ask_price_cents}</p>
+                                    {errors.ask_price_idr && (
+                                        <p className="mt-1 text-sm text-red-600">{errors.ask_price_idr}</p>
                                     )}
-                                    {data.ask_price_cents && (
+                                    {data.ask_price_idr && (
                                         <p className="mt-1 text-xs text-green-700 font-medium">
-                                            {formatRupiah(Number(data.ask_price_cents))}
+                                            {formatRupiah(Number(data.ask_price_idr))}
                                         </p>
                                     )}
                                     <p className="mt-1 text-xs text-gray-500">
-                                        Minimum price: {formatRupiah(activeInvestments.find(i => i.id === Number(data.investment_id))?.amount_cents || 0)}
+                                        Minimum price: {formatRupiah(activeInvestments.find(i => i.id === Number(data.investment_id))?.amount_idr || 0)}
                                     </p>
                                 </div>
 

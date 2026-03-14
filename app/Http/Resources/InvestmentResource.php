@@ -18,7 +18,7 @@ class InvestmentResource extends JsonResource
         /** @var Investment $this */
         return [
             'id' => $this->id,
-            'amount_cents' => $this->amount_cents,
+            'amount_idr' => $this->amount_idr,
             'formatted_amount' => $this->formatted_amount,
             'status' => $this->status->value,
             'status_label' => $this->status->getLabel(),
@@ -28,8 +28,8 @@ class InvestmentResource extends JsonResource
             'tree' => new TreeResource($this->whenLoaded('tree')),
             'transaction' => new TransactionResource($this->whenLoaded('transaction')),
             'payouts' => PayoutResource::collection($this->whenLoaded('payouts')),
-            'current_value_cents' => $this->amount_cents,
-            'projected_return_cents' => (int) ($this->amount_cents * ($this->tree?->expected_roi_percent ?? 0) / 100),
+            'current_value_idr' => $this->amount_idr,
+            'projected_return_idr' => (int) ($this->amount_idr * ($this->tree?->expected_roi_percent ?? 0) / 100),
         ];
     }
 
@@ -40,7 +40,7 @@ class InvestmentResource extends JsonResource
     {
         return [
             'id' => $investment->id,
-            'amount_cents' => $investment->amount_cents,
+            'amount_idr' => $investment->amount_idr,
             'formatted_amount' => $investment->formatted_amount,
             'status' => $investment->status->value,
             'purchase_date' => $investment->purchase_date->toIso8601String(),
@@ -107,7 +107,7 @@ class InvestmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount_cents' => $this->amount_cents,
+            'amount_idr' => $this->amount_idr,
             'formatted_amount' => $this->formatted_amount,
             'status' => $this->status->value,
             'status_label' => $this->status->getLabel(),
@@ -137,11 +137,11 @@ class InvestmentResource extends JsonResource
     {
         return [
             'id' => $this->id,
-            'amount_cents' => $this->amount_cents,
+            'amount_idr' => $this->amount_idr,
             'formatted_amount' => $this->formatted_amount,
             'tree' => [
                 'identifier' => $this->tree->tree_identifier,
-                'max_investment_cents' => $this->tree->max_investment_cents,
+                'max_investment_idr' => $this->tree->max_investment_idr,
             ],
         ];
     }

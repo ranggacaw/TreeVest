@@ -32,10 +32,10 @@ class FarmOwnerDashboardService
             })->distinct('user_id')->count('user_id');
 
             // Defaulting total earnings to sum of all investments made on the owner's farms
-            $totalEarningsCents = Investment::whereHas('tree.fruitCrop', function ($q) use ($farmIds) {
+            $totalEarningsIdr = Investment::whereHas('tree.fruitCrop', function ($q) use ($farmIds) {
                 $q->whereIn('farm_id', $farmIds);
             })->where('status', InvestmentStatus::Active)
-                ->sum('amount_cents');
+                ->sum('amount_idr');
 
             $farmsList = $farms->map(function ($f) {
                 return [
@@ -86,7 +86,7 @@ class FarmOwnerDashboardService
                     'active_farms' => $activeFarms,
                     'total_trees' => $totalTrees,
                     'total_investors' => $totalInvestors,
-                    'total_earnings_cents' => (int) $totalEarningsCents,
+                    'total_earnings_idr' => (int) $totalEarningsIdr,
                 ],
                 'farms' => $farmsList,
                 'upcoming_harvests' => $upcomingHarvests,

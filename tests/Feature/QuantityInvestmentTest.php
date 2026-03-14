@@ -20,9 +20,9 @@ class QuantityInvestmentTest extends TestCase
         $investor = User::factory()->create(['role' => 'investor', 'kyc_status' => 'verified']);
         // price=10000, min=20000 → minTrees=2
         $tree = Tree::factory()->create([
-            'price_cents' => 10_000,
-            'min_investment_cents' => 20_000,
-            'max_investment_cents' => 100_000,
+            'price_idr' => 10_000,
+            'min_investment_idr' => 20_000,
+            'max_investment_idr' => 100_000,
             'status' => 'productive',
         ]);
 
@@ -41,9 +41,9 @@ class QuantityInvestmentTest extends TestCase
         $investor = User::factory()->create(['role' => 'investor', 'kyc_status' => 'verified']);
         // price=10000, max=50000 → maxTrees=5
         $tree = Tree::factory()->create([
-            'price_cents' => 10_000,
-            'min_investment_cents' => 10_000,
-            'max_investment_cents' => 50_000,
+            'price_idr' => 10_000,
+            'min_investment_idr' => 10_000,
+            'max_investment_idr' => 50_000,
             'status' => 'productive',
         ]);
 
@@ -61,9 +61,9 @@ class QuantityInvestmentTest extends TestCase
     {
         $investor = User::factory()->create(['role' => 'investor', 'kyc_status' => 'verified']);
         $tree = Tree::factory()->create([
-            'price_cents' => 10_000,
-            'min_investment_cents' => 10_000,
-            'max_investment_cents' => 50_000,
+            'price_idr' => 10_000,
+            'min_investment_idr' => 10_000,
+            'max_investment_idr' => 50_000,
             'status' => 'productive',
         ]);
 
@@ -78,17 +78,17 @@ class QuantityInvestmentTest extends TestCase
             'user_id' => $investor->id,
             'tree_id' => $tree->id,
             'quantity' => 3,
-            'amount_cents' => 30_000, // 3 × 10_000
+            'amount_idr' => 30_000, // 3 × 10_000
         ]);
     }
 
-    public function test_amount_cents_is_derived_from_quantity_and_price(): void
+    public function test_amount_idr_is_derived_from_quantity_and_price(): void
     {
         $investor = User::factory()->create(['role' => 'investor', 'kyc_status' => 'verified']);
         $tree = Tree::factory()->create([
-            'price_cents' => 25_000,
-            'min_investment_cents' => 25_000,
-            'max_investment_cents' => 250_000,
+            'price_idr' => 25_000,
+            'min_investment_idr' => 25_000,
+            'max_investment_idr' => 250_000,
             'status' => 'productive',
         ]);
 
@@ -105,16 +105,16 @@ class QuantityInvestmentTest extends TestCase
 
         $this->assertNotNull($investment);
         $this->assertEquals(4, $investment->quantity);
-        $this->assertEquals(100_000, $investment->amount_cents); // 4 × 25_000
+        $this->assertEquals(100_000, $investment->amount_idr); // 4 × 25_000
     }
 
     public function test_kyc_unverified_user_cannot_invest(): void
     {
         $investor = User::factory()->create(['role' => 'investor', 'kyc_status' => 'pending']);
         $tree = Tree::factory()->create([
-            'price_cents' => 10_000,
-            'min_investment_cents' => 10_000,
-            'max_investment_cents' => 50_000,
+            'price_idr' => 10_000,
+            'min_investment_idr' => 10_000,
+            'max_investment_idr' => 50_000,
             'status' => 'productive',
         ]);
 
@@ -135,13 +135,13 @@ class QuantityInvestmentTest extends TestCase
     public function test_investment_model_casts_quantity_to_integer(): void
     {
         $investor = User::factory()->create(['role' => 'investor']);
-        $tree = Tree::factory()->create(['price_cents' => 10_000]);
+        $tree = Tree::factory()->create(['price_idr' => 10_000]);
 
         $investment = Investment::factory()->create([
             'user_id' => $investor->id,
             'tree_id' => $tree->id,
             'quantity' => 3,
-            'amount_cents' => 30_000,
+            'amount_idr' => 30_000,
             'status' => InvestmentStatus::Active,
         ]);
 
@@ -154,16 +154,16 @@ class QuantityInvestmentTest extends TestCase
     {
         $investor = User::factory()->create(['role' => 'investor']);
         $tree = Tree::factory()->create([
-            'price_cents' => 10_000,
-            'min_investment_cents' => 10_000,
-            'max_investment_cents' => 50_000,
+            'price_idr' => 10_000,
+            'min_investment_idr' => 10_000,
+            'max_investment_idr' => 50_000,
         ]);
 
         $investment = Investment::factory()->create([
             'user_id' => $investor->id,
             'tree_id' => $tree->id,
             'quantity' => 3,
-            'amount_cents' => 30_000,
+            'amount_idr' => 30_000,
             'status' => InvestmentStatus::Active,
         ]);
 

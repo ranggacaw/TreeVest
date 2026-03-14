@@ -12,8 +12,8 @@ class LotProfitsDistributed
 
     public function __construct(
         public readonly Lot $lot,
-        public readonly int $investorPoolCents,
-        public readonly int $farmOwnerShareCents,
-        public readonly int $platformFeeCents,
+        public readonly int $investorPoolIdr,
+        public readonly int $farmOwnerShareIdr,
+        public readonly int $platformFeeIdr,
     ) {}
 }

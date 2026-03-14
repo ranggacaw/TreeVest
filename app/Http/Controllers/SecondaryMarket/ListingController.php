@@ -21,7 +21,7 @@ class ListingController extends Controller
         $query = MarketListing::active()
             ->with(['investment.tree.fruitCrop.farm', 'investment.tree.fruitType', 'seller']);
 
-        $filters = $request->only(['fruit_type_id', 'min_price_cents', 'max_price_cents', 'risk_rating']);
+        $filters = $request->only(['fruit_type_id', 'min_price_idr', 'max_price_idr', 'risk_rating']);
 
         if (isset($filters['fruit_type_id'])) {
             $query->whereHas('investment.tree', function ($q) use ($filters) {
@@ -29,12 +29,12 @@ class ListingController extends Controller
             });
         }
 
-        if (isset($filters['min_price_cents'])) {
-            $query->where('ask_price_cents', '>=', $filters['min_price_cents']);
+        if (isset($filters['min_price_idr'])) {
+            $query->where('ask_price_idr', '>=', $filters['min_price_idr']);
         }
 
-        if (isset($filters['max_price_cents'])) {
-            $query->where('ask_price_cents', '<=', $filters['max_price_cents']);
+        if (isset($filters['max_price_idr'])) {
+            $query->where('ask_price_idr', '<=', $filters['max_price_idr']);
         }
 
         if (isset($filters['risk_rating'])) {
@@ -101,7 +101,7 @@ class ListingController extends Controller
             $listing = $this->service->createListing(
                 seller: $request->user(),
                 investment: $investment,
-                askPriceCents: $request->ask_price_cents,
+                askPriceIdr: $request->ask_price_idr,
                 notes: $request->notes,
                 expiresAt: $request->expires_at
             );

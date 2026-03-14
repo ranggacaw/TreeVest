@@ -15,12 +15,12 @@ class UpdateInvestmentAmountRequest extends FormRequest
     public function rules(): array
     {
         $investment = Investment::find($this->route('investment'));
-        $maxInvestment = $investment?->tree?->max_investment_cents ?? 999999999;
-        $currentAmount = $investment?->amount_cents ?? 0;
+        $maxInvestment = $investment?->tree?->max_investment_idr ?? 99999999999;
+        $currentAmount = $investment?->amount_idr ?? 0;
         $availableCapacity = $maxInvestment - $currentAmount;
 
         return [
-            'top_up_cents' => [
+            'top_up_idr' => [
                 'required',
                 'integer',
                 'min:1',
@@ -33,8 +33,8 @@ class UpdateInvestmentAmountRequest extends FormRequest
     public function messages(): array
     {
         return [
-            'top_up_cents.min' => 'Top-up amount must be at least 1 cent.',
-            'top_up_cents.max' => 'Top-up amount exceeds the remaining investment capacity for this tree.',
+            'top_up_idr.min' => 'Top-up amount must be at least Rp 1.',
+            'top_up_idr.max' => 'Top-up amount exceeds the remaining investment capacity for this tree.',
         ];
     }
 }

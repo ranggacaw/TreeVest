@@ -5,6 +5,7 @@ import StatCard from '@/Components/Dashboard/StatCard';
 import ActivityFeed from '@/Components/Dashboard/ActivityFeed';
 import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
 import { useTranslation } from 'react-i18next';
+import { formatRupiah } from '@/utils/currency';
 import { Users, FileCheck, Landmark, DollarSign, Clock, Leaf, Sprout, HandCoins, FileText, Globe } from 'lucide-react';
 
 interface Article {
@@ -59,8 +60,8 @@ export default function Dashboard({
         { label: t('translations.title', 'Translation Management'), href: route('admin.translations.index'), icon: <Globe /> },
     ];
 
-    const formatCurrency = (cents: number) => {
-        return '$' + (cents / 100).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    const formatCurrency = (idr: number) => {
+        return formatRupiah(idr);
     };
 
     return (
@@ -117,7 +118,7 @@ export default function Dashboard({
                             <StatCard label={t('dashboard.total_users')} value={metrics?.total_users || 0} icon={<Users />} />
                             <StatCard label={t('dashboard.kyc_verified')} value={metrics?.kyc_verified || 0} icon={<FileCheck />} />
                             <StatCard label={t('dashboard.active_investments')} value={metrics?.active_investments || 0} icon={<Sprout />} />
-                            <StatCard label={t('dashboard.investment_volume')} value={formatCurrency(metrics?.investment_volume || 0)} icon={<DollarSign />} />
+                            <StatCard label={t('dashboard.investment_volume')} value={formatCurrency(metrics?.investment_volume_idr || 0)} icon={<DollarSign />} />
 
                             <StatCard
                                 label={t('dashboard.pending_kyc')}
@@ -132,7 +133,7 @@ export default function Dashboard({
                                 accent={(metrics?.pending_farms || 0) > 0 ? 'amber' : 'none'}
                             />
                             <StatCard label={t('dashboard.completed_harvests')} value={metrics?.completed_harvests || 0} icon={<Leaf />} />
-                            <StatCard label={t('dashboard.total_payouts')} value={formatCurrency(metrics?.total_payouts || 0)} icon={<HandCoins />} />
+                            <StatCard label={t('dashboard.total_payouts')} value={formatCurrency(metrics?.total_payouts_idr || 0)} icon={<HandCoins />} />
                         </div>
                     </div>
 

@@ -12,7 +12,7 @@ class LotPriceSnapshot extends Model
     protected $fillable = [
         'lot_id',
         'cycle_month',
-        'price_per_tree_cents',
+        'price_per_tree_idr',
         'recorded_at',
     ];
 
@@ -20,7 +20,7 @@ class LotPriceSnapshot extends Model
     {
         return [
             'recorded_at' => 'datetime',
-            'price_per_tree_cents' => 'integer',
+            'price_per_tree_idr' => 'integer',
             'cycle_month' => 'integer',
         ];
     }

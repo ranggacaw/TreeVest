@@ -5,7 +5,7 @@ import { Lot, Investment } from '@/types';
 
 interface PriceTableRow {
     month: number;
-    price_cents: number;
+    price_idr: number;
 }
 
 interface Props {
@@ -14,13 +14,14 @@ interface Props {
     currentCycleMonth: number;
     myInvestment: Investment | null;
     isInvestmentOpen: boolean;
+    monthlyRatePercentage: number;
 }
 
 function formatIDR(amount: number) {
     return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 }
 
-export default function Show({ lot, priceTable, currentCycleMonth, myInvestment, isInvestmentOpen }: Props) {
+export default function Show({ lot, priceTable, currentCycleMonth, myInvestment, isInvestmentOpen, monthlyRatePercentage }: Props) {
     const { data, setData, post, processing, errors } = useForm({
         trees: '1',
     });
@@ -50,7 +51,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <p className="text-xs text-gray-500 uppercase tracking-wide">Current Price/Tree</p>
-                        <p className="text-lg font-semibold">{formatIDR(lot.current_price_per_tree_cents)}</p>
+                        <p className="text-lg font-semibold">{formatIDR(lot.current_price_per_tree_idr)}</p>
                     </div>
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <p className="text-xs text-gray-500 uppercase tracking-wide">Cycle Progress</p>
@@ -61,6 +62,37 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                         <p className="text-lg font-semibold">{lot.total_trees}</p>
                     </div>
                 </div>
+
+                {/* Pricing Illustration */}
+                {priceTable.length > 0 && (
+                    <div className="mb-8 bg-green-50 border border-green-200 rounded-lg p-5">
+                        <h2 className="text-base font-semibold text-green-800 mb-3">How Pricing Works</h2>
+                        <div className="text-sm text-green-900 space-y-3">
+                            <div>
+                                <p className="font-medium mb-1">Base Price: {formatIDR(priceTable[0]?.price_idr)}</p>
+                                <p className="font-medium mb-1">Monthly Increase: {monthlyRatePercentage}% per month</p>
+                            </div>
+                            <div className="bg-white rounded p-3 border border-green-200">
+                                <p className="font-medium mb-2">Example Calculation:</p>
+                                <div className="space-y-1 text-xs">
+                                    <p>Month 1: {formatIDR(priceTable[0]?.price_idr)}</p>
+                                    {priceTable.slice(1, 6).map((row, idx) => (
+                                        <p key={row.month}>
+                                            Month {row.month}: {formatIDR(row.price_idr)}
+                                            <span className="text-green-600 ml-2">
+                                                (+{(((row.price_idr! - priceTable[idx].price_idr!) / priceTable[idx].price_idr!) * 100).toFixed(1)}%)
+                                            </span>
+                                        </p>
+                                    ))}
+                                    {priceTable.length > 6 && <p className="text-green-600 italic">...continues until month {lot.cycle_months}</p>}
+                                </div>
+                            </div>
+                            <p className="text-xs text-green-700 italic">
+                                💡 Buy earlier to lock in a lower price. Prices increase each month.
+                            </p>
+                        </div>
+                    </div>
+                )}
 
                 {/* Price schedule */}
                 {priceTable.length > 0 && (
@@ -83,7 +115,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                                     <span className="ml-2 text-xs text-green-600 font-medium">Current</span>
                                                 )}
                                             </td>
-                                            <td className="px-4 py-2">{formatIDR(row.price_cents)}</td>
+                                            <td className="px-4 py-2">{formatIDR(row.price_idr)}</td>
                                         </tr>
                                     ))}
                                 </tbody>
@@ -96,7 +128,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                 {myInvestment && (
                     <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <p className="text-sm font-medium text-blue-800">You already hold an investment in this lot</p>
-                        <p className="text-xs text-blue-600 mt-1">Amount: {formatIDR(myInvestment.amount_cents)} — Status: {myInvestment.status}</p>
+                        <p className="text-xs text-blue-600 mt-1">Amount: {formatIDR(myInvestment.amount_idr)} — Status: {myInvestment.status}</p>
                     </div>
                 )}
 
@@ -124,7 +156,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                             </button>
                         </div>
                         <p className="text-xs text-gray-400 mt-2">
-                            Total: {formatIDR(Number(data.trees || 0) * lot.current_price_per_tree_cents)}
+                            Total: {formatIDR(Number(data.trees || 0) * lot.current_price_per_tree_idr)}
                         </p>
                     </form>
                 )}

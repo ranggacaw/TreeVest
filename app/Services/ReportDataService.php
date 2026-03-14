@@ -49,10 +49,10 @@ class ReportDataService
         $totalPayouts = 0;
 
         foreach ($investments as $investment) {
-            $totalPayoutsCents = $investment->payouts->sum('net_amount_cents');
-            $netCents = $totalPayoutsCents - $investment->amount_cents;
-            $actualRoiPercent = $investment->amount_cents > 0
-                ? round(($netCents / $investment->amount_cents) * 100, 2)
+            $totalPayoutsIdr = $investment->payouts->sum('net_amount_idr');
+            $netIdr = $totalPayoutsIdr - $investment->amount_idr;
+            $actualRoiPercent = $investment->amount_idr > 0
+                ? round(($netIdr / $investment->amount_idr) * 100, 2)
                 : 0;
 
             $rows[] = [
@@ -61,24 +61,24 @@ class ReportDataService
                 'fruitType' => $investment->tree->fruitCrop->fruitType->name,
                 'variant' => $investment->tree->fruitCrop->variant,
                 'farmName' => $investment->tree->fruitCrop->farm->name,
-                'amountInvestedCents' => $investment->amount_cents,
-                'totalPayoutsCents' => $totalPayoutsCents,
-                'netCents' => $netCents,
+                'amountInvestedIdr' => $investment->amount_idr,
+                'totalPayoutsIdr' => $totalPayoutsIdr,
+                'netIdr' => $netIdr,
                 'actualRoiPercent' => $actualRoiPercent,
                 'status' => $investment->status->value,
                 'purchaseDate' => $investment->purchase_date->toDateString(),
             ];
 
-            $totalInvested += $investment->amount_cents;
-            $totalPayouts += $totalPayoutsCents;
+            $totalInvested += $investment->amount_idr;
+            $totalPayouts += $totalPayoutsIdr;
         }
 
         return [
             'rows' => $rows,
             'summary' => [
-                'totalInvestedCents' => $totalInvested,
-                'totalPayoutsCents' => $totalPayouts,
-                'netCents' => $totalPayouts - $totalInvested,
+                'totalInvestedIdr' => $totalInvested,
+                'totalPayoutsIdr' => $totalPayouts,
+                'netIdr' => $totalPayouts - $totalInvested,
                 'overallRoiPercent' => $totalInvested > 0
                     ? round((($totalPayouts - $totalInvested) / $totalInvested) * 100, 2)
                     : 0,
@@ -110,11 +110,11 @@ class ReportDataService
                 'payoutId' => $payout->id,
                 'date' => $payout->completed_at->toDateString(),
                 'farmName' => $payout->investment->tree->fruitCrop->farm->name ?? 'Unknown',
-                'grossAmountCents' => $payout->gross_amount_cents,
-                'platformFeeCents' => $payout->platform_fee_cents,
-                'netAmountCents' => $payout->net_amount_cents,
+                'grossAmountIdr' => $payout->gross_amount_idr,
+                'platformFeeIdr' => $payout->platform_fee_idr,
+                'netAmountIdr' => $payout->net_amount_idr,
             ];
-            $totalIncome += $payout->net_amount_cents;
+            $totalIncome += $payout->net_amount_idr;
         }
 
         $investmentRows = [];
@@ -125,25 +125,25 @@ class ReportDataService
                 'investmentId' => $investment->id,
                 'date' => $investment->purchase_date->toDateString(),
                 'farmName' => $investment->tree->fruitCrop->farm->name ?? 'Unknown',
-                'amountCents' => $investment->amount_cents,
+                'amountIdr' => $investment->amount_idr,
             ];
-            $totalInvested += $investment->amount_cents;
+            $totalInvested += $investment->amount_idr;
         }
 
         return [
             'year' => $year,
             'income' => [
                 'rows' => $incomeRows,
-                'totalCents' => $totalIncome,
+                'totalIdr' => $totalIncome,
             ],
             'investments' => [
                 'rows' => $investmentRows,
-                'totalCents' => $totalInvested,
+                'totalIdr' => $totalInvested,
             ],
             'summary' => [
-                'totalIncomeCents' => $totalIncome,
-                'totalInvestedCents' => $totalInvested,
-                'netCents' => $totalIncome - $totalInvested,
+                'totalIncomeIdr' => $totalIncome,
+                'totalInvestedIdr' => $totalInvested,
+                'netIdr' => $totalIncome - $totalInvested,
             ],
         ];
     }
@@ -174,22 +174,22 @@ class ReportDataService
             if (! isset($byMonth[$month])) {
                 $byMonth[$month] = [
                     'month' => $month,
-                    'investedCents' => 0,
-                    'payoutsCents' => 0,
+                    'investedIdr' => 0,
+                    'payoutsIdr' => 0,
                 ];
             }
-            $byMonth[$month]['investedCents'] += $investment->amount_cents;
+            $byMonth[$month]['investedIdr'] += $investment->amount_idr;
 
             foreach ($investment->payouts as $payout) {
                 $payoutMonth = $payout->completed_at->format('Y-m');
                 if (! isset($byMonth[$payoutMonth])) {
                     $byMonth[$payoutMonth] = [
                         'month' => $payoutMonth,
-                        'investedCents' => 0,
-                        'payoutsCents' => 0,
+                        'investedIdr' => 0,
+                        'payoutsIdr' => 0,
                     ];
                 }
-                $byMonth[$payoutMonth]['payoutsCents'] += $payout->net_amount_cents;
+                $byMonth[$payoutMonth]['payoutsIdr'] += $payout->net_amount_idr;
             }
         }
 
@@ -198,12 +198,12 @@ class ReportDataService
         $cumulative = 0;
         $dataPoints = [];
         foreach ($byMonth as $monthData) {
-            $cumulative += $monthData['payoutsCents'] - $monthData['investedCents'];
+            $cumulative += $monthData['payoutsIdr'] - $monthData['investedIdr'];
             $dataPoints[] = [
                 'month' => $monthData['month'],
-                'investedCents' => $monthData['investedCents'],
-                'payoutsCents' => $monthData['payoutsCents'],
-                'cumulativeCents' => $cumulative,
+                'investedIdr' => $monthData['investedIdr'],
+                'payoutsIdr' => $monthData['payoutsIdr'],
+                'cumulativeIdr' => $cumulative,
             ];
         }
 

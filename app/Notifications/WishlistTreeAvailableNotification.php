@@ -15,7 +15,7 @@ class WishlistTreeAvailableNotification extends BaseNotification
             'fruit_type' => $tree->fruitCrop?->fruitType?->name,
             'variant' => $tree->fruitCrop?->variant,
             'farm_name' => $tree->fruitCrop?->farm?->name,
-            'price_cents' => $tree->price_cents,
+            'price_idr' => $tree->price_idr,
             'tree_url' => route('trees.show', $tree->id),
         ]);
     }

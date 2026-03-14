@@ -22,9 +22,9 @@ class NotifySellerOfSale
             'data' => [
                 'listing_id' => $listing->id,
                 'investment_id' => $listing->investment_id,
-                'transfer_price_cents' => $transfer->transfer_price_cents,
-                'platform_fee_cents' => $transfer->platform_fee_cents,
-                'net_proceeds_cents' => $listing->net_proceeds_cents,
+                'transfer_price_idr' => $transfer->transfer_price_idr,
+                'platform_fee_idr' => $transfer->platform_fee_idr,
+                'net_proceeds_idr' => $listing->net_proceeds_idr,
                 'buyer_id' => $event->buyer->id,
             ],
         ]);

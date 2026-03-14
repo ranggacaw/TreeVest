@@ -5,14 +5,14 @@ import { FormEventHandler, useState } from 'react';
 interface WalletTransaction {
     id: number;
     transaction_type: string;
-    amount_cents: number;
+    amount_idr: number;
     description: string | null;
     created_at: string;
 }
 
 interface Wallet {
     id: number;
-    balance_cents: number;
+    balance_idr: number;
     currency: string;
 }
 
@@ -29,7 +29,7 @@ export default function Index({ wallet, transactions }: Props) {
     const [showWithdrawModal, setShowWithdrawModal] = useState(false);
 
     const { data, setData, post, processing, errors, reset } = useForm({
-        amount_cents: '',
+        amount_idr: '',
     });
 
     const submitWithdraw: FormEventHandler = (e) => {
@@ -48,7 +48,7 @@ export default function Index({ wallet, transactions }: Props) {
                 {/* Balance card */}
                 <div className="bg-green-600 text-white rounded-xl p-6 mb-6">
                     <p className="text-sm opacity-80 mb-1">Available Balance</p>
-                    <p className="text-4xl font-bold">{formatIDR(wallet?.balance_cents ?? 0)}</p>
+                    <p className="text-4xl font-bold">{formatIDR(wallet?.balance_idr ?? 0)}</p>
                     <div className="mt-4 flex gap-3">
                         <button
                             onClick={() => setShowWithdrawModal(true)}
@@ -74,8 +74,8 @@ export default function Index({ wallet, transactions }: Props) {
                                     {tx.description && <p className="text-xs text-gray-500">{tx.description}</p>}
                                     <p className="text-xs text-gray-400">{tx.created_at}</p>
                                 </div>
-                                <span className={`text-sm font-semibold ${tx.amount_cents >= 0 ? 'text-green-600' : 'text-red-500'}`}>
-                                    {tx.amount_cents >= 0 ? '+' : ''}{formatIDR(tx.amount_cents)}
+                                <span className={`text-sm font-semibold ${tx.amount_idr >= 0 ? 'text-green-600' : 'text-red-500'}`}>
+                                    {tx.amount_idr >= 0 ? '+' : ''}{formatIDR(tx.amount_idr)}
                                 </span>
                             </div>
                         ))}
@@ -89,15 +89,15 @@ export default function Index({ wallet, transactions }: Props) {
                             <h3 className="text-lg font-semibold mb-4">Withdraw Funds</h3>
                             <form onSubmit={submitWithdraw} className="space-y-4">
                                 <div>
-                                    <label className="block text-sm font-medium text-gray-700 mb-1">Amount (IDR cents)</label>
+                                    <label className="block text-sm font-medium text-gray-700 mb-1">Amount (IDR)</label>
                                     <input
                                         type="number" min="1000"
                                         className="w-full border-gray-300 rounded-md text-sm"
-                                        value={data.amount_cents}
-                                        onChange={(e) => setData('amount_cents', e.target.value)}
+                                        value={data.amount_idr}
+                                        onChange={(e) => setData('amount_idr', e.target.value)}
                                         placeholder="Minimum 1000"
                                     />
-                                    {errors.amount_cents && <p className="text-red-500 text-xs mt-1">{errors.amount_cents}</p>}
+                                    {errors.amount_idr && <p className="text-red-500 text-xs mt-1">{errors.amount_idr}</p>}
                                 </div>
                                 <div className="flex justify-end gap-2">
                                     <button type="button" onClick={() => setShowWithdrawModal(false)}

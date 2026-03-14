@@ -36,7 +36,7 @@ class WishlistController extends Controller
                     $data['entity'] = [
                         'id' => $wishlistable->id,
                         'identifier' => $wishlistable->tree_identifier,
-                        'price_cents' => $wishlistable->price_cents,
+                        'price_idr' => $wishlistable->price_idr,
                         'expected_roi_percent' => $wishlistable->expected_roi_percent,
                         'risk_rating' => $wishlistable->risk_rating?->value ?? $wishlistable->risk_rating,
                         'status' => $wishlistable->status?->value ?? $wishlistable->status,

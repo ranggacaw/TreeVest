@@ -11,7 +11,7 @@ return new class extends Migration
         Schema::create('wallets', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->nullable()->unique()->constrained('users')->onDelete('cascade');
-            $table->bigInteger('balance_cents')->default(0);
+            $table->bigInteger('balance_idr')->default(0);
             $table->char('currency', 3)->default('IDR');
             $table->boolean('is_platform')->default(false);
             $table->timestamps();
