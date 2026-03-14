@@ -22,9 +22,9 @@ class LotFactory extends Factory
             'fruit_crop_id' => FruitCrop::factory(),
             'name' => 'L' . str_pad((string) fake()->numberBetween(1, 999), 3, '0', STR_PAD_LEFT),
             'total_trees' => fake()->numberBetween(5, 50),
-            'base_price_per_tree_cents' => fake()->numberBetween(50000, 500000),
+            'base_price_per_tree_idr' => fake()->numberBetween(50000, 500000),
             'monthly_increase_rate' => '0.0500',
-            'current_price_per_tree_cents' => fake()->numberBetween(50000, 500000),
+            'current_price_per_tree_idr' => fake()->numberBetween(50000, 500000),
             'cycle_started_at' => now()->subMonths(1)->toDateString(),
             'cycle_months' => $cycleMonths,
             'last_investment_month' => $lastInvestmentMonth,
@@ -61,7 +61,7 @@ class LotFactory extends Factory
     {
         return $this->state(fn (array $attrs) => [
             'status' => LotStatus::Selling,
-            'selling_revenue_cents' => fake()->numberBetween(1000000, 50000000),
+            'selling_revenue_idr' => fake()->numberBetween(1000000, 50000000),
             'selling_proof_photo' => 'lot-selling-proofs/proof.jpg',
             'selling_submitted_at' => now(),
         ]);
@@ -83,9 +83,9 @@ class LotFactory extends Factory
             'status' => LotStatus::Active,
             'cycle_started_at' => now()->subDays(5)->toDateString(),
             'cycle_months' => 6,
-            'last_investment_month' => 5,
-            'base_price_per_tree_cents' => 100000,
-            'current_price_per_tree_cents' => 100000,
+            'last_investment_month' =>5,
+            'base_price_per_tree_idr' => 100000,
+            'current_price_per_tree_idr' => 100000,
             'monthly_increase_rate' => '0.0500',
         ]);
     }

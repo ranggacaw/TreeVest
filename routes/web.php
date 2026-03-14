@@ -293,6 +293,16 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::post('/{lot}/record-harvest', [FarmOwnerLotController::class, 'recordHarvest'])->name('record-harvest');
             Route::post('/{lot}/submit-selling', [FarmOwnerLotController::class, 'submitSelling'])->name('submit-selling');
         });
+
+        Route::prefix('growth-timeline')->name('growth-timeline.')->group(function () {
+            Route::get('/', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'index'])->name('index');
+            Route::get('/lot/{lot}/create', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'create'])->name('create');
+            Route::post('/', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'store'])->name('store');
+            Route::get('/{timeline}', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'show'])->name('show');
+            Route::get('/{timeline}/edit', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'edit'])->name('edit');
+            Route::put('/{timeline}', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'update'])->name('update');
+            Route::delete('/{timeline}', [\App\Http\Controllers\FarmOwner\GrowthTimelineController::class, 'destroy'])->name('destroy');
+        });
     });
 
     Route::prefix('farms/manage')->name('farms.manage.')->group(function () {

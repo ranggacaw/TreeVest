@@ -32,6 +32,63 @@ export type GeneratedReportStatus =
     | "completed"
     | "failed";
 export type ListingStatus = "active" | "sold" | "cancelled";
+export type LotStatus =
+    | "active"
+    | "in_progress"
+    | "harvest"
+    | "selling"
+    | "completed"
+    | "cancelled";
+
+export interface Warehouse {
+    id: number;
+    farm_id: number;
+    name: string;
+    description: string | null;
+    created_at?: string;
+    updated_at?: string;
+    racks?: Rack[];
+    farm?: Farm;
+}
+
+export interface Rack {
+    id: number;
+    warehouse_id: number;
+    name: string;
+    description: string | null;
+    created_at?: string;
+    updated_at?: string;
+    lots?: Lot[];
+    warehouse?: Warehouse;
+}
+
+export interface Lot {
+    id: number;
+    rack_id: number;
+    name: string;
+    status: LotStatus;
+    total_trees: number;
+    current_price_per_tree_cents: number;
+    cycle_months: number;
+    created_at?: string;
+    updated_at?: string;
+    rack?: Rack;
+    fruit_crop?: FruitCrop;
+}
+
+export interface PaginatedLots {
+    data: Lot[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links: Array<{
+        url: string | null;
+        label: string;
+        active: boolean;
+    }>;
+}
+
 
 export interface User {
     id: number;
@@ -245,6 +302,7 @@ export interface Investment {
         status: string;
         stripe_payment_intent_id?: string;
     };
+    investor?: User;
 }
 
 export interface InvestmentDetail extends Investment {
@@ -598,7 +656,6 @@ export interface TaxSummaryData {
         netCents: number;
     };
 }
-
 export interface MarketListing {
     id: number;
     investment_id: number;
@@ -632,10 +689,7 @@ export interface MarketListing {
             expected_roi_percent: number;
             risk_rating: string;
             age_years: number;
-            fruit_type: {
-                id: number;
-                name: string;
-            };
+            fruit_type: FruitType;
             fruit_crop: {
                 variant: string;
                 farm: {
@@ -647,6 +701,26 @@ export interface MarketListing {
     };
     seller: User;
     buyer?: User;
+}
+
+export interface FruitType {
+    id: number;
+    name: string;
+    slug: string;
+}
+
+export interface FruitCrop {
+    id: number;
+    farm_id: number;
+    fruit_type_id: number;
+    variant: string;
+    description: string | null;
+    harvest_cycle: string;
+    planted_date: string | null;
+    created_at?: string;
+    updated_at?: string;
+    fruit_type?: FruitType;
+    farm?: Farm;
 }
 
 export interface InvestmentTransfer {
@@ -891,4 +965,95 @@ export interface AgrotourismRegistration {
     // Relations (loaded conditionally)
     event?: AgrotourismEvent;
     investor?: User;
+}
+
+// Growth Timeline Types
+export type GrowthMilestoneType =
+    | "planting"
+    | "first_leaves"
+    | "flowering"
+    | "fruit_set"
+    | "fruit_growth"
+    | "pre_harvest"
+    | "harvest"
+    | "post_harvest"
+    | "pruning"
+    | "fertilization"
+    | "pest_control";
+
+export type TreeHealthStatus =
+    | "excellent"
+    | "good"
+    | "fair"
+    | "poor"
+    | "critical";
+
+export interface TreeGrowthTimeline {
+    id: number;
+    tree_id: number;
+    lot_id: number;
+    milestone_type: GrowthMilestoneType;
+    milestone_type_label: string;
+    milestone_type_icon: string;
+    milestone_type_color: string;
+    health_status: TreeHealthStatus;
+    health_status_label: string;
+    health_status_icon: string;
+    health_status_color: string;
+    title: string;
+    description?: string;
+    photos: string[];
+    height_cm?: number;
+    trunk_diameter_cm?: number;
+    fruit_count?: number;
+    recorded_at: string;
+    visibility: "public" | "private";
+    author_id: number;
+    created_at: string;
+    updated_at: string;
+    // Relations (loaded conditionally)
+    tree?: Tree;
+    author?: User;
+}
+
+// Location Hierarchy Types
+export interface LocationHierarchyData {
+    farm: {
+        id: number;
+        name: string;
+        city?: string;
+        state?: string;
+        country?: string;
+    };
+    warehouse: {
+        id: number;
+        name: string;
+        description?: string;
+    };
+    rack: {
+        id: number;
+        name: string;
+        description?: string;
+    };
+    lot: {
+        id: number;
+        name: string;
+        status: LotStatus;
+        total_trees: number;
+    };
+    tree: {
+        id: number;
+        identifier: string;
+        latitude?: number;
+        longitude?: number;
+        qr_code?: string;
+    };
+    fruit_crop: {
+        id: number;
+        variant: string;
+        fruit_type: {
+            id: number;
+            name: string;
+        };
+    };
 }

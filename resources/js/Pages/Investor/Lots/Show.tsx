@@ -1,35 +1,11 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { FormEventHandler } from 'react';
+import { Lot, Investment } from '@/types';
 
 interface PriceTableRow {
     month: number;
     price_cents: number;
-}
-
-interface Investment {
-    id: number;
-    amount: number;
-    status: string;
-    purchase_date: string;
-}
-
-interface Lot {
-    id: number;
-    name: string;
-    status: string;
-    total_trees: number;
-    base_price_per_tree_cents: number;
-    current_price_per_tree_cents: number;
-    monthly_increase_rate: number;
-    cycle_months: number;
-    last_investment_month: number;
-    cycle_started_at: string | null;
-    rack: {
-        name: string;
-        warehouse: { name: string; farm: { id: number; name: string } };
-    };
-    fruit_crop: { variety_name: string } | null;
 }
 
 interface Props {
@@ -40,8 +16,8 @@ interface Props {
     isInvestmentOpen: boolean;
 }
 
-function formatIDR(cents: number) {
-    return (cents / 100).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+function formatIDR(amount: number) {
+    return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 }
 
 export default function Show({ lot, priceTable, currentCycleMonth, myInvestment, isInvestmentOpen }: Props) {
@@ -59,11 +35,11 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
             <Head title={`Invest in ${lot.name}`} />
             <div className="max-w-3xl mx-auto py-8 px-4">
                 <div className="mb-6">
-                    <Link href={route('farms.show', lot.rack.warehouse.farm.id)} className="text-sm text-gray-500 hover:text-gray-700">
-                        ← {lot.rack.warehouse.farm.name}
+                    <Link href={route('farms.show', lot.rack?.warehouse?.farm?.id || 0)} className="text-sm text-gray-500 hover:text-gray-700">
+                        ← {lot.rack?.warehouse?.farm?.name}
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-900 mt-2">{lot.name}</h1>
-                    {lot.fruit_crop && <p className="text-sm text-gray-500">{lot.fruit_crop.variety_name}</p>}
+                    {lot.fruit_crop && <p className="text-sm text-gray-500">{lot.fruit_crop.variant}</p>}
                 </div>
 
                 {/* Key metrics */}
@@ -120,7 +96,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                 {myInvestment && (
                     <div className="mb-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
                         <p className="text-sm font-medium text-blue-800">You already hold an investment in this lot</p>
-                        <p className="text-xs text-blue-600 mt-1">Amount: {formatIDR(myInvestment.amount)} — Status: {myInvestment.status}</p>
+                        <p className="text-xs text-blue-600 mt-1">Amount: {formatIDR(myInvestment.amount_cents)} — Status: {myInvestment.status}</p>
                     </div>
                 )}
 

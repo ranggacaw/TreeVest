@@ -22,7 +22,7 @@ class LotController extends Controller
     public function index(): Response
     {
         $lots = Lot::with(['rack.warehouse.farm', 'fruitCrop'])
-            ->scopeForFarmOwner(auth()->id())
+            ->forFarmOwner(auth()->id())
             ->withCount('investments')
             ->latest()
             ->paginate(20);
@@ -43,7 +43,7 @@ class LotController extends Controller
             ]);
 
         $fruitCrops = \App\Models\FruitCrop::whereHas('farm', fn ($q) => $q->where('owner_id', auth()->id()))
-            ->get(['id', 'variety_name']);
+            ->get(['id', 'variant']);
 
         return Inertia::render('FarmOwner/Lots/Create', [
             'racks' => $racks,
@@ -58,7 +58,7 @@ class LotController extends Controller
             'fruit_crop_id' => ['required', 'integer', 'exists:fruit_crops,id'],
             'name' => ['required', 'string', 'max:100'],
             'total_trees' => ['required', 'integer', 'min:1'],
-            'base_price_per_tree_cents' => ['required', 'integer', 'min:1'],
+            'base_price_per_tree_idr' => ['required', 'integer', 'min:1'],
             'monthly_increase_rate' => ['required', 'numeric', 'min:0', 'max:1'],
             'cycle_months' => ['required', 'integer', 'min:1', 'max:120'],
             'last_investment_month' => ['required', 'integer', 'min:1'],
@@ -77,7 +77,7 @@ class LotController extends Controller
 
         $lot = Lot::create([
             ...$validated,
-            'current_price_per_tree_cents' => $validated['base_price_per_tree_cents'],
+            'current_price_per_tree_idr' => $validated['base_price_per_tree_idr'],
             'status' => 'active',
         ]);
 
@@ -167,7 +167,7 @@ class LotController extends Controller
         $this->authorizeLot($lot);
 
         $validated = $request->validate([
-            'selling_revenue_cents' => ['required', 'integer', 'min:0'],
+            'selling_revenue_idr' => ['required', 'integer', 'min:0'],
             'proof_photo' => ['required', 'file', 'image', 'max:5120'],
         ]);
 
@@ -175,7 +175,7 @@ class LotController extends Controller
 
         $this->sellingService->submitSellingRevenue(
             $lot,
-            $validated['selling_revenue_cents'],
+            $validated['selling_revenue_idr'],
             $photoPath,
         );
 

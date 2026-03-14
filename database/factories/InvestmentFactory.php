@@ -15,7 +15,7 @@ class InvestmentFactory extends Factory
         return [
             'user_id' => User::factory(),
             'tree_id' => Tree::factory(),
-            'amount_cents' => $this->faker->numberBetween(1000, 100000),
+            'amount_idr' => $this->faker->numberBetween(1000, 100000),
             'quantity' => 1,
             'currency' => 'IDR',
             'purchase_date' => now()->toDateString(),

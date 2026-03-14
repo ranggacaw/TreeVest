@@ -569,8 +569,11 @@ Admin Approval → Listed on Marketplace
 | **FarmCertification**       | id, farm_id, name, issuer, certificate_number, issued_date, expiry_date, file_path, notes                                                                                                                                                                                   | Farm certifications and permits                                                                         |
 | **FruitType**               | id, name, slug, description, is_active                                                                                                                                                                                                                                      | e.g., Durian, Mango, Grapes                                                                             |
 | **FruitCrop**               | id, farm_id, fruit_type_id, variant, description, harvest_cycle, planted_date                                                                                                                                                                                               | e.g., Musang King variant on a specific farm                                                            |
-| **Tree**                    | id, fruit_crop_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json                                                    | Investable unit                                                                                         |
-| **Investment**              | id, investor_id, tree_id, amount, purchase_date, status                                                                                                                                                                                                                     | Core transaction                                                                                        |
+| **Warehouse**               | id, farm_id, name, description                                                                                                                                                                                                                                               | Large block or section within a farm; organizational unit for grouping racks                            |
+| **Rack**                    | id, warehouse_id, name, description                                                                                                                                                                                                                                          | Smaller row or planting section within a warehouse                                                      |
+| **Lot**                     | id, rack_id, fruit_crop_id, name, total_trees, base_price_per_tree_cents, monthly_increase_rate, current_price_per_tree_cents, cycle_started_at, cycle_months, last_investment_month, status, harvest_total_fruit, harvest_total_weight_kg, harvest_notes, harvest_recorded_at, selling_revenue_cents, selling_proof_photo, selling_submitted_at | Investment package containing multiple trees; tracks harvest and selling data                           |
+| **Tree**                    | id, fruit_crop_id, lot_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json                                            | Individual investable unit; belongs to both a FruitCrop (plant type) and a Lot (investment grouping)   |
+| **Investment**              | id, investor_id, tree_id, lot_id, amount, purchase_date, status                                                                                                                                                                                                             | Core transaction                                                                                        |
 | **MarketListing**           | id, investment_id FK, seller_id FK, ask_price_cents, currency, platform_fee_rate, platform_fee_cents, net_proceeds_cents, status ENUM, buyer_id FK null, purchased_at null, cancelled_at null, expires_at null, notes text null, metadata json null, timestamps, deleted_at | Secondary market listing for investment resale                                                          |
 | **InvestmentTransfer**      | id, investment_id FK, listing_id FK, from_user_id FK, to_user_id FK, transfer_price_cents, platform_fee_cents, transaction_id FK null, transferred_at, timestamps                                                                                                           | Immutable record of ownership transfer                                                                  |
 | **TreeHarvest**             | id, tree_id, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes                                                                                                                                                                                        | Tied to payout                                                                                          |
@@ -608,18 +611,23 @@ Admin Approval → Listed on Marketplace
 - Farm (1) → (N) FarmImage
 - Farm (1) → (N) FarmCertification
 - Farm (1) → (N) FruitCrop
+- Farm (1) → (N) Warehouse
 - Farm (1) → (N) WeatherData
 - Farm (1) → (N) HealthAlert
+- Warehouse (1) → (N) Rack
+- Rack (1) → (N) Lot
+- FruitCrop (1) → (N) Lot
 - FruitCrop (1) → (N) Tree
 - FruitCrop (1) → (N) TreeHealthUpdate
 - FruitCrop (1) → (N) HealthAlert
+- Lot (1) → (N) Tree
+- Lot (1) → (N) Investment
 - Tree (1) → (N) Investment
 - Tree (1) → (N) Harvest
 - Harvest (1) → (N) Payout
 - Investment (1) → (N) Payout
 - Investment (1) → (N) MarketListing
 - MarketListing (1) → (N) InvestmentTransfer
-- Investment (1) → (N) Payout
 - Article (N) ↔ (N) Category (many-to-many)
 - Article (N) ↔ (N) Tag (many-to-many)
 - GeneratedReport (1) → (N) User (belongs to)
@@ -645,7 +653,12 @@ Admin Approval → Listed on Marketplace
 
 | Term                        | Definition                                                                                                                   |
 | --------------------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| **Farm**                    | A physical agricultural location owned by a farm partner where fruit crops are grown                                         |
+| **Warehouse**               | A large block or section within a farm used for organizing planting areas; contains multiple racks                           |
+| **Rack**                    | A smaller row or planting section within a warehouse; contains multiple lots                                                 |
+| **Lot**                     | An investment package containing multiple trees of the same fruit crop; the primary unit investors purchase                  |
 | **Tree**                    | The fundamental investable unit; represents a single fruit-producing tree on a partner farm                                  |
+| **Fruit Crop**              | A specific variety or variant of a fruit type planted on a farm (e.g., Musang King Durian)                                   |
 | **Investment**              | A financial stake in one or more trees, purchased by an Investor                                                             |
 | **Harvest Cycle**           | The recurring period during which a tree produces fruit (annual, bi-annual, seasonal)                                        |
 | **ROI**                     | Return on Investment — expected percentage return based on historical yield and market pricing                               |
@@ -675,6 +688,7 @@ Admin Approval → Listed on Marketplace
 | --------------------- | -------------------------------------------------------- |
 | KYC                   | pending, submitted, verified, rejected                   |
 | Investment            | pending_payment, active, **listed**, **sold**, cancelled |
+| Lot                   | active, harvest, selling, completed, cancelled           |
 | Harvest               | scheduled, in_progress, completed, failed                |
 | Payout                | pending, processing, completed, failed                   |
 | Tree                  | seedling, growing, productive, declining, retired        |

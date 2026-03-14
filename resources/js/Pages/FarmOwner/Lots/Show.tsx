@@ -1,53 +1,21 @@
 import { Head, Link } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
+import { Lot, Investment } from '@/types';
 
 interface PriceTableRow {
     month: number;
     price_cents: number;
 }
 
-interface Investment {
-    id: number;
-    user: { id: number; name: string };
-    amount: number;
-    status: string;
-    purchase_date: string;
-}
-
-interface Lot {
-    id: number;
-    name: string;
-    status: string;
-    total_trees: number;
-    base_price_per_tree_cents: number;
-    current_price_per_tree_cents: number;
-    monthly_increase_rate: number;
-    cycle_months: number;
-    last_investment_month: number;
-    cycle_started_at: string | null;
-    rack: {
-        id: number;
-        name: string;
-        warehouse: {
-            id: number;
-            name: string;
-            farm: { id: number; name: string };
-        };
-    };
-    fruit_crop: { id: number; variety_name: string } | null;
-    investments: Investment[];
-    price_snapshots: { id: number; month: number; price_per_tree_cents: number }[];
-}
-
 interface Props {
-    lot: Lot;
+    lot: Lot & { investments: Investment[]; price_snapshots: any[] };
     priceTable: PriceTableRow[];
     currentCycleMonth: number;
 }
 
 export default function Show({ lot, priceTable, currentCycleMonth }: Props) {
-    const farmName = lot.rack.warehouse.farm.name;
-    const warehouseName = lot.rack.warehouse.name;
+    const farmName = lot.rack?.warehouse?.farm?.name;
+    const warehouseName = lot.rack?.warehouse?.name;
 
     return (
         <AppLayout>
@@ -63,7 +31,7 @@ export default function Show({ lot, priceTable, currentCycleMonth }: Props) {
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-900 mt-2">{lot.name}</h1>
                     <p className="text-sm text-gray-500">
-                        {farmName} → {warehouseName} → {lot.rack.name}
+                        {farmName} → {warehouseName} → {lot.rack?.name}
                     </p>
                 </div>
 
@@ -80,7 +48,7 @@ export default function Show({ lot, priceTable, currentCycleMonth }: Props) {
                     <div className="bg-white border border-gray-200 rounded-lg p-4">
                         <p className="text-xs text-gray-500 uppercase tracking-wide">Current Price/Tree</p>
                         <p className="text-lg font-semibold text-gray-900">
-                            {(lot.current_price_per_tree_cents / 100).toLocaleString('id-ID', {
+                            {lot.current_price_per_tree_cents.toLocaleString('id-ID', {
                                 style: 'currency',
                                 currency: 'IDR',
                                 maximumFractionDigits: 0,
@@ -116,7 +84,7 @@ export default function Show({ lot, priceTable, currentCycleMonth }: Props) {
                                         >
                                             <td className="px-4 py-2">{row.month}</td>
                                             <td className="px-4 py-2">
-                                                {(row.price_cents / 100).toLocaleString('id-ID')}
+                                                {row.price_cents.toLocaleString('id-ID')}
                                             </td>
                                             <td className="px-4 py-2 text-xs">
                                                 {row.month === currentCycleMonth ? (
@@ -156,9 +124,9 @@ export default function Show({ lot, priceTable, currentCycleMonth }: Props) {
                                 <tbody className="bg-white divide-y divide-gray-200">
                                     {lot.investments.map((inv) => (
                                         <tr key={inv.id}>
-                                            <td className="px-4 py-2">{inv.user.name}</td>
+                                            <td className="px-4 py-2">{inv.investor?.name || 'Unknown'}</td>
                                             <td className="px-4 py-2">
-                                                {(inv.amount / 100).toLocaleString('id-ID')}
+                                                {inv.amount_cents.toLocaleString('id-ID')}
                                             </td>
                                             <td className="px-4 py-2 capitalize">{inv.status}</td>
                                             <td className="px-4 py-2">{inv.purchase_date}</td>

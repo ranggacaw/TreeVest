@@ -13,8 +13,8 @@ class WalletTransaction extends Model
         'wallet_id',
         'type',
         'transaction_type',
-        'amount_cents',
-        'balance_after_cents',
+        'amount_idr',
+        'balance_after_idr',
         'reference_type',
         'reference_id',
         'notes',
@@ -24,8 +24,8 @@ class WalletTransaction extends Model
     {
         return [
             'transaction_type' => WalletTransactionType::class,
-            'amount_cents' => 'integer',
-            'balance_after_cents' => 'integer',
+            'amount_idr' => 'integer',
+            'balance_after_idr' => 'integer',
         ];
     }
 

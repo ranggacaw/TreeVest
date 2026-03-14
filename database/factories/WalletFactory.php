@@ -14,7 +14,7 @@ class WalletFactory extends Factory
     {
         return [
             'user_id' => User::factory(),
-            'balance_cents' => fake()->numberBetween(0, 10_000_000),
+            'balance_idr' => fake()->numberBetween(0, 10_000_000),
             'currency' => 'IDR',
             'is_platform' => false,
         ];
@@ -28,17 +28,17 @@ class WalletFactory extends Factory
         ]);
     }
 
-    public function funded(int $amountCents = 1_000_000): static
+    public function funded(int $amountIdr = 1_000_000): static
     {
         return $this->state(fn (array $attrs) => [
-            'balance_cents' => $amountCents,
+            'balance_idr' => $amountIdr,
         ]);
     }
 
     public function empty(): static
     {
         return $this->state(fn (array $attrs) => [
-            'balance_cents' => 0,
+            'balance_idr' => 0,
         ]);
     }
 }

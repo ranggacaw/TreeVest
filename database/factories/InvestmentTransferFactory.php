@@ -11,16 +11,16 @@ class InvestmentTransferFactory extends Factory
 {
     public function definition(): array
     {
-        $transferPriceCents = $this->faker->numberBetween(1000, 100000);
-        $platformFeeCents = (int) ceil($transferPriceCents * config('treevest.secondary_market_fee_rate', 0.02));
+        $transferPriceIdr = $this->faker->numberBetween(1000, 100000);
+        $platformFeeIdr = (int) ceil($transferPriceIdr * config('treevest.secondary_market_fee_rate', 0.02));
 
         return [
             'investment_id' => Investment::factory(),
             'listing_id' => MarketListing::factory(),
             'from_user_id' => User::factory(),
             'to_user_id' => User::factory(),
-            'transfer_price_cents' => $transferPriceCents,
-            'platform_fee_cents' => $platformFeeCents,
+            'transfer_price_idr' => $transferPriceIdr,
+            'platform_fee_idr' => $platformFeeIdr,
             'transaction_id' => null,
             'transferred_at' => now(),
         ];

@@ -18,9 +18,9 @@ class Lot extends Model
         'fruit_crop_id',
         'name',
         'total_trees',
-        'base_price_per_tree_cents',
+        'base_price_per_tree_idr',
         'monthly_increase_rate',
-        'current_price_per_tree_cents',
+        'current_price_per_tree_idr',
         'cycle_started_at',
         'cycle_months',
         'last_investment_month',
@@ -29,7 +29,7 @@ class Lot extends Model
         'harvest_total_weight_kg',
         'harvest_notes',
         'harvest_recorded_at',
-        'selling_revenue_cents',
+        'selling_revenue_idr',
         'selling_proof_photo',
         'selling_submitted_at',
     ];
@@ -42,9 +42,9 @@ class Lot extends Model
             'harvest_recorded_at' => 'datetime',
             'selling_submitted_at' => 'datetime',
             'total_trees' => 'integer',
-            'base_price_per_tree_cents' => 'integer',
-            'current_price_per_tree_cents' => 'integer',
-            'selling_revenue_cents' => 'integer',
+            'base_price_per_tree_idr' => 'integer',
+            'current_price_per_tree_idr' => 'integer',
+            'selling_revenue_idr' => 'integer',
             'monthly_increase_rate' => 'decimal:4',
             'harvest_total_weight_kg' => 'decimal:2',
             'cycle_months' => 'integer',
@@ -76,6 +76,18 @@ class Lot extends Model
     public function priceSnapshots(): HasMany
     {
         return $this->hasMany(LotPriceSnapshot::class);
+    }
+
+    public function growthTimeline(): HasMany
+    {
+        return $this->hasMany(TreeGrowthTimeline::class)->orderBy('recorded_date', 'desc');
+    }
+
+    public function visibleGrowthTimeline(): HasMany
+    {
+        return $this->hasMany(TreeGrowthTimeline::class)
+            ->where('is_visible_to_investors', true)
+            ->orderBy('recorded_date', 'desc');
     }
 
     public function activeInvestments(): HasMany
@@ -114,9 +126,9 @@ class Lot extends Model
             && $this->currentCycleMonth() <= $this->last_investment_month;
     }
 
-    public function getTotalPriceCents(): int
+    public function getTotalPriceIdr(): int
     {
-        return $this->current_price_per_tree_cents * $this->total_trees;
+        return $this->current_price_per_tree_idr * $this->total_trees;
     }
 
     public function canTransitionTo(LotStatus $newStatus): bool

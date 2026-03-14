@@ -16,7 +16,7 @@ class Investment extends Model
         'user_id',
         'tree_id',
         'lot_id',
-        'amount_cents',
+        'amount_idr',
         'quantity',
         'currency',
         'purchase_date',
@@ -31,7 +31,7 @@ class Investment extends Model
         return [
             'status' => InvestmentStatus::class,
             'metadata' => 'array',
-            'amount_cents' => 'integer',
+            'amount_idr' => 'integer',
             'quantity' => 'integer',
             'purchase_date' => 'date',
             'purchase_month' => 'integer',
@@ -113,9 +113,9 @@ class Investment extends Model
         return $this->status->canTransitionTo(InvestmentStatus::Cancelled);
     }
 
-    public function getMaxAdditionalTrees(int $maxInvestmentCents, int $pricePerTreeCents): int
+    public function getMaxAdditionalTrees(int $maxInvestmentIdr, int $pricePerTreeIdr): int
     {
-        $maxTrees = (int) floor($maxInvestmentCents / $pricePerTreeCents);
+        $maxTrees = (int) floor($maxInvestmentIdr / $pricePerTreeIdr);
 
         return max(0, $maxTrees - $this->quantity);
     }
@@ -127,7 +127,7 @@ class Investment extends Model
             default => $this->currency,
         };
 
-        return $currencySymbol.' '.number_format($this->amount_cents / 100, 2);
+        return $currencySymbol.' '.number_format($this->amount_idr, 0);
     }
 
     public function transitionTo(InvestmentStatus $newStatus): bool

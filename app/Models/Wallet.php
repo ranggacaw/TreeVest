@@ -13,7 +13,7 @@ class Wallet extends Model
     use HasFactory;
     protected $fillable = [
         'user_id',
-        'balance_cents',
+        'balance_idr',
         'currency',
         'is_platform',
     ];
@@ -21,7 +21,7 @@ class Wallet extends Model
     protected function casts(): array
     {
         return [
-            'balance_cents' => 'integer',
+            'balance_idr' => 'integer',
             'is_platform' => 'boolean',
         ];
     }
@@ -45,11 +45,11 @@ class Wallet extends Model
             default => $this->currency,
         };
 
-        return $symbol . ' ' . number_format($this->balance_cents / 100, 2);
+        return $symbol . ' ' . number_format($this->balance_idr, 0);
     }
 
-    public function hasSufficientBalance(int $amountCents): bool
+    public function hasSufficientBalance(int $amountIdr): bool
     {
-        return $this->balance_cents >= $amountCents;
+        return $this->balance_idr >= $amountIdr;
     }
 }

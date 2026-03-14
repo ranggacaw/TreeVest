@@ -1,17 +1,7 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { FormEventHandler } from 'react';
-
-interface Rack {
-    id: number;
-    name: string;
-    warehouse: { id: number; name: string; farm: { name: string } };
-}
-
-interface FruitCrop {
-    id: number;
-    variety_name: string;
-}
+import { FruitCrop, Rack } from '@/types';
 
 interface Props {
     racks: Rack[];
@@ -55,9 +45,9 @@ export default function Create({ racks, fruitCrops }: Props) {
                             onChange={(e) => setData('rack_id', e.target.value)}
                         >
                             <option value="">Select a rack</option>
-                            {racks.map((rack) => (
+                            {racks.map((rack: any) => (
                                 <option key={rack.id} value={rack.id}>
-                                    {rack.warehouse.farm.name} / {rack.warehouse.name} / {rack.name}
+                                    {rack.label}
                                 </option>
                             ))}
                         </select>
@@ -73,7 +63,7 @@ export default function Create({ racks, fruitCrops }: Props) {
                         >
                             <option value="">Select a crop</option>
                             {fruitCrops.map((crop) => (
-                                <option key={crop.id} value={crop.id}>{crop.variety_name}</option>
+                                <option key={crop.id} value={crop.id}>{crop.variant}</option>
                             ))}
                         </select>
                         {errors.fruit_crop_id && <p className="text-red-500 text-xs mt-1">{errors.fruit_crop_id}</p>}
@@ -102,7 +92,7 @@ export default function Create({ racks, fruitCrops }: Props) {
                             {errors.total_trees && <p className="text-red-500 text-xs mt-1">{errors.total_trees}</p>}
                         </div>
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Base Price / Tree (IDR cents)</label>
+                            <label className="block text-sm font-medium text-gray-700 mb-1">Base Price / Tree (IDR)</label>
                             <input
                                 type="number" min="1"
                                 className="w-full border-gray-300 rounded-md text-sm"

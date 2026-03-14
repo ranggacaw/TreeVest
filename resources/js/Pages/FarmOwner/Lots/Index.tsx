@@ -1,21 +1,9 @@
 import { Head, Link } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
-
-interface Lot {
-    id: number;
-    name: string;
-    status: string;
-    total_trees: number;
-    current_price_per_tree_cents: number;
-    cycle_months: number;
-    rack: {
-        name: string;
-        warehouse: { name: string; farm: { name: string } };
-    };
-}
+import { Lot, PaginatedLots } from '@/types';
 
 interface Props {
-    lots: { data: Lot[]; links: { url: string | null; label: string; active: boolean }[] };
+    lots: PaginatedLots;
 }
 
 export default function Index({ lots }: Props) {
@@ -54,14 +42,14 @@ export default function Index({ lots }: Props) {
                                     <tr key={lot.id}>
                                         <td className="px-4 py-2 font-medium">{lot.name}</td>
                                         <td className="px-4 py-2 text-gray-500">
-                                            {lot.rack.warehouse.farm.name} / {lot.rack.warehouse.name} / {lot.rack.name}
+                                            {lot.rack?.warehouse?.farm?.name} / {lot.rack?.warehouse?.name} / {lot.rack?.name}
                                         </td>
                                         <td className="px-4 py-2 capitalize">
                                             <span className="px-2 py-0.5 rounded-full text-xs bg-gray-100">{lot.status}</span>
                                         </td>
                                         <td className="px-4 py-2">{lot.total_trees}</td>
                                         <td className="px-4 py-2">
-                                            {(lot.current_price_per_tree_cents / 100).toLocaleString('id-ID', {
+                                            {lot.current_price_per_tree_cents.toLocaleString('id-ID', {
                                                 style: 'currency', currency: 'IDR', maximumFractionDigits: 0,
                                             })}
                                         </td>

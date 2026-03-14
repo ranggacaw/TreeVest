@@ -308,7 +308,7 @@ export default function FruitCropsManagement({ farm, isEditable = false }: Props
                                                                             {tree.status?.replace('_', ' ')}
                                                                         </span>
                                                                     </td>
-                                                                    <td className="py-2 px-4">Rp {(tree.price_cents / 100).toLocaleString('id-ID')}</td>
+                                                                    <td className="py-2 px-4">Rp {tree.price_cents.toLocaleString('id-ID')}</td>
                                                                     <td className="py-2 px-4 text-center">
                                                                         <span className="bg-green-100 text-green-800 px-1.5 py-0.5 rounded font-bold">
                                                                             {tree.expected_roi_percent}%

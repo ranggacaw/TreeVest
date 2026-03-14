@@ -12,13 +12,13 @@ class TreeFactory extends Factory
         return [
             'fruit_crop_id' => FruitCrop::factory(),
             'tree_identifier' => $this->faker->unique()->word(),
-            'price_cents' => 10000,
+            'price_idr' => 10000,
             'expected_roi_percent' => 12.5,
             'age_years' => 5,
             'productive_lifespan_years' => 20,
             'risk_rating' => 'medium',
-            'min_investment_cents' => 1000,
-            'max_investment_cents' => 10000,
+            'min_investment_idr' => 1000,
+            'max_investment_idr' => 10000,
             'status' => 'growing',
             'pricing_config_json' => [
                 'base_price' => 10000,

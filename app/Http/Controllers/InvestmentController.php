@@ -47,10 +47,13 @@ class InvestmentController extends Controller
     {
         // Find the investment and authorize access using policy
         $investment = Investment::with([
-            'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id',
+            'tree:id,tree_identifier,price_cents,expected_roi_percent,risk_rating,age_years,productive_lifespan_years,status,fruit_crop_id,lot_id,latitude,longitude,qr_code',
             'tree.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
-            'tree.fruitCrop.farm:id,name,city,state',
+            'tree.fruitCrop.farm:id,name,city,state,country',
             'tree.fruitCrop.fruitType:id,name',
+            'tree.lot:id,name,status,total_trees,rack_id',
+            'tree.lot.rack:id,name,description,warehouse_id',
+            'tree.lot.rack.warehouse:id,name,description,farm_id',
             'transaction:id,status,stripe_payment_intent_id',
             'payouts:id,investment_id,gross_amount_cents,platform_fee_cents,net_amount_cents,status,currency,completed_at,failed_at,failed_reason,harvest_id',
             'payouts.harvest:id,scheduled_date',
@@ -112,6 +115,9 @@ class InvestmentController extends Controller
                 'age_years' => $tree->age_years,
                 'productive_lifespan_years' => $tree->productive_lifespan_years,
                 'status' => $tree->status?->value ?? $tree->status,
+                'latitude' => $tree->latitude,
+                'longitude' => $tree->longitude,
+                'qr_code' => $tree->qr_code,
                 'fruit_crop' => [
                     'variant' => $fruitCrop?->variant,
                     'harvest_cycle' => $fruitCrop?->harvest_cycle,
@@ -124,6 +130,9 @@ class InvestmentController extends Controller
                         'location' => $fruitCrop?->farm?->city
                             ? trim(($fruitCrop->farm->city ?? '').', '.($fruitCrop->farm->state ?? ''), ', ')
                             : null,
+                        'city' => $fruitCrop?->farm?->city,
+                        'state' => $fruitCrop?->farm?->state,
+                        'country' => $fruitCrop?->farm?->country,
                     ],
                 ],
             ],
@@ -135,11 +144,11 @@ class InvestmentController extends Controller
             'payouts' => $investment->payouts->map(fn ($p) => [
                 'id' => $p->id,
                 'gross_amount_cents' => $p->gross_amount_cents,
-                'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_cents / 100, 2),
+                'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_cents, 0),
                 'platform_fee_cents' => $p->platform_fee_cents,
-                'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_cents / 100, 2),
+                'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_cents, 0),
                 'net_amount_cents' => $p->net_amount_cents,
-                'net_amount_formatted' => 'Rp '.number_format($p->net_amount_cents / 100, 2),
+                'net_amount_formatted' => 'Rp '.number_format($p->net_amount_cents, 0),
                 'status' => $p->status?->value ?? $p->status,
                 'status_label' => method_exists($p->status, 'getLabel') ? $p->status->getLabel() : (method_exists($p->status, 'label') ? $p->status->label() : ucfirst($p->status?->value ?? $p->status)),
                 'currency' => $p->currency,
@@ -156,6 +165,82 @@ class InvestmentController extends Controller
                 'upcoming' => $upcomingHarvests,
             ],
         ];
+
+        // Add location hierarchy data if lot relationship exists
+        if ($tree->lot) {
+            $lot = $tree->lot;
+            $rack = $lot->rack;
+            $warehouse = $rack?->warehouse;
+
+            $investmentData['location_hierarchy'] = [
+                'farm' => [
+                    'id' => $fruitCrop?->farm?->id,
+                    'name' => $fruitCrop?->farm?->name,
+                    'city' => $fruitCrop?->farm?->city,
+                    'state' => $fruitCrop?->farm?->state,
+                    'country' => $fruitCrop?->farm?->country,
+                ],
+                'warehouse' => $warehouse ? [
+                    'id' => $warehouse->id,
+                    'name' => $warehouse->name,
+                    'description' => $warehouse->description,
+                ] : null,
+                'rack' => $rack ? [
+                    'id' => $rack->id,
+                    'name' => $rack->name,
+                    'description' => $rack->description,
+                ] : null,
+                'lot' => [
+                    'id' => $lot->id,
+                    'name' => $lot->name,
+                    'status' => $lot->status?->value ?? $lot->status,
+                    'total_trees' => $lot->total_trees,
+                ],
+                'tree' => [
+                    'id' => $tree->id,
+                    'identifier' => $tree->tree_identifier,
+                    'latitude' => $tree->latitude,
+                    'longitude' => $tree->longitude,
+                    'qr_code' => $tree->qr_code,
+                ],
+                'fruit_crop' => [
+                    'id' => $fruitCrop?->id,
+                    'variant' => $fruitCrop?->variant,
+                    'fruit_type' => [
+                        'id' => $fruitCrop?->fruitType?->id,
+                        'name' => $fruitCrop?->fruitType?->name,
+                    ],
+                ],
+            ];
+        }
+
+        // Add growth timeline data (visible to investors)
+        $growthTimeline = $tree->visibleGrowthTimeline()
+            ->with('author:id,name')
+            ->orderBy('recorded_at', 'desc')
+            ->get();
+
+        if ($growthTimeline->isNotEmpty()) {
+            $investmentData['growth_timeline'] = $growthTimeline->map(fn ($entry) => [
+                'id' => $entry->id,
+                'milestone_type' => $entry->milestone_type->value,
+                'milestone_type_label' => $entry->milestone_type->label(),
+                'milestone_type_icon' => $entry->milestone_type->icon(),
+                'milestone_type_color' => $entry->milestone_type->color(),
+                'health_status' => $entry->health_status->value,
+                'health_status_label' => $entry->health_status->label(),
+                'health_status_icon' => $entry->health_status->icon(),
+                'health_status_color' => $entry->health_status->color(),
+                'title' => $entry->title,
+                'description' => $entry->description,
+                'photos' => $entry->getPhotoUrls(),
+                'height_cm' => $entry->height_cm,
+                'trunk_diameter_cm' => $entry->trunk_diameter_cm,
+                'fruit_count' => $entry->fruit_count,
+                'recorded_at' => $entry->recorded_at,
+                'author' => $entry->author ? ['name' => $entry->author->name] : null,
+            ])->toArray();
+        }
 
         return Inertia::render('Investments/Show', [
             'investment' => $investmentData,

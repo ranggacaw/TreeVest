@@ -11,18 +11,18 @@ class MarketListingFactory extends Factory
 {
     public function definition(): array
     {
-        $askPriceCents = $this->faker->numberBetween(1000, 100000);
+        $askPriceIdr = $this->faker->numberBetween(1000, 100000);
         $feeRate = config('treevest.secondary_market_fee_rate', 0.02);
-        $platformFeeCents = (int) ceil($askPriceCents * $feeRate);
+        $platformFeeIdr = (int) ceil($askPriceIdr * $feeRate);
 
         return [
             'investment_id' => Investment::factory(),
             'seller_id' => User::factory(),
-            'ask_price_cents' => $askPriceCents,
+            'ask_price_idr' => $askPriceIdr,
             'currency' => 'IDR',
             'platform_fee_rate' => $feeRate,
-            'platform_fee_cents' => $platformFeeCents,
-            'net_proceeds_cents' => $askPriceCents - $platformFeeCents,
+            'platform_fee_idr' => $platformFeeIdr,
+            'net_proceeds_idr' => $askPriceIdr - $platformFeeIdr,
             'status' => ListingStatus::Active,
             'buyer_id' => null,
             'purchased_at' => null,

@@ -50,7 +50,7 @@ class ReportController extends Controller
                         '%s - %s (%s)',
                         $inv->tree->fruitCrop->farm->name ?? 'Unknown Farm',
                         $inv->tree->tree_identifier,
-                        number_format($inv->amount_cents / 100, 2)
+                        number_format($inv->amount_cents, 0)
                     ),
                 ];
             });

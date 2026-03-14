@@ -21,8 +21,8 @@ interface Props {
     transactions: WalletTransaction[];
 }
 
-function formatIDR(cents: number) {
-    return (cents / 100).toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
+function formatIDR(amount: number) {
+    return amount.toLocaleString('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 });
 }
 
 export default function Index({ wallet, transactions }: Props) {

@@ -15,9 +15,9 @@ class Payout extends Model
         'investment_id',
         'harvest_id',
         'investor_id',
-        'gross_amount_cents',
-        'platform_fee_cents',
-        'net_amount_cents',
+        'gross_amount_idr',
+        'platform_fee_idr',
+        'net_amount_idr',
         'currency',
         'status',
         'payout_method',
@@ -33,9 +33,9 @@ class Payout extends Model
     {
         return [
             'status' => PayoutStatus::class,
-            'gross_amount_cents' => 'integer',
-            'platform_fee_cents' => 'integer',
-            'net_amount_cents' => 'integer',
+            'gross_amount_idr' => 'integer',
+            'platform_fee_idr' => 'integer',
+            'net_amount_idr' => 'integer',
             'processing_started_at' => 'datetime',
             'completed_at' => 'datetime',
             'failed_at' => 'datetime',
@@ -69,16 +69,16 @@ class Payout extends Model
 
     public function getGrossAmountFormattedAttribute(): string
     {
-        return $this->currency.' '.number_format($this->gross_amount_cents / 100, 2);
+        return $this->currency.' '.number_format($this->gross_amount_idr, 0);
     }
 
     public function getPlatformFeeFormattedAttribute(): string
     {
-        return $this->currency.' '.number_format($this->platform_fee_cents / 100, 2);
+        return $this->currency.' '.number_format($this->platform_fee_idr, 0);
     }
 
     public function getNetAmountFormattedAttribute(): string
     {
-        return $this->currency.' '.number_format($this->net_amount_cents / 100, 2);
+        return $this->currency.' '.number_format($this->net_amount_idr, 0);
     }
 }

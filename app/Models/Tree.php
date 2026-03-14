@@ -19,13 +19,16 @@ class Tree extends Model
         'fruit_crop_id',
         'lot_id',
         'tree_identifier',
-        'price_cents',
+        'latitude',
+        'longitude',
+        'qr_code',
+        'price_idr',
         'expected_roi_percent',
         'age_years',
         'productive_lifespan_years',
         'risk_rating',
-        'min_investment_cents',
-        'max_investment_cents',
+        'min_investment_idr',
+        'max_investment_idr',
         'status',
         'historical_yield_json',
         'pricing_config_json',
@@ -40,10 +43,12 @@ class Tree extends Model
             'pricing_config_json' => 'array',
             'age_years' => 'integer',
             'productive_lifespan_years' => 'integer',
-            'price_cents' => 'integer',
+            'price_idr' => 'integer',
             'expected_roi_percent' => 'decimal:2',
-            'min_investment_cents' => 'integer',
-            'max_investment_cents' => 'integer',
+            'min_investment_idr' => 'integer',
+            'max_investment_idr' => 'integer',
+            'latitude' => 'float',
+            'longitude' => 'float',
         ];
     }
 
@@ -77,6 +82,18 @@ class Tree extends Model
     public function investments(): HasMany
     {
         return $this->hasMany(Investment::class);
+    }
+
+    public function growthTimeline(): HasMany
+    {
+        return $this->hasMany(TreeGrowthTimeline::class)->orderBy('recorded_date', 'desc');
+    }
+
+    public function visibleGrowthTimeline(): HasMany
+    {
+        return $this->hasMany(TreeGrowthTimeline::class)
+            ->where('is_visible_to_investors', true)
+            ->orderBy('recorded_date', 'desc');
     }
 
     public function scopeInvestable($query)
@@ -127,5 +144,64 @@ class Tree extends Model
     public function wishlistItems(): MorphMany
     {
         return $this->morphMany(WishlistItem::class, 'wishlistable');
+    }
+
+    public function hasLocation(): bool
+    {
+        return $this->latitude !== null && $this->longitude !== null;
+    }
+
+    public function getGoogleMapsUrl(): ?string
+    {
+        if (! $this->hasLocation()) {
+            return null;
+        }
+
+        return "https://www.google.com/maps?q={$this->latitude},{$this->longitude}";
+    }
+
+    public function getLocationLabel(): string
+    {
+        if (! $this->hasLocation()) {
+            return 'Location not set';
+        }
+
+        return "{$this->latitude}, {$this->longitude}";
+    }
+
+    public function generateQrCode(): string
+    {
+        if ($this->qr_code) {
+            return $this->qr_code;
+        }
+
+        // Generate unique QR code format: TREE-{FARM_ID}-{WAREHOUSE_ID}-{RACK_ID}-{LOT_ID}-{TREE_ID}
+        $qrCode = sprintf(
+            'TREE-%d-%d-%d-%d-%d',
+            $this->lot->rack->warehouse->farm_id ?? 0,
+            $this->lot->rack->warehouse_id ?? 0,
+            $this->lot->rack_id ?? 0,
+            $this->lot_id ?? 0,
+            $this->id
+        );
+
+        $this->update(['qr_code' => $qrCode]);
+
+        return $qrCode;
+    }
+
+    public function scopeWithLocation($query)
+    {
+        return $query->whereNotNull('latitude')->whereNotNull('longitude');
+    }
+
+    public function scopeNearby($query, float $lat, float $lng, float $radiusKm = 10)
+    {
+        return $query->whereNotNull('latitude')
+            ->whereNotNull('longitude')
+            ->whereRaw(
+                'ST_Distance_Sphere(point(longitude, latitude), point(?, ?)) <= ?',
+                [$lng, $lat, $radiusKm * 1000]
+            );
     }
 }

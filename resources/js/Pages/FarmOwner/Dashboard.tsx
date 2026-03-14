@@ -5,7 +5,7 @@ import StatCard from '@/Components/Dashboard/StatCard';
 import QuickActionGrid from '@/Components/Dashboard/QuickActionGrid';
 import FarmStatusBadge from '@/Components/FarmStatusBadge';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
-import { Leaf, Calendar, Stethoscope, LineChart, HandCoins, Users, Sprout } from 'lucide-react';
+import { Leaf, Calendar, Stethoscope, LineChart, HandCoins, Users, Sprout, Warehouse, Layers } from 'lucide-react';
 import { useTranslation } from 'react-i18next';
 
 export default function Dashboard({
@@ -22,6 +22,8 @@ export default function Dashboard({
         { label: t('farm_owner.dashboard.schedule_harvest'), href: route('farm-owner.harvests.create'), icon: <Calendar />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.post_health_update'), href: route('farm-owner.health-updates.create'), icon: <Stethoscope />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.manage_trees'), href: route('farm-owner.trees.index'), icon: <Sprout />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.manage_warehouses', 'Warehouses'), href: route('farm-owner.warehouses.index'), icon: <Warehouse />, color: 'sage' as const },
+        { label: t('farm_owner.dashboard.manage_lots', 'Lots'), href: route('farm-owner.lots.index'), icon: <Layers />, color: 'sage' as const },
         { label: t('farm_owner.dashboard.view_analytics'), href: route('farms.manage.index'), icon: <LineChart />, color: 'sage' as const },
     ];
 

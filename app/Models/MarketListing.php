@@ -15,11 +15,11 @@ class MarketListing extends Model
     protected $fillable = [
         'investment_id',
         'seller_id',
-        'ask_price_cents',
+        'ask_price_idr',
         'currency',
         'platform_fee_rate',
-        'platform_fee_cents',
-        'net_proceeds_cents',
+        'platform_fee_idr',
+        'net_proceeds_idr',
         'status',
         'buyer_id',
         'purchased_at',
@@ -33,10 +33,10 @@ class MarketListing extends Model
     {
         return [
             'status' => ListingStatus::class,
-            'ask_price_cents' => 'integer',
+            'ask_price_idr' => 'integer',
             'platform_fee_rate' => 'decimal:4',
-            'platform_fee_cents' => 'integer',
-            'net_proceeds_cents' => 'integer',
+            'platform_fee_idr' => 'integer',
+            'net_proceeds_idr' => 'integer',
             'purchased_at' => 'datetime',
             'cancelled_at' => 'datetime',
             'expires_at' => 'datetime',
@@ -111,16 +111,16 @@ class MarketListing extends Model
 
     public function getFormattedAskPriceAttribute(): string
     {
-        return $this->currency.' '.number_format($this->ask_price_cents / 100, 2);
+        return $this->currency.' '.number_format($this->ask_price_idr, 0);
     }
 
     public function getFormattedPlatformFeeAttribute(): string
     {
-        return $this->currency.' '.number_format($this->platform_fee_cents / 100, 2);
+        return $this->currency.' '.number_format($this->platform_fee_idr, 0);
     }
 
     public function getFormattedNetProceedsAttribute(): string
     {
-        return $this->currency.' '.number_format($this->net_proceeds_cents / 100, 2);
+        return $this->currency.' '.number_format($this->net_proceeds_idr, 0);
     }
 }

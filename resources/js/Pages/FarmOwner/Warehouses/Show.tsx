@@ -1,20 +1,6 @@
 import { Head, Link, useForm } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
-
-interface Rack {
-    id: number;
-    name: string;
-    description: string | null;
-    lots?: { id: number; name: string; status: string; investments_count: number }[];
-}
-
-interface Warehouse {
-    id: number;
-    name: string;
-    description: string | null;
-    racks: Rack[];
-    farm: { id: number; name: string };
-}
+import { Warehouse, Rack } from '@/types';
 
 interface Props {
     warehouse: Warehouse;
@@ -42,13 +28,13 @@ export default function Show({ warehouse }: Props) {
                         ← Back to Warehouses
                     </Link>
                     <h1 className="text-2xl font-bold text-gray-900 mt-2">{warehouse.name}</h1>
-                    <p className="text-sm text-gray-500">{warehouse.farm.name}</p>
+                    <p className="text-sm text-gray-500">{warehouse.farm?.name}</p>
                 </div>
 
                 {/* Racks list */}
                 <div className="mb-8">
                     <h2 className="text-lg font-semibold text-gray-800 mb-4">Racks</h2>
-                    {warehouse.racks.length === 0 ? (
+                    {!warehouse.racks || warehouse.racks.length === 0 ? (
                         <p className="text-gray-500 text-sm">No racks yet. Add one below.</p>
                     ) : (
                         <div className="grid gap-3">

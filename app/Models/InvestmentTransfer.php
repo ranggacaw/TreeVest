@@ -15,8 +15,8 @@ class InvestmentTransfer extends Model
         'listing_id',
         'from_user_id',
         'to_user_id',
-        'transfer_price_cents',
-        'platform_fee_cents',
+        'transfer_price_idr',
+        'platform_fee_idr',
         'transaction_id',
         'transferred_at',
     ];
@@ -24,8 +24,8 @@ class InvestmentTransfer extends Model
     protected function casts(): array
     {
         return [
-            'transfer_price_cents' => 'integer',
-            'platform_fee_cents' => 'integer',
+            'transfer_price_idr' => 'integer',
+            'platform_fee_idr' => 'integer',
             'transferred_at' => 'datetime',
         ];
     }
@@ -71,13 +71,13 @@ class InvestmentTransfer extends Model
     {
         $currency = $this->listing?->currency ?? 'IDR';
 
-        return $currency.' '.number_format($this->transfer_price_cents / 100, 2);
+        return $currency.' '.number_format($this->transfer_price_idr, 0);
     }
 
     public function getFormattedPlatformFeeAttribute(): string
     {
         $currency = $this->listing?->currency ?? 'IDR';
 
-        return $currency.' '.number_format($this->platform_fee_cents / 100, 2);
+        return $currency.' '.number_format($this->platform_fee_idr, 0);
     }
 }

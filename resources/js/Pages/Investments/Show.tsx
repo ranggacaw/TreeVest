@@ -3,12 +3,15 @@ import { Head, Link, useForm } from '@inertiajs/react';
 import AppShellLayout from '@/Layouts/AppShellLayout';
 import AppTopBar from '@/Components/Portfolio/AppTopBar';
 import BottomNav from '@/Components/Portfolio/BottomNav';
-import { PageProps } from '@/types';
+import { PageProps, LocationHierarchyData, TreeGrowthTimeline } from '@/types';
 import { useTranslation } from 'react-i18next';
 import { IconTree, IconDollar, IconChart, IconCalendar, IconArrowLeft, IconCheck, IconX } from '@/Components/Icons/AppIcons';
 import { formatRupiah } from '@/utils/currency';
 import PrimaryButton from '@/Components/PrimaryButton';
 import SecondaryButton from '@/Components/SecondaryButton';
+import LocationHierarchy from '@/Components/LocationHierarchy';
+import TreeLocationMap from '@/Components/TreeLocationMap';
+import GrowthTimeline from '@/Components/GrowthTimeline';
 
 interface HarvestData {
     id: number;
@@ -59,6 +62,9 @@ interface InvestmentData {
         age_years?: number;
         productive_lifespan_years?: number;
         status?: string;
+        latitude?: number;
+        longitude?: number;
+        qr_code?: string;
         fruit_crop: {
             variant: string;
             fruit_type: {
@@ -69,6 +75,25 @@ interface InvestmentData {
                 id: number;
                 name: string;
                 location?: string;
+                city?: string;
+                state?: string;
+                country?: string;
+            };
+        };
+        lot?: {
+            id: number;
+            name: string;
+            status: string;
+            total_trees: number;
+            rack?: {
+                id: number;
+                name: string;
+                description?: string;
+                warehouse?: {
+                    id: number;
+                    name: string;
+                    description?: string;
+                };
             };
         };
     };
@@ -82,6 +107,8 @@ interface InvestmentData {
         status: string;
         stripe_payment_intent_id?: string;
     };
+    location_hierarchy?: LocationHierarchyData;
+    growth_timeline?: TreeGrowthTimeline[];
 }
 
 interface Props extends PageProps {
@@ -254,6 +281,85 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                             </Link>
                         </div>
                     </div>
+
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* Location Hierarchy */}
+                    {investment.location_hierarchy && (
+                        <div className="bg-white p-6">
+                            <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                {t('tree_location', 'Tree Location')}
+                            </h3>
+                            <LocationHierarchy
+                                farm={investment.location_hierarchy.farm}
+                                warehouse={investment.location_hierarchy.warehouse}
+                                rack={investment.location_hierarchy.rack}
+                                lot={investment.location_hierarchy.lot}
+                                tree={{
+                                    id: investment.location_hierarchy.tree.id,
+                                    tree_identifier: investment.location_hierarchy.tree.identifier,
+                                }}
+                                fruitCrop={investment.location_hierarchy.fruit_crop}
+                                compact={false}
+                            />
+                        </div>
+                    )}
+
+                    {/* GPS Map (if coordinates available) */}
+                    {investment.tree.latitude && investment.tree.longitude && (
+                        <>
+                            <div className="h-3 bg-gray-50" />
+                            <div className="bg-white p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                    {t('gps_location', 'GPS Location')}
+                                </h3>
+                                <TreeLocationMap
+                                    latitude={investment.tree.latitude}
+                                    longitude={investment.tree.longitude}
+                                    treeName={`${investment.tree.identifier} - ${investment.tree.fruit_crop.farm.name}`}
+                                    height={400}
+                                    showDirections={true}
+                                />
+                            </div>
+                        </>
+                    )}
+
+                    {/* Growth Timeline */}
+                    {investment.growth_timeline && investment.growth_timeline.length > 0 && (
+                        <>
+                            <div className="h-3 bg-gray-50" />
+                            <div className="bg-white p-6">
+                                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                    {t('growth_timeline', 'Growth Timeline')}
+                                </h3>
+                                <GrowthTimeline
+                                    entries={investment.growth_timeline.map((entry) => ({
+                                        id: entry.id,
+                                        title: entry.title,
+                                        description: entry.description,
+                                        milestone_type: {
+                                            value: entry.milestone_type,
+                                            label: entry.milestone_type_label,
+                                            icon: entry.milestone_type_icon,
+                                            color: entry.milestone_type_color,
+                                        },
+                                        health_status: {
+                                            value: entry.health_status,
+                                            label: entry.health_status_label,
+                                            icon: entry.health_status_icon,
+                                            color: entry.health_status_color,
+                                        },
+                                        photos: entry.photos,
+                                        tree_height_cm: entry.height_cm,
+                                        trunk_diameter_cm: entry.trunk_diameter_cm,
+                                        estimated_fruit_count: entry.fruit_count,
+                                        recorded_date: entry.recorded_at,
+                                        recorded_by: entry.author ? { name: entry.author.name } : undefined,
+                                    }))}
+                                />
+                            </div>
+                        </>
+                    )}
 
                     <div className="h-3 bg-gray-50" />
 
