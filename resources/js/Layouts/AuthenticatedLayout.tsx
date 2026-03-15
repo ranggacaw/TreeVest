@@ -40,8 +40,11 @@ export default function Authenticated({
                                         <NavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
                                             {t('navigation:portfolio')}
                                         </NavLink>
+                                        <NavLink href={route('investor.lots.index')} active={route().current('investor.lots.*')}>
+                                            {t('navigation:lot_marketplace', 'Lot Marketplace')}
+                                        </NavLink>
                                         <NavLink href={route('farms.index')} active={route().current('farms.*')}>
-                                            {t('navigation:marketplace')}
+                                            {t('navigation:farms', 'Farms')}
                                         </NavLink>
                                         <NavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
                                             {t('navigation:secondary_market')}
@@ -202,8 +205,11 @@ export default function Authenticated({
                                 <ResponsiveNavLink href={route('portfolio.dashboard')} active={route().current('portfolio.dashboard')}>
                                     {t('navigation:portfolio')}
                                 </ResponsiveNavLink>
+                                <ResponsiveNavLink href={route('investor.lots.index')} active={route().current('investor.lots.*')}>
+                                    {t('navigation:lot_marketplace', 'Lot Marketplace')}
+                                </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('farms.index')} active={route().current('farms.*')}>
-                                    {t('navigation:marketplace')}
+                                    {t('navigation:farms', 'Farms')}
                                 </ResponsiveNavLink>
                                 <ResponsiveNavLink href={route('secondary-market.index')} active={route().current('secondary-market.*')}>
                                     {t('navigation:secondary_market')}

@@ -337,6 +337,7 @@ Route::middleware(['auth', 'role:investor'])->group(function () {
 
         // Lot investment routes
         Route::prefix('lots')->name('lots.')->group(function () {
+            Route::get('/', [InvestorLotController::class, 'index'])->name('index');
             Route::get('/{lot}', [InvestorLotController::class, 'show'])->name('show');
             Route::post('/{lot}/invest', [InvestorLotController::class, 'invest'])->name('invest');
             Route::post('/{lot}/reinvest', [InvestorLotController::class, 'reinvest'])->name('reinvest');

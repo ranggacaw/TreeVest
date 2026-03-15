@@ -77,9 +77,9 @@ class FruitCrop extends Model
         return $this->hasMany(TreeHealthUpdate::class)->orderBy('created_at', 'desc');
     }
 
-    public function healthAlerts(): HasMany
+    public function harvests(): HasMany
     {
-        return $this->hasMany(HealthAlert::class)->orderBy('created_at', 'desc');
+        return $this->hasMany(Harvest::class)->orderBy('scheduled_date', 'desc');
     }
 
     public function latestHealthUpdate(): ?TreeHealthUpdate

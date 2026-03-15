@@ -43,6 +43,11 @@ class Investment extends Model
         return $this->belongsTo(User::class);
     }
 
+    public function investor(): BelongsTo
+    {
+        return $this->user();
+    }
+
     public function tree(): BelongsTo
     {
         return $this->belongsTo(Tree::class);

@@ -54,6 +54,12 @@ class InvestmentController extends Controller
             'tree.lot:id,name,status,total_trees,rack_id',
             'tree.lot.rack:id,name,description,warehouse_id',
             'tree.lot.rack.warehouse:id,name,description,farm_id',
+            'lot:id,name,status,total_trees,rack_id,fruit_crop_id,current_price_per_tree_idr,base_price_per_tree_idr,monthly_increase_rate,cycle_started_at,cycle_months',
+            'lot.fruitCrop:id,variant,harvest_cycle,farm_id,fruit_type_id',
+            'lot.fruitCrop.farm:id,name,city,state,country',
+            'lot.fruitCrop.fruitType:id,name',
+            'lot.rack:id,name,description,warehouse_id',
+            'lot.rack.warehouse:id,name,description,farm_id',
             'transaction:id,status,stripe_payment_intent_id',
             'payouts:id,investment_id,gross_amount_idr,platform_fee_idr,net_amount_idr,status,currency,completed_at,failed_at,failed_reason,harvest_id',
             'payouts.harvest:id,scheduled_date',
@@ -64,34 +70,58 @@ class InvestmentController extends Controller
         $this->authorize('viewDetails', $investment);
 
         $tree = $investment->tree;
-        $fruitCrop = $tree->fruitCrop;
+        $lot = $investment->lot;
+
+        // Handle both tree-based and lot-based investments
+        if ($tree && $tree->fruitCrop) {
+            $fruitCrop = $tree->fruitCrop;
+            $investmentType = 'tree';
+        } elseif ($lot && $lot->fruitCrop) {
+            $fruitCrop = $lot->fruitCrop;
+            $investmentType = 'lot';
+        } else {
+            abort(404, 'Investment has incomplete or missing data');
+        }
 
         // Get harvest data using Eloquent scopes
-        $completedHarvests = $tree->harvests()
-            ->completed()
-            ->select(['id', 'scheduled_date', 'estimated_yield_kg', 'actual_yield_kg', 'quality_grade', 'notes'])
-            ->get()
-            ->map(fn ($h) => [
-                'id' => $h->id,
-                'harvest_date' => $h->scheduled_date,
-                'estimated_yield_kg' => $h->estimated_yield_kg,
-                'actual_yield_kg' => $h->actual_yield_kg,
-                'quality_grade' => $h->quality_grade?->value ?? $h->quality_grade,
-                'notes' => $h->notes,
-            ])
-            ->toArray();
+        $harvests = null;
 
-        $upcomingHarvests = $tree->harvests()
-            ->upcoming()
-            ->select(['id', 'scheduled_date', 'estimated_yield_kg'])
-            ->orderBy('scheduled_date')
-            ->get()
-            ->map(fn ($h) => [
-                'id' => $h->id,
-                'harvest_date' => $h->scheduled_date,
-                'estimated_yield_kg' => $h->estimated_yield_kg,
-            ])
-            ->toArray();
+        if ($tree) {
+            $harvests = $tree->harvests();
+        } elseif ($fruitCrop) {
+            $harvests = $fruitCrop->harvests();
+        }
+
+        if (! $harvests) {
+            $completedHarvests = [];
+            $upcomingHarvests = [];
+        } else {
+            $completedHarvests = $harvests
+                ->completed()
+                ->select(['id', 'scheduled_date', 'estimated_yield_kg', 'actual_yield_kg', 'quality_grade', 'notes'])
+                ->get()
+                ->map(fn ($h) => [
+                    'id' => $h->id,
+                    'harvest_date' => $h->scheduled_date->format('d-m-Y. H:i'),
+                    'estimated_yield_kg' => $h->estimated_yield_kg,
+                    'actual_yield_kg' => $h->actual_yield_kg,
+                    'quality_grade' => $h->quality_grade?->value ?? $h->quality_grade,
+                    'notes' => $h->notes,
+                ])
+                ->toArray();
+
+            $upcomingHarvests = $harvests
+                ->upcoming()
+                ->select(['id', 'scheduled_date', 'estimated_yield_kg'])
+                ->orderBy('scheduled_date')
+                ->get()
+                ->map(fn ($h) => [
+                    'id' => $h->id,
+                    'harvest_date' => $h->scheduled_date->format('d-m-Y. H:i'),
+                    'estimated_yield_kg' => $h->estimated_yield_kg,
+                ])
+                ->toArray();
+        }
 
         // Build a flat, explicit data array to avoid cascading resource memory issues
         $investmentData = [
@@ -100,12 +130,16 @@ class InvestmentController extends Controller
             'formatted_amount' => $investment->formatted_amount,
             'status' => $investment->status->value,
             'status_label' => $investment->status->getLabel(),
-            'purchase_date' => $investment->purchase_date->toIso8601String(),
-            'created_at' => $investment->created_at?->toIso8601String(),
+            'purchase_date' => $investment->purchase_date->format('d-m-Y. H:i'),
+            'created_at' => $investment->created_at?->format('d-m-Y. H:i'),
             'currency' => $investment->currency,
             'current_value_idr' => $investment->amount_idr,
-            'projected_return_idr' => (int) ($investment->amount_idr * ($tree->expected_roi_percent ?? 0) / 100),
-            'tree' => [
+            'projected_return_idr' => $investmentType === 'tree' ? (int) ($investment->amount_idr * ($tree?->expected_roi_percent ?? 0) / 100) : 0,
+            'investment_type' => $investmentType,
+        ];
+
+        if ($tree) {
+            $investmentData['tree'] = [
                 'id' => $tree->id,
                 'identifier' => $tree->tree_identifier,
                 'price_idr' => $tree->price_idr,
@@ -118,57 +152,73 @@ class InvestmentController extends Controller
                 'latitude' => $tree->latitude,
                 'longitude' => $tree->longitude,
                 'qr_code' => $tree->qr_code,
-                'fruit_crop' => [
-                    'variant' => $fruitCrop?->variant,
-                    'harvest_cycle' => $fruitCrop?->harvest_cycle,
-                    'fruit_type' => [
-                        'name' => $fruitCrop?->fruitType?->name,
-                    ],
-                    'farm' => [
-                        'id' => $fruitCrop?->farm?->id,
-                        'name' => $fruitCrop?->farm?->name,
-                        'location' => $fruitCrop?->farm?->city
-                            ? trim(($fruitCrop->farm->city ?? '').', '.($fruitCrop->farm->state ?? ''), ', ')
-                            : null,
-                        'city' => $fruitCrop?->farm?->city,
-                        'state' => $fruitCrop?->farm?->state,
-                        'country' => $fruitCrop?->farm?->country,
-                    ],
+            ];
+        } elseif ($lot) {
+            $investmentData['lot'] = [
+                'id' => $lot->id,
+                'name' => $lot->name,
+                'total_trees' => $lot->total_trees,
+                'current_price_per_tree_idr' => $lot->current_price_per_tree_idr,
+                'current_price_formatted' => 'Rp '.number_format($lot->current_price_per_tree_idr, 0),
+                'status' => $lot->status?->value ?? $lot->status,
+                'cycle_started_at' => $lot->cycle_started_at?->format('d-m-Y. H:i'),
+                'cycle_months' => $lot->cycle_months,
+            ];
+        }
+
+        if ($fruitCrop) {
+            $investmentData['fruit_crop'] = [
+                'variant' => $fruitCrop->variant,
+                'harvest_cycle' => $fruitCrop->harvest_cycle,
+                'fruit_type' => [
+                    'name' => $fruitCrop->fruitType?->name,
                 ],
-            ],
-            'transaction' => $investment->transaction ? [
-                'id' => $investment->transaction->id,
-                'status' => $investment->transaction->status,
-                'stripe_payment_intent_id' => $investment->transaction->stripe_payment_intent_id,
+                'farm' => [
+                    'id' => $fruitCrop->farm?->id,
+                    'name' => $fruitCrop->farm?->name,
+                    'location' => $fruitCrop->farm?->city
+                        ? trim(($fruitCrop->farm->city ?? '').', '.($fruitCrop->farm->state ?? ''), ', ')
+                        : null,
+                    'city' => $fruitCrop->farm?->city,
+                    'state' => $fruitCrop->farm?->state,
+                    'country' => $fruitCrop->farm?->country,
+                ],
+            ];
+        }
+
+        $investmentData['transaction'] = $investment->transaction ? [
+            'id' => $investment->transaction->id,
+            'status' => $investment->transaction->status,
+            'stripe_payment_intent_id' => $investment->transaction->stripe_payment_intent_id,
+        ] : null;
+
+        $investmentData['payouts'] = $investment->payouts->map(fn ($p) => [
+            'id' => $p->id,
+            'gross_amount_idr' => $p->gross_amount_idr,
+            'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_idr, 0),
+            'platform_fee_idr' => $p->platform_fee_idr,
+            'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_idr, 0),
+            'net_amount_idr' => $p->net_amount_idr,
+            'net_amount_formatted' => 'Rp '.number_format($p->net_amount_idr, 0),
+            'status' => $p->status?->value ?? $p->status,
+            'status_label' => method_exists($p->status, 'getLabel') ? $p->status->getLabel() : (method_exists($p->status, 'label') ? $p->status->label() : ucfirst($p->status?->value ?? $p->status)),
+            'currency' => $p->currency,
+            'harvest' => $p->harvest ? [
+                'id' => $p->harvest->id,
+                'harvest_date' => $p->harvest->scheduled_date->format('d-m-Y. H:i'),
             ] : null,
-            'payouts' => $investment->payouts->map(fn ($p) => [
-                'id' => $p->id,
-                'gross_amount_idr' => $p->gross_amount_idr,
-                'gross_amount_formatted' => 'Rp '.number_format($p->gross_amount_idr, 0),
-                'platform_fee_idr' => $p->platform_fee_idr,
-                'platform_fee_formatted' => 'Rp '.number_format($p->platform_fee_idr, 0),
-                'net_amount_idr' => $p->net_amount_idr,
-                'net_amount_formatted' => 'Rp '.number_format($p->net_amount_idr, 0),
-                'status' => $p->status?->value ?? $p->status,
-                'status_label' => method_exists($p->status, 'getLabel') ? $p->status->getLabel() : (method_exists($p->status, 'label') ? $p->status->label() : ucfirst($p->status?->value ?? $p->status)),
-                'currency' => $p->currency,
-                'harvest' => $p->harvest ? [
-                    'id' => $p->harvest->id,
-                    'harvest_date' => $p->harvest->scheduled_date,
-                ] : null,
-                'completed_at' => $p->completed_at,
-                'failed_at' => $p->failed_at,
-                'failed_reason' => $p->failed_reason,
-            ])->values()->toArray(),
-            'harvests' => [
-                'completed' => $completedHarvests,
-                'upcoming' => $upcomingHarvests,
-            ],
+            'completed_at' => $p->completed_at?->format('d-m-Y. H:i'),
+            'failed_at' => $p->failed_at?->format('d-m-Y. H:i'),
+            'failed_reason' => $p->failed_reason,
+        ])->values()->toArray();
+
+        $investmentData['harvests'] = [
+            'completed' => $completedHarvests,
+            'upcoming' => $upcomingHarvests,
         ];
 
         // Add location hierarchy data if lot relationship exists
-        if ($tree->lot) {
-            $lot = $tree->lot;
+        if ($lot) {
             $rack = $lot->rack;
             $warehouse = $rack?->warehouse;
 
@@ -196,50 +246,61 @@ class InvestmentController extends Controller
                     'status' => $lot->status?->value ?? $lot->status,
                     'total_trees' => $lot->total_trees,
                 ],
-                'tree' => [
+            ];
+
+            if ($tree) {
+                $investmentData['location_hierarchy']['tree'] = [
                     'id' => $tree->id,
                     'identifier' => $tree->tree_identifier,
                     'latitude' => $tree->latitude,
                     'longitude' => $tree->longitude,
                     'qr_code' => $tree->qr_code,
-                ],
-                'fruit_crop' => [
-                    'id' => $fruitCrop?->id,
-                    'variant' => $fruitCrop?->variant,
-                    'fruit_type' => [
-                        'id' => $fruitCrop?->fruitType?->id,
-                        'name' => $fruitCrop?->fruitType?->name,
-                    ],
+                ];
+            }
+
+            $investmentData['location_hierarchy']['fruit_crop'] = [
+                'id' => $fruitCrop?->id,
+                'variant' => $fruitCrop?->variant,
+                'fruit_type' => [
+                    'id' => $fruitCrop?->fruitType?->id,
+                    'name' => $fruitCrop?->fruitType?->name,
                 ],
             ];
         }
 
         // Add growth timeline data (visible to investors)
-        $growthTimeline = $tree->visibleGrowthTimeline()
-            ->with('author:id,name')
-            ->orderBy('recorded_at', 'desc')
-            ->get();
+        $growthTimeline = null;
 
-        if ($growthTimeline->isNotEmpty()) {
-            $investmentData['growth_timeline'] = $growthTimeline->map(fn ($entry) => [
-                'id' => $entry->id,
-                'milestone_type' => $entry->milestone_type->value,
-                'milestone_type_label' => $entry->milestone_type->label(),
-                'milestone_type_icon' => $entry->milestone_type->icon(),
-                'milestone_type_color' => $entry->milestone_type->color(),
-                'health_status' => $entry->health_status->value,
-                'health_status_label' => $entry->health_status->label(),
-                'health_status_icon' => $entry->health_status->icon(),
-                'health_status_color' => $entry->health_status->color(),
-                'title' => $entry->title,
-                'description' => $entry->description,
-                'photos' => $entry->getPhotoUrls(),
-                'height_cm' => $entry->height_cm,
-                'trunk_diameter_cm' => $entry->trunk_diameter_cm,
-                'fruit_count' => $entry->fruit_count,
-                'recorded_at' => $entry->recorded_at,
-                'author' => $entry->author ? ['name' => $entry->author->name] : null,
-            ])->toArray();
+        if ($tree) {
+            $growthTimeline = $tree->visibleGrowthTimeline();
+        } elseif ($lot) {
+            $growthTimeline = $lot->visibleGrowthTimeline();
+        }
+
+        if ($growthTimeline) {
+            $growthTimeline = $growthTimeline->with('recordedBy:id,name')->get();
+
+            if ($growthTimeline->isNotEmpty()) {
+                $investmentData['growth_timeline'] = $growthTimeline->map(fn ($entry) => [
+                    'id' => $entry->id,
+                    'milestone_type' => $entry->milestone_type->value,
+                    'milestone_type_label' => $entry->milestone_type->label(),
+                    'milestone_type_icon' => $entry->milestone_type->icon(),
+                    'milestone_type_color' => $entry->milestone_type->color(),
+                    'health_status' => $entry->health_status->value,
+                    'health_status_label' => $entry->health_status->label(),
+                    'health_status_icon' => $entry->health_status->icon(),
+                    'health_status_color' => $entry->health_status->color(),
+                    'title' => $entry->title,
+                    'description' => $entry->description,
+                    'photos' => $entry->getPhotoUrls(),
+                    'height_cm' => $entry->tree_height_cm,
+                    'trunk_diameter_cm' => $entry->trunk_diameter_cm,
+                    'fruit_count' => $entry->estimated_fruit_count,
+                    'recorded_at' => $entry->recorded_date,
+                    'author' => $entry->recordedBy ? ['name' => $entry->recordedBy->name] : null,
+                ])->toArray();
+            }
         }
 
         return Inertia::render('Investments/Show', [

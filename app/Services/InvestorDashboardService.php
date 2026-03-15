@@ -23,7 +23,10 @@ class InvestorDashboardService
             $totalInvestmentsCount = $investments->count();
             $activeTrees = $activeInvestments->count();
 
-            $payouts = Payout::with('investment.tree.fruitCrop.farm')
+            $payouts = Payout::with([
+                'investment.tree.fruitCrop.farm',
+                'investment.lot.fruitCrop.farm',
+            ])
                 ->where('investor_id', $userId)
                 ->orderBy('created_at', 'desc')
                 ->get();
@@ -68,6 +71,8 @@ class InvestorDashboardService
                 $farmName = 'Unknown';
                 if ($p->investment && $p->investment->tree && $p->investment->tree->fruitCrop && $p->investment->tree->fruitCrop->farm) {
                     $farmName = $p->investment->tree->fruitCrop->farm->name;
+                } elseif ($p->investment && $p->investment->lot && $p->investment->lot->fruitCrop && $p->investment->lot->fruitCrop->farm) {
+                    $farmName = $p->investment->lot->fruitCrop->farm->name;
                 }
 
                 return [
@@ -79,7 +84,10 @@ class InvestorDashboardService
                 ];
             })->values()->toArray();
 
-            $recentInvestmentsList = Investment::with('tree.fruitCrop.farm')
+            $recentInvestmentsList = Investment::with([
+                'tree.fruitCrop.farm',
+                'lot.fruitCrop.farm',
+            ])
                 ->where('user_id', $userId)
                 ->orderBy('created_at', 'desc')
                 ->limit(5)
@@ -88,6 +96,8 @@ class InvestorDashboardService
                     $farmName = 'Unknown';
                     if ($i->tree && $i->tree->fruitCrop && $i->tree->fruitCrop->farm) {
                         $farmName = $i->tree->fruitCrop->farm->name;
+                    } elseif ($i->lot && $i->lot->fruitCrop && $i->lot->fruitCrop->farm) {
+                        $farmName = $i->lot->fruitCrop->farm->name;
                     }
 
                     return [

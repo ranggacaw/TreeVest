@@ -28,10 +28,10 @@ class InvestmentPortfolioService
 
         $totalValue = $investments->sum('amount_idr');
         $totalInvested = $totalValue;
-        $averageRoi = $investments->avg('tree.expected_roi_percent') ?? 0;
+        $averageRoi = $investments->map(fn ($i) => $this->getInvestmentExpectedRoi($i))->avg() ?? 0;
 
         $treeCountByStatus = $investments->groupBy(function ($investment) {
-            return $investment->tree?->status?->value ?? 'unknown';
+            return $this->getInvestmentStatus($investment);
         })->map(fn ($group) => $group->count())->toArray();
 
         $totalPayouts = $this->getTotalPayouts($userId);
@@ -52,9 +52,9 @@ class InvestmentPortfolioService
 
         return $investments->groupBy(function ($investment) use ($groupBy) {
             return match ($groupBy) {
-                'fruit_type' => $investment->tree?->fruitCrop?->fruitType?->name ?? 'Unknown',
-                'farm' => $investment->tree?->fruitCrop?->farm?->name ?? 'Unknown',
-                'risk' => $investment->tree?->risk_rating?->value ?? 'unknown',
+                'fruit_type' => $this->getInvestmentFruitType($investment),
+                'farm' => $this->getInvestmentFarmName($investment),
+                'risk' => $this->getInvestmentRiskRating($investment),
                 default => 'Unknown',
             };
         })->map(function ($group) {
@@ -69,27 +69,55 @@ class InvestmentPortfolioService
     {
         $investments = $this->getUserActiveInvestments($userId);
 
-        $treeIds = $investments->pluck('tree_id')->filter()->unique();
+        $treeIds = $investments->whereNotNull('tree_id')->pluck('tree_id')->filter()->unique();
+        $lotFruitCropIds = $investments->whereNotNull('lot_id')
+            ->map(fn ($i) => $i->lot->fruit_crop_id)
+            ->filter()
+            ->unique();
 
-        return Harvest::whereIn('tree_id', $treeIds)
-            ->where('scheduled_date', '>=', now()->toDateString())
-            ->orderBy('scheduled_date', 'asc')
-            ->limit($limit)
-            ->with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType'])
-            ->get()
-            ->map(function ($harvest) {
-                return [
-                    'id' => $harvest->id,
-                    'harvest_date' => $harvest->scheduled_date->format('Y-m-d'),
-                    'estimated_yield_kg' => $harvest->estimated_yield_kg,
-                    'tree_id' => $harvest->tree_id,
-                    'tree_identifier' => $harvest->tree?->tree_identifier,
-                    'fruit_type' => $harvest->tree?->fruitCrop?->fruitType?->name,
-                    'variant' => $harvest->tree?->fruitCrop?->variant,
-                    'farm_name' => $harvest->tree?->fruitCrop?->farm?->name,
-                    'status' => $harvest->status?->value ?? 'scheduled',
-                ];
-            });
+        $harvestsFromTrees = $treeIds->isNotEmpty()
+            ? Harvest::whereIn('tree_id', $treeIds)
+                ->where('scheduled_date', '>=', now()->toDateString())
+                ->orderBy('scheduled_date', 'asc')
+                ->with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType'])
+                ->get()
+                ->map(function ($harvest) {
+                    return [
+                        'id' => $harvest->id,
+                        'harvest_date' => $harvest->scheduled_date->format('Y-m-d'),
+                        'estimated_yield_kg' => $harvest->estimated_yield_kg,
+                        'tree_id' => $harvest->tree_id,
+                        'tree_identifier' => $harvest->tree?->tree_identifier,
+                        'fruit_type' => $harvest->tree?->fruitCrop?->fruitType?->name,
+                        'variant' => $harvest->tree?->fruitCrop?->variant,
+                        'farm_name' => $harvest->tree?->fruitCrop?->farm?->name,
+                        'status' => $harvest->status?->value ?? 'scheduled',
+                    ];
+                })
+            : collect();
+
+        $harvestsFromLots = $lotFruitCropIds->isNotEmpty()
+            ? Harvest::whereIn('fruit_crop_id', $lotFruitCropIds->toArray())
+                ->where('scheduled_date', '>=', now()->toDateString())
+                ->orderBy('scheduled_date', 'asc')
+                ->with('fruitCrop.farm', 'fruitCrop.fruitType')
+                ->get()
+                ->map(function ($harvest) {
+                    return [
+                        'id' => $harvest->id,
+                        'harvest_date' => $harvest->scheduled_date->format('Y-m-d'),
+                        'estimated_yield_kg' => $harvest->estimated_yield_kg,
+                        'tree_id' => null,
+                        'tree_identifier' => null,
+                        'fruit_type' => $harvest->fruitCrop?->fruitType?->name,
+                        'variant' => $harvest->fruitCrop?->variant,
+                        'farm_name' => $harvest->fruitCrop?->farm?->name,
+                        'status' => $harvest->status?->value ?? 'scheduled',
+                    ];
+                })
+            : collect();
+
+        return $harvestsFromTrees->concat($harvestsFromLots)->take($limit);
     }
 
     public function getPerformanceMetrics(int $userId): array
@@ -107,12 +135,12 @@ class InvestmentPortfolioService
         }
 
         $investmentMetrics = $investments->map(function ($investment) {
-            $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+            $projectedReturn = (int) ($investment->amount_idr * $this->getInvestmentExpectedRoi($investment) / 100);
             $actualReturn = $this->calculateActualReturns($investment);
 
             return [
                 'investment_id' => $investment->id,
-                'tree_identifier' => $investment->tree?->tree_identifier,
+                'tree_identifier' => $this->getInvestmentTreeIdentifier($investment),
                 'amount_idr' => $investment->amount_idr,
                 'projected_return_idr' => $projectedReturn,
                 'actual_return_idr' => $actualReturn,
@@ -140,6 +168,8 @@ class InvestmentPortfolioService
             'tree.fruitCrop.farm.images',
             'tree.fruitCrop.fruitType',
             'tree.harvests',
+            'lot.fruitCrop.farm.images',
+            'lot.fruitCrop.fruitType',
         ])
             ->where('user_id', $userId)
             ->find($investmentId);
@@ -149,8 +179,11 @@ class InvestmentPortfolioService
         }
 
         $currentValue = $this->calculateCurrentValue($investment);
-        $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+        $projectedReturn = (int) ($investment->amount_idr * $this->getInvestmentExpectedRoi($investment) / 100);
         $actualReturn = $this->calculateActualReturns($investment);
+
+        $harvests = $investment->tree?->harvests ?? collect();
+        $farm = $this->getInvestmentFarm($investment);
 
         return [
             'id' => $investment->id,
@@ -160,9 +193,16 @@ class InvestmentPortfolioService
             'current_value_idr' => $currentValue,
             'projected_return_idr' => $projectedReturn,
             'actual_return_idr' => $actualReturn,
-            'tree' => $this->formatTreeDetails($investment->tree),
-            'farm' => $investment->tree?->fruitCrop?->farm ? $this->formatFarmDetails($investment->tree->fruitCrop->farm) : null,
-            'harvests' => $investment->tree?->harvests?->map(fn ($h) => [
+            'tree' => $investment->tree ? $this->formatTreeDetails($investment->tree) : null,
+            'lot' => $investment->lot ? [
+                'id' => $investment->lot->id,
+                'name' => $investment->lot->name,
+                'status' => $investment->lot->status?->value,
+                'total_trees' => $investment->lot->total_trees,
+                'current_price_per_tree_idr' => $investment->lot->current_price_per_tree_idr,
+            ] : null,
+            'farm' => $farm ? $this->formatFarmDetails($farm) : null,
+            'harvests' => $harvests?->map(fn ($h) => [
                 'id' => $h->id,
                 'harvest_date' => $h->scheduled_date?->format('Y-m-d'),
                 'estimated_yield_kg' => $h->estimated_yield_kg,
@@ -182,6 +222,8 @@ class InvestmentPortfolioService
                 $query->where('scheduled_date', '<=', now()->toDateString())
                     ->orderBy('scheduled_date', 'desc');
             },
+            'lot.fruitCrop.farm',
+            'lot.fruitCrop.fruitType',
         ])
             ->where('user_id', $userId)
             ->where('status', InvestmentStatus::Active)
@@ -195,13 +237,19 @@ class InvestmentPortfolioService
                     'amount_idr' => $investment->amount_idr,
                     'purchase_date' => $investment->purchase_date?->format('Y-m-d'),
                     'current_value_idr' => $this->calculateCurrentValue($investment),
-                    'projected_return_idr' => (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100),
+                    'projected_return_idr' => (int) ($investment->amount_idr * $this->getInvestmentExpectedRoi($investment) / 100),
                     'actual_return_idr' => $this->calculateActualReturns($investment),
                     'status' => $investment->status->value,
-                    'tree' => $this->formatTreeSummary($investment->tree),
+                    'tree' => $this->formatInvestmentSummary($investment),
                     'next_harvest' => $investment->tree?->harvests
                         ->where('scheduled_date', '>=', now()->toDateString())
-                        ->first()?->scheduled_date?->format('Y-m-d'),
+                        ->first()?->scheduled_date?->format('Y-m-d') ??
+                           ($investment->lot && $investment->lot->fruitCrop ?
+                               \App\Models\Harvest::where('fruit_crop_id', $investment->lot->fruitCrop->id)
+                                   ->where('scheduled_date', '>=', now()->toDateString())
+                                   ->orderBy('scheduled_date', 'asc')
+                                   ->first()?->scheduled_date?->format('Y-m-d')
+                               : null),
                 ];
             })->toArray(),
             'current_page' => $investments->currentPage(),
@@ -243,7 +291,12 @@ class InvestmentPortfolioService
 
     private function getUserActiveInvestments(int $userId): Collection
     {
-        return Investment::with(['tree.fruitCrop.farm', 'tree.fruitCrop.fruitType'])
+        return Investment::with([
+            'tree.fruitCrop.farm',
+            'tree.fruitCrop.fruitType',
+            'lot.fruitCrop.farm',
+            'lot.fruitCrop.fruitType',
+        ])
             ->where('user_id', $userId)
             ->where('status', InvestmentStatus::Active)
             ->get();
@@ -256,18 +309,38 @@ class InvestmentPortfolioService
 
     private function calculateActualReturns(Investment $investment): int
     {
-        $completedHarvests = $investment->tree?->harvests
-            ->whereNotNull('actual_yield_kg')
-            ->where('scheduled_date', '<=', now()->toDateString()) ?? collect();
+        if ($investment->tree) {
+            $completedHarvests = $investment->tree->harvests
+                ->whereNotNull('actual_yield_kg')
+                ->where('scheduled_date', '<=', now()->toDateString());
 
-        if ($completedHarvests->isEmpty()) {
-            return 0;
+            if ($completedHarvests->isEmpty()) {
+                return 0;
+            }
+
+            $totalYield = $completedHarvests->sum('actual_yield_kg');
+            $investmentAmount = $investment->amount_idr;
+
+            return (int) ($investmentAmount * ($totalYield / 100));
         }
 
-        $totalYield = $completedHarvests->sum('actual_yield_kg');
-        $investmentAmount = $investment->amount_idr;
+        // For lot-based investments, we'd need to get harvests via fruitCrop
+        if ($investment->lot && $investment->lot->fruitCrop) {
+            $completedHarvests = $investment->lot->fruitCrop->harvests
+                ->whereNotNull('actual_yield_kg')
+                ->where('scheduled_date', '<=', now()->toDateString());
 
-        return (int) ($investmentAmount * ($totalYield / 100));
+            if ($completedHarvests->isEmpty()) {
+                return 0;
+            }
+
+            $totalYield = $completedHarvests->sum('actual_yield_kg');
+            $investmentAmount = $investment->amount_idr;
+
+            return (int) ($investmentAmount * ($totalYield / 100));
+        }
+
+        return 0;
     }
 
     private function getTotalPayouts(int $userId): int
@@ -313,6 +386,39 @@ class InvestmentPortfolioService
         ];
     }
 
+    private function formatInvestmentSummary(Investment $investment): ?array
+    {
+        // Handle tree-based investments
+        if ($investment->tree) {
+            return [
+                'id' => $investment->tree->id,
+                'identifier' => $investment->tree->tree_identifier,
+                'status' => $investment->tree->status?->value,
+                'risk_rating' => $investment->tree->risk_rating?->value,
+                'expected_roi_percent' => $investment->tree->expected_roi_percent,
+                'fruit_type' => $investment->tree->fruitCrop?->fruitType?->name,
+                'variant' => $investment->tree->fruitCrop?->variant,
+                'farm_name' => $investment->tree->fruitCrop?->farm?->name,
+            ];
+        }
+
+        // Handle lot-based investments
+        if ($investment->lot) {
+            return [
+                'id' => $investment->lot->id,
+                'identifier' => $investment->lot->name,
+                'status' => $investment->lot->status?->value,
+                'risk_rating' => 'medium',
+                'expected_roi_percent' => 0,
+                'fruit_type' => $investment->lot->fruitCrop?->fruitType?->name,
+                'variant' => $investment->lot->fruitCrop?->variant,
+                'farm_name' => $investment->lot->fruitCrop?->farm?->name,
+            ];
+        }
+
+        return null;
+    }
+
     private function formatFarmDetails(\App\Models\Farm $farm): array
     {
         return [
@@ -325,7 +431,59 @@ class InvestmentPortfolioService
     }
 
     // ---------------------------------------------------------------
-    // New methods for the redesigned Portfolio Dashboard (Task 9)
+    // Helper methods for tree/lot based investments
+    // ---------------------------------------------------------------
+
+    private function getInvestmentExpectedRoi(Investment $investment): float
+    {
+        return $investment->tree?->expected_roi_percent ?? 0;
+    }
+
+    private function getInvestmentRiskRating(Investment $investment): string
+    {
+        return $investment->tree?->risk_rating?->value ?? 'medium';
+    }
+
+    private function getInvestmentTreeIdentifier(Investment $investment): ?string
+    {
+        return $investment->tree?->tree_identifier ?? $investment->lot?->name ?? null;
+    }
+
+    private function getInvestmentFruitType(Investment $investment): string
+    {
+        return $investment->tree?->fruitCrop?->fruitType?->name
+            ?? $investment->lot?->fruitCrop?->fruitType?->name
+            ?? 'Unknown';
+    }
+
+    private function getInvestmentVariant(Investment $investment): string
+    {
+        return $investment->tree?->fruitCrop?->variant
+            ?? $investment->lot?->fruitCrop?->variant
+            ?? 'Unknown';
+    }
+
+    private function getInvestmentFarmName(Investment $investment): string
+    {
+        return $investment->tree?->fruitCrop?->farm?->name
+            ?? $investment->lot?->fruitCrop?->farm?->name
+            ?? 'Unknown';
+    }
+
+    private function getInvestmentFarm(Investment $investment): ?\App\Models\Farm
+    {
+        return $investment->tree?->fruitCrop?->farm ?? $investment->lot?->fruitCrop?->farm ?? null;
+    }
+
+    private function getInvestmentStatus(Investment $investment): string
+    {
+        return $investment->tree?->status?->value
+            ?? $investment->lot?->status?->value
+            ?? 'unknown';
+    }
+
+    // ---------------------------------------------------------------
+    // New methods for redesigned Portfolio Dashboard (Task 9)
     // ---------------------------------------------------------------
 
     /**
@@ -374,6 +532,8 @@ class InvestmentPortfolioService
         $paginator = Investment::with([
             'tree.fruitCrop.farm',
             'tree.fruitCrop.fruitType',
+            'lot.fruitCrop.farm',
+            'lot.fruitCrop.fruitType',
             'payouts' => fn ($q) => $q->where('status', \App\Enums\PayoutStatus::Completed)
                 ->orderBy('created_at', 'desc')
                 ->limit(6),
@@ -391,7 +551,8 @@ class InvestmentPortfolioService
                 ->toArray();
 
             $actualReturn = $investment->payouts->sum('net_amount_idr');
-            $projectedReturn = (int) ($investment->amount_idr * ($investment->tree?->expected_roi_percent ?? 0) / 100);
+            $treeRoi = $investment->tree?->expected_roi_percent ?? 0;
+            $projectedReturn = (int) ($investment->amount_idr * $treeRoi / 100);
 
             return [
                 'id' => $investment->id,
@@ -402,8 +563,8 @@ class InvestmentPortfolioService
                 'actual_return_idr' => (int) $actualReturn,
                 'projected_return_idr' => $projectedReturn,
                 'gain_loss_idr' => (int) $actualReturn - $projectedReturn,
-                'sparkline' => $sparkline,
-                'tree' => $this->formatTreeSummary($investment->tree),
+                'gain_loss_percent' => $investment->amount_idr > 0 ? ((int) $actualReturn - $projectedReturn) / $investment->amount_idr * 100 : 0,
+                'tree' => $this->formatInvestmentSummary($investment),
             ];
         })->toArray();
 

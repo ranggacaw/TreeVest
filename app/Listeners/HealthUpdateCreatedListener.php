@@ -25,7 +25,7 @@ class HealthUpdateCreatedListener implements ShouldQueue
         // Get all investors who have investments in this crop
         $investors = $fruitCrop->trees()
             ->join('investments', 'trees.id', '=', 'investments.tree_id')
-            ->join('users', 'investments.investor_id', '=', 'users.id')
+            ->join('users', 'investments.user_id', '=', 'users.id')
             ->where('investments.status', 'active')
             ->select('users.*')
             ->distinct()

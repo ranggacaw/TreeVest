@@ -596,10 +596,10 @@ $farmLocation = $tree->lot->rack->warehouse->farm->full_address;
 ### Get all investments for a lot with investor details:
 
 ```php
-$lot = Lot::with(['investments.user', 'trees'])->find(1);
+$lot = Lot::with(['investments.investor', 'trees'])->find(1);
 $investors = $lot->investments->map(function ($investment) {
     return [
-        'investor_name' => $investment->user->name,
+        'investor_name' => $investment->investor->name,
         'trees_owned' => $investment->quantity,
         'purchase_date' => $investment->purchase_date,
     ];

@@ -80,6 +80,7 @@ export interface Lot {
     updated_at?: string;
     rack?: Rack;
     fruit_crop?: FruitCrop;
+    investments_count?: number;
 }
 
 export interface PaginatedLots {
@@ -579,7 +580,7 @@ export interface Payout {
             tree_identifier: string;
         };
     };
-    harvest?: Harvest;
+    harvest?: HarvestWithRelations;
     investor?: User;
     transaction?: {
         id: number;

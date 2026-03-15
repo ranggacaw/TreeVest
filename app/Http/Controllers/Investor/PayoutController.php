@@ -12,7 +12,17 @@ class PayoutController extends Controller
 {
     public function index(Request $request): Response
     {
-        $payouts = Payout::with(['harvest.tree', 'harvest.tree.fruitCrop'])
+        $payouts = Payout::with([
+            'harvest.tree',
+            'harvest.tree.fruitCrop',
+            'harvest.tree.fruitCrop.farm',
+            'investment.tree',
+            'investment.tree.fruitCrop',
+            'investment.tree.fruitCrop.farm',
+            'investment.lot',
+            'investment.lot.fruitCrop',
+            'investment.lot.fruitCrop.farm',
+        ])
             ->where('investor_id', auth()->id())
             ->orderBy('created_at', 'desc')
             ->paginate(20);
@@ -28,7 +38,18 @@ class PayoutController extends Controller
             abort(403);
         }
 
-        $payout->load(['harvest.tree', 'harvest.tree.fruitCrop', 'investment', 'transaction']);
+        $payout->load([
+            'harvest.tree',
+            'harvest.tree.fruitCrop',
+            'harvest.tree.fruitCrop.farm',
+            'investment.tree',
+            'investment.tree.fruitCrop',
+            'investment.tree.fruitCrop.farm',
+            'investment.lot',
+            'investment.lot.fruitCrop',
+            'investment.lot.fruitCrop.farm',
+            'transaction',
+        ]);
 
         return Inertia::render('Investor/Payouts/Show', [
             'payout' => $payout,

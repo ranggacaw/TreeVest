@@ -104,21 +104,12 @@ export default function LocationHierarchy({
                     </div>
                 </div>
 
-                {/* Arrow Down */}
-                {warehouse && (
-                    <div className="flex justify-center">
-                        <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                        </svg>
-                    </div>
-                )}
-
                 {/* Warehouse */}
                 {warehouse && (
                     <>
                         <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                                <svg className="w-4 h-4 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                                 </svg>
                             </div>
@@ -128,13 +119,6 @@ export default function LocationHierarchy({
                             </div>
                         </div>
 
-                        {rack && (
-                            <div className="flex justify-center">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        )}
                     </>
                 )}
 
@@ -142,24 +126,16 @@ export default function LocationHierarchy({
                 {rack && (
                     <>
                         <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center">
-                                <svg className="w-4 h-4 text-purple-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 10h16M4 14h16M4 18h16" />
                                 </svg>
                             </div>
                             <div>
                                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Rack</div>
-                                <div className="text-sm font-semibold text-gray-900">{rack.name}</div>
+                                <div className="text-sm font-semibold text-">{rack.name}</div>
                             </div>
                         </div>
-
-                        {lot && (
-                            <div className="flex justify-center">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        )}
                     </>
                 )}
 
@@ -167,24 +143,16 @@ export default function LocationHierarchy({
                 {lot && (
                     <>
                         <div className="flex items-start gap-3">
-                            <div className="flex-shrink-0 w-8 h-8 bg-yellow-100 rounded-full flex items-center justify-center">
-                                <svg className="w-4 h-4 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <div className="flex-shrink-0 w-8 h-8 bg-green-100 rounded-full flex items-center justify-center">
+                                <svg className="w-4 h-4 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
                                 </svg>
                             </div>
                             <div>
                                 <div className="text-xs font-medium text-gray-500 uppercase tracking-wide">Investment Lot</div>
-                                <div className="text-sm font-semibold text-green-600">{lot.name}</div>
+                                <div className="text-sm font-semibold text-gray-900">{lot.name}</div>
                             </div>
                         </div>
-
-                        {tree && (
-                            <div className="flex justify-center">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        )}
                     </>
                 )}
 
@@ -200,14 +168,6 @@ export default function LocationHierarchy({
                                 <div className="text-sm font-semibold text-blue-600">Tree #{tree.tree_identifier}</div>
                             </div>
                         </div>
-
-                        {fruitCrop && (
-                            <div className="flex justify-center">
-                                <svg className="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                                </svg>
-                            </div>
-                        )}
                     </>
                 )}
 

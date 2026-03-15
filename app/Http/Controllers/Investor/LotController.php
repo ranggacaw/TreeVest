@@ -19,6 +19,51 @@ class LotController extends Controller
         private readonly WalletService $walletService,
     ) {}
 
+    public function index(Request $request): Response
+    {
+        $query = Lot::query()
+            ->with(['rack.warehouse.farm', 'fruitCrop.fruitType'])
+            ->where('status', 'active')
+            ->where(function ($q) use ($request) {
+                // Only show lots that are within investment window
+                $q->whereRaw('cycle_started_at IS NULL OR DATEDIFF(NOW(), cycle_started_at) / 30 + 1 <= last_investment_month');
+            })
+            ->withCount('investments');
+
+        // Filter by fruit type
+        if ($request->filled('fruit_type_id')) {
+            $query->whereHas('fruitCrop', fn ($q) => $q->where('fruit_type_id', $request->fruit_type_id));
+        }
+
+        // Filter by farm
+        if ($request->filled('farm_id')) {
+            $query->whereHas('rack.warehouse.farm', fn ($q) => $q->where('id', $request->farm_id));
+        }
+
+        // Search by name
+        if ($request->filled('search')) {
+            $query->where('name', 'like', '%'.$request->search.'%');
+        }
+
+        // Sort
+        $sortBy = $request->get('sort_by', 'created_at');
+        $sortDir = $request->get('sort_dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $lots = $query->paginate(12)->withQueryString();
+
+        // Get filter options
+        $fruitTypes = \App\Models\FruitType::where('is_active', true)->get();
+        $farms = \App\Models\Farm::where('status', 'active')->get();
+
+        return Inertia::render('Investor/Lots/Index', [
+            'lots' => $lots,
+            'filters' => $request->only(['fruit_type_id', 'farm_id', 'search', 'sort_by', 'sort_dir']),
+            'fruitTypes' => $fruitTypes,
+            'farms' => $farms,
+        ]);
+    }
+
     public function show(Lot $lot): Response
     {
         /** @var \App\Models\User $user */

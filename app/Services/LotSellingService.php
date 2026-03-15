@@ -113,7 +113,7 @@ class LotSellingService
             $farmOwnerShareIdr = $remainingIdr - $investorPoolIdr;
 
             // 3. Load active investments
-            $investments = $lot->activeInvestments()->with('user')->get();
+            $investments = $lot->activeInvestments()->with('investor')->get();
             $totalInvestedIdr = $investments->sum('amount_idr');
 
             // 4. Distribute investor pool proportionally
@@ -127,7 +127,7 @@ class LotSellingService
                     : 0;
 
                 $this->walletService->credit(
-                    $investment->user,
+                    $investment->investor,
                     $share,
                     WalletTransactionType::PayoutCredit,
                     $lot

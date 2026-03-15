@@ -47,6 +47,20 @@ export default function PayoutsIndex({ payouts }: Props) {
   const page = usePage();
   const unreadCount = (page.props as any).unread_notifications_count ?? 0;
 
+  // Helper to get farm name from investment (tree or lot based)
+  const getFarmName = (payout: Payout): string => {
+    if (payout.harvest?.tree?.fruit_crop?.farm) {
+      return payout.harvest.tree.fruit_crop.farm.name;
+    }
+    if ((payout.investment as any)?.tree?.fruit_crop?.farm) {
+      return (payout.investment as any).tree.fruit_crop.farm.name;
+    }
+    if ((payout.investment as any)?.lot?.fruit_crop?.farm) {
+      return (payout.investment as any).lot.fruit_crop.farm.name;
+    }
+    return 'Farm Name';
+  };
+
   return (
     <AppShellLayout>
       <Head title="Payouts Saya" />
@@ -81,7 +95,7 @@ export default function PayoutsIndex({ payouts }: Props) {
                     <div className="flex items-center justify-between">
                         <div>
                              <p className="text-[13px] font-bold text-gray-900 line-clamp-1">
-                                {(payout.harvest?.tree as any)?.farm?.name ?? (payout.investment?.tree as any)?.farm?.name ?? 'Farm Name'}
+                                {getFarmName(payout)}
                              </p>
                              <p className="text-[11px] text-gray-500 mt-0.5">Via {payout.payout_method?.replace('_', ' ') ?? 'Transfer'}</p>
                         </div>

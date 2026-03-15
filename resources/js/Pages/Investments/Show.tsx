@@ -52,7 +52,8 @@ interface InvestmentData {
     created_at?: string;
     current_value_idr: number;
     projected_return_idr: number;
-    tree: {
+    investment_type: 'tree' | 'lot';
+    tree?: {
         id: number;
         identifier: string;
         price_idr?: number;
@@ -65,36 +66,30 @@ interface InvestmentData {
         latitude?: number;
         longitude?: number;
         qr_code?: string;
-        fruit_crop: {
-            variant: string;
-            fruit_type: {
-                name: string;
-            };
-            harvest_cycle?: string;
-            farm: {
-                id: number;
-                name: string;
-                location?: string;
-                city?: string;
-                state?: string;
-                country?: string;
-            };
+    };
+    lot?: {
+        id: number;
+        name: string;
+        total_trees: number;
+        current_price_per_tree_idr: number;
+        current_price_formatted: string;
+        status?: string;
+        cycle_started_at?: string;
+        cycle_months?: number;
+    };
+    fruit_crop?: {
+        variant: string;
+        fruit_type: {
+            name: string;
         };
-        lot?: {
+        harvest_cycle?: string;
+        farm: {
             id: number;
             name: string;
-            status: string;
-            total_trees: number;
-            rack?: {
-                id: number;
-                name: string;
-                description?: string;
-                warehouse?: {
-                    id: number;
-                    name: string;
-                    description?: string;
-                };
-            };
+            location?: string;
+            city?: string;
+            state?: string;
+            country?: string;
         };
     };
     harvests?: {
@@ -118,6 +113,58 @@ interface Props extends PageProps {
 export default function Show({ auth, investment, unread_notifications_count }: Props) {
     const { t } = useTranslation(['investments', 'translation']);
     const { delete: destroy, processing } = useForm();
+
+    // Helper function to get investment identifier
+    const getIdentifier = () => {
+        if (investment.investment_type === 'tree' && investment.tree) {
+            return investment.tree.identifier;
+        } else if (investment.investment_type === 'lot' && investment.lot) {
+            return investment.lot.name;
+        }
+        return 'Unknown';
+    };
+
+    // Helper to get expected ROI
+    const getExpectedRoi = () => {
+        if (investment.investment_type === 'tree' && investment.tree) {
+            return investment.tree.expected_roi;
+        }
+        return 0;
+    };
+
+    // Helper to get risk rating
+    const getRiskRating = () => {
+        if (investment.investment_type === 'tree' && investment.tree) {
+            return investment.tree.risk_rating;
+        }
+        return 'medium';
+    };
+
+    // Helper to get age/lifespan info
+    const getAgeInfo = () => {
+        if (investment.investment_type === 'tree' && investment.tree) {
+            return {
+                age: investment.tree.age_years,
+                lifespan: investment.tree.productive_lifespan_years,
+            };
+        } else if (investment.investment_type === 'lot' && investment.lot) {
+            return {
+                age: investment.lot.cycle_started_at
+                    ? Math.floor((new Date().getTime() - new Date(investment.lot.cycle_started_at).getTime()) / (1000 * 60 * 60 * 24 * 30))
+                    : 0,
+                lifespan: investment.lot.cycle_months,
+            };
+        }
+        return { age: 0, lifespan: 0 };
+    };
+
+    // Helper to get GPS coordinates
+    const getGpsCoordinates = () => {
+        if (investment.investment_type === 'tree' && investment.tree) {
+            return { latitude: investment.tree.latitude, longitude: investment.tree.longitude };
+        }
+        return null;
+    };
 
     const handleCancel = () => {
         if (confirm(t('confirm_cancel_investment'))) {
@@ -153,7 +200,6 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                     {/* Back Navigation */}
                     <div className="bg-white px-6 pt-4 pb-2">
                         <Link href={route('portfolio.dashboard')} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
-                            <IconArrowLeft className="w-4 h-4 mr-1" />
                             {t('back_to_portfolio', 'Back to Portfolio')}
                         </Link>
                     </div>
@@ -163,9 +209,9 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         <div className="flex justify-between items-start mb-4">
                             <div>
                                 <h2 className="text-xl font-bold text-gray-900">
-                                    {investment.tree.identifier}
+                                    {getIdentifier()}
                                 </h2>
-                                <p className="text-sm text-gray-500">{investment.tree.fruit_crop.farm.name}</p>
+                                <p className="text-sm text-gray-500">{investment.fruit_crop?.farm?.name || 'Unknown Farm'}</p>
                             </div>
                             <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${statusColors[investment.status] || 'bg-gray-100 text-gray-800'}`}>
                                 {investment.status_label || investment.status.replace('_', ' ')}
@@ -187,8 +233,8 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                                 <p className="font-semibold text-gray-900">{investment.formatted_amount}</p>
                             </div>
                             <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-500 mb-1">{t('expected_roi', 'ROI')}</p>
-                                <p className="font-semibold text-emerald-600">{investment.tree.expected_roi}%</p>
+                                <p className="text-xs text-gray-500 mb-1">ROI</p>
+                                <p className="font-semibold text-emerald-600">{getExpectedRoi()}%</p>
                             </div>
                         </div>
 
@@ -241,43 +287,42 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                     <div className="bg-white p-6">
                         <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
                             <IconTree className="w-5 h-5 text-emerald-600" />
-                            {t('tree_details')}
+                            {investment.investment_type === 'tree' ? t('tree_details') : t('lot_details', 'Lot Details')}
                         </h3>
                         <div className="space-y-3">
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('variant')}</span>
-                                <span className="text-sm font-medium text-gray-900">{investment.tree.fruit_crop.variant}</span>
+                                <span className="text-sm font-medium text-gray-900">{investment.fruit_crop?.variant || '-'}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('fruit_type')}</span>
-                                <span className="text-sm font-medium text-gray-900">{investment.tree.fruit_crop.fruit_type.name}</span>
+                                <span className="text-sm font-medium text-gray-900">{investment.fruit_crop?.fruit_type?.name || '-'}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('age')}</span>
-                                <span className="text-sm font-medium text-gray-900">{investment.tree.age_years} {t('years')}</span>
+                                <span className="text-sm font-medium text-gray-900">{getAgeInfo().age} {t('month')}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('risk_rating')}</span>
-                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.tree.risk_rating}</span>
+                                <span className="text-sm font-medium text-gray-900 capitalize">{getRiskRating()}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('harvest_cycle')}</span>
-                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.tree.fruit_crop.harvest_cycle}</span>
+                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.fruit_crop?.harvest_cycle || '-'}</span>
                             </div>
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('location')}</span>
                                 <span className="text-sm font-medium text-gray-900 text-right max-w-[60%] truncate">
-                                    {investment.tree.fruit_crop.farm.location || investment.tree.fruit_crop.farm.name}
+                                    {investment.fruit_crop?.farm?.location || investment.fruit_crop?.farm?.name || '-'}
                                 </span>
                             </div>
                         </div>
                         <div className="mt-4 pt-2">
                              <Link
-                                href={`/farms/${investment.tree.fruit_crop.farm.id}`}
+                                href={investment.fruit_crop?.farm?.id ? `/farms/${investment.fruit_crop.farm.id}` : '#'}
                                 className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-1"
                             >
                                 {t('view_full_farm_details')}
-                                <IconCheck className="w-4 h-4 rotate-90" /> {/* Using generic icon as placeholder for arrow-right if not available */}
                             </Link>
                         </div>
                     </div>
@@ -295,10 +340,10 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                                 warehouse={investment.location_hierarchy.warehouse}
                                 rack={investment.location_hierarchy.rack}
                                 lot={investment.location_hierarchy.lot}
-                                tree={{
+                                tree={investment.location_hierarchy.tree ? {
                                     id: investment.location_hierarchy.tree.id,
                                     tree_identifier: investment.location_hierarchy.tree.identifier,
-                                }}
+                                } : undefined}
                                 fruitCrop={investment.location_hierarchy.fruit_crop}
                                 compact={false}
                             />
@@ -306,23 +351,26 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                     )}
 
                     {/* GPS Map (if coordinates available) */}
-                    {investment.tree.latitude && investment.tree.longitude && (
-                        <>
-                            <div className="h-3 bg-gray-50" />
-                            <div className="bg-white p-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">
-                                    {t('gps_location', 'GPS Location')}
-                                </h3>
-                                <TreeLocationMap
-                                    latitude={investment.tree.latitude}
-                                    longitude={investment.tree.longitude}
-                                    treeName={`${investment.tree.identifier} - ${investment.tree.fruit_crop.farm.name}`}
-                                    height={400}
-                                    showDirections={true}
-                                />
-                            </div>
-                        </>
-                    )}
+                    {(() => {
+                        const coords = getGpsCoordinates();
+                        return coords && coords.latitude && coords.longitude ? (
+                            <>
+                                <div className="h-3 bg-gray-50" />
+                                <div className="bg-white p-6">
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                        {t('gps_location', 'GPS Location')}
+                                    </h3>
+                                    <TreeLocationMap
+                                        latitude={coords.latitude}
+                                        longitude={coords.longitude}
+                                        treeName={`${getIdentifier()} - ${investment.fruit_crop?.farm?.name || 'Unknown Farm'}`}
+                                        height={400}
+                                        showDirections={true}
+                                    />
+                                </div>
+                            </>
+                        ) : null;
+                    })()}
 
                     {/* Growth Timeline */}
                     {investment.growth_timeline && investment.growth_timeline.length > 0 && (

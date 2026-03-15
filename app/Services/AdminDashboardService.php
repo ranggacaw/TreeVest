@@ -66,11 +66,11 @@ class AdminDashboardService
             ];
         })->toArray();
 
-        $investments = Investment::with('user')->orderByDesc('created_at')->limit($limit)->get()->map(function ($i) {
+        $investments = Investment::with('investor')->orderByDesc('created_at')->limit($limit)->get()->map(function ($i) {
             return [
                 'type' => 'investment_created',
                 'description' => 'made an investment',
-                'actor_name' => $i->user ? $i->user->name : 'Unknown',
+                'actor_name' => $i->investor ? $i->investor->name : 'Unknown',
                 'created_at' => $i->created_at->toIso8601String(),
             ];
         })->toArray();

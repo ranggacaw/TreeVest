@@ -93,7 +93,7 @@ class LotController extends Controller
     {
         $this->authorizeLot($lot);
 
-        $lot->load(['rack.warehouse.farm', 'fruitCrop', 'investments.user', 'priceSnapshots']);
+        $lot->load(['rack.warehouse.farm', 'fruitCrop', 'investments.investor', 'priceSnapshots']);
         $priceTable = $this->pricingService->getPriceTable($lot);
 
         return Inertia::render('FarmOwner/Lots/Show', [
