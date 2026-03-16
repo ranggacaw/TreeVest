@@ -531,6 +531,8 @@ Admin Approval → Listed on Marketplace
 ### Key Business Rules (from PRD)
 
 - Each tree is an individual investable unit with its own price, ROI, and risk rating
+- Investors purchase N trees from a lot (quantity-driven); each purchase decrements `lot.available_trees` atomically
+- Each tree receives a unique `token_id` on creation (format: `TRX-{lot_id_5digits}-{tree_number_3digits}`)
 - Returns are tied to actual agricultural harvest cycles (not speculative)
 - Harvest cycles vary: annual, bi-annual, or seasonal depending on crop type
 - Trees have an expected productive lifespan (finite investment horizon)
@@ -538,6 +540,21 @@ Admin Approval → Listed on Marketplace
 - Secondary market allows resale of tree investments to other users (optional feature)
 - KYC verification is mandatory before investing
 - Multiple payout options: bank transfer, digital wallet, reinvestment
+
+### Profit Distribution Formula
+
+```
+totalYieldIdr     = actual_yield_kg × market_price_per_kg_idr
+platformFeeIdr    = ROUND(totalYieldIdr × 0.10)        // 10% platform fee
+remainingIdr      = totalYieldIdr − platformFeeIdr       // 90%
+investorPoolIdr   = ROUND(remainingIdr × 0.70)          // 70% of 90% = 63% of total
+farmOwnerShareIdr = remainingIdr − investorPoolIdr       // 30% of 90% = 27% of total
+
+// Per payout (proportional to investment share):
+grossAmountIdr = ROUND((investmentIdr / totalInvestedIdr) × investorPoolIdr)
+platformFeeIdr = 0          // fee already deducted at pool level
+netAmountIdr   = grossAmountIdr
+```
 
 ### Validation Rules
 
@@ -571,9 +588,9 @@ Admin Approval → Listed on Marketplace
 | **FruitCrop**               | id, farm_id, fruit_type_id, variant, description, harvest_cycle, planted_date                                                                                                                                                                                               | e.g., Musang King variant on a specific farm                                                            |
 | **Warehouse**               | id, farm_id, name, description                                                                                                                                                                                                                                               | Large block or section within a farm; organizational unit for grouping racks                            |
 | **Rack**                    | id, warehouse_id, name, description                                                                                                                                                                                                                                          | Smaller row or planting section within a warehouse                                                      |
-| **Lot**                     | id, rack_id, fruit_crop_id, name, total_trees, base_price_per_tree_cents, monthly_increase_rate, current_price_per_tree_cents, cycle_started_at, cycle_months, last_investment_month, status, harvest_total_fruit, harvest_total_weight_kg, harvest_notes, harvest_recorded_at, selling_revenue_cents, selling_proof_photo, selling_submitted_at | Investment package containing multiple trees; tracks harvest and selling data                           |
-| **Tree**                    | id, fruit_crop_id, lot_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json                                            | Individual investable unit; belongs to both a FruitCrop (plant type) and a Lot (investment grouping)   |
-| **Investment**              | id, investor_id, tree_id, lot_id, amount, purchase_date, status                                                                                                                                                                                                             | Core transaction                                                                                        |
+| **Lot**                     | id, rack_id, fruit_crop_id, name, total_trees, available_trees, base_price_per_tree_cents, monthly_increase_rate, current_price_per_tree_cents, cycle_started_at, cycle_months, last_investment_month, status, harvest_total_fruit, harvest_total_weight_kg, harvest_notes, harvest_recorded_at, selling_revenue_cents, selling_proof_photo, selling_submitted_at | Investment package containing multiple trees; `available_trees` tracks remaining purchasable trees (starts at `total_trees`, decremented atomically on purchase) |
+| **Tree**                    | id, fruit_crop_id, lot_id, token_id, tree_identifier, price_cents, expected_roi_percent, age_years, productive_lifespan_years, risk_rating, min_investment_cents, max_investment_cents, status, historical_yield_json, pricing_config_json                                  | Individual investable unit; `token_id` is auto-generated on creation (format: `TRX-{lot_id_5digits}-{tree_number_3digits}`, e.g. `TRX-00001-012`) |
+| **Investment**              | id, investor_id, tree_id, lot_id, amount_idr, currency, purchase_date, purchase_month, status, metadata (price_per_tree_idr, quantity, cycle_month_at_purchase)                                                                                                             | Core transaction; quantity-driven (investor buys N trees from a lot); `tree_id` is null for lot-based investments |
 | **MarketListing**           | id, investment_id FK, seller_id FK, ask_price_cents, currency, platform_fee_rate, platform_fee_cents, net_proceeds_cents, status ENUM, buyer_id FK null, purchased_at null, cancelled_at null, expires_at null, notes text null, metadata json null, timestamps, deleted_at | Secondary market listing for investment resale                                                          |
 | **InvestmentTransfer**      | id, investment_id FK, listing_id FK, from_user_id FK, to_user_id FK, transfer_price_cents, platform_fee_cents, transaction_id FK null, transferred_at, timestamps                                                                                                           | Immutable record of ownership transfer                                                                  |
 | **TreeHarvest**             | id, tree_id, harvest_date, estimated_yield_kg, actual_yield_kg, quality_grade, notes                                                                                                                                                                                        | Tied to payout                                                                                          |

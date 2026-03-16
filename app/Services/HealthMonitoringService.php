@@ -77,6 +77,7 @@ class HealthMonitoringService
         return [
             'crop_id' => $crop->id,
             'farm_id' => $crop->farm_id,
+            'last_update_date' => $latestUpdate?->created_at?->toIso8601String(),
             'latest_update' => $latestUpdate ? [
                 'id' => $latestUpdate->id,
                 'title' => $latestUpdate->title,
@@ -164,14 +165,27 @@ class HealthMonitoringService
 
     private function getInvestorCropIds(User $investor): \Illuminate\Support\Collection
     {
-        return $investor->investments()
-            ->where('status', \App\Enums\InvestmentStatus::Active)
-            ->with('tree.fruitCrop')
-            ->get()
+        $investments = $investor->investments()
+            ->whereIn('status', [
+                \App\Enums\InvestmentStatus::Active,
+                \App\Enums\InvestmentStatus::Listed,
+            ])
+            ->with(['tree.fruitCrop', 'lot'])
+            ->get();
+
+        // Tree-based investments: investment → tree → fruitCrop
+        $fromTrees = $investments
+            ->whereNotNull('tree_id')
             ->pluck('tree.fruitCrop.id')
-            ->filter()
-            ->unique()
-            ->values();
+            ->filter();
+
+        // Lot-based investments: investment → lot → fruitCrop
+        $fromLots = $investments
+            ->whereNotNull('lot_id')
+            ->pluck('lot.fruit_crop_id')
+            ->filter();
+
+        return $fromTrees->merge($fromLots)->unique()->values();
     }
 
     private function applyFilters($query, array $filters): mixed

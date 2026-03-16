@@ -1,16 +1,21 @@
 import { Head, Link, router } from '@inertiajs/react';
 import { AppLayout } from '@/Layouts';
 import { PageProps, Harvest, Payout } from '@/types';
+import { useState } from 'react';
 
 interface Props extends PageProps {
     harvest: Harvest;
 }
 
-function formatCurrency(idr: number): string {
-    return 'Rp ' + (idr).toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
+function formatCurrency(idr: number | null | undefined): string {
+    if (idr == null) return 'N/A';
+    return 'Rp ' + idr.toLocaleString('id-ID', { minimumFractionDigits: 0, maximumFractionDigits: 0 });
 }
 
 export default function Show({ harvest }: Props) {
+    const [showYieldForm, setShowYieldForm] = useState(false);
+    const [yieldKg, setYieldKg] = useState('');
+    const [qualityGrade, setQualityGrade] = useState('A');
     const statusColors: Record<string, string> = {
         scheduled: 'bg-blue-100 text-blue-800',
         in_progress: 'bg-yellow-100 text-yellow-800',
@@ -22,6 +27,14 @@ export default function Show({ harvest }: Props) {
         if (confirm('Are you sure you want to start this harvest?')) {
             router.post(route('farm-owner.harvests.start', harvest.id));
         }
+    };
+
+    const handleRecordYield = (e: React.FormEvent) => {
+        e.preventDefault();
+        router.post(route('farm-owner.harvests.record-yield', harvest.id), {
+            actual_yield_kg: yieldKg,
+            quality_grade: qualityGrade,
+        });
     };
 
     const handleConfirm = () => {
@@ -65,7 +78,15 @@ export default function Show({ harvest }: Props) {
                                     Start Harvest
                                 </button>
                             )}
-                            {harvest.status === 'in_progress' && (
+                            {harvest.status === 'in_progress' && harvest.actual_yield_kg === null && (
+                                <button
+                                    onClick={() => setShowYieldForm(true)}
+                                    className="px-4 py-2 rounded bg-blue-600 text-white text-sm font-medium hover:bg-blue-700"
+                                >
+                                    Record Yield
+                                </button>
+                            )}
+                            {harvest.status === 'in_progress' && harvest.actual_yield_kg !== null && (
                                 <button
                                     onClick={handleConfirm}
                                     className="px-4 py-2 rounded bg-green-600 text-white text-sm font-medium hover:bg-green-700"
@@ -152,6 +173,60 @@ export default function Show({ harvest }: Props) {
                             </dl>
                         </div>
 
+                        {/* Record Yield Form */}
+                        {showYieldForm && (
+                            <div className="rounded-lg bg-blue-50 p-6 border border-blue-200">
+                                <h3 className="text-lg font-semibold text-gray-900 mb-4">Record Actual Yield</h3>
+                                <form onSubmit={handleRecordYield}>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-4">
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Actual Yield (kg)
+                                            </label>
+                                            <input
+                                                type="number"
+                                                step="0.01"
+                                                min="0"
+                                                value={yieldKg}
+                                                onChange={(e) => setYieldKg(e.target.value)}
+                                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                                required
+                                            />
+                                        </div>
+                                        <div>
+                                            <label className="block text-sm font-medium text-gray-700 mb-1">
+                                                Quality Grade
+                                            </label>
+                                            <select
+                                                value={qualityGrade}
+                                                onChange={(e) => setQualityGrade(e.target.value)}
+                                                className="w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                                            >
+                                                <option value="A">Grade A (Premium)</option>
+                                                <option value="B">Grade B (Standard)</option>
+                                                <option value="C">Grade C (Below Standard)</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div className="flex gap-2">
+                                        <button
+                                            type="submit"
+                                            className="px-4 py-2 rounded bg-indigo-600 text-white text-sm font-medium hover:bg-indigo-700"
+                                        >
+                                            Save Yield
+                                        </button>
+                                        <button
+                                            type="button"
+                                            onClick={() => setShowYieldForm(false)}
+                                            className="px-4 py-2 rounded bg-gray-200 text-gray-700 text-sm font-medium hover:bg-gray-300"
+                                        >
+                                            Cancel
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        )}
+
                         {/* Tree Information */}
                         {harvest.tree && (
                             <div className="rounded-lg bg-white p-6 shadow">
@@ -172,7 +247,7 @@ export default function Show({ harvest }: Props) {
                                     <div>
                                         <dt className="text-sm text-gray-500">Expected ROI</dt>
                                         <dd className="text-sm font-medium text-gray-900">
-                                            {harvest.tree.expected_roi_percent.toFixed(2)}%
+                                            {Number(harvest.tree.expected_roi_percent).toFixed(2)}%
                                         </dd>
                                     </div>
                                     <div>

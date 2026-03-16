@@ -67,6 +67,9 @@ function HoldingCard({ holding }: { holding: HoldingWithSparkline }) {
         <div className="min-w-0">
           <h4 className="font-bold text-gray-900 text-sm truncate">{holding.tree?.variant || '—'}</h4>
           <p className="text-[11px] text-gray-500 truncate">{holding.tree?.farm_name || '—'}</p>
+          {holding.tree?.token_id && (
+            <p className="text-[10px] text-gray-400 font-mono truncate mt-0.5">{holding.tree.token_id}</p>
+          )}
         </div>
       </div>
 

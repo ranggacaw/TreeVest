@@ -1,14 +1,34 @@
-import { Head, Link } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { Head, Link, usePage } from '@inertiajs/react';
 import { PageProps } from '@/types';
-import Navbar from '@/Components/Navbar';
 import RiskBadge from '@/Components/RiskBadge';
 import HarvestCycleIcon from '@/Components/HarvestCycleIcon';
 import HealthStatusIndicator from '@/Components/HealthStatusIndicator';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 import WishlistToggleButton from '@/Components/WishlistToggleButton';
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+import { IconArrowLeft, IconTree, IconPlant, IconCalendar, IconInfoCircle } from '@/Components/Icons/AppIcons';
 import { useTranslation } from 'react-i18next';
 import { formatRupiah } from '@/utils/currency';
 
+// ─── Harvest Status Badge ─────────────────────────────────────────────────────
+function HarvestStatusBadge({ status }: { status: string }) {
+    const config: Record<string, { label: string; className: string }> = {
+        scheduled:   { label: 'Scheduled',    className: 'bg-blue-100 text-blue-700' },
+        in_progress: { label: 'In Progress',  className: 'bg-yellow-100 text-yellow-700' },
+        completed:   { label: 'Completed',    className: 'bg-emerald-100 text-emerald-700' },
+        failed:      { label: 'Failed',       className: 'bg-red-100 text-red-700' },
+    };
+    const { label, className } = config[status] ?? { label: status ?? '-', className: 'bg-gray-100 text-gray-600' };
+    return (
+        <span className={`inline-flex items-center px-2 py-0.5 rounded text-xs font-medium capitalize ${className}`}>
+            {label}
+        </span>
+    );
+}
+
+// ─── Main Page ────────────────────────────────────────────────────────────────
 export default function Show({ tree, auth, isWishlisted, healthStatus, recentUpdates, currentWeather }: PageProps<{
     tree: any;
     isWishlisted?: boolean;
@@ -17,6 +37,9 @@ export default function Show({ tree, auth, isWishlisted, healthStatus, recentUpd
     currentWeather?: any;
 }>) {
     const { t } = useTranslation('trees');
+    const page = usePage<PageProps>();
+    const unreadCount = (page.props as any).unread_notifications_count ?? 0;
+
     const crop = tree?.fruit_crop;
     const farm = crop?.farm;
     const fruitType = crop?.fruit_type;
@@ -27,288 +50,394 @@ export default function Show({ tree, auth, isWishlisted, healthStatus, recentUpd
     const maxInv = formatRupiah(tree?.max_investment_idr ?? 0);
     const authenticated = !!auth?.user;
 
+    const remainingYears = Math.max(0, (tree?.productive_lifespan_years ?? 0) - (tree?.age_years ?? 0));
+
+    const weatherIcon = currentWeather?.weather_condition?.includes('rain') ? '🌧️'
+        : currentWeather?.weather_condition?.includes('cloud') ? '☁️'
+        : '☀️';
+
     return (
-        <div className="min-h-screen bg-gray-50">
-            <Navbar />
+        <AppShellLayout>
             <Head title={t('invest_in_tree', { name: fruitTypeName })} />
 
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-                {/* Breadcrumb */}
-                <nav className="flex mb-8 text-sm text-gray-500" aria-label="Breadcrumb">
-                    <ol className="flex items-center space-x-4">
-                        {farm?.id && (
-                            <>
-                                <li>
-                                    <Link href={route('farms.show', farm.id)} className="hover:text-gray-900">{farm.name}</Link>
-                                </li>
-                                <li>
-                                    <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                        <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                                    </svg>
-                                </li>
-                            </>
-                        )}
-                        <li>
-                            <span className="text-gray-900 font-medium">{fruitTypeName} ({crop?.variant})</span>
-                        </li>
-                        <li>
-                            <svg className="h-5 w-5 text-gray-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                <path fillRule="evenodd" d="M7.293 14.707a1 1 0 010-1.414L10.586 10 7.293 6.707a1 1 0 011.414-1.414l4 4a1 1 0 010 1.414l-4 4a1 1 0 01-1.414 0z" clipRule="evenodd" />
-                            </svg>
-                        </li>
-                        <li>
-                            <span className="text-gray-900 font-medium">Tree #{tree.tree_identifier}</span>
-                        </li>
-                    </ol>
-                </nav>
+            {/* App Shell — mobile-first max-w-md container */}
+            <div
+                className="relative w-full max-w-md bg-gray-50 flex flex-col"
+                style={{ height: '100dvh' }}
+            >
+                {/* ── Scrollable Area ──────────────────────────────────────── */}
+                <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
 
-                <div className="bg-white rounded-lg shadow-lg overflow-hidden">
-                    <div className="grid grid-cols-1 md:grid-cols-2">
-                        {/* Image Side */}
-                        <div className="h-96 md:h-auto bg-gray-200 relative">
-                            {farm?.image_url ? (
-                                <img src={farm.image_url} alt={farm.name} className="w-full h-full object-cover" />
-                            ) : (
-                                <div className="w-full h-full flex items-center justify-center text-gray-400 bg-green-50 text-xl font-medium">
-                                    {t('no_image_available')}
-                                </div>
-                            )}
-                            <div className="absolute top-4 right-4 flex gap-2 items-center">
-                                <RiskBadge rating={tree.risk_rating} className="text-sm px-3 py-1" />
-                                <WishlistToggleButton
-                                    treeId={tree.id}
-                                    isWishlisted={isWishlisted ?? false}
-                                    authenticated={authenticated}
-                                />
-                            </div>
+                    {/* ── Top App Bar ──────────────────────────────────────── */}
+                    <AppTopBar notificationCount={unreadCount} />
+
+                    {/* ── Back + Breadcrumb ────────────────────────────────── */}
+                    <div className="bg-white px-5 pt-4 pb-3 flex items-center gap-3 border-b border-gray-100">
+                        <Link
+                            href={farm?.id ? route('farms.show', farm.id) : route('trees.index')}
+                            className="p-1.5 -ml-1.5 rounded-lg text-gray-500 hover:bg-gray-100 transition-colors"
+                            aria-label="Back"
+                        >
+                            <IconArrowLeft className="w-5 h-5" />
+                        </Link>
+                        <div className="min-w-0 flex-1">
+                            <p className="text-[11px] text-gray-400 truncate">
+                                {farm?.name ?? t('tree_marketplace')}
+                                <span className="mx-1.5 text-gray-300">›</span>
+                                {fruitTypeName} ({crop?.variant})
+                            </p>
+                            <h1 className="text-sm font-bold text-gray-900 truncate">
+                                Tree #{tree.tree_identifier}
+                            </h1>
                         </div>
+                        <WishlistToggleButton
+                            treeId={tree.id}
+                            isWishlisted={isWishlisted ?? false}
+                            authenticated={authenticated}
+                        />
+                    </div>
 
-                        {/* Details Side */}
-                        <div className="p-8 flex flex-col">
-                            <div className="mb-2 text-sm font-semibold text-indigo-600 uppercase tracking-wide">
-                                {fruitTypeName} - {crop?.variant}
+                    {/* ── Hero Image ───────────────────────────────────────── */}
+                    <div className="relative h-52 bg-gray-200 overflow-hidden">
+                        {farm?.image_url ? (
+                            <img
+                                src={farm.image_url}
+                                alt={farm.name}
+                                className="w-full h-full object-cover"
+                            />
+                        ) : (
+                            <div className="w-full h-full flex items-center justify-center bg-emerald-50">
+                                <div className="text-center">
+                                    <IconTree className="w-16 h-16 text-emerald-200 mx-auto mb-2" />
+                                    <p className="text-sm text-gray-400">{t('no_image_available')}</p>
+                                </div>
                             </div>
-                            <h1 className="text-3xl font-bold text-gray-900 mb-4">{t('tree_investment')}</h1>
+                        )}
+                        {/* Overlaid badges */}
+                        <div className="absolute top-3 left-3">
+                            <RiskBadge rating={tree.risk_rating} className="text-xs px-2.5 py-1 shadow-sm" />
+                        </div>
+                        {/* Fruit type chip */}
+                        <div className="absolute bottom-3 left-3">
+                            <span className="bg-white/90 backdrop-blur-sm text-emerald-700 text-[11px] font-bold px-2.5 py-1 rounded-full border border-emerald-100">
+                                {fruitTypeName} · {crop?.variant}
+                            </span>
+                        </div>
+                    </div>
 
-                            <div className="grid grid-cols-2 gap-6 mb-6">
-                                <div className="bg-gray-50 p-4 rounded-lg">
-                                    <div className="text-sm text-gray-500 mb-1">{t('expected_roi')}</div>
-                                    <div className="text-2xl font-bold text-green-600">{tree.expected_roi_percent}%</div>
-                                </div>
-                                <div className="bg-gray-50 p-4 rounded-lg">
-                                    <div className="text-sm text-gray-500 mb-1">{t('current_price')}</div>
-                                    <div className="text-2xl font-bold text-gray-900">{price}</div>
-                                </div>
+                    {/* Section divider */}
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* ── Key Metrics ──────────────────────────────────────── */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <p className="text-[11px] text-gray-400 uppercase tracking-wide font-semibold mb-1">
+                            {t('tree_investment')}
+                        </p>
+                        <h2 className="text-[22px] font-extrabold text-gray-900 tracking-tight leading-none mb-5">
+                            {price}
+                        </h2>
+
+                        <div className="grid grid-cols-2 gap-3">
+                            {/* ROI */}
+                            <div className="bg-emerald-50 rounded-2xl p-4">
+                                <p className="text-[11px] text-emerald-600 font-semibold uppercase tracking-wide mb-1">
+                                    {t('expected_roi')}
+                                </p>
+                                <p className="text-[26px] font-extrabold text-emerald-600 leading-none">
+                                    {tree.expected_roi_percent}%
+                                </p>
                             </div>
 
-                            <dl className="grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
-                                <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">{t('tree_age')}</dt>
-                                    <dd className="mt-1 text-sm text-gray-900">{t('years', { count: tree.age_years })}</dd>
-                                </div>
-                                <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">{t('remaining_productivity', { defaultValue: 'Remaining Productivity' })}</dt>
-                                    <dd className="mt-1 text-sm text-green-700 bg-green-50 inline-flex px-2 py-0.5 rounded border border-green-100 font-medium">{t('years', { count: Math.max(0, (tree?.productive_lifespan_years ?? 0) - (tree?.age_years ?? 0)) })} ({t('produces_yields', { defaultValue: 'produces yields' })})</dd>
-                                </div>
-                                <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">{t('status')}</dt>
-                                    <dd className="mt-1 text-sm text-gray-900 capitalize">{tree.status}</dd>
-                                </div>
-                                <div className="sm:col-span-1">
-                                    <dt className="text-sm font-medium text-gray-500">{t('harvest_cycle_label')}</dt>
-                                    <dd className="mt-1 text-sm text-gray-900 capitalize flex items-center gap-2">
-                                        <HarvestCycleIcon cycle={crop?.harvest_cycle} className="w-5 h-5 text-gray-400" />
+                            {/* Tree Age */}
+                            <div className="bg-gray-50 rounded-2xl p-4">
+                                <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wide mb-1">
+                                    {t('tree_age')}
+                                </p>
+                                <p className="text-[22px] font-extrabold text-gray-900 leading-none">
+                                    {t('years', { count: tree.age_years })}
+                                </p>
+                                <p className="text-[10px] text-gray-400 mt-1">
+                                    {t('remaining_productivity')}: {t('years', { count: remainingYears })}
+                                </p>
+                            </div>
+
+                            {/* Status */}
+                            <div className="bg-gray-50 rounded-2xl p-4">
+                                <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5">
+                                    {t('status')}
+                                </p>
+                                <span className="inline-flex items-center px-2.5 py-1 bg-emerald-100 text-emerald-700 rounded-full text-xs font-bold capitalize">
+                                    {tree.status}
+                                </span>
+                            </div>
+
+                            {/* Harvest Cycle */}
+                            <div className="bg-gray-50 rounded-2xl p-4">
+                                <p className="text-[11px] text-gray-500 font-semibold uppercase tracking-wide mb-1.5">
+                                    {t('harvest_cycle_label')}
+                                </p>
+                                <div className="flex items-center gap-1.5">
+                                    <HarvestCycleIcon cycle={crop?.harvest_cycle} className="w-4 h-4 text-gray-500" />
+                                    <span className="text-sm font-semibold text-gray-800 capitalize">
                                         {crop?.harvest_cycle}
-                                    </dd>
+                                    </span>
                                 </div>
-                            </dl>
-
-                            <div className="mt-8 border-t border-gray-200 pt-6">
-                                <h3 className="text-lg font-medium text-gray-900 mb-4">{t('investment_limits')}</h3>
-                                <div className="flex justify-between text-sm text-gray-600">
-                                    <span>{t('minimum')} <strong className="text-gray-900">{minInv}</strong></span>
-                                    <span>{t('maximum')} <strong className="text-gray-900">{maxInv}</strong></span>
-                                </div>
-                            </div>
-
-                            <div className="mt-auto pt-8">
-                                <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6">
-                                    <div className="flex">
-                                        <div className="flex-shrink-0">
-                                            <svg className="h-5 w-5 text-yellow-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-                                                <path fillRule="evenodd" d="M8.257 3.099c.765-1.36 2.722-1.36 3.486 0l5.58 9.92c.75 1.334-.213 2.98-1.742 2.98H4.42c-1.53 0-2.493-1.646-1.743-2.98l5.58-9.92zM11 13a1 1 0 11-2 0 1 1 0 012 0zm-1-8a1 1 0 00-1 1v3a1 1 0 002 0V6a1 1 0 00-1-1z" clipRule="evenodd" />
-                                            </svg>
-                                        </div>
-                                        <div className="ml-3">
-                                            <p className="text-sm text-yellow-700">
-                                                <strong>{t('risk_disclosure_title')}</strong> {t('risk_disclosure_text')}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-
-                                <Link
-                                    href={authenticated ? route('investments.create', tree.id) : route('login')}
-                                    className="w-full flex justify-center py-3 px-4 border border-transparent rounded-md shadow-sm text-lg font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-                                >
-                                    {t('invest_now')}
-                                </Link>
                             </div>
                         </div>
                     </div>
-                </div>
 
-                {/* Health Status & Weather Section */}
-                <div className="mt-8 grid grid-cols-1 lg:grid-cols-2 gap-6">
-                    {/* Health Status Section */}
+                    {/* Section divider */}
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* ── Investment Limits ────────────────────────────────── */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <h3 className="text-sm font-bold text-gray-900 mb-4">{t('investment_limits')}</h3>
+                        <div className="flex gap-3">
+                            <div className="flex-1 bg-gray-50 rounded-2xl p-4 text-center">
+                                <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide mb-1">
+                                    {t('minimum')}
+                                </p>
+                                <p className="font-extrabold text-gray-900 text-[15px]">{minInv}</p>
+                            </div>
+                            <div className="flex-1 bg-gray-50 rounded-2xl p-4 text-center">
+                                <p className="text-[11px] text-gray-400 font-medium uppercase tracking-wide mb-1">
+                                    {t('maximum')}
+                                </p>
+                                <p className="font-extrabold text-gray-900 text-[15px]">{maxInv}</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    {/* Section divider */}
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* ── Health Status ────────────────────────────────────── */}
                     {healthStatus && (
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <div className="flex items-center justify-between mb-4">
-                                <h2 className="text-xl font-bold text-gray-900">{t('health_status')}</h2>
-                                <HealthStatusIndicator status={healthStatus.overall_status} size="md" />
-                            </div>
-
-                            <div className="space-y-3">
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-600">{t('last_updated')}</span>
-                                    <span className="text-gray-900 font-medium">
-                                        {healthStatus.last_update_date ?
-                                            new Date(healthStatus.last_update_date).toLocaleDateString() :
-                                            t('no_updates_yet')
-                                        }
-                                    </span>
+                        <>
+                            <div className="bg-white px-5 pt-5 pb-6">
+                                <div className="flex items-center justify-between mb-4">
+                                    <h3 className="text-sm font-bold text-gray-900">{t('health_status')}</h3>
+                                    <HealthStatusIndicator status={healthStatus.overall_status} size="md" />
                                 </div>
-                                <div className="flex justify-between items-center text-sm">
-                                    <span className="text-gray-600">{t('active_alerts')}</span>
-                                    <span className="text-gray-900 font-medium">{healthStatus.active_alerts_count || 0}</span>
-                                </div>
-                            </div>
 
-                            {recentUpdates && recentUpdates.length > 0 && (
-                                <div className="mt-6 border-t pt-4">
-                                    <h3 className="text-sm font-semibold text-gray-700 mb-3">{t('recent_updates')}</h3>
-                                    <div className="space-y-3">
-                                        {recentUpdates.slice(0, 3).map((update: any) => {
-                                            if (!update) return null;
-                                            return (
-                                                <Link
-                                                    key={update.id}
-                                                    href={route('investments.health-feed.show', update.id)}
-                                                    className="block p-3 bg-gray-50 rounded-lg hover:bg-gray-100 transition-colors"
-                                                >
-                                                    <div className="flex items-start justify-between mb-1">
-                                                        <span className="text-sm font-medium text-gray-900 line-clamp-1">
-                                                            {update?.title}
-                                                        </span>
+                                <div className="flex gap-3 mb-4">
+                                    <div className="flex-1 bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('last_updated')}
+                                        </p>
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            {healthStatus.last_update_date
+                                                ? new Date(healthStatus.last_update_date).toLocaleDateString()
+                                                : t('no_updates_yet')}
+                                        </p>
+                                    </div>
+                                    <div className="flex-1 bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('active_alerts')}
+                                        </p>
+                                        <p className="text-sm font-semibold text-gray-900">
+                                            {healthStatus.active_alerts_count || 0}
+                                        </p>
+                                    </div>
+                                </div>
+
+                                {recentUpdates && recentUpdates.length > 0 && (
+                                    <>
+                                        <h4 className="text-[11px] text-gray-500 font-semibold uppercase tracking-wide mb-3">
+                                            {t('recent_updates')}
+                                        </h4>
+                                        <div className="space-y-2.5">
+                                            {recentUpdates.slice(0, 3).map((update: any) => {
+                                                if (!update) return null;
+                                                return (
+                                                    <Link
+                                                        key={update.id}
+                                                        href={route('investments.health-feed.show', update.id)}
+                                                        className="flex items-start justify-between p-3.5 bg-gray-50 rounded-xl hover:bg-gray-100 transition-colors"
+                                                    >
+                                                        <div className="min-w-0 flex-1 pr-3">
+                                                            <p className="text-sm font-semibold text-gray-900 line-clamp-1 mb-0.5">
+                                                                {update?.title}
+                                                            </p>
+                                                            <p className="text-[11px] text-gray-400">
+                                                                {update?.created_at
+                                                                    ? new Date(update.created_at).toLocaleDateString()
+                                                                    : ''}
+                                                            </p>
+                                                        </div>
                                                         <HealthSeverityBadge severity={update?.severity} />
-                                                    </div>
-                                                    <span className="text-xs text-gray-500">
-                                                        {update?.created_at ? new Date(update.created_at).toLocaleDateString() : ''}
-                                                    </span>
-                                                </Link>
-                                            );
-                                        })}
-                                    </div>
-                                    <Link
-                                        href={route('investments.health-feed.index')}
-                                        className="mt-3 inline-block text-sm text-emerald-600 hover:text-emerald-700 font-medium"
-                                    >
-                                        {t('view_all_updates')}
-                                    </Link>
-                                </div>
-                            )}
-                        </div>
+                                                    </Link>
+                                                );
+                                            })}
+                                        </div>
+                                        <Link
+                                            href={route('investments.health-feed.index')}
+                                            className="mt-4 flex items-center justify-center gap-1.5 text-sm text-emerald-600 font-bold py-3 rounded-xl border border-emerald-200 hover:bg-emerald-50 transition-colors"
+                                        >
+                                            {t('view_all_updates')}
+                                        </Link>
+                                    </>
+                                )}
+                            </div>
+
+                            {/* Section divider */}
+                            <div className="h-3 bg-gray-50" />
+                        </>
                     )}
 
-                    {/* Current Weather Section */}
+                    {/* ── Current Weather ──────────────────────────────────── */}
                     {currentWeather && (
-                        <div className="bg-white rounded-lg shadow-sm p-6">
-                            <h2 className="text-xl font-bold text-gray-900 mb-4">{t('current_weather')}</h2>
+                        <>
+                            <div className="bg-white px-5 pt-5 pb-6">
+                                <h3 className="text-sm font-bold text-gray-900 mb-4">{t('current_weather')}</h3>
 
-                            <div className="flex items-center justify-between mb-6">
-                                <div>
-                                    <div className="text-4xl font-bold text-gray-900">
-                                        {currentWeather.temperature_celsius}°C
+                                <div className="flex items-center justify-between mb-5">
+                                    <div>
+                                        <p className="text-[32px] font-extrabold text-gray-900 leading-none">
+                                            {currentWeather.temperature_celsius}°C
+                                        </p>
+                                        <p className="text-sm text-gray-500 capitalize mt-1">
+                                            {currentWeather.weather_condition}
+                                        </p>
                                     </div>
-                                    <div className="text-sm text-gray-600 capitalize">
-                                        {currentWeather.weather_condition}
-                                    </div>
+                                    <span className="text-5xl">{weatherIcon}</span>
                                 </div>
-                                <div className="text-6xl">
-                                    {currentWeather.weather_condition?.includes('rain') ? '🌧️' :
-                                        currentWeather.weather_condition?.includes('cloud') ? '☁️' :
-                                            '☀️'}
+
+                                <div className="grid grid-cols-2 gap-3">
+                                    <div className="bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('humidity')}
+                                        </p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {currentWeather.humidity_percent}%
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('wind_speed')}
+                                        </p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {currentWeather.wind_speed_kmh} km/h
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('rainfall')}
+                                        </p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {currentWeather.rainfall_mm || 0} mm
+                                        </p>
+                                    </div>
+                                    <div className="bg-gray-50 rounded-2xl p-3.5">
+                                        <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-1">
+                                            {t('updated')}
+                                        </p>
+                                        <p className="text-base font-bold text-gray-900">
+                                            {new Date(currentWeather.recorded_at).toLocaleTimeString([], {
+                                                hour: '2-digit',
+                                                minute: '2-digit',
+                                            })}
+                                        </p>
+                                    </div>
                                 </div>
                             </div>
 
-                            <div className="grid grid-cols-2 gap-4">
-                                <div className="bg-gray-50 p-3 rounded-lg">
-                                    <div className="text-xs text-gray-500 mb-1">{t('humidity')}</div>
-                                    <div className="text-lg font-semibold text-gray-900">
-                                        {currentWeather.humidity_percent}%
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-lg">
-                                    <div className="text-xs text-gray-500 mb-1">{t('wind_speed')}</div>
-                                    <div className="text-lg font-semibold text-gray-900">
-                                        {currentWeather.wind_speed_kmh} km/h
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-lg">
-                                    <div className="text-xs text-gray-500 mb-1">{t('rainfall')}</div>
-                                    <div className="text-lg font-semibold text-gray-900">
-                                        {currentWeather.rainfall_mm || 0} mm
-                                    </div>
-                                </div>
-                                <div className="bg-gray-50 p-3 rounded-lg">
-                                    <div className="text-xs text-gray-500 mb-1">{t('updated')}</div>
-                                    <div className="text-sm font-semibold text-gray-900">
-                                        {new Date(currentWeather.recorded_at).toLocaleTimeString([], {
-                                            hour: '2-digit',
-                                            minute: '2-digit'
-                                        })}
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                            {/* Section divider */}
+                            <div className="h-3 bg-gray-50" />
+                        </>
                     )}
+
+                    {/* ── Historical Harvests ──────────────────────────────── */}
+                    <div className="bg-white px-5 pt-5 pb-6">
+                        <div className="flex items-center gap-2 mb-4">
+                            <IconCalendar className="w-4 h-4 text-emerald-600" />
+                            <h3 className="text-sm font-bold text-gray-900">{t('historical_harvests')}</h3>
+                        </div>
+
+                        {tree.harvests && tree.harvests.length > 0 ? (
+                            <div className="space-y-3">
+                                {tree.harvests.map((harvest: any) => (
+                                    <div key={harvest.id} className="bg-gray-50 rounded-2xl p-4">
+                                        <div className="flex items-start justify-between mb-3">
+                                            <div>
+                                                <p className="text-sm font-semibold text-gray-900">
+                                                    {new Date(harvest.harvest_date).toLocaleDateString()}
+                                                </p>
+                                                {harvest.quality_grade && (
+                                                    <p className="text-[11px] text-gray-400 capitalize mt-0.5">
+                                                        {t('grade')}: {harvest.quality_grade}
+                                                    </p>
+                                                )}
+                                            </div>
+                                            <HarvestStatusBadge status={harvest.status} />
+                                        </div>
+                                        <div className="grid grid-cols-2 gap-2">
+                                            <div>
+                                                <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-0.5">
+                                                    {t('estimated_yield')}
+                                                </p>
+                                                <p className="text-sm font-bold text-gray-700">
+                                                    {harvest.estimated_yield_kg ? `${harvest.estimated_yield_kg} kg` : '—'}
+                                                </p>
+                                            </div>
+                                            <div>
+                                                <p className="text-[10px] text-gray-400 uppercase tracking-wide font-medium mb-0.5">
+                                                    {t('actual_yield')}
+                                                </p>
+                                                <p className="text-sm font-bold text-emerald-600">
+                                                    {harvest.actual_yield_kg ? `${harvest.actual_yield_kg} kg` : '—'}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    </div>
+                                ))}
+                            </div>
+                        ) : (
+                            <div className="bg-gray-50 rounded-2xl p-6 text-center border border-dashed border-gray-200">
+                                <IconCalendar className="w-8 h-8 text-gray-300 mx-auto mb-2" />
+                                <p className="text-sm text-gray-400">{t('no_historical_data')}</p>
+                            </div>
+                        )}
+                    </div>
+
+                    {/* Section divider */}
+                    <div className="h-3 bg-gray-50" />
+
+                    {/* ── Risk Disclosure ──────────────────────────────────── */}
+                    <div className="px-5 pb-5">
+                        <div className="flex gap-3 bg-amber-50 border border-amber-100 rounded-2xl p-4">
+                            <IconInfoCircle className="w-4 h-4 text-amber-500 flex-shrink-0 mt-0.5" />
+                            <p className="text-[12px] text-amber-700 leading-relaxed">
+                                <span className="font-bold">{t('risk_disclosure_title')} </span>
+                                {t('risk_disclosure_text')}
+                            </p>
+                        </div>
+                    </div>
+
+                </div>{/* end scrollable */}
+
+                {/* ── Sticky CTA ───────────────────────────────────────────── */}
+                <div
+                    className="absolute bottom-0 left-0 right-0 bg-white border-t border-gray-100 px-5 pt-3"
+                    style={{ paddingBottom: 'calc(env(safe-area-inset-bottom) + 60px)' }}
+                >
+                    <Link
+                        href={authenticated ? route('investments.create', tree.id) : route('login')}
+                        className="w-full flex items-center justify-center py-3.5 bg-emerald-500 hover:bg-emerald-600 text-white font-extrabold text-[15px] rounded-2xl shadow-md shadow-emerald-200/60 transition-colors"
+                    >
+                        {t('invest_now')}
+                    </Link>
                 </div>
 
-                {/* Historical Yields section */}
-                <div className="mt-8 bg-white rounded-lg shadow-sm p-8">
-                    <h2 className="text-2xl font-bold text-gray-900 mb-6">{t('historical_harvests')}</h2>
-                    {tree.harvests && tree.harvests.length > 0 ? (
-                        <div className="overflow-x-auto">
-                            <table className="min-w-full divide-y divide-gray-200">
-                                <thead className="bg-gray-50">
-                                    <tr>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('date')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('estimated_yield')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('actual_yield')}</th>
-                                        <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('grade')}</th>
-                                    </tr>
-                                </thead>
-                                <tbody className="bg-white divide-y divide-gray-200">
-                                    {tree.harvests.map((harvest: any) => (
-                                        <tr key={harvest.id}>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                                                {new Date(harvest.harvest_date).toLocaleDateString()}
-                                            </td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{harvest.estimated_yield_kg}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">{harvest.actual_yield_kg || '-'}</td>
-                                            <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">{harvest.quality_grade || '-'}</td>
-                                        </tr>
-                                    ))}
-                                </tbody>
-                            </table>
-                        </div>
-                    ) : (
-                        <div className="text-center py-8 text-gray-500 bg-gray-50 rounded-lg border border-gray-200">
-                            {t('no_historical_data')}
-                        </div>
-                    )}
-                </div>
+                {/* ── Fixed Bottom Navigation ──────────────────────────────── */}
+                <BottomNav />
+
             </div>
-        </div>
+
+            <style>{`
+                ::-webkit-scrollbar { display: none; }
+                * { -webkit-tap-highlight-color: transparent; }
+            `}</style>
+        </AppShellLayout>
     );
 }

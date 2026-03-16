@@ -94,11 +94,15 @@ class LotController extends Controller
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
+        $quantity = max(1, (int) $request->input('trees', 1));
+
         try {
-            $investment = $this->investmentService->purchase($user, $lot);
+            $investment = $this->investmentService->purchase($user, $lot, $quantity);
 
             return redirect()->route('investments.show', $investment)
                 ->with('success', "Investment confirmed! You've invested in {$lot->name}.");
+        } catch (\App\Exceptions\InsufficientTreesException $e) {
+            return back()->withErrors(['lot' => $e->getMessage()]);
         } catch (\App\Exceptions\InvestmentCycleClosedException $e) {
             return back()->withErrors(['lot' => $e->getMessage()]);
         } catch (\App\Exceptions\KycNotVerifiedException $e) {
@@ -112,15 +116,20 @@ class LotController extends Controller
         /** @var \App\Models\User $user */
         $user = auth()->user();
 
+        $quantity = max(1, (int) $request->input('trees', 1));
+
         try {
             $investment = $this->investmentService->reinvestFromWallet(
                 $user,
                 $lot,
-                $this->walletService
+                $this->walletService,
+                $quantity,
             );
 
             return redirect()->route('investments.show', $investment)
                 ->with('success', "Reinvestment from wallet successful for {$lot->name}.");
+        } catch (\App\Exceptions\InsufficientTreesException $e) {
+            return back()->withErrors(['lot' => $e->getMessage()]);
         } catch (\App\Exceptions\InvestmentCycleClosedException $e) {
             return back()->withErrors(['lot' => $e->getMessage()]);
         } catch (\App\Exceptions\InsufficientWalletBalanceException $e) {

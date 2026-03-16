@@ -70,6 +70,7 @@ export interface Lot {
     name: string;
     status: LotStatus;
     total_trees: number;
+    available_trees: number;
     base_price_per_tree_idr?: number;
     current_price_per_tree_idr: number;
     monthly_increase_rate: number;
@@ -393,6 +394,7 @@ export interface PortfolioInvestment {
     tree: {
         id: number;
         identifier: string;
+        token_id?: string;
         status: string;
         risk_rating: string;
         expected_roi_percent: number;
@@ -422,6 +424,7 @@ export interface InvestmentWithDetails {
     tree: {
         id: number;
         identifier: string;
+        token_id?: string;
         status: string;
         age_years: number;
         productive_lifespan_years: number;
@@ -922,6 +925,7 @@ export interface HoldingWithSparkline {
     tree: {
         id: number;
         identifier: string;
+        token_id?: string;
         status: string;
         risk_rating: string;
         expected_roi_percent: number;

@@ -355,17 +355,17 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                         >
                                             -
                                         </button>
-                                        <input
+                                         <input
                                             type="number"
                                             min="1"
-                                            max={lot.total_trees}
+                                            max={lot.available_trees}
                                             value={data.trees}
                                             onChange={(e) => setData('trees', e.target.value)}
                                             className="flex-1 text-center bg-gray-50 border-gray-200 rounded-xl py-2 text-lg font-bold focus:ring-2 focus:ring-emerald-500"
                                         />
                                         <button
                                             type="button"
-                                            onClick={() => setData('trees', Math.min(lot.total_trees, Number(data.trees) + 1).toString())}
+                                            onClick={() => setData('trees', Math.min(lot.available_trees, Number(data.trees) + 1).toString())}
                                             className="w-10 h-10 bg-emerald-600 rounded-xl flex items-center justify-center text-white font-bold text-lg hover:bg-emerald-700 transition-colors"
                                         >
                                             +
@@ -374,8 +374,8 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                     {errors.trees && (
                                         <p className="text-red-500 text-xs mt-1.5">{errors.trees}</p>
                                     )}
-                                    <p className="text-xs text-gray-500 mt-1.5">
-                                        Maksimum: {lot.total_trees} pohon
+                                     <p className="text-xs text-gray-500 mt-1.5">
+                                        Tersedia: {lot.available_trees} dari {lot.total_trees} pohon
                                     </p>
                                 </div>
 

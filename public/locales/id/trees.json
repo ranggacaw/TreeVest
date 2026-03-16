@@ -24,6 +24,7 @@
     "current_price": "Harga Saat Ini",
     "tree_age": "Usia Pohon",
     "years": "{{count}} Tahun",
+    "remaining_productivity": "Sisa Produktivitas",
     "lifespan": "Masa Hidup",
     "status": "Status",
     "harvest_cycle_label": "Siklus Panen",

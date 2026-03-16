@@ -18,6 +18,7 @@ class Lot extends Model
         'fruit_crop_id',
         'name',
         'total_trees',
+        'available_trees',
         'base_price_per_tree_idr',
         'monthly_increase_rate',
         'current_price_per_tree_idr',
@@ -42,6 +43,7 @@ class Lot extends Model
             'harvest_recorded_at' => 'datetime',
             'selling_submitted_at' => 'datetime',
             'total_trees' => 'integer',
+            'available_trees' => 'integer',
             'base_price_per_tree_idr' => 'integer',
             'current_price_per_tree_idr' => 'integer',
             'selling_revenue_idr' => 'integer',
@@ -51,6 +53,14 @@ class Lot extends Model
             'last_investment_month' => 'integer',
             'harvest_total_fruit' => 'integer',
         ];
+    }
+
+    /**
+     * Returns true when all trees in this lot have been claimed by investors.
+     */
+    public function isFull(): bool
+    {
+        return $this->available_trees <= 0;
     }
 
     public function rack(): BelongsTo

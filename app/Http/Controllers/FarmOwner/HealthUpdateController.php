@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers\FarmOwner;
 
+use App\Http\Resources\HealthUpdateResource;
 use App\Events\HealthUpdateCreated;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\StoreHealthUpdateRequest;
@@ -32,7 +33,7 @@ class HealthUpdateController extends Controller
             ->paginate(15);
 
         return Inertia::render('FarmOwner/HealthUpdates/Index', [
-            'healthUpdates' => $updates,
+            'healthUpdates' => HealthUpdateResource::collection($updates),
             'farms' => $farms,
         ]);
     }
@@ -98,8 +99,19 @@ class HealthUpdateController extends Controller
             ->get();
 
         return Inertia::render('FarmOwner/HealthUpdates/Edit', [
-            'healthUpdate' => $healthUpdate,
+            'healthUpdate' => (new HealthUpdateResource($healthUpdate))->resolve(),
             'farms' => $farms,
+        ]);
+    }
+
+    public function show(Request $request, TreeHealthUpdate $healthUpdate): Response
+    {
+        Gate::authorize('manage-health-updates', $healthUpdate->fruitCrop->farm);
+
+        $healthUpdate->load(['fruitCrop.farm', 'fruitCrop.fruitType', 'author']);
+
+        return Inertia::render('FarmOwner/HealthUpdates/Show', [
+            'healthUpdate' => (new HealthUpdateResource($healthUpdate))->resolve(),
         ]);
     }
 

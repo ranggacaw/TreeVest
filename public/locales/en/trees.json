@@ -24,6 +24,7 @@
     "current_price": "Current Price",
     "tree_age": "Tree Age",
     "years": "{{count}} Years",
+    "remaining_productivity": "Remaining Productivity",
     "lifespan": "Lifespan",
     "status": "Status",
     "harvest_cycle_label": "Harvest Cycle",

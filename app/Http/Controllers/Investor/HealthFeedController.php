@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Investor;
 
 use App\Http\Controllers\Controller;
+use App\Http\Resources\HealthUpdateResource;
 use App\Models\TreeHealthUpdate;
 use App\Services\HealthMonitoringService;
 use Illuminate\Http\Request;
@@ -30,7 +31,7 @@ class HealthFeedController extends Controller
         );
 
         return Inertia::render('Investments/HealthFeed/Index', [
-            'healthUpdates' => $healthFeed,
+            'healthUpdates' => HealthUpdateResource::collection($healthFeed),
             'healthAlerts' => $alertsFeed,
             'filters' => $filters,
         ]);
@@ -41,7 +42,7 @@ class HealthFeedController extends Controller
         $healthUpdate->load(['fruitCrop.farm', 'fruitCrop.fruitType', 'author']);
 
         return Inertia::render('Investments/HealthFeed/Show', [
-            'healthUpdate' => $healthUpdate,
+            'healthUpdate' => (new HealthUpdateResource($healthUpdate))->resolve(),
         ]);
     }
 

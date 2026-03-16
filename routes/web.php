@@ -59,6 +59,18 @@ Route::get('/', function () {
     ]);
 })->name('home');
 
+Route::get('/debug/auth-status', function () {
+    return response()->json([
+        'authenticated' => auth()->check(),
+        'user' => auth()->check() ? [
+            'id' => auth()->id(),
+            'email' => auth()->user()->email,
+            'role' => auth()->user()->role,
+            'is_farm_owner' => auth()->user()->isFarmOwner(),
+        ] : null,
+    ]);
+})->middleware('auth');
+
 Route::get('/dashboard', function () {
     $user = auth()->user();
     if ($user->hasRole('admin')) {
@@ -236,6 +248,7 @@ Route::middleware(['auth', 'role:farm_owner'])->group(function () {
             Route::get('/', [FarmOwnerHealthUpdateController::class, 'index'])->name('index');
             Route::get('/create', [FarmOwnerHealthUpdateController::class, 'create'])->name('create');
             Route::post('/', [FarmOwnerHealthUpdateController::class, 'store'])->name('store');
+            Route::get('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'show'])->name('show');
             Route::get('/{healthUpdate}/edit', [FarmOwnerHealthUpdateController::class, 'edit'])->name('edit');
             Route::put('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'update'])->name('update');
             Route::delete('/{healthUpdate}', [FarmOwnerHealthUpdateController::class, 'destroy'])->name('destroy');
@@ -435,14 +448,19 @@ Route::middleware(['auth', 'role:admin'])->prefix('admin/market-listings')->name
     Route::delete('/{listing}', [\App\Http\Controllers\Admin\MarketListingController::class, 'destroy'])->name('destroy');
 });
 
-// Fallback for missing storage images
+// Fallback for missing storage images - must be after other routes
 Route::get('storage/{path}', function ($path) {
-    if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $path)) {
-        $filename = pathinfo($path, PATHINFO_FILENAME);
-        // Replace dashes and underscores with spaces for a better avatar letter
-        $name = str_replace(['-', '_'], ' ', $filename);
-
-        return redirect('https://placehold.co/600x400/png?text='.urlencode($name));
+    $fullPath = storage_path('app/public/' . $path);
+    
+    if (!file_exists($fullPath)) {
+        if (preg_match('/\.(jpg|jpeg|png|gif|webp)$/i', $path)) {
+            $filename = pathinfo($path, PATHINFO_FILENAME);
+            $name = str_replace(['-', '_'], ' ', $filename);
+            return redirect('https://placehold.co/600x400/png?text=' . urlencode($name));
+        }
+        abort(404);
     }
-    abort(404);
+    
+    $mime = mime_content_type($fullPath);
+    return response()->file($fullPath, ['Content-Type' => $mime]);
 })->where('path', '.*');

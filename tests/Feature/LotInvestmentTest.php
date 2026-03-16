@@ -49,10 +49,11 @@ class LotInvestmentTest extends TestCase
         $lot = Lot::factory()->cycleOpen()->create([
             'current_price_per_tree_idr' => 100_000,
             'total_trees' => 5,
+            'available_trees' => 5,
         ]);
 
         $this->actingAs($this->investor)
-            ->post(route('investor.lots.invest', $lot));
+            ->post(route('investor.lots.invest', $lot), ['trees' => 5]);
 
         $this->assertDatabaseHas('investments', [
             'user_id' => $this->investor->id,
@@ -128,6 +129,7 @@ class LotInvestmentTest extends TestCase
         $lot = Lot::factory()->cycleOpen()->create([
             'current_price_per_tree_idr' => 100_000,
             'total_trees' => 2,
+            'available_trees' => 2,
         ]);
 
         // Fund the wallet
@@ -137,7 +139,7 @@ class LotInvestmentTest extends TestCase
         ]);
 
         $response = $this->actingAs($this->investor)
-            ->post(route('investor.lots.reinvest', $lot));
+            ->post(route('investor.lots.reinvest', $lot), ['trees' => 2]);
 
         $response->assertRedirect();
         $this->assertDatabaseHas('investments', [

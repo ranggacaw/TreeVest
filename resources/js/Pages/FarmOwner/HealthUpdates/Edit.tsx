@@ -35,6 +35,44 @@ interface Props {
 export default function Edit({ healthUpdate, farms }: Props) {
   const [photos, setPhotos] = useState<File[]>([]);
 
+  if (!healthUpdate) {
+    return (
+      <AppLayout title="Edit Health Update">
+        <Head title="Edit Health Update" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            Health update not found or you don't have permission to edit it.
+          </div>
+          <Link
+            href={route('farm-owner.health-updates.index')}
+            className="mt-4 inline-block text-emerald-600 hover:text-emerald-700"
+          >
+            ← Back to Health Updates
+          </Link>
+        </div>
+      </AppLayout>
+    );
+  }
+
+  if (!farms || farms.length === 0) {
+    return (
+      <AppLayout title="Edit Health Update">
+        <Head title="Edit Health Update" />
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+          <div className="bg-red-50 border border-red-200 rounded-lg p-4 text-red-700">
+            You don't have any active farms. Please create a farm first.
+          </div>
+          <Link
+            href={route('farm-owner.health-updates.index')}
+            className="mt-4 inline-block text-emerald-600 hover:text-emerald-700"
+          >
+            ← Back to Health Updates
+          </Link>
+        </div>
+      </AppLayout>
+    );
+  }
+
   const { data, setData, processing, errors } = useForm({
     fruit_crop_id: String(healthUpdate.fruit_crop_id),
     severity: healthUpdate.severity,
@@ -69,7 +107,7 @@ export default function Edit({ healthUpdate, farms }: Props) {
   return (
     <AppLayout title="Edit Health Update">
       <Head title="Edit Health Update" />
-      <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-6">
           <Link
             href={route('farm-owner.health-updates.index')}
@@ -88,10 +126,10 @@ export default function Edit({ healthUpdate, farms }: Props) {
             data={data}
             setData={setData}
             errors={errors}
-            farms={farms}
+            farms={farms || []}
             photos={photos}
             setPhotos={setPhotos}
-            existingPhotos={healthUpdate.photos}
+            existingPhotos={healthUpdate.photos || []}
           />
 
           <div className="flex justify-end gap-4">

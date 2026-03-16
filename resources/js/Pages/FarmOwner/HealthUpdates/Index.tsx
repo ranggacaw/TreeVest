@@ -1,4 +1,5 @@
-import { Head, Link } from '@inertiajs/react';
+import { Head, Link, router } from '@inertiajs/react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { AppLayout } from '@/Layouts';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
@@ -47,7 +48,10 @@ interface Props {
 }
 
 export default function Index({ healthUpdates, farms }: Props) {
-  const { t } = useTranslation('health');
+  const { t } = useTranslation();
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [deletingId, setDeletingId] = useState<number | null>(null);
+  const [deleting, setDeleting] = useState(false);
 
   const formatDate = (dateString: string) => {
     return new Date(dateString).toLocaleDateString('en-US', {
@@ -69,19 +73,38 @@ export default function Index({ healthUpdates, farms }: Props) {
     return labels[type] || type;
   };
 
+  const canEdit = (createdAt: string) => {
+    const created = new Date(createdAt);
+    const now = new Date();
+    const hoursDiff = (now.getTime() - created.getTime()) / (1000 * 60 * 60);
+    return hoursDiff < 24;
+  };
+
+  const handleDelete = () => {
+    if (deletingId === null) return;
+    setDeleting(true);
+    router.delete(route('farm-owner.health-updates.destroy', deletingId), {
+      onFinish: () => {
+        setDeleting(false);
+        setShowDeleteModal(false);
+        setDeletingId(null);
+      },
+    });
+  };
+
   return (
     <AppLayout title="Health Updates">
       <Head title="Health Updates" />
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="flex justify-between items-center mb-6">
           <h1 className="text-2xl font-semibold text-gray-900">
-            {t('farmOwner.healthUpdates.title')}
+            Health Updates
           </h1>
           <Link
             href={route('farm-owner.health-updates.create')}
             className="px-4 py-2 bg-emerald-600 text-white rounded-lg hover:bg-emerald-700"
           >
-            {t('farmOwner.healthUpdates.create')}
+            + Create Health Update
           </Link>
         </div>
 
@@ -134,11 +157,29 @@ export default function Index({ healthUpdates, farms }: Props) {
 
                   <div className="flex gap-2">
                     <Link
-                      href={route('farm-owner.health-updates.edit', update.id)}
-                      className="text-sm text-gray-600 hover:text-gray-900"
+                      href={route('farm-owner.health-updates.show', update.id)}
+                      className="text-sm text-blue-600 hover:text-blue-900"
                     >
-                      Edit
+                      View
                     </Link>
+                    {canEdit(update.created_at) && (
+                      <Link
+                        href={route('farm-owner.health-updates.edit', update.id)}
+                        className="text-sm text-gray-600 hover:text-gray-900"
+                      >
+                        Edit
+                      </Link>
+                    )}
+                    <button
+                      onClick={(e) => {
+                        e.preventDefault();
+                        setDeletingId(update.id);
+                        setShowDeleteModal(true);
+                      }}
+                      className="text-sm text-red-600 hover:text-red-900"
+                    >
+                      Delete
+                    </button>
                   </div>
                 </div>
               </div>
@@ -147,13 +188,13 @@ export default function Index({ healthUpdates, farms }: Props) {
         ) : (
           <div className="text-center py-12 bg-gray-50 rounded-lg">
             <p className="text-gray-500">
-              {t('farmOwner.healthUpdates.noUpdates')}
+              No health updates found.
             </p>
             <Link
               href={route('farm-owner.health-updates.create')}
               className="mt-4 inline-block text-emerald-600 hover:text-emerald-700"
             >
-              {t('farmOwner.healthUpdates.createFirst')}
+              Create your first health update
             </Link>
           </div>
         )}
@@ -177,6 +218,36 @@ export default function Index({ healthUpdates, farms }: Props) {
           </div>
         )}
       </div>
+
+      {showDeleteModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="absolute inset-0 bg-black bg-opacity-50" onClick={() => setShowDeleteModal(false)} />
+          <div className="relative bg-white rounded-lg shadow-xl max-w-md w-full p-6">
+            <h3 className="text-lg font-semibold text-gray-900 mb-2">
+              Delete Health Update
+            </h3>
+            <p className="text-gray-600 mb-4">
+              Are you sure you want to delete this health update? This action cannot be undone.
+            </p>
+            <div className="flex justify-end gap-3">
+              <button
+                onClick={() => setShowDeleteModal(false)}
+                className="px-4 py-2 border border-gray-300 text-gray-700 rounded-lg hover:bg-gray-50"
+                disabled={deleting}
+              >
+                Cancel
+              </button>
+              <button
+                onClick={handleDelete}
+                className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 disabled:opacity-50"
+                disabled={deleting}
+              >
+                {deleting ? 'Deleting...' : 'Delete'}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
     </AppLayout>
   );
 }

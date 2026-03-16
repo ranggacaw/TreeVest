@@ -17,11 +17,14 @@ class LotFactory extends Factory
         $cycleMonths = fake()->numberBetween(4, 12);
         $lastInvestmentMonth = fake()->numberBetween(1, $cycleMonths - 1);
 
+        $totalTrees = fake()->numberBetween(5, 50);
+
         return [
             'rack_id' => Rack::factory(),
             'fruit_crop_id' => FruitCrop::factory(),
             'name' => 'L' . str_pad((string) fake()->numberBetween(1, 999), 3, '0', STR_PAD_LEFT),
-            'total_trees' => fake()->numberBetween(5, 50),
+            'total_trees' => $totalTrees,
+            'available_trees' => $totalTrees,
             'base_price_per_tree_idr' => fake()->numberBetween(50000, 500000),
             'monthly_increase_rate' => '0.0500',
             'current_price_per_tree_idr' => fake()->numberBetween(50000, 500000),
@@ -87,6 +90,7 @@ class LotFactory extends Factory
             'base_price_per_tree_idr' => 100000,
             'current_price_per_tree_idr' => 100000,
             'monthly_increase_rate' => '0.0500',
+            'available_trees' => $attrs['total_trees'] ?? 10,
         ]);
     }
 

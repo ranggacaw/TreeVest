@@ -4,6 +4,7 @@ namespace App\Services;
 
 use App\Enums\InvestmentStatus;
 use App\Enums\LotStatus;
+use App\Exceptions\InsufficientTreesException;
 use App\Exceptions\InvestmentCycleClosedException;
 use App\Models\Investment;
 use App\Models\Lot;
@@ -18,24 +19,40 @@ class LotInvestmentService
     ) {}
 
     /**
-     * Validates and creates a lot investment record.
+     * Validates and creates a lot investment record for a given quantity of trees.
      * Payment initiation is handled separately by the payment service.
+     *
+     * @param  int  $quantity  Number of trees the investor wants to purchase (default 1).
      *
      * @throws \App\Exceptions\InvestmentCycleClosedException
      * @throws \App\Exceptions\KycNotVerifiedException
+     * @throws \App\Exceptions\InsufficientTreesException
      */
-    public function purchase(User $investor, Lot $lot): Investment
+    public function purchase(User $investor, Lot $lot, int $quantity = 1): Investment
     {
         $this->validateCycleOpen($lot);
         $this->validateKyc($investor);
 
-        $totalIdr = $lot->current_price_per_tree_idr * $lot->total_trees;
         $currentMonth = $this->pricingService->currentCycleMonth($lot);
 
-        return DB::transaction(function () use ($investor, $lot, $totalIdr, $currentMonth) {
+        return DB::transaction(function () use ($investor, $lot, $quantity, $currentMonth) {
+            // Re-read lot with a row-level lock to safely check and decrement available_trees.
+            /** @var Lot $lockedLot */
+            $lockedLot = Lot::lockForUpdate()->findOrFail($lot->id);
+
+            if ($lockedLot->available_trees < $quantity) {
+                throw new InsufficientTreesException(
+                    "Only {$lockedLot->available_trees} tree(s) available in this lot, but {$quantity} requested."
+                );
+            }
+
+            $lockedLot->decrement('available_trees', $quantity);
+
+            $totalIdr = $lockedLot->current_price_per_tree_idr * $quantity;
+
             $investment = Investment::create([
                 'user_id' => $investor->id,
-                'lot_id' => $lot->id,
+                'lot_id' => $lockedLot->id,
                 'tree_id' => null,
                 'amount_idr' => $totalIdr,
                 'currency' => 'IDR',
@@ -43,8 +60,8 @@ class LotInvestmentService
                 'purchase_month' => $currentMonth,
                 'status' => InvestmentStatus::Active,
                 'metadata' => [
-                    'price_per_tree_idr' => $lot->current_price_per_tree_idr,
-                    'total_trees' => $lot->total_trees,
+                    'price_per_tree_idr' => $lockedLot->current_price_per_tree_idr,
+                    'quantity' => $quantity,
                     'cycle_month_at_purchase' => $currentMonth,
                 ],
             ]);
@@ -52,7 +69,8 @@ class LotInvestmentService
             Log::info('Lot investment created', [
                 'investment_id' => $investment->id,
                 'investor_id' => $investor->id,
-                'lot_id' => $lot->id,
+                'lot_id' => $lockedLot->id,
+                'quantity' => $quantity,
                 'amount_idr' => $totalIdr,
                 'purchase_month' => $currentMonth,
             ]);
@@ -94,21 +112,24 @@ class LotInvestmentService
     }
 
     /**
-     * Purchases a lot using wallet balance instead of payment gateway.
+     * Purchases trees from a lot using wallet balance instead of payment gateway.
      * Investment is immediately activated (no pending_payment state).
+     *
+     * @param  int  $quantity  Number of trees to purchase (default 1).
      *
      * @throws \App\Exceptions\InvestmentCycleClosedException
      * @throws \App\Exceptions\InsufficientWalletBalanceException
+     * @throws \App\Exceptions\InsufficientTreesException
      */
-    public function reinvestFromWallet(User $investor, Lot $lot, WalletService $walletService): Investment
+    public function reinvestFromWallet(User $investor, Lot $lot, WalletService $walletService, int $quantity = 1): Investment
     {
         $this->validateCycleOpen($lot);
         $this->validateKyc($investor);
 
-        $totalIdr = $lot->current_price_per_tree_idr * $lot->total_trees;
+        $totalIdr = $lot->current_price_per_tree_idr * $quantity;
 
-        return DB::transaction(function () use ($investor, $lot, $totalIdr, $walletService) {
-            $investment = $this->purchase($investor, $lot);
+        return DB::transaction(function () use ($investor, $lot, $quantity, $totalIdr, $walletService) {
+            $investment = $this->purchase($investor, $lot, $quantity);
             $walletService->debit(
                 $investor,
                 $totalIdr,
@@ -120,3 +141,4 @@ class LotInvestmentService
         });
     }
 }
+

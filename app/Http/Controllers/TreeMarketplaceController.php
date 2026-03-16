@@ -113,7 +113,7 @@ class TreeMarketplaceController extends Controller
         $tree->load([
             'fruitCrop.fruitType',
             'fruitCrop.farm.images' => fn ($q) => $q->where('is_featured', true)->limit(1),
-            'harvests' => fn ($q) => $q->orderBy('scheduled_date', 'desc')->limit(10),
+            'fruitCrop.harvests' => fn ($q) => $q->orderBy('scheduled_date', 'desc')->limit(10),
         ]);
 
         $crop = $tree->fruitCrop;
@@ -197,9 +197,10 @@ class TreeMarketplaceController extends Controller
                             : null,
                     ],
                 ],
-                'harvests' => $tree->harvests->map(fn ($h) => [
+                'harvests' => ($crop?->harvests ?? collect())->map(fn ($h) => [
                     'id' => $h->id,
                     'harvest_date' => $h->scheduled_date?->format('Y-m-d'),
+                    'status' => $h->status?->value ?? $h->status,
                     'estimated_yield_kg' => $h->estimated_yield_kg,
                     'actual_yield_kg' => $h->actual_yield_kg,
                     'quality_grade' => $h->quality_grade?->value ?? $h->quality_grade,

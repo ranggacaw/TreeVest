@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\RiskRating;
 use App\Enums\TreeLifecycleStage;
+use App\Services\TreeTokenService;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -15,9 +16,29 @@ class Tree extends Model
 {
     use HasFactory, SoftDeletes;
 
+    protected static function booted(): void
+    {
+        static::created(function (Tree $tree) {
+            if ($tree->token_id === null && $tree->lot_id !== null) {
+                // Count how many trees in this lot have token_ids already
+                // (including the just-created tree itself), then assign the next number.
+                $treeNumber = static::where('lot_id', $tree->lot_id)
+                    ->whereNotNull('token_id')
+                    ->count() + 1;
+
+                $tree->token_id = app(TreeTokenService::class)->generateTokenId(
+                    $tree->lot,
+                    $treeNumber
+                );
+                $tree->saveQuietly();
+            }
+        });
+    }
+
     protected $fillable = [
         'fruit_crop_id',
         'lot_id',
+        'token_id',
         'tree_identifier',
         'latitude',
         'longitude',

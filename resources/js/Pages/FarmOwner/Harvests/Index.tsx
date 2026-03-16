@@ -4,9 +4,20 @@ import { PageProps, PaginatedHarvests } from '@/types';
 import HarvestStatusBadge from '@/Components/HarvestStatusBadge';
 import { formatDate } from '@/utils/date';
 import { useTranslation } from 'react-i18next';
+import { useState } from 'react';
+
+interface FruitType {
+  id: number;
+  name: string;
+}
 
 interface Props extends PageProps {
   harvests: PaginatedHarvests;
+  filters: {
+    search?: string;
+    fruit_type_id?: number;
+  };
+  fruitTypes: FruitType[];
 }
 
 function EmptyState({ t }: { t: (key: string) => string }) {
@@ -56,11 +67,41 @@ function EmptyState({ t }: { t: (key: string) => string }) {
   );
 }
 
-export default function Index({ harvests, flash }: Props) {
+export default function Index({ harvests, flash, filters, fruitTypes }: Props) {
   const { t } = useTranslation('harvests');
+  const [search, setSearch] = useState(filters?.search ?? '');
+  const activeCrop = filters?.fruit_type_id ?? '';
+
+  const applySearch = () => {
+    const params: Record<string, string | number> = {};
+    if (search) params.search = search;
+    if (activeCrop) params.fruit_type_id = activeCrop;
+    router.get(route('farm-owner.harvests.index'), params, {
+      preserveState: true,
+      replace: true,
+    });
+  };
+
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    applySearch();
+  };
+
+  const applyCropFilter = (cropId: number | '') => {
+    const params: Record<string, string | number> = {};
+    if (search) params.search = search;
+    if (cropId) params.fruit_type_id = cropId;
+    router.get(route('farm-owner.harvests.index'), params, {
+      preserveState: true,
+      replace: true,
+    });
+  };
 
   const goToPage = (page: number) => {
-    router.get(route('farm-owner.harvests.index'), { page }, { preserveState: true });
+    const params: Record<string, string | number> = { page };
+    if (search) params.search = search;
+    if (activeCrop) params.fruit_type_id = activeCrop;
+    router.get(route('farm-owner.harvests.index'), params, { preserveState: true });
   };
 
   return (
@@ -98,6 +139,67 @@ export default function Index({ harvests, flash }: Props) {
             {t('schedule_harvest')}
           </Link>
         </div>
+
+        {/* Search and Crop Filter */}
+        {harvests.total > 0 && (
+          <div className="mb-6 flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+            {/* Search */}
+            <form onSubmit={handleSearch} className="flex w-full max-w-md gap-2">
+              <div className="relative flex-1">
+                <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
+                  <svg
+                    className="h-4 w-4 text-gray-400"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke="currentColor"
+                  >
+                    <path
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                      strokeWidth={2}
+                      d="m21 21-5.197-5.197m0 0A7.5 7.5 0 1 0 5.196 5.196a7.5 7.5 0 0 0 10.607 10.607Z"
+                    />
+                  </svg>
+                </div>
+                <input
+                  type="text"
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  placeholder="Search by tree or farm name..."
+                  className="block w-full rounded-lg border border-gray-200 py-2 pl-10 pr-4 text-sm text-gray-900 placeholder-gray-400 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                />
+              </div>
+              <button
+                type="submit"
+                className="rounded-lg bg-emerald-600 px-4 py-2 text-sm font-medium text-white hover:bg-emerald-700 focus:outline-none focus:ring-2 focus:ring-emerald-500 focus:ring-offset-2"
+              >
+                Search
+              </button>
+            </form>
+
+            {/* Crop Filter */}
+            {fruitTypes.length > 0 && (
+              <div className="flex items-center gap-2">
+                <label htmlFor="crop-filter" className="text-sm font-medium text-gray-600">
+                  Crop:
+                </label>
+                <select
+                  id="crop-filter"
+                  value={activeCrop}
+                  onChange={(e) => applyCropFilter(e.target.value ? Number(e.target.value) : '')}
+                  className="rounded-lg border border-gray-200 py-2 pl-3 pr-8 text-sm text-gray-900 focus:border-emerald-500 focus:outline-none focus:ring-1 focus:ring-emerald-500"
+                >
+                  <option value="">All Crops</option>
+                  {fruitTypes.map((crop) => (
+                    <option key={crop.id} value={crop.id}>
+                      {crop.name}
+                    </option>
+                  ))}
+                </select>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Flash message */}
         {flash?.success && (

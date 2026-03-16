@@ -56,6 +56,7 @@ interface InvestmentData {
     tree?: {
         id: number;
         identifier: string;
+        token_id?: string;
         price_idr?: number;
         price_formatted?: string;
         expected_roi: number;
@@ -310,6 +311,12 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                                 <span className="text-sm text-gray-500">{t('harvest_cycle')}</span>
                                 <span className="text-sm font-medium text-gray-900 capitalize">{investment.fruit_crop?.harvest_cycle || '-'}</span>
                             </div>
+                            {investment.investment_type === 'tree' && investment.tree?.token_id && (
+                                <div className="flex justify-between py-2 border-b border-gray-50">
+                                    <span className="text-sm text-gray-500">{t('token_id', 'Token ID')}</span>
+                                    <span className="text-sm font-mono font-medium text-gray-900">{investment.tree.token_id}</span>
+                                </div>
+                            )}
                             <div className="flex justify-between py-2 border-b border-gray-50">
                                 <span className="text-sm text-gray-500">{t('location')}</span>
                                 <span className="text-sm font-medium text-gray-900 text-right max-w-[60%] truncate">

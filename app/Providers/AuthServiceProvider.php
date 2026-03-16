@@ -15,6 +15,7 @@ class AuthServiceProvider extends ServiceProvider
      */
     protected $policies = [
         Investment::class => InvestmentPolicy::class,
+        \App\Models\TreeHealthUpdate::class => \App\Policies\HealthUpdatePolicy::class,
     ];
 
     /**
@@ -28,6 +29,10 @@ class AuthServiceProvider extends ServiceProvider
             if ($user->isAdmin()) {
                 return true;
             }
+        });
+
+        \Illuminate\Support\Facades\Gate::define('manage-health-updates', function ($user, \App\Models\Farm $farm) {
+            return $user->isFarmOwner() && $user->id === $farm->owner_id;
         });
     }
 }
