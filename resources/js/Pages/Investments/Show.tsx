@@ -174,12 +174,12 @@ export default function Show({ auth, investment, unread_notifications_count }: P
     };
 
     const statusColors: Record<string, string> = {
-        pending_payment: 'bg-amber-100 text-amber-800',
-        active: 'bg-emerald-100 text-emerald-800',
-        listed: 'bg-blue-100 text-blue-800',
-        matured: 'bg-indigo-100 text-indigo-800',
-        sold: 'bg-purple-100 text-purple-800',
-        cancelled: 'bg-red-100 text-red-800',
+        pending_payment: 'bg-warning-50 text-warning-700',
+        active: 'bg-success-50 text-success-700',
+        listed: 'bg-blue-50 text-blue-700',
+        matured: 'bg-indigo-50 text-indigo-700',
+        sold: 'bg-purple-50 text-purple-700',
+        cancelled: 'bg-danger-50 text-danger-700',
     };
 
     const formatDate = (dateString: string) => {
@@ -194,48 +194,48 @@ export default function Show({ auth, investment, unread_notifications_count }: P
         <AppShellLayout>
             <Head title={t('investment_number', { id: investment.id })} />
 
-            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+            <div className="relative w-full max-w-md bg-bg flex flex-col" style={{ height: '100dvh' }}>
                 <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: '88px' }}>
                     <AppTopBar notificationCount={unread_notifications_count} />
 
                     {/* Back Navigation */}
-                    <div className="bg-white px-6 pt-4 pb-2">
-                        <Link href={route('portfolio.dashboard')} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
+                    <div className="bg-card px-6 pt-4 pb-2">
+                        <Link href={route('portfolio.dashboard')} className="inline-flex items-center text-sm text-textSecondary hover:text-primary transition-colors">
                             {t('back_to_portfolio', 'Back to Portfolio')}
                         </Link>
                     </div>
 
                     {/* Header Section */}
-                    <div className="bg-white px-6 pb-6 pt-2">
+                    <div className="bg-card px-6 pb-6 pt-2">
                         <div className="flex justify-between items-start mb-4">
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">
+                                <h2 className="text-xl font-bold text-text">
                                     {getIdentifier()}
                                 </h2>
-                                <p className="text-sm text-gray-500">{investment.fruit_crop?.farm?.name || 'Unknown Farm'}</p>
+                                <p className="text-sm text-textSecondary">{investment.fruit_crop?.farm?.name || 'Unknown Farm'}</p>
                             </div>
-                            <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${statusColors[investment.status] || 'bg-gray-100 text-gray-800'}`}>
+                            <span className={`px-2.5 py-1 rounded-lg text-xs font-semibold capitalize ${statusColors[investment.status] || 'bg-bg text-textSecondary'}`}>
                                 {investment.status_label || investment.status.replace('_', ' ')}
                             </span>
                         </div>
 
                         {/* Summary Cards */}
                         <div className="grid grid-cols-2 gap-3 mb-6">
-                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-500 mb-1">{t('current_value')}</p>
-                                <p className="font-bold text-gray-900">{formatRupiah(investment.current_value_idr)}</p>
+                            <div className="p-3 bg-bg rounded-xl border border-border">
+                                <p className="text-xs text-textSecondary mb-1">{t('current_value')}</p>
+                                <p className="font-bold text-text">{formatRupiah(investment.current_value_idr)}</p>
                             </div>
-                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-500 mb-1">{t('projected_return')}</p>
-                                <p className="font-bold text-emerald-600">{formatRupiah(investment.projected_return_idr)}</p>
+                            <div className="p-3 bg-bg rounded-xl border border-border">
+                                <p className="text-xs text-textSecondary mb-1">{t('projected_return')}</p>
+                                <p className="font-bold text-primary">{formatRupiah(investment.projected_return_idr)}</p>
                             </div>
-                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-500 mb-1">{t('amount_invested')}</p>
-                                <p className="font-semibold text-gray-900">{investment.formatted_amount}</p>
+                            <div className="p-3 bg-bg rounded-xl border border-border">
+                                <p className="text-xs text-textSecondary mb-1">{t('amount_invested')}</p>
+                                <p className="font-semibold text-text">{investment.formatted_amount}</p>
                             </div>
-                            <div className="p-3 bg-gray-50 rounded-xl border border-gray-100">
-                                <p className="text-xs text-gray-500 mb-1">ROI</p>
-                                <p className="font-semibold text-emerald-600">{getExpectedRoi()}%</p>
+                            <div className="p-3 bg-bg rounded-xl border border-border">
+                                <p className="text-xs text-textSecondary mb-1">ROI</p>
+                                <p className="font-semibold text-primary">{getExpectedRoi()}%</p>
                             </div>
                         </div>
 
@@ -244,7 +244,7 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                             <PrimaryButton
                                 onClick={handleCancel}
                                 disabled={processing}
-                                className="w-full justify-center bg-red-600 hover:bg-red-700 py-3 rounded-xl"
+                                className="w-full justify-center bg-danger hover:bg-danger-600 py-3 rounded-xl"
                             >
                                 {processing ? t('cancelling') : t('cancel_investment')}
                             </PrimaryButton>
@@ -254,13 +254,13 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                             <div className="flex gap-3">
                                 <Link
                                     href={`/investments/${investment.id}/top-up`}
-                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-emerald-600 border border-transparent rounded-xl font-semibold text-sm text-white hover:bg-emerald-700 transition-colors shadow-sm"
+                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-primary border border-transparent rounded-xl font-semibold text-sm text-white hover:bg-primary-dark transition-colors shadow-card"
                                 >
                                     {t('top_up_investment', 'Top Up')}
                                 </Link>
                                 <Link
                                     href={`/secondary-market/create?investment_id=${investment.id}`}
-                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-white border border-gray-200 rounded-xl font-semibold text-sm text-gray-700 hover:bg-gray-50 transition-colors shadow-sm"
+                                    className="flex-1 inline-flex justify-center items-center px-4 py-3 bg-card border border-border rounded-xl font-semibold text-sm text-text hover:bg-bg transition-colors shadow-card"
                                 >
                                     {t('list_for_sale', 'Sell')}
                                 </Link>
@@ -282,44 +282,44 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         )}
                     </div>
 
-                    <div className="h-3 bg-gray-50" />
+                    <div className="h-3 bg-bg" />
 
                     {/* Tree Details */}
-                    <div className="bg-white p-6">
-                        <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                            <IconTree className="w-5 h-5 text-emerald-600" />
+                    <div className="bg-card p-6">
+                        <h3 className="text-lg font-bold text-text mb-4 flex items-center gap-2">
+                            <IconTree className="w-5 h-5 text-primary" />
                             {investment.investment_type === 'tree' ? t('tree_details') : t('lot_details', 'Lot Details')}
                         </h3>
                         <div className="space-y-3">
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('variant')}</span>
-                                <span className="text-sm font-medium text-gray-900">{investment.fruit_crop?.variant || '-'}</span>
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('variant')}</span>
+                                <span className="text-sm font-medium text-text">{investment.fruit_crop?.variant || '-'}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('fruit_type')}</span>
-                                <span className="text-sm font-medium text-gray-900">{investment.fruit_crop?.fruit_type?.name || '-'}</span>
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('fruit_type')}</span>
+                                <span className="text-sm font-medium text-text">{investment.fruit_crop?.fruit_type?.name || '-'}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('age')}</span>
-                                <span className="text-sm font-medium text-gray-900">{getAgeInfo().age} {t('month')}</span>
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('age')}</span>
+                                <span className="text-sm font-medium text-text">{getAgeInfo().age} {t('month')}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('risk_rating')}</span>
-                                <span className="text-sm font-medium text-gray-900 capitalize">{getRiskRating()}</span>
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('risk_rating')}</span>
+                                <span className="text-sm font-medium text-text capitalize">{getRiskRating()}</span>
                             </div>
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('harvest_cycle')}</span>
-                                <span className="text-sm font-medium text-gray-900 capitalize">{investment.fruit_crop?.harvest_cycle || '-'}</span>
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('harvest_cycle')}</span>
+                                <span className="text-sm font-medium text-text capitalize">{investment.fruit_crop?.harvest_cycle || '-'}</span>
                             </div>
                             {investment.investment_type === 'tree' && investment.tree?.token_id && (
-                                <div className="flex justify-between py-2 border-b border-gray-50">
-                                    <span className="text-sm text-gray-500">{t('token_id', 'Token ID')}</span>
-                                    <span className="text-sm font-mono font-medium text-gray-900">{investment.tree.token_id}</span>
+                                <div className="flex justify-between py-2 border-b border-border">
+                                    <span className="text-sm text-textSecondary">{t('token_id', 'Token ID')}</span>
+                                    <span className="text-sm font-mono font-medium text-text">{investment.tree.token_id}</span>
                                 </div>
                             )}
-                            <div className="flex justify-between py-2 border-b border-gray-50">
-                                <span className="text-sm text-gray-500">{t('location')}</span>
-                                <span className="text-sm font-medium text-gray-900 text-right max-w-[60%] truncate">
+                            <div className="flex justify-between py-2 border-b border-border">
+                                <span className="text-sm text-textSecondary">{t('location')}</span>
+                                <span className="text-sm font-medium text-text text-right max-w-[60%] truncate">
                                     {investment.fruit_crop?.farm?.location || investment.fruit_crop?.farm?.name || '-'}
                                 </span>
                             </div>
@@ -327,19 +327,19 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         <div className="mt-4 pt-2">
                              <Link
                                 href={investment.fruit_crop?.farm?.id ? `/farms/${investment.fruit_crop.farm.id}` : '#'}
-                                className="text-sm font-semibold text-emerald-600 hover:text-emerald-700 flex items-center justify-center gap-1"
+                                className="text-sm font-semibold text-primary hover:text-primary-dark flex items-center justify-center gap-1"
                             >
                                 {t('view_full_farm_details')}
                             </Link>
                         </div>
                     </div>
 
-                    <div className="h-3 bg-gray-50" />
+                    <div className="h-3 bg-bg" />
 
                     {/* Location Hierarchy */}
                     {investment.location_hierarchy && (
-                        <div className="bg-white p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4">
+                        <div className="bg-card p-6">
+                            <h3 className="text-lg font-bold text-text mb-4">
                                 {t('tree_location', 'Tree Location')}
                             </h3>
                             <LocationHierarchy
@@ -362,9 +362,9 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         const coords = getGpsCoordinates();
                         return coords && coords.latitude && coords.longitude ? (
                             <>
-                                <div className="h-3 bg-gray-50" />
-                                <div className="bg-white p-6">
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4">
+                                <div className="h-3 bg-bg" />
+                                <div className="bg-card p-6">
+                                    <h3 className="text-lg font-bold text-text mb-4">
                                         {t('gps_location', 'GPS Location')}
                                     </h3>
                                     <TreeLocationMap
@@ -382,9 +382,9 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                     {/* Growth Timeline */}
                     {investment.growth_timeline && investment.growth_timeline.length > 0 && (
                         <>
-                            <div className="h-3 bg-gray-50" />
-                            <div className="bg-white p-6">
-                                <h3 className="text-lg font-bold text-gray-900 mb-4">
+                            <div className="h-3 bg-bg" />
+                            <div className="bg-card p-6">
+                                <h3 className="text-lg font-bold text-text mb-4">
                                     {t('growth_timeline', 'Growth Timeline')}
                                 </h3>
                                 <GrowthTimeline
@@ -416,28 +416,28 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                         </>
                     )}
 
-                    <div className="h-3 bg-gray-50" />
+                    <div className="h-3 bg-bg" />
 
                     {/* Harvest History & Upcoming */}
                     {investment.harvests && (
-                        <div className="bg-white p-6">
-                             <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <IconCalendar className="w-5 h-5 text-emerald-600" />
+                        <div className="bg-card p-6">
+                             <h3 className="text-lg font-bold text-text mb-4 flex items-center gap-2">
+                                <IconCalendar className="w-5 h-5 text-primary" />
                                 {t('harvest_activity', 'Harvest Activity')}
                             </h3>
                             
                             {investment.harvests.upcoming.length > 0 && (
                                 <div className="mb-6">
-                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t('upcoming_harvests')}</h4>
+                                    <h4 className="text-xs font-bold text-textSecondary uppercase tracking-wider mb-3">{t('upcoming_harvests')}</h4>
                                     <div className="space-y-3">
                                         {investment.harvests.upcoming.map((harvest) => (
-                                            <div key={harvest.id} className="bg-gray-50 rounded-xl p-3 border border-gray-100 flex justify-between items-center">
+                                            <div key={harvest.id} className="bg-bg rounded-xl p-3 border border-border flex justify-between items-center">
                                                 <div>
-                                                    <p className="text-sm font-bold text-gray-900">{formatDate(harvest.harvest_date)}</p>
-                                                    <p className="text-xs text-gray-500">{t('est_yield')}</p>
+                                                    <p className="text-sm font-bold text-text">{formatDate(harvest.harvest_date)}</p>
+                                                    <p className="text-xs text-textSecondary">{t('est_yield')}</p>
                                                 </div>
                                                 <div className="text-right">
-                                                    <p className="text-sm font-bold text-emerald-600">{harvest.estimated_yield_kg} kg</p>
+                                                    <p className="text-sm font-bold text-primary">{harvest.estimated_yield_kg} kg</p>
                                                 </div>
                                             </div>
                                         ))}
@@ -447,19 +447,19 @@ export default function Show({ auth, investment, unread_notifications_count }: P
 
                              {investment.harvests.completed.length > 0 && (
                                 <div>
-                                    <h4 className="text-xs font-bold text-gray-400 uppercase tracking-wider mb-3">{t('harvest_history')}</h4>
+                                    <h4 className="text-xs font-bold text-textSecondary uppercase tracking-wider mb-3">{t('harvest_history')}</h4>
                                     <div className="space-y-3">
                                         {investment.harvests.completed.map((harvest) => (
-                                            <div key={harvest.id} className="bg-white rounded-xl p-3 border border-gray-100 shadow-sm">
+                                            <div key={harvest.id} className="bg-card rounded-xl p-3 border border-border shadow-card">
                                                 <div className="flex justify-between mb-2">
-                                                    <span className="text-sm font-bold text-gray-900">{formatDate(harvest.harvest_date)}</span>
-                                                    <span className="text-xs font-semibold bg-green-50 text-green-700 px-2 py-0.5 rounded">
+                                                    <span className="text-sm font-bold text-text">{formatDate(harvest.harvest_date)}</span>
+                                                    <span className="text-xs font-semibold bg-success-50 text-success-700 px-2 py-0.5 rounded">
                                                         {harvest.quality_grade || 'Grade A'}
                                                     </span>
                                                 </div>
                                                 <div className="flex justify-between text-sm">
-                                                    <span className="text-gray-500">{t('actual_yield')}:</span>
-                                                    <span className="font-medium text-gray-900">{harvest.actual_yield_kg ?? '-'} kg</span>
+                                                    <span className="text-textSecondary">{t('actual_yield')}:</span>
+                                                    <span className="font-medium text-text">{harvest.actual_yield_kg ?? '-'} kg</span>
                                                 </div>
                                             </div>
                                         ))}
@@ -468,42 +468,42 @@ export default function Show({ auth, investment, unread_notifications_count }: P
                             )}
 
                             {investment.harvests.upcoming.length === 0 && investment.harvests.completed.length === 0 && (
-                                <p className="text-sm text-gray-500 italic text-center py-4">{t('no_harvest_activity', 'No harvest activity yet.')}</p>
+                                <p className="text-sm text-textSecondary italic text-center py-4">{t('no_harvest_activity', 'No harvest activity yet.')}</p>
                             )}
                         </div>
                     )}
 
-                    <div className="h-3 bg-gray-50" />
+                    <div className="h-3 bg-bg" />
 
                     {/* Payouts */}
                     {investment.payouts && investment.payouts.length > 0 && (
-                        <div className="bg-white p-6">
-                            <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2">
-                                <IconDollar className="w-5 h-5 text-emerald-600" />
+                        <div className="bg-card p-6">
+                            <h3 className="text-lg font-bold text-text mb-4 flex items-center gap-2">
+                                <IconDollar className="w-5 h-5 text-primary" />
                                 {t('payout_history')}
                             </h3>
                             <div className="space-y-3">
                                 {investment.payouts.map((payout) => (
-                                    <div key={payout.id} className="bg-white rounded-xl p-4 border border-gray-100 shadow-sm">
+                                    <div key={payout.id} className="bg-card rounded-xl p-4 border border-border shadow-card">
                                         <div className="flex justify-between items-start mb-2">
                                             <div>
-                                                <p className="text-sm font-bold text-gray-900">
+                                                <p className="text-sm font-bold text-text">
                                                     {payout.harvest ? formatDate(payout.harvest.harvest_date) : 'Unknown Date'}
                                                 </p>
-                                                <p className="text-xs text-gray-500">{t('net_amount')}</p>
+                                                <p className="text-xs text-textSecondary">{t('net_amount')}</p>
                                             </div>
                                             <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wide ${
-                                                payout.status === 'completed' ? 'bg-green-100 text-green-700' :
-                                                payout.status === 'failed' ? 'bg-red-100 text-red-700' :
-                                                'bg-yellow-100 text-yellow-700'
+                                                payout.status === 'completed' ? 'bg-success-50 text-success-700' :
+                                                payout.status === 'failed' ? 'bg-danger-50 text-danger-700' :
+                                                'bg-warning-50 text-warning-700'
                                             }`}>
                                                 {payout.status_label}
                                             </span>
                                         </div>
-                                        <div className="text-lg font-bold text-emerald-600">
+                                        <div className="text-lg font-bold text-primary">
                                             {payout.net_amount_formatted}
                                         </div>
-                                        <div className="mt-2 pt-2 border-t border-gray-50 flex justify-between text-xs text-gray-400">
+                                        <div className="mt-2 pt-2 border-t border-border flex justify-between text-xs text-textSecondary">
                                             <span>{t('gross')}: {payout.gross_amount_formatted}</span>
                                             <span>{t('fee')}: {payout.platform_fee_formatted}</span>
                                         </div>

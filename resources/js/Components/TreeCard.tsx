@@ -16,12 +16,12 @@ export default function TreeCard({ tree, isWishlisted = false, authenticated = t
     const fruitType = crop?.fruit_type;
 
     return (
-        <div className="bg-white rounded-lg shadow-md overflow-hidden flex flex-col transition-transform hover:-translate-y-1 hover:shadow-lg">
-            <div className="h-48 bg-gray-200 relative">
+        <div className="bg-card rounded-lg shadow-card overflow-hidden flex flex-col transition-transform hover:-translate-y-1 hover:shadow-floating">
+            <div className="h-48 bg-bg relative">
                 {farm?.image_url ? (
                     <img src={farm.image_url} alt={farm.name} className="w-full h-full object-cover" />
                 ) : (
-                    <div className="w-full h-full flex items-center justify-center text-gray-400 bg-green-50">
+                    <div className="w-full h-full flex items-center justify-center text-textSecondary bg-bg">
                         No Image
                     </div>
                 )}
@@ -35,28 +35,28 @@ export default function TreeCard({ tree, isWishlisted = false, authenticated = t
                 </div>
             </div>
             <div className="p-4 flex flex-col flex-grow">
-                <div className="text-xs text-gray-500 uppercase tracking-wide font-semibold mb-1">
+                <div className="text-xs text-textSecondary uppercase tracking-wide font-semibold mb-1">
                     {fruitType?.name ?? fruitType} &bull; {crop?.variant}
                 </div>
-                <h3 className="text-lg font-bold text-gray-900 mb-2 truncate" title={farm?.name}>
+                <h3 className="text-lg font-bold text-text mb-2 truncate" title={farm?.name}>
                     {farm?.name}
                 </h3>
                 <div className="mt-auto space-y-3">
                     <div className="flex justify-between items-center text-sm">
-                        <span className="text-gray-500 flex items-center gap-1">
+                        <span className="text-textSecondary flex items-center gap-1">
                             <HarvestCycleIcon cycle={crop?.harvest_cycle || 'annual'} className="w-4 h-4" />
                             <span className="capitalize">{crop?.harvest_cycle}</span>
                         </span>
-                        <span className="font-medium text-green-600">ROI: {tree.expected_roi_percent}%</span>
+                        <span className="font-medium text-success">ROI: {tree.expected_roi_percent}%</span>
                     </div>
                     <div className="flex justify-between items-end">
                         <div>
-                            <div className="text-xs text-gray-500">Price / tree</div>
-                            <div className="text-xl font-bold text-gray-900">{formatRupiah(tree.price_idr)}</div>
+                            <div className="text-xs text-textSecondary">Price / tree</div>
+                            <div className="text-xl font-bold text-text">{formatRupiah(tree.price_idr)}</div>
                         </div>
                         <Link
                             href={route('trees.show', tree.id)}
-                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-indigo-600 hover:bg-indigo-700"
+                            className="inline-flex items-center px-3 py-1.5 border border-transparent text-xs font-medium rounded shadow-sm text-white bg-primary hover:bg-primary-dark"
                         >
                             Details
                         </Link>

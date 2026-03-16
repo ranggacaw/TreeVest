@@ -9,8 +9,8 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
     switch (status) {
       case 'healthy':
         return {
-          color: 'bg-green-500',
-          bgColor: 'bg-green-50',
+          color: 'bg-success',
+          bgColor: 'bg-success-50',
           label: 'Healthy',
           icon: (
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -20,8 +20,8 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
         };
       case 'attention':
         return {
-          color: 'bg-yellow-500',
-          bgColor: 'bg-yellow-50',
+          color: 'bg-warning',
+          bgColor: 'bg-warning-50',
           label: 'Needs Attention',
           icon: (
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -31,8 +31,8 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
         };
       case 'warning':
         return {
-          color: 'bg-orange-500',
-          bgColor: 'bg-orange-50',
+          color: 'bg-warning-600',
+          bgColor: 'bg-warning-50',
           label: 'Warning',
           icon: (
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -42,8 +42,8 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
         };
       case 'critical':
         return {
-          color: 'bg-red-500',
-          bgColor: 'bg-red-50',
+          color: 'bg-danger',
+          bgColor: 'bg-danger-50',
           label: 'Critical',
           icon: (
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -53,8 +53,8 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
         };
       default:
         return {
-          color: 'bg-gray-400',
-          bgColor: 'bg-gray-50',
+          color: 'bg-textSecondary',
+          bgColor: 'bg-bg',
           label: 'Unknown',
           icon: (
             <svg className="w-4 h-4" fill="currentColor" viewBox="0 0 20 20">
@@ -78,7 +78,7 @@ export default function HealthStatusIndicator({ status, showLabel = true, size =
         {config.icon}
       </span>
       {showLabel && (
-        <span className={`font-medium text-${status === 'unknown' ? 'gray' : status === 'healthy' ? 'green' : status === 'critical' ? 'red' : 'yellow'}-700`}>
+        <span className={`font-medium text-${status === 'unknown' ? 'textSecondary' : status === 'healthy' ? 'success-700' : status === 'critical' ? 'danger-700' : 'warning-700'}`}>
           {config.label}
         </span>
       )}

@@ -17,47 +17,81 @@ export default {
                 sans: ['Figtree', ...defaultTheme.fontFamily.sans],
             },
             colors: {
-                // Earthy & Organic Palette
-                pine: {
-                    DEFAULT: '#2D4A3E', // Deep forest green
-                    100: '#E6EFEA',
-                    200: '#C2D9CD',
-                    500: '#5A8B73',
-                    800: '#1A2B24',
+                primary: {
+                    DEFAULT: '#2E9F6B',
+                    50: '#F2FBF7',
+                    100: '#DFF3EA',
+                    600: '#258A5D',
+                    700: '#1F7F56',
+                    dark: '#1F7F56',
                 },
-                sage: {
-                    DEFAULT: '#899E8B', // Soft sage green
-                    100: '#F0F3F1',
-                    500: '#899E8B',
-                    800: '#4D5E4E',
+                primaryDark: '#1F7F56', // Semantic alias
+                
+                // Product Colors
+                durian: '#CFE9DD',
+                alpukat: '#F4E3CF',
+                mangga: '#D9E5F5',
+                lainnya: '#E6E0F3',
+
+                // Functional Colors (with scales)
+                success: {
+                    DEFAULT: '#2DBE78',
+                    50: '#ECFDF5',
+                    100: '#D1FAE5',
+                    200: '#A7F3D0',
+                    300: '#6EE7B7',
+                    400: '#34D399',
+                    500: '#2DBE78',
+                    600: '#059669',
+                    700: '#047857',
                 },
-                earth: {
-                    DEFAULT: '#8C6C54', // Warm terracotta / soil
-                    100: '#F5EFEB',
-                    500: '#C29875',
-                    800: '#544132',
+                warning: {
+                    DEFAULT: '#FF8A4C',
+                    50: '#FFF7ED',
+                    100: '#FFEDD5',
+                    200: '#FED7AA',
+                    300: '#FDBA74',
+                    400: '#FB923C',
+                    500: '#FF8A4C',
+                    600: '#EA580C',
                 },
-                sand: {
-                    DEFAULT: '#FDFBF7', // Warm off-white background
-                    100: '#FAF6ED',
-                    200: '#F3EFE6',
+                danger: {
+                    DEFAULT: '#FF5A5A',
+                    50: '#FEF2F2',
+                    100: '#FEE2E2',
+                    200: '#FECACA',
+                    300: '#FCA5A5',
+                    400: '#F87171',
+                    500: '#FF5A5A',
+                    600: '#DC2626',
                 },
-                sun: {
-                    DEFAULT: '#D99A45', // Warm amber / sunshine
-                    50: '#FDF6E9',
-                    100: '#F8E9D0',
-                    500: '#D99A45',
-                }
+                gray: {
+                    50: '#F9FAFB',
+                    100: '#F3F4F6',
+                    200: '#E5E7EB',
+                    300: '#D1D5DB',
+                    400: '#9CA3AF',
+                    500: '#6B7280',
+                    600: '#4B5563',
+                    700: '#374151',
+                    800: '#1F2937',
+                    900: '#111827',
+                },
+
+                // Semantic Colors
+                bg: '#F6F8F7',
+                card: '#FFFFFF',
+                border: '#E7ECEA',
+                text: '#1F2D2A',
+                textSecondary: '#7B8A87',
             },
             boxShadow: {
-                'soft': '0 10px 40px -10px rgba(45,74,62,0.08)',
-                'card': '0 4px 20px -2px rgba(0,0,0,0.05)',
+                card: '0 4px 12px rgba(0,0,0,0.05)',
+                floating: '0 10px 24px rgba(46,159,107,0.25)',
             },
             borderRadius: {
-                'xl': '1rem',
-                '2xl': '1.5rem',
-                '3xl': '2rem',
-            }
+                card: '16px',
+            },
         },
     },
 

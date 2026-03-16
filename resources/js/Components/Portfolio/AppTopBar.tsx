@@ -12,10 +12,10 @@ interface AppTopBarProps {
  */
 export default function AppTopBar({ notificationCount = 0 }: AppTopBarProps) {
   return (
-    <div className="sticky top-0 z-20 bg-white px-5 pt-3 pb-3 flex items-center justify-between border-b border-gray-100">
+    <div className="sticky top-0 z-20 bg-card px-5 pt-3 pb-3 flex items-center justify-between border-b border-border">
       {/* Brand / Logo */}
-      <span className="font-extrabold text-xl tracking-tight text-emerald-600 flex items-center gap-1.5">
-        <span className="w-6 h-6 bg-emerald-600 rounded-md flex items-center justify-center text-white">
+      <span className="font-extrabold text-xl tracking-tight text-primary flex items-center gap-1.5">
+        <span className="w-6 h-6 bg-primary rounded-md flex items-center justify-center text-white">
           <svg
             className="w-3.5 h-3.5"
             fill="none"
@@ -30,10 +30,10 @@ export default function AppTopBar({ notificationCount = 0 }: AppTopBarProps) {
       </span>
 
       {/* Notification Bell */}
-      <Link href={route('notifications.index')} className="relative p-2 text-gray-600">
+      <Link href={route('notifications.index')} className="relative p-2 text-textSecondary">
         <IconBell />
         {notificationCount > 0 && (
-          <span className="absolute top-2 right-2 w-4 h-4 bg-red-500 rounded-full border-2 border-white text-[9px] text-white font-bold flex items-center justify-center">
+          <span className="absolute top-2 right-2 w-4 h-4 bg-danger rounded-full border-2 border-card text-[9px] text-white font-bold flex items-center justify-center">
             {notificationCount > 9 ? '9+' : notificationCount}
           </span>
         )}

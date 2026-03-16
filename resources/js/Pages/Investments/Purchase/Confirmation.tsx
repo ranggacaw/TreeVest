@@ -43,12 +43,12 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
         pending: {
             title: t('awaiting_payment_title'),
             description: t('awaiting_payment_desc'),
-            color: 'text-amber-600',
-            bgColor: 'bg-amber-50',
-            borderColor: 'border-amber-100',
-            iconBg: 'bg-amber-100',
+            color: 'text-warning-600',
+            bgColor: 'bg-warning-50',
+            borderColor: 'border-warning-100',
+            iconBg: 'bg-warning-100',
             icon: (
-                <svg className="w-8 h-8 text-amber-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-8 h-8 text-warning-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
             )
@@ -70,20 +70,20 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
         completed: {
             title: t('investment_confirmed_title'),
             description: t('investment_confirmed_desc'),
-            color: 'text-emerald-600',
-            bgColor: 'bg-emerald-50',
-            borderColor: 'border-emerald-100',
-            iconBg: 'bg-emerald-100',
-            icon: <IconCheck className="w-8 h-8 text-emerald-600" />
+            color: 'text-success-600',
+            bgColor: 'bg-success-50',
+            borderColor: 'border-success-100',
+            iconBg: 'bg-success-100',
+            icon: <IconCheck className="w-8 h-8 text-success-600" />
         },
         failed: {
             title: t('payment_failed_title'),
             description: t('payment_failed_desc'),
-            color: 'text-red-600',
-            bgColor: 'bg-red-50',
-            borderColor: 'border-red-100',
-            iconBg: 'bg-red-100',
-            icon: <IconX className="w-8 h-8 text-red-600" />
+            color: 'text-danger-600',
+            bgColor: 'bg-danger-50',
+            borderColor: 'border-danger-100',
+            iconBg: 'bg-danger-100',
+            icon: <IconX className="w-8 h-8 text-danger-600" />
         },
     };
 
@@ -92,7 +92,7 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
     return (
         <AppShellLayout>
             <Head title={t('investment_confirmation')} />
-            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+            <div className="relative w-full max-w-md bg-bg flex flex-col" style={{ height: '100dvh' }}>
                 <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
                     <AppTopBar notificationCount={unreadCount} />
 
@@ -103,7 +103,7 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                 <div className="mb-4">
                                     <button 
                                         onClick={() => window.history.back()} 
-                                        className="inline-flex items-center text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                                        className="inline-flex items-center text-sm font-bold text-textSecondary hover:text-text transition-colors"
                                     >
                                         <IconArrowLeft className="w-4 h-4 mr-1" />
                                         {t('back')}
@@ -119,35 +119,35 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                 <h3 className={`text-xl font-bold mb-2 ${status.color}`}>
                                     {status.title}
                                 </h3>
-                                <p className="text-sm text-gray-600 leading-relaxed">
+                                <p className="text-sm text-textSecondary leading-relaxed">
                                     {status.description}
                                 </p>
                             </div>
 
                             {/* Details Card */}
-                            <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden mb-6">
-                                <div className="px-5 py-4 border-b border-gray-50 bg-gray-50/50">
-                                    <h4 className="text-sm font-bold text-gray-900">{t('investment_details')}</h4>
+                            <div className="bg-card rounded-2xl border border-border shadow-card overflow-hidden mb-6">
+                                <div className="px-5 py-4 border-b border-bg bg-bg/50">
+                                    <h4 className="text-sm font-bold text-text">{t('investment_details')}</h4>
                                 </div>
                                 <div className="p-5 space-y-4">
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                                            <div className="w-8 h-8 rounded-full bg-bg flex items-center justify-center text-textSecondary">
                                                 <span className="text-[10px] font-bold">ID</span>
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('investment_id')}</span>
+                                            <span className="text-sm text-textSecondary">{t('investment_id')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">#{investment.id}</span>
+                                        <span className="text-sm font-bold text-text">#{investment.id}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-emerald-50 flex items-center justify-center text-emerald-600">
+                                            <div className="w-8 h-8 rounded-full bg-primary-50 flex items-center justify-center text-primary">
                                                 <IconDollar className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('amount')}</span>
+                                            <span className="text-sm text-textSecondary">{t('amount')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-emerald-600">{investment.formatted_amount}</span>
+                                        <span className="text-sm font-bold text-primary">{investment.formatted_amount}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -155,9 +155,9 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                             <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                                 <IconPlant className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('fruit_type')}</span>
+                                            <span className="text-sm text-textSecondary">{t('fruit_type')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">{investment.tree.fruit_crop.fruit_type}</span>
+                                        <span className="text-sm font-bold text-text">{investment.tree.fruit_crop.fruit_type}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -165,9 +165,9 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                             <div className="w-8 h-8 rounded-full bg-orange-50 flex items-center justify-center text-orange-600">
                                                 <IconTree className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('tree')}</span>
+                                            <span className="text-sm text-textSecondary">{t('tree')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">#{investment.tree.identifier}</span>
+                                        <span className="text-sm font-bold text-text">#{investment.tree.identifier}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
@@ -175,19 +175,19 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                             <div className="w-8 h-8 rounded-full bg-purple-50 flex items-center justify-center text-purple-600">
                                                 <IconMapPin className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('farm')}</span>
+                                            <span className="text-sm text-textSecondary">{t('farm')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">{investment.tree.farm.name}</span>
+                                        <span className="text-sm font-bold text-text">{investment.tree.farm.name}</span>
                                     </div>
 
                                     <div className="flex items-center justify-between">
                                         <div className="flex items-center gap-3">
-                                            <div className="w-8 h-8 rounded-full bg-gray-50 flex items-center justify-center text-gray-400">
+                                            <div className="w-8 h-8 rounded-full bg-bg flex items-center justify-center text-textSecondary">
                                                 <IconCalendar className="w-4 h-4" />
                                             </div>
-                                            <span className="text-sm text-gray-500">{t('date')}</span>
+                                            <span className="text-sm text-textSecondary">{t('date')}</span>
                                         </div>
-                                        <span className="text-sm font-bold text-gray-900">
+                                        <span className="text-sm font-bold text-text">
                                             {new Date(investment.purchase_date).toLocaleDateString(t('common.date_locale', 'en-US'))}
                                         </span>
                                     </div>
@@ -200,13 +200,13 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                     <>
                                         <Link
                                             href="/investments"
-                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all active:scale-[0.98]"
+                                            className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-primary/30 hover:bg-primary-dark transition-all active:scale-[0.98]"
                                         >
                                             {t('view_my_investments')}
                                         </Link>
                                         <Link
                                             href="/farms"
-                                            className="w-full py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-sm text-center hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+                                            className="w-full py-3 bg-card text-text border border-border rounded-xl font-bold text-sm text-center hover:bg-bg hover:border-border transition-all active:scale-[0.98]"
                                         >
                                             {t('continue_investing')}
                                         </Link>
@@ -215,13 +215,13 @@ export default function Confirmation({ auth, investment, is_local }: Props) {
                                     <>
                                         <Link
                                             href="/payment-methods"
-                                            className="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-emerald-200 hover:bg-emerald-700 hover:shadow-emerald-300 transition-all active:scale-[0.98]"
+                                            className="w-full py-3 bg-primary text-white rounded-xl font-bold text-sm text-center shadow-lg shadow-primary/30 hover:bg-primary-dark transition-all active:scale-[0.98]"
                                         >
                                             {t('add_payment_method')}
                                         </Link>
                                         <Link
                                             href="/investments"
-                                            className="w-full py-3 bg-white text-gray-700 border border-gray-200 rounded-xl font-bold text-sm text-center hover:bg-gray-50 hover:border-gray-300 transition-all active:scale-[0.98]"
+                                            className="w-full py-3 bg-card text-text border border-border rounded-xl font-bold text-sm text-center hover:bg-bg hover:border-border transition-all active:scale-[0.98]"
                                         >
                                             {t('view_all_investments')}
                                         </Link>

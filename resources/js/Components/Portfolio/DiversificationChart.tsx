@@ -57,10 +57,10 @@ export default function DiversificationChart({ data }: Props) {
     };
 
     return (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div className="bg-card overflow-hidden shadow-card sm:rounded-lg">
             <div className="p-6">
                 <div className="flex items-center justify-between mb-4">
-                    <h3 className="text-lg font-semibold text-gray-900">
+                    <h3 className="text-lg font-semibold text-text">
                         Portfolio Diversification
                     </h3>
                     <div className="flex gap-2">
@@ -69,8 +69,8 @@ export default function DiversificationChart({ data }: Props) {
                                 key={tab}
                                 onClick={() => setActiveTab(tab)}
                                 className={`px-3 py-1 text-xs rounded-full transition-colors ${activeTab === tab
-                                        ? 'bg-green-600 text-white'
-                                        : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
+                                        ? 'bg-primary text-white'
+                                        : 'bg-bg text-textSecondary hover:bg-border'
                                     }`}
                             >
                                 {tab === 'fruit_type' ? 'Fruit Type' : tab === 'farm' ? 'Farm' : 'Risk'}
@@ -80,7 +80,7 @@ export default function DiversificationChart({ data }: Props) {
                 </div>
 
                 {chartData.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">
+                    <p className="text-textSecondary text-center py-8">
                         No data available
                     </p>
                 ) : (
@@ -105,12 +105,13 @@ export default function DiversificationChart({ data }: Props) {
                                         formatCurrency(Number(value)),
                                         'Value',
                                     ]}
+                                    contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
                                 />
                                 <Legend
                                     formatter={(value, entry) => {
                                         const item = entry.payload as typeof chartData[0];
                                         const percentage = total > 0 ? ((item.value / total) * 100).toFixed(1) : '0';
-                                        return `${value} (${percentage}%)`;
+                                        return <span className="text-textSecondary text-xs">{`${value} (${percentage}%)`}</span>;
                                     }}
                                 />
                             </PieChart>

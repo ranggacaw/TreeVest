@@ -2,11 +2,11 @@ import { Link } from '@inertiajs/react';
 
 export default function EmptyPortfolio() {
     return (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div className="bg-card overflow-hidden shadow-card sm:rounded-lg">
             <div className="p-12 text-center">
                 <div className="mb-6">
                     <svg
-                        className="mx-auto h-16 w-16 text-gray-400"
+                        className="mx-auto h-16 w-16 text-textSecondary"
                         fill="none"
                         viewBox="0 0 24 24"
                         stroke="currentColor"
@@ -19,15 +19,15 @@ export default function EmptyPortfolio() {
                         />
                     </svg>
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900 mb-2">
+                <h3 className="text-lg font-semibold text-text mb-2">
                     You haven't invested in any trees yet
                 </h3>
-                <p className="text-gray-500 mb-6">
+                <p className="text-textSecondary mb-6">
                     Start building your agricultural portfolio today
                 </p>
                 <Link
                     href="/farms"
-                    className="inline-flex items-center px-6 py-3 bg-green-600 border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-green-700"
+                    className="inline-flex items-center px-6 py-3 bg-primary border border-transparent rounded-md font-semibold text-sm text-white uppercase tracking-widest hover:bg-primary-dark"
                 >
                     Browse Marketplace
                 </Link>

@@ -52,25 +52,25 @@ export default function HealthUpdateCard({ healthUpdate }: Props) {
   };
 
   return (
-    <div className="bg-white rounded-lg shadow-sm border border-gray-200 p-6 hover:shadow-md transition-shadow">
+    <div className="bg-card rounded-lg shadow-card border border-border p-6 hover:shadow-floating transition-shadow">
       <div className="flex justify-between items-start mb-4">
         <div>
           <div className="flex items-center gap-3 mb-2">
             <HealthSeverityBadge severity={healthUpdate.severity} />
-            <span className="text-sm text-gray-500">
+            <span className="text-sm text-textSecondary">
               {getUpdateTypeLabel(healthUpdate.update_type)}
             </span>
           </div>
-          <h3 className="text-lg font-semibold text-gray-900">
+          <h3 className="text-lg font-semibold text-text">
             {healthUpdate.title}
           </h3>
         </div>
-        <span className="text-sm text-gray-500">
+        <span className="text-sm text-textSecondary">
           {formatDate(healthUpdate.created_at)}
         </span>
       </div>
 
-      <p className="text-gray-600 mb-4 line-clamp-3">
+      <p className="text-textSecondary mb-4 line-clamp-3">
         {healthUpdate.description}
       </p>
 
@@ -78,19 +78,19 @@ export default function HealthUpdateCard({ healthUpdate }: Props) {
         <div className="flex items-center gap-4">
           <Link
             href={`/farms/${healthUpdate.fruit_crop.farm.id}`}
-            className="text-sm text-emerald-600 hover:text-emerald-700"
+            className="text-sm text-primary hover:text-primary-dark"
           >
             {healthUpdate.fruit_crop.farm.name}
           </Link>
-          <span className="text-gray-300">|</span>
-          <span className="text-sm text-gray-500">
+          <span className="text-border">|</span>
+          <span className="text-sm text-textSecondary">
             {healthUpdate.fruit_crop.fruit_type?.name}
           </span>
         </div>
         
         <Link
           href={route('investments.health-feed.show', healthUpdate.id)}
-          className="text-sm text-emerald-600 hover:text-emerald-700 font-medium"
+          className="text-sm text-primary hover:text-primary-dark font-medium"
         >
           View Details →
         </Link>

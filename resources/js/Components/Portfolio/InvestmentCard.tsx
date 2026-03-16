@@ -9,13 +9,13 @@ interface Props {
 function getStatusColor(status: string): string {
     switch (status) {
         case 'productive':
-            return 'bg-green-100 text-green-800';
+            return 'bg-success-50 text-success-700';
         case 'growing':
-            return 'bg-blue-100 text-blue-800';
+            return 'bg-info-50 text-info-700';
         case 'seedling':
-            return 'bg-yellow-100 text-yellow-800';
+            return 'bg-warning-50 text-warning-700';
         default:
-            return 'bg-gray-100 text-gray-800';
+            return 'bg-bg text-text';
     }
 }
 
@@ -25,14 +25,14 @@ export default function InvestmentCard({ investment, formatCurrency }: Props) {
         : 0;
 
     return (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg hover:shadow-md transition-shadow">
+        <div className="bg-card overflow-hidden shadow-card sm:rounded-lg hover:shadow-floating transition-shadow">
             <div className="p-4">
                 <div className="flex items-start justify-between mb-3">
                     <div>
-                        <h4 className="font-semibold text-gray-900">
+                        <h4 className="font-semibold text-text">
                             {investment.tree.fruit_type}
                         </h4>
-                        <p className="text-sm text-gray-500">
+                        <p className="text-sm text-textSecondary">
                             {investment.tree.variant} • Tree #{investment.tree.identifier}
                         </p>
                     </div>
@@ -43,21 +43,21 @@ export default function InvestmentCard({ investment, formatCurrency }: Props) {
 
                 <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                        <span className="text-gray-500">Investment</span>
-                        <span className="font-medium text-gray-900">
+                        <span className="text-textSecondary">Investment</span>
+                        <span className="font-medium text-text">
                             {formatCurrency(investment.amount_idr)}
                         </span>
                     </div>
                     <div className="flex justify-between">
-                        <span className="text-gray-500">Farm</span>
-                        <span className="font-medium text-gray-900">
+                        <span className="text-textSecondary">Farm</span>
+                        <span className="font-medium text-text">
                             {investment.tree.farm_name}
                         </span>
                     </div>
                     {investment.next_harvest && (
                         <div className="flex justify-between">
-                            <span className="text-gray-500">Next Harvest</span>
-                            <span className="font-medium text-gray-900">
+                            <span className="text-textSecondary">Next Harvest</span>
+                            <span className="font-medium text-text">
                                 {new Date(investment.next_harvest).toLocaleDateString('en-MY', {
                                     month: 'short',
                                     day: 'numeric',
@@ -67,21 +67,21 @@ export default function InvestmentCard({ investment, formatCurrency }: Props) {
                         </div>
                     )}
                     <div className="flex justify-between">
-                        <span className="text-gray-500">Expected ROI</span>
-                        <span className="font-medium text-gray-900">
+                        <span className="text-textSecondary">Expected ROI</span>
+                        <span className="font-medium text-text">
                             {investment.tree.expected_roi_percent}%
                         </span>
                     </div>
                 </div>
 
                 <div className="mt-3">
-                    <div className="flex justify-between text-xs text-gray-500 mb-1">
+                    <div className="flex justify-between text-xs text-textSecondary mb-1">
                         <span>ROI Progress</span>
                         <span>{roiProgress.toFixed(0)}%</span>
                     </div>
-                    <div className="w-full bg-gray-200 rounded-full h-2">
+                    <div className="w-full bg-border rounded-full h-2">
                         <div
-                            className="bg-green-600 h-2 rounded-full"
+                            className="bg-primary h-2 rounded-full"
                             style={{ width: `${roiProgress}%` }}
                         />
                     </div>
@@ -89,7 +89,7 @@ export default function InvestmentCard({ investment, formatCurrency }: Props) {
 
                 <Link
                     href={`/investments/${investment.id}`}
-                    className="mt-4 block w-full text-center px-4 py-2 bg-green-600 border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-green-700"
+                    className="mt-4 block w-full text-center px-4 py-2 bg-primary border border-transparent rounded-md font-semibold text-xs text-white uppercase tracking-widest hover:bg-primary-dark"
                 >
                     View Details
                 </Link>

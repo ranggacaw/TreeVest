@@ -68,37 +68,37 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
         <AppShellLayout>
             <Head title="Top Up Investment" />
 
-            <div className="relative w-full max-w-md bg-gray-50 flex flex-col" style={{ height: '100dvh' }}>
+            <div className="relative w-full max-w-md bg-bg flex flex-col" style={{ height: '100dvh' }}>
                 <div className="flex-1 overflow-y-auto no-scrollbar" style={{ paddingBottom: '88px' }}>
                     <AppTopBar notificationCount={unread_notifications_count} />
 
                     {/* Back Navigation */}
-                    <div className="bg-white px-6 pt-4 pb-2">
-                        <Link href={route('investments.show', investment.id)} className="inline-flex items-center text-sm text-gray-500 hover:text-emerald-600 transition-colors">
+                    <div className="bg-card px-6 pt-4 pb-2">
+                        <Link href={route('investments.show', investment.id)} className="inline-flex items-center text-sm text-textSecondary hover:text-primary transition-colors">
                             <IconArrowLeft className="w-4 h-4 mr-1" />
                             Back to Investment
                         </Link>
                     </div>
 
-                    <div className="bg-white px-6 pb-6">
+                    <div className="bg-card px-6 pb-6">
                         <div className="flex items-center gap-3 mb-6">
-                            <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
+                            <div className="w-10 h-10 rounded-full bg-primary-50 flex items-center justify-center text-primary">
                                 <IconDollar className="w-5 h-5" />
                             </div>
                             <div>
-                                <h2 className="text-xl font-bold text-gray-900">Top Up Investment</h2>
-                                <p className="text-sm text-gray-500">#{investment.tree.identifier}</p>
+                                <h2 className="text-xl font-bold text-text">Top Up Investment</h2>
+                                <p className="text-sm text-textSecondary">#{investment.tree.identifier}</p>
                             </div>
                         </div>
 
-                        <div className="bg-emerald-50 rounded-xl p-4 mb-6 border border-emerald-100">
+                        <div className="bg-primary-50 rounded-xl p-4 mb-6 border border-primary-100">
                             <div className="flex justify-between text-sm mb-1">
-                                <span className="text-emerald-800">Current Investment</span>
-                                <span className="font-bold text-emerald-800">{investment.formatted_amount}</span>
+                                <span className="text-primary-700">Current Investment</span>
+                                <span className="font-bold text-primary-700">{investment.formatted_amount}</span>
                             </div>
                             <div className="flex justify-between text-sm">
-                                <span className="text-emerald-600">Max Available Top Up</span>
-                                <span className="font-bold text-emerald-600">{formatRupiah(maxTopUp)}</span>
+                                <span className="text-primary">Max Available Top Up</span>
+                                <span className="font-bold text-primary">{formatRupiah(maxTopUp)}</span>
                             </div>
                         </div>
 
@@ -107,7 +107,7 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
                                 <InputLabel htmlFor="amount" value="Top Up Amount (Rp)" className="mb-2" />
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                        <span className="text-gray-500 sm:text-sm">Rp</span>
+                                        <span className="text-textSecondary sm:text-sm">Rp</span>
                                     </div>
                                     <TextInput
                                         id="amount"
@@ -115,7 +115,7 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
                                         step="1"
                                         min={minTopUp}
                                         max={maxTopUp}
-                                        className="pl-10 block w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500"
+                                        className="pl-10 block w-full rounded-xl border-border focus:border-primary focus:ring-primary bg-bg text-text"
                                         value={data.top_up_idr}
                                         onChange={(e) => setData('top_up_idr', e.target.value)}
                                         required
@@ -129,7 +129,7 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
                                 <InputLabel htmlFor="payment_method" value="Payment Method" className="mb-2" />
                                 <select
                                     id="payment_method"
-                                    className="block w-full rounded-xl border-gray-300 focus:border-emerald-500 focus:ring-emerald-500 shadow-sm py-3"
+                                    className="block w-full rounded-xl border-border focus:border-primary focus:ring-primary shadow-sm py-3 bg-bg text-text"
                                     value={data.payment_method_id}
                                     onChange={(e) => setData('payment_method_id', e.target.value)}
                                     required
@@ -142,7 +142,7 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
                                     ))}
                                 </select>
                                 {payment_methods.length === 0 && (
-                                    <p className="mt-2 text-sm text-red-600 flex items-center gap-1">
+                                    <p className="mt-2 text-sm text-danger flex items-center gap-1">
                                         Please add a payment method in your settings first.
                                     </p>
                                 )}
@@ -151,14 +151,14 @@ export default function TopUp({ auth, investment, payment_methods, unread_notifi
 
                             <div className="pt-4">
                                 <PrimaryButton 
-                                    className="w-full justify-center py-3 rounded-xl text-base"
+                                    className="w-full justify-center py-3 rounded-xl text-base shadow-floating"
                                     disabled={processing || payment_methods.length === 0 || maxTopUp <= 0}
                                 >
                                     {processing ? 'Processing...' : 'Confirm Top Up'}
                                 </PrimaryButton>
                                 <Link
                                     href={route('investments.show', investment.id)}
-                                    className="mt-4 block text-center text-sm font-medium text-gray-500 hover:text-gray-900"
+                                    className="mt-4 block text-center text-sm font-medium text-textSecondary hover:text-text"
                                 >
                                     Cancel
                                 </Link>

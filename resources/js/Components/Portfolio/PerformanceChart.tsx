@@ -18,14 +18,14 @@ export default function PerformanceChart({ performance, formatCurrency }: Props)
     const summaryText = `Total projected: ${formatCurrency(performance.projected_returns_idr)} | Total actual: ${formatCurrency(performance.actual_returns_idr)} | Difference: ${performance.difference_idr >= 0 ? '+' : ''}${formatCurrency(performance.difference_idr)} (${performance.percentage_gain_loss >= 0 ? '+' : ''}${performance.percentage_gain_loss}%)`;
 
     return (
-        <div className="bg-white overflow-hidden shadow-sm sm:rounded-lg">
+        <div className="bg-card overflow-hidden shadow-card sm:rounded-lg">
             <div className="p-6">
-                <h3 className="text-lg font-semibold text-gray-900 mb-4">
+                <h3 className="text-lg font-semibold text-text mb-4">
                     Performance: Projected vs Actual Returns
                 </h3>
 
                 {performance.investments.length === 0 ? (
-                    <p className="text-gray-500 text-center py-8">
+                    <p className="text-textSecondary text-center py-8">
                         No performance data available
                     </p>
                 ) : (
@@ -34,19 +34,19 @@ export default function PerformanceChart({ performance, formatCurrency }: Props)
                             <ResponsiveContainer width="100%" height="100%">
                                 <BarChart data={chartData}>
                                     <CartesianGrid strokeDasharray="3 3" />
-                                    <XAxis dataKey="name" tick={{ fontSize: 12 }} />
-                                    <YAxis tickFormatter={(value) => `Rp ${value}`} tick={{ fontSize: 12 }} />
+                                    <XAxis dataKey="name" tick={{ fontSize: 12, fill: '#7B8A87' }} />
+                                    <YAxis tickFormatter={(value) => `Rp ${value}`} tick={{ fontSize: 12, fill: '#7B8A87' }} />
                                     <Tooltip
                                         formatter={(value) => [formatCurrency(Number(value)), '']}
                                         contentStyle={{ borderRadius: '8px', border: 'none', boxShadow: '0 2px 8px rgba(0,0,0,0.1)' }}
                                     />
                                     <Legend />
                                     <Bar dataKey="Projected" fill="#3B82F6" radius={[4, 4, 0, 0]} />
-                                    <Bar dataKey="Actual" fill="#10B981" radius={[4, 4, 0, 0]} />
+                                    <Bar dataKey="Actual" fill="#2E9F6B" radius={[4, 4, 0, 0]} />
                                 </BarChart>
                             </ResponsiveContainer>
                         </div>
-                        <p className="text-sm text-gray-600 mt-4 text-center">
+                        <p className="text-sm text-textSecondary mt-4 text-center">
                             {summaryText}
                         </p>
                     </>
