@@ -7,6 +7,7 @@ import { createRoot } from 'react-dom/client';
 import StripeProvider from './Providers/StripeProvider';
 import { I18nextProvider } from 'react-i18next';
 import i18n, { initI18n } from './i18n';
+import ErrorBoundary from './Components/ErrorBoundary';
 
 const appName = import.meta.env.VITE_APP_NAME || 'Laravel';
 
@@ -24,11 +25,13 @@ createInertiaApp({
         initI18n(locale);
 
         root.render(
-            <I18nextProvider i18n={i18n}>
-                <StripeProvider>
-                    <App {...props} />
-                </StripeProvider>
-            </I18nextProvider>
+            <ErrorBoundary context="app-root">
+                <I18nextProvider i18n={i18n}>
+                    <StripeProvider>
+                        <App {...props} />
+                    </StripeProvider>
+                </I18nextProvider>
+            </ErrorBoundary>
         );
     },
     progress: {

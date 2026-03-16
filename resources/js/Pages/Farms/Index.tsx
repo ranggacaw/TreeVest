@@ -1,213 +1,368 @@
-import React, { useState, useEffect, useRef } from 'react';
-import { useForm, usePage, Link } from '@inertiajs/react';
-import Navbar from '@/Components/Navbar';
-import FarmCard from '@/Components/FarmCard';
-import FarmMap from '@/Components/FarmMap';
-import { Farm } from '@/types';
-import { Search, Map as MapIcon, LayoutGrid, Leaf, MapPin, ThermometerSun } from 'lucide-react';
+import React, { useState, FormEventHandler } from 'react';
+import { Head, Link, router, usePage } from '@inertiajs/react';
+import AppShellLayout from '@/Layouts/AppShellLayout';
+import { PageProps, Farm } from '@/types';
 import { useTranslation } from 'react-i18next';
 
-interface Props {
-    farms: {
-        data: Farm[];
-        current_page: number;
-        last_page: number;
-        per_page: number;
-        total: number;
-    };
-    filters: {
-        search?: string;
-        country?: string;
-        climate?: string;
-    };
-    options: {
-        countries: string[];
-        climates: string[];
-    };
+// Icons
+import { Search, Map as MapIcon, Filter, X, MapPin, ThermometerSun, Leaf } from 'lucide-react';
+
+// App Shell Components
+import AppTopBar from '@/Components/Portfolio/AppTopBar';
+import BottomNav from '@/Components/Portfolio/BottomNav';
+
+interface Props extends PageProps {
+  farms: {
+    data: Farm[];
+    current_page: number;
+    last_page: number;
+    per_page: number;
+    total: number;
+    links?: any[];
+  };
+  filters: {
+    search?: string;
+    country?: string;
+    climate?: string;
+  };
+  options: {
+    countries: string[];
+    climates: string[];
+  };
 }
 
 export default function Index({ farms, filters, options }: Props) {
-    const { t } = useTranslation('farms');
-    const [viewMode, setViewMode] = useState<'grid' | 'map'>('grid');
+  const { t } = useTranslation('farms');
+  const page = usePage<PageProps>();
+  const unreadCount = (page.props as any).unread_notifications_count ?? 0;
 
-    const { data, setData, get } = useForm({
-        search: filters.search || '',
-        country: filters.country || '',
-        climate: filters.climate || ''
-    });
+  const [showFilters, setShowFilters] = useState(false);
 
-    const isFirstRender = useRef(true);
+  // Safely parse filters, handling the case where PHP sends [] instead of {} for empty associative arrays
+  const safeFilters = filters && typeof filters === 'object' && !Array.isArray(filters) ? filters : {};
 
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
+  const [search, setSearch] = useState(safeFilters.search || '');
+  const [country, setCountry] = useState(safeFilters.country || '');
+  const [climate, setClimate] = useState(safeFilters.climate || '');
 
-        const timeoutId = setTimeout(() => {
-            get('/farms', {
-                preserveState: true,
-                replace: true,
-                preserveScroll: true
-            });
-        }, 300);
+  const farmsData = farms?.data ?? [];
+  const farmsTotal = farms?.total ?? 0;
+  const farmsLastPage = farms?.last_page ?? 1;
+  const farmsLinks = farms?.links ?? [];
 
-        return () => clearTimeout(timeoutId);
-    }, [data.search, data.country, data.climate]);
-
-    return (
-        <div className="min-h-screen bg-[#FDFBF7] font-sans pb-16">
-            <Navbar />
-            {/* Hero Section */}
-            <div className="bg-pine text-white py-16 relative overflow-hidden">
-                <div className="absolute inset-0 opacity-10 pointer-events-none" style={{ backgroundImage: "url('https://images.unsplash.com/photo-1542838132-92c53300491e?auto=format&fit=crop&q=80&w=2000')", backgroundSize: 'cover', backgroundPosition: 'center' }}></div>
-                <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-                    <div className="flex items-center gap-3 mb-4">
-                        <span className="p-2 bg-sage/20 rounded-xl">
-                            <Leaf className="w-6 h-6 text-sage-300" />
-                        </span>
-                        <span className="text-sage-100 font-medium tracking-wide uppercase text-sm">{t('partner_farms')}</span>
-                    </div>
-                    <h1 className="text-4xl md:text-5xl font-bold mb-4 tracking-tight">{t('browse_farms')}</h1>
-                    <p className="text-lg text-sage-100 max-w-2xl">
-                        {t('browse_farms_subtitle')}
-                    </p>
-                </div>
-            </div>
-
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-20">
-                {/* Filter Bar */}
-                <div className="bg-white rounded-2xl shadow-card p-2 md:p-4 mb-8 border border-sand flex flex-col md:flex-row items-center gap-3">
-                    <div className="relative flex-1 w-full">
-                        <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                            <Search className="h-5 w-5 text-earth-400" />
-                        </div>
-                        <input
-                            type="text"
-                            name="search"
-                            placeholder={t('search_placeholder')}
-                            value={data.search}
-                            onChange={(e) => setData('search', e.target.value)}
-                            className="block w-full pl-11 pr-3 py-3 border-0 bg-sand/30 rounded-xl text-pine placeholder-earth-400 focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors"
-                        />
-                    </div>
-
-                    <div className="flex w-full md:w-auto gap-3">
-                        <div className="relative w-full md:w-48">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <MapPin className="h-4 w-4 text-earth-400" />
-                            </div>
-                            <select
-                                value={data.country}
-                                onChange={(e) => setData('country', e.target.value)}
-                                className="block w-full pl-9 pr-10 py-3 border-0 bg-sand/30 rounded-xl text-pine focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors appearance-none"
-                            >
-                                <option value="">{t('all_regions')}</option>
-                                {options.countries.map((country) => (
-                                    <option key={country} value={country}>
-                                        {country}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-
-                        <div className="relative w-full md:w-48">
-                            <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-                                <ThermometerSun className="h-4 w-4 text-earth-400" />
-                            </div>
-                            <select
-                                value={data.climate}
-                                onChange={(e) => setData('climate', e.target.value)}
-                                className="block w-full pl-9 pr-10 py-3 border-0 bg-sand/30 rounded-xl text-pine focus:ring-2 focus:ring-pine-500 focus:bg-white transition-colors appearance-none"
-                            >
-                                <option value="">{t('all_climates')}</option>
-                                {options.climates.map((climate) => (
-                                    <option key={climate} value={climate}>
-                                        {climate}
-                                    </option>
-                                ))}
-                            </select>
-                        </div>
-                    </div>
-
-                    <div className="hidden md:flex bg-sand/50 p-1 rounded-xl gap-1">
-                        <button
-                            onClick={() => setViewMode('grid')}
-                            className={`p-2.5 rounded-lg flex items-center justify-center transition-all ${viewMode === 'grid'
-                                ? 'bg-white text-pine shadow-sm'
-                                : 'text-earth-500 hover:text-pine hover:bg-sand'
-                                }`}
-                            title={t('grid_view')}
-                        >
-                            <LayoutGrid className="w-5 h-5" />
-                        </button>
-                        <button
-                            onClick={() => setViewMode('map')}
-                            className={`p-2.5 rounded-lg flex items-center justify-center transition-all ${viewMode === 'map'
-                                ? 'bg-white text-pine shadow-sm'
-                                : 'text-earth-500 hover:text-pine hover:bg-sand'
-                                }`}
-                            title={t('map_view')}
-                        >
-                            <MapIcon className="w-5 h-5" />
-                        </button>
-                    </div>
-                </div>
-
-                {/* View Content */}
-                {viewMode === 'grid' ? (
-                    <>
-                        {farms.data.length > 0 ? (
-                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 md:gap-8">
-                                {farms.data.map((farm) => (
-                                    <FarmCard key={farm.id} farm={farm} />
-                                ))}
-                            </div>
-                        ) : (
-                            <div className="text-center py-20 bg-white rounded-3xl shadow-soft border border-sand">
-                                <div className="inline-flex items-center justify-center w-16 h-16 rounded-full bg-sand mb-4">
-                                    <Leaf className="w-8 h-8 text-earth-400" />
-                                </div>
-                                <h3 className="text-xl font-semibold text-pine mb-2">{t('no_farms_found')}</h3>
-                                <p className="text-earth-500 max-w-md mx-auto">
-                                    {t('no_farms_desc')}
-                                </p>
-                                <Link
-                                    href="/farms"
-                                    className="mt-6 px-6 py-2.5 bg-pine text-white rounded-xl hover:bg-pine-600 transition-colors font-medium inline-block"
-                                >
-                                    {t('clear_filters')}
-                                </Link>
-                            </div>
-                        )}
-                    </>
-                ) : (
-                    <div className="bg-white rounded-3xl shadow-card p-4 border border-sand h-[600px] overflow-hidden">
-                        <FarmMap farms={farms.data} />
-                    </div>
-                )}
-
-                {/* Pagination */}
-                {farms.last_page > 1 && (
-                    <div className="mt-12 flex justify-center gap-2">
-                        {Array.from({ length: farms.last_page }, (_, i) => i + 1).map((page) => (
-                            <Link
-                                key={page}
-                                href={`/farms`}
-                                data={{ ...data, page }}
-                                preserveScroll
-                                preserveState
-                                className={`w-10 h-10 flex items-center justify-center rounded-xl font-medium transition-all ${page === farms.current_page
-                                    ? 'bg-pine text-white shadow-soft'
-                                    : 'bg-white text-earth-600 border border-sand hover:border-pine-300 hover:text-pine'
-                                    }`}
-                            >
-                                {page}
-                            </Link>
-                        ))}
-                    </div>
-                )}
-            </div>
-        </div>
+  const handleFilter: FormEventHandler = (e) => {
+    e.preventDefault();
+    router.get(
+      '/farms',
+      {
+        search: search || undefined,
+        country: country || undefined,
+        climate: climate || undefined,
+      },
+      { preserveState: true }
     );
+  };
+
+  const clearFilters = () => {
+    setSearch('');
+    setCountry('');
+    setClimate('');
+    setShowFilters(false);
+    router.get('/farms');
+  };
+
+  return (
+    <AppShellLayout>
+      <Head title={t('partner_farms')} />
+
+      {/* App Shell — mobile-first max-w-md container */}
+      <div
+        className="relative w-full max-w-md mx-auto bg-gray-50 flex flex-col"
+        style={{ height: '100dvh' }}
+      >
+        {/* ── Scrollable Area ─────────────────────────────────────── */}
+        <div className="flex-1 overflow-y-auto" style={{ paddingBottom: '88px' }}>
+
+          {/* ── Top App Bar (reusable, dynamic notification count) ── */}
+          <AppTopBar notificationCount={unreadCount} />
+
+          {/* ── Header Section ──────────────────────────────────── */}
+          <div className="bg-white px-5 pt-5 pb-6">
+            <div className="flex items-center justify-between mb-4">
+              <div>
+                <h1 className="text-[20px] font-extrabold text-gray-900 mb-1">
+                  {t('partner_farms')}
+                </h1>
+                <p className="text-[13px] text-gray-500 mt-1 leading-snug">
+                  {t('browse_farms_subtitle', 'Browse and discover partner farms')}
+                </p>
+              </div>
+              <button
+                onClick={() => setShowFilters(!showFilters)}
+                className="p-2.5 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors flex-shrink-0 ml-4"
+              >
+                <Filter className="w-5 h-5 text-gray-700" />
+              </button>
+            </div>
+
+            {/* Search Bar */}
+            <div className="relative">
+              <input
+                type="text"
+                value={search}
+                onChange={(e) => setSearch(e.target.value)}
+                placeholder={t('search_placeholder', 'Search farms...')}
+                className="w-full bg-gray-50 border-gray-200 rounded-xl pl-10 pr-10 py-2.5 text-sm focus:ring-2 focus:ring-emerald-500 focus:border-transparent"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleFilter(e as any);
+                  }
+                }}
+              />
+              <Search className="w-5 h-5 text-gray-400 absolute left-3 top-1/2 transform -translate-y-1/2" />
+              {search && (
+                <button
+                  onClick={() => { setSearch(''); router.get('/farms'); }}
+                  className="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                >
+                  <X className="w-4 h-4" />
+                </button>
+              )}
+            </div>
+          </div>
+
+          {/* Filter Panel (collapsible) */}
+          {showFilters && (
+            <div className="bg-white px-5 pb-4">
+              <div className="space-y-3">
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                    <MapPin className="w-3.5 h-3.5" /> {t('all_regions', 'All Regions')}
+                  </label>
+                  <select
+                    value={country}
+                    onChange={(e) => setCountry(e.target.value)}
+                    className="w-full bg-gray-50 border-gray-200 rounded-lg px-3 py-2.5 text-sm"
+                  >
+                    <option value="">{t('all_regions', 'All Regions')}</option>
+                    {options.countries.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-semibold text-gray-700 mb-1.5 flex items-center gap-1.5">
+                    <ThermometerSun className="w-3.5 h-3.5" /> {t('all_climates', 'All Climates')}
+                  </label>
+                  <select
+                    value={climate}
+                    onChange={(e) => setClimate(e.target.value)}
+                    className="w-full bg-gray-50 border-gray-200 rounded-lg px-3 py-2.5 text-sm"
+                  >
+                    <option value="">{t('all_climates', 'All Climates')}</option>
+                    {options.climates.map((c) => (
+                      <option key={c} value={c}>{c}</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="flex gap-2 pt-2">
+                  <button
+                    onClick={handleFilter}
+                    className="flex-1 px-4 py-2.5 bg-emerald-600 text-white rounded-xl text-xs font-bold hover:bg-emerald-700 transition-colors"
+                  >
+                    {t('apply_filters', 'Terapkan Filter')}
+                  </button>
+                  <button
+                    onClick={clearFilters}
+                    className="px-4 py-2.5 bg-gray-100 text-gray-700 rounded-xl text-xs font-bold hover:bg-gray-200 transition-colors"
+                  >
+                    {t('reset', 'Reset')}
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
+
+          {/* Active Filters Display */}
+          {(country || climate || search) && (
+            <div className="bg-emerald-50 px-5 py-3 border-b border-emerald-100">
+              <div className="flex items-center gap-2 flex-wrap">
+                <span className="text-xs font-semibold text-emerald-800">{t('active_filters', 'Filter aktif:')}</span>
+                {search && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-white text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200">
+                    "{search}"
+                  </span>
+                )}
+                {country && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-white text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200 capitalize">
+                    {country}
+                  </span>
+                )}
+                {climate && (
+                  <span className="inline-flex items-center gap-1 px-2 py-1 bg-white text-emerald-700 text-[10px] font-bold rounded-full border border-emerald-200 capitalize">
+                    {climate}
+                  </span>
+                )}
+                <button
+                  onClick={clearFilters}
+                  className="text-[10px] font-bold text-emerald-600 hover:text-emerald-700 underline"
+                >
+                  {t('clear_all', 'Hapus Semua')}
+                </button>
+              </div>
+            </div>
+          )}
+
+          {/* Section divider */}
+          <div className="h-3 bg-gray-50" />
+
+          {/* Results Count */}
+          <div className="bg-white px-5 pt-4 pb-2">
+            <p className="text-sm text-gray-600 font-medium">
+              {t('showing', 'Menampilkan')} <span className="font-bold text-gray-900">{farmsData.length}</span> {t('of', 'dari')} <span className="font-bold text-gray-900">{farmsTotal}</span> {t('farms_count', 'kebun')}
+            </p>
+          </div>
+
+          {/* Farms List */}
+          {farmsData.length > 0 ? (
+            <div className="bg-white px-5 pt-5 pb-6 min-h-[50vh]">
+              {farmsData.map((farm: any, index: number) => {
+                if (!farm || !farm.id) return null;
+                return (
+                  <div key={farm.id}>
+                    <Link
+                      href={`/farms/${farm.id}`}
+                      className="block p-4 bg-white border border-gray-100 rounded-2xl shadow-sm hover:border-emerald-200 transition-colors mb-3"
+                    >
+                      {/* Farm Header */}
+                      <div className="flex items-start gap-3 mb-3">
+                        <div className="w-12 h-12 bg-gray-100 rounded-2xl flex items-center justify-center text-gray-400 flex-shrink-0 overflow-hidden border border-gray-200">
+                          {farm.image_url ? (
+                            <img src={farm.image_url} alt={farm.name} className="w-full h-full object-cover" />
+                          ) : (
+                            <Leaf className="w-6 h-6 text-earth-400" />
+                          )}
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <div className="flex items-center gap-2 mb-0.5">
+                            <h3 className="font-bold text-gray-900 text-sm truncate">
+                              {farm.name}
+                            </h3>
+                          </div>
+                          <p className="text-xs text-gray-500 truncate uppercase font-semibold">
+                            {farm.country || 'Unknown'} • {farm.climate || 'Unknown'}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* Key Metrics Grid */}
+                      <div className="grid grid-cols-2 gap-3 mt-3 pt-3 border-t border-gray-100">
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold mb-0.5 flex items-center gap-1">
+                            <Leaf className="w-3 h-3" /> {t('size')}
+                          </p>
+                          <p className="text-sm font-bold text-gray-900 capitalize">
+                            {farm.size_hectares} {t('hectares')}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold mb-0.5 flex items-center gap-1">
+                            <MapPin className="w-3 h-3" /> Lokasi
+                          </p>
+                          <p className="text-sm font-bold text-gray-900 truncate">
+                            {farm.city || farm.region || farm.country || '-'}
+                          </p>
+                        </div>
+                        <div>
+                          <p className="text-[10px] text-gray-400 uppercase tracking-wide font-semibold mb-0.5 flex items-center gap-1">
+                            <Leaf className="w-3 h-3" /> {t('capacity')}
+                          </p>
+                          <p className="text-sm font-bold text-gray-900 capitalize">
+                            {farm.capacity_trees?.toLocaleString()} {t('trees')}
+                          </p>
+                        </div>
+                      </div>
+
+                      {/* CTA Arrow */}
+                      <div className="flex justify-end mt-3 pt-2">
+                        <span className="text-xs font-bold text-emerald-600 flex items-center gap-1">
+                          Lihat Detail
+                          <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                            <path strokeLinecap="round" strokeLinejoin="round" d="M9 5l7 7-7 7" />
+                          </svg>
+                        </span>
+                      </div>
+                    </Link>
+
+                    {/* Item divider (not on last item) */}
+                    {index < farmsData.length - 1 && (
+                      <div className="h-px bg-gray-100 mx-4" />
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          ) : (
+            <div className="bg-white px-5 py-12 text-center">
+              <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                <Leaf className="w-8 h-8 text-gray-400" />
+              </div>
+              <h3 className="text-sm font-bold text-gray-900 mb-2">
+                {t('no_farms_found')}
+              </h3>
+              <p className="text-[13px] text-gray-500 leading-snug mb-4">
+                {t('no_farms_desc')}
+              </p>
+              <button
+                onClick={clearFilters}
+                className="px-5 py-2.5 bg-emerald-600 text-white rounded-full text-xs font-bold hover:bg-emerald-700 transition-colors"
+              >
+                {t('clear_filters')}
+              </button>
+            </div>
+          )}
+
+          {/* Pagination */}
+          {farmsLastPage > 1 && (
+            <div className="bg-white px-5 pt-4 pb-6">
+              <div className="flex justify-center items-center gap-2 flex-wrap">
+                {farmsLinks.map((link: any, index: number) => {
+                  if ((link.label.includes('Previous') || link.label.includes('Next')) && !link.url) return null;
+
+                  return (
+                    <Link
+                      key={index}
+                      href={link.url || '#'}
+                      className={`min-w-[36px] h-9 px-2 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${link.active
+                        ? 'bg-emerald-600 text-white'
+                        : link.url
+                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                          : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                        }`}
+                      dangerouslySetInnerHTML={{ __html: link.label }}
+                      preserveState
+                    />
+                  );
+                })}
+              </div>
+            </div>
+          )}
+
+        </div>{/* end scrollable */}
+
+        {/* ── Fixed Bottom Navigation (reusable component) ─────── */}
+        <BottomNav />
+
+      </div>
+
+      <style>{`
+                ::-webkit-scrollbar { display: none; }
+                * { -webkit-tap-highlight-color: transparent; }
+            `}</style>
+    </AppShellLayout>
+  );
 }
+

@@ -88,5 +88,8 @@
         "english": "English",
         "indonesian": "Bahasa Indonesia",
         "switch_language": "Ganti Bahasa"
+    },
+    "trees": {
+        "marketplace": "Pohon Marketplace"
     }
 }

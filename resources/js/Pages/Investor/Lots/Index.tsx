@@ -318,10 +318,10 @@ export default function Index({ lots, filters, fruitTypes, farms }: Props) {
                     key={index}
                     href={link.url || '#'}
                     className={`min-w-[36px] h-9 flex items-center justify-center rounded-lg text-xs font-semibold transition-colors ${link.active
-                        ? 'bg-emerald-600 text-white'
-                        : link.url
-                          ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                          : 'bg-gray-50 text-gray-400 cursor-not-allowed'
+                      ? 'bg-emerald-600 text-white'
+                      : link.url
+                        ? 'bg-gray-100 text-gray-700 hover:bg-gray-200'
+                        : 'bg-gray-50 text-gray-400 cursor-not-allowed'
                       }`}
                     dangerouslySetInnerHTML={{ __html: link.label }}
                     preserveState

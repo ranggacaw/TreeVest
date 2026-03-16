@@ -102,5 +102,8 @@
         "english": "English",
         "indonesian": "Bahasa Indonesia",
         "switch_language": "Switch Language"
+    },
+    "trees": {
+        "marketplace": "Tree Marketplace"
     }
 }

@@ -4,32 +4,34 @@ import resourcesToBackend from "i18next-resources-to-backend";
 
 let isInitialized = false;
 
-export const initI18n = async (locale: string = "en") => {
+export const initI18n = (locale: string = "en") => {
     if (isInitialized) {
-        await i18n.changeLanguage(locale);
-        return;
+        i18n.changeLanguage(locale);
+        return i18n;
     }
 
-    await i18n
+    i18n
         .use(
             resourcesToBackend((language: string, namespace: string) => {
-                // Try to load from public/locales directory
+                // Load from public/locales directory with better error handling
                 return fetch(`/locales/${language}/${namespace}.json`)
                     .then((response) => {
                         if (!response.ok) {
                             console.warn(
-                                `Translation file not found: /locales/${language}/${namespace}.json`,
+                                `i18next: Translation file not found: /locales/${language}/${namespace}.json`,
                             );
-                            return null;
+                            // Return empty object instead of null to prevent errors
+                            return {};
                         }
                         return response.json();
                     })
                     .catch((error) => {
-                        console.error(
-                            `Error loading translation file: /locales/${language}/${namespace}.json`,
+                        console.warn(
+                            `i18next: Error loading translation file: /locales/${language}/${namespace}.json`,
                             error,
                         );
-                        return null;
+                        // Return empty object instead of null to prevent errors
+                        return {};
                     });
             }),
         )
@@ -55,11 +57,22 @@ export const initI18n = async (locale: string = "en") => {
             },
             react: {
                 useSuspense: false,
+                bindI18n: "languageChanged loaded",
+                bindI18nStore: "added removed",
             },
-            debug: process.env.NODE_ENV === "development",
+            load: "languageOnly",
+            // Reduced console output
+            debug: false,
+            saveMissing: false,
+            // Better handling of missing keys
+            returnEmptyString: false,
+            returnNull: false,
+            // Load namespaces in parallel
+            partialBundledLanguages: true,
         });
 
     isInitialized = true;
+    return i18n;
 };
 
 export default i18n;
