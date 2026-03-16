@@ -13,6 +13,8 @@ class ReportDataService
         $query = Investment::with([
             'tree.fruitCrop.farm',
             'tree.fruitCrop.fruitType',
+            'lot.fruitCrop.farm',
+            'lot.fruitCrop.fruitType',
             'payouts' => function ($q) {
                 $q->where('status', PayoutStatus::Completed);
             },
@@ -27,14 +29,24 @@ class ReportDataService
         }
 
         if (! empty($filters['farm_id'])) {
-            $query->whereHas('tree.fruitCrop.farm', function ($q) use ($filters) {
-                $q->where('id', $filters['farm_id']);
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('tree.fruitCrop.farm', function ($subQ) use ($filters) {
+                    $subQ->where('id', $filters['farm_id']);
+                })
+                    ->orWhereHas('lot.fruitCrop.farm', function ($subQ) use ($filters) {
+                        $subQ->where('id', $filters['farm_id']);
+                    });
             });
         }
 
         if (! empty($filters['fruit_type_id'])) {
-            $query->whereHas('tree.fruitCrop', function ($q) use ($filters) {
-                $q->where('fruit_type_id', $filters['fruit_type_id']);
+            $query->where(function ($q) use ($filters) {
+                $q->whereHas('tree.fruitCrop', function ($subQ) use ($filters) {
+                    $subQ->where('fruit_type_id', $filters['fruit_type_id']);
+                })
+                    ->orWhereHas('lot.fruitCrop', function ($subQ) use ($filters) {
+                        $subQ->where('fruit_type_id', $filters['fruit_type_id']);
+                    });
             });
         }
 
@@ -49,6 +61,16 @@ class ReportDataService
         $totalPayouts = 0;
 
         foreach ($investments as $investment) {
+            $tree = $investment->tree;
+            $fruitCrop = $tree?->fruitCrop;
+            $fruitType = $fruitCrop?->fruitType;
+            $farm = $fruitCrop?->farm;
+
+            $treeIdentifier = $tree?->tree_identifier ?? $investment->lot?->name ?? 'N/A';
+            $fruitTypeName = $fruitType?->name ?? 'Unknown';
+            $variant = $fruitCrop?->variant ?? 'N/A';
+            $farmName = $farm?->name ?? 'Unknown';
+
             $totalPayoutsIdr = $investment->payouts->sum('net_amount_idr');
             $netIdr = $totalPayoutsIdr - $investment->amount_idr;
             $actualRoiPercent = $investment->amount_idr > 0
@@ -57,10 +79,10 @@ class ReportDataService
 
             $rows[] = [
                 'investmentId' => $investment->id,
-                'treeIdentifier' => $investment->tree->tree_identifier,
-                'fruitType' => $investment->tree->fruitCrop->fruitType->name,
-                'variant' => $investment->tree->fruitCrop->variant,
-                'farmName' => $investment->tree->fruitCrop->farm->name,
+                'treeIdentifier' => $treeIdentifier,
+                'fruitType' => $fruitTypeName,
+                'variant' => $variant,
+                'farmName' => $farmName,
                 'amountInvestedIdr' => $investment->amount_idr,
                 'totalPayoutsIdr' => $totalPayoutsIdr,
                 'netIdr' => $netIdr,
@@ -91,13 +113,13 @@ class ReportDataService
         $startDate = sprintf('%d-01-01', $year);
         $endDate = sprintf('%d-12-31', $year);
 
-        $payouts = \App\Models\Payout::with(['investment.tree.fruitCrop.farm'])
+        $payouts = \App\Models\Payout::with(['investment.tree.fruitCrop.farm', 'investment.lot.fruitCrop.farm'])
             ->where('investor_id', $user->id)
             ->where('status', PayoutStatus::Completed)
             ->whereBetween('completed_at', [$startDate, $endDate])
             ->get();
 
-        $investments = Investment::with(['tree.fruitCrop.farm'])
+        $investments = Investment::with(['tree.fruitCrop.farm', 'lot.fruitCrop.farm'])
             ->where('user_id', $user->id)
             ->whereBetween('purchase_date', [$startDate, $endDate])
             ->get();
@@ -106,10 +128,14 @@ class ReportDataService
         $totalIncome = 0;
 
         foreach ($payouts as $payout) {
+            $farmName = $payout->investment->tree?->fruitCrop?->farm?->name
+                ?? $payout->investment->lot?->fruitCrop?->farm?->name
+                ?? 'Unknown';
+
             $incomeRows[] = [
                 'payoutId' => $payout->id,
                 'date' => $payout->completed_at->toDateString(),
-                'farmName' => $payout->investment->tree->fruitCrop->farm->name ?? 'Unknown',
+                'farmName' => $farmName,
                 'grossAmountIdr' => $payout->gross_amount_idr,
                 'platformFeeIdr' => $payout->platform_fee_idr,
                 'netAmountIdr' => $payout->net_amount_idr,
@@ -121,10 +147,14 @@ class ReportDataService
         $totalInvested = 0;
 
         foreach ($investments as $investment) {
+            $farmName = $investment->tree?->fruitCrop?->farm?->name
+                ?? $investment->lot?->fruitCrop?->farm?->name
+                ?? 'Unknown';
+
             $investmentRows[] = [
                 'investmentId' => $investment->id,
                 'date' => $investment->purchase_date->toDateString(),
-                'farmName' => $investment->tree->fruitCrop->farm->name ?? 'Unknown',
+                'farmName' => $farmName,
                 'amountIdr' => $investment->amount_idr,
             ];
             $totalInvested += $investment->amount_idr;
@@ -152,6 +182,7 @@ class ReportDataService
     {
         $query = Investment::with([
             'tree.fruitCrop.farm',
+            'lot.fruitCrop.farm',
             'payouts' => function ($q) {
                 $q->where('status', PayoutStatus::Completed);
             },
@@ -170,6 +201,10 @@ class ReportDataService
         $byMonth = [];
 
         foreach ($investments as $investment) {
+            if (! $investment->purchase_date) {
+                continue;
+            }
+
             $month = $investment->purchase_date->format('Y-m');
             if (! isset($byMonth[$month])) {
                 $byMonth[$month] = [
@@ -181,6 +216,9 @@ class ReportDataService
             $byMonth[$month]['investedIdr'] += $investment->amount_idr;
 
             foreach ($investment->payouts as $payout) {
+                if (! $payout->completed_at) {
+                    continue;
+                }
                 $payoutMonth = $payout->completed_at->format('Y-m');
                 if (! isset($byMonth[$payoutMonth])) {
                     $byMonth[$payoutMonth] = [

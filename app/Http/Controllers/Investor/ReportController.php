@@ -32,24 +32,39 @@ class ReportController extends Controller
         $profitLossData = $this->reportDataService->getProfitLossData($user, $filters);
         $performanceData = $this->reportDataService->getPerformanceData($user, $filters);
 
-        $farms = Farm::whereHas('fruitCrops.trees.investments', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
+        $farms = Farm::where(function ($query) use ($user) {
+            $query->whereHas('fruitCrops.trees.investments', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->orWhereHas('fruitCrops.lots.investments', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
         })->get(['id', 'name']);
 
-        $fruitTypes = FruitType::whereHas('fruitCrops.trees.investments', function ($query) use ($user) {
-            $query->where('user_id', $user->id);
+        $fruitTypes = FruitType::where(function ($query) use ($user) {
+            $query->whereHas('fruitCrops.trees.investments', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            })->orWhereHas('fruitCrops.lots.investments', function ($q) use ($user) {
+                $q->where('user_id', $user->id);
+            });
         })->get(['id', 'name']);
 
         $investments = Investment::where('user_id', $user->id)
-            ->with('tree.fruitCrop.farm')
-            ->get(['id', 'tree_id', 'amount_idr', 'purchase_date'])
+            ->with('tree.fruitCrop.farm', 'lot.fruitCrop.farm')
+            ->get(['id', 'tree_id', 'lot_id', 'amount_idr', 'purchase_date'])
             ->map(function ($inv) {
+                $farmName = $inv->tree?->fruitCrop?->farm?->name
+                    ?? $inv->lot?->fruitCrop?->farm?->name
+                    ?? 'Unknown Farm';
+                $identifier = $inv->tree?->tree_identifier
+                    ?? $inv->lot?->name
+                    ?? 'N/A';
+
                 return [
                     'id' => $inv->id,
                     'label' => sprintf(
                         '%s - %s (%s)',
-                        $inv->tree->fruitCrop->farm->name ?? 'Unknown Farm',
-                        $inv->tree->tree_identifier,
+                        $farmName,
+                        $identifier,
                         number_format($inv->amount_idr, 0)
                     ),
                 ];

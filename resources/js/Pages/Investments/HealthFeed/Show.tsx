@@ -6,6 +6,7 @@ import BottomNav from '@/Components/Portfolio/BottomNav';
 import { PageProps } from '@/types';
 import HealthSeverityBadge from '@/Components/HealthSeverityBadge';
 import { IconArrowLeft, IconMapPin, IconTree, IconUser } from '@/Components/Icons/AppIcons';
+import PhotoGallery from '@/Components/PhotoGallery';
 
 interface HealthUpdate {
   id: number;
@@ -95,14 +96,14 @@ export default function Show({ auth, healthUpdate, unread_notifications_count }:
             </div>
 
             {/* Farm Context */}
-            <div className="bg-bg rounded-xl p-4 mb-6 border border-border">
-                <div className="flex items-start gap-3 mb-3">
-                    <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary shrink-0">
-                        <IconMapPin className="w-4 h-4" />
+            <div className="bg-bg rounded-xl p-4 mb-6 border border-border flex flex-col gap-4">
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <IconMapPin className="w-5 h-5" />
                     </div>
                     <div>
-                        <p className="text-xs text-textSecondary uppercase font-bold tracking-wider mb-0.5">Farm</p>
-                        <Link href={`/farms/${healthUpdate.fruit_crop.farm.id}`} className="text-sm font-semibold text-text hover:text-primary">
+                        <p className="text-[10px] text-textSecondary uppercase font-bold tracking-wider mb-0.5">Location</p>
+                        <Link href={`/farms/${healthUpdate.fruit_crop.farm.id}`} className="text-sm font-semibold text-text hover:text-primary transition-colors">
                             {healthUpdate.fruit_crop.farm.name}
                         </Link>
                         {healthUpdate.fruit_crop.farm.city && (
@@ -110,12 +111,13 @@ export default function Show({ auth, healthUpdate, unread_notifications_count }:
                         )}
                     </div>
                 </div>
-                <div className="flex items-start gap-3">
-                    <div className="w-8 h-8 rounded-full bg-primary-100 flex items-center justify-center text-primary shrink-0">
-                        <IconTree className="w-4 h-4" />
+                <div className="w-full h-px bg-border"></div>
+                <div className="flex items-center gap-4">
+                    <div className="w-10 h-10 rounded-full bg-primary/10 flex items-center justify-center text-primary shrink-0">
+                        <IconTree className="w-5 h-5" />
                     </div>
                     <div>
-                        <p className="text-xs text-textSecondary uppercase font-bold tracking-wider mb-0.5">Crop</p>
+                        <p className="text-[10px] text-textSecondary uppercase font-bold tracking-wider mb-0.5">Crop Variant</p>
                         <p className="text-sm font-semibold text-text">{healthUpdate.fruit_crop.variant}</p>
                         <p className="text-xs text-textSecondary">{healthUpdate.fruit_crop.fruit_type.name}</p>
                     </div>
@@ -123,38 +125,35 @@ export default function Show({ auth, healthUpdate, unread_notifications_count }:
             </div>
 
             {/* Description */}
-            <div className="prose prose-sm max-w-none text-text mb-6">
-              {healthUpdate.description.split('\n').map((paragraph, i) => (
-                <p key={i} className="mb-2 leading-relaxed">{paragraph}</p>
-              ))}
+            <div className="bg-bg rounded-xl p-5 border border-border mb-6">
+              <h3 className="text-sm font-bold text-text mb-3">Update Details</h3>
+              <div className="prose prose-sm max-w-none text-text">
+                {healthUpdate.description.split('\n').map((paragraph, i) => (
+                  <p key={i} className="mb-2 leading-relaxed last:mb-0">{paragraph}</p>
+                ))}
+              </div>
             </div>
 
             {/* Photos */}
             {healthUpdate.photos && healthUpdate.photos.length > 0 && (
-              <div className="mb-6">
+              <div className="mb-6 bg-bg rounded-xl p-5 border border-border">
                 <h3 className="text-sm font-bold text-text mb-3">Photos ({healthUpdate.photos.length})</h3>
-                <div className="grid grid-cols-2 gap-2">
-                  {healthUpdate.photos.map((photo, index) => (
-                    <div key={index} className="rounded-xl overflow-hidden bg-bg aspect-square relative">
-                       <img
-                        src={photo}
-                        alt={`Update photo ${index + 1}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                  ))}
-                </div>
+                <PhotoGallery 
+                  photos={healthUpdate.photos.map(url => ({ url }))} 
+                  className="grid-cols-2 !gap-3"
+                />
               </div>
             )}
 
             {/* Footer / Author */}
-            <div className="border-t border-border pt-4 flex items-center gap-3">
-                <div className="w-10 h-10 rounded-full bg-border flex items-center justify-center text-textSecondary">
-                    <IconUser className="w-5 h-5" />
+            <div className="bg-bg rounded-xl p-4 flex items-center gap-4 border border-border">
+                <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center text-primary">
+                    <IconUser className="w-6 h-6" />
                 </div>
                 <div>
+                    <p className="text-[10px] text-textSecondary uppercase font-bold tracking-wider mb-0.5">Reported By</p>
                     <p className="text-sm font-bold text-text">{healthUpdate.author.name}</p>
-                    <p className="text-xs text-textSecondary capitalize">{healthUpdate.author.role.replace('_', ' ')}</p>
+                    <p className="text-xs text-textSecondary capitalize">{healthUpdate.author.role?.replace('_', ' ') || 'Unknown'}</p>
                 </div>
             </div>
           </div>

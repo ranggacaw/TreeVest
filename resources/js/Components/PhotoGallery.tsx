@@ -60,7 +60,7 @@ export default function PhotoGallery({ photos, className = '' }: Props) {
           <button
             key={index}
             onClick={() => openLightbox(index)}
-            className="relative aspect-square rounded-lg overflow-hidden bg-gray-100 hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-emerald-500"
+            className="relative aspect-square rounded-xl overflow-hidden bg-bg border border-border hover:opacity-90 transition-opacity focus:outline-none focus:ring-2 focus:ring-primary shadow-sm"
           >
             <img
               src={photo.thumbnail_url || photo.url}

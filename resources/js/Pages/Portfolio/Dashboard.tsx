@@ -391,7 +391,7 @@ export default function Dashboard({
                         className={`whitespace-nowrap rounded-full px-4 py-1.5 text-[13px] font-semibold border transition-colors ${isActive
                           ? 'border-emerald-500 text-emerald-600 bg-emerald-50/30'
                           : 'border-gray-200 text-gray-600 hover:bg-gray-50'
-                        }`}
+                          }`}
                       >
                         {crop}
                       </button>
@@ -413,8 +413,8 @@ export default function Dashboard({
                       const medalBg = isGold
                         ? 'bg-amber-100 text-amber-600 border-amber-300'
                         : isSilver
-                        ? 'bg-gray-100 text-gray-500 border-gray-300'
-                        : 'bg-orange-100 text-orange-700 border-orange-300';
+                          ? 'bg-gray-100 text-gray-500 border-gray-300'
+                          : 'bg-orange-100 text-orange-700 border-orange-300';
 
                       const logoColors = ['bg-blue-50 text-blue-500', 'bg-amber-50 text-amber-500', 'bg-red-50 text-red-500'];
                       const logoBg = logoColors[index % logoColors.length];
@@ -453,31 +453,32 @@ export default function Dashboard({
             </>
           )}
 
-           {/* ── Quick Links ───────────────────────────────────────── */}
-           <div className="h-3 bg-gray-50" />
-           <div className="bg-white px-5 pt-5 pb-6">
-             <h2 className="text-sm font-bold text-gray-900 mb-3">Akses Cepat</h2>
-             <div className="grid grid-cols-2 gap-3">
-               {[
-                 { href: route('investor.lots.index'), icon: <IconPlant className="w-5 h-5 text-emerald-600" />, label: 'Lot Marketplace', bg: 'bg-emerald-50' },
-                 { href: route('reports.index'), icon: <IconChart className="w-5 h-5 text-indigo-500" />, label: 'Laporan', bg: 'bg-indigo-50' },
-                 { href: route('investor.payouts.index'), icon: <IconDollar className="w-5 h-5 text-emerald-500" />, label: 'Payout Saya', bg: 'bg-emerald-50' },
-                 { href: route('education.index'), icon: <IconTree className="w-5 h-5 text-orange-500" />, label: 'Edukasi', bg: 'bg-orange-50' },
-                 { href: route('encyclopedia.index'), icon: <IconFlash className="w-5 h-5 text-blue-500" />, label: 'Ensiklopedia', bg: 'bg-blue-50' },
-               ].map(({ href, icon, label, bg }) => (
-                 <Link
-                   key={label}
-                   href={href}
-                   className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100 shadow-sm hover:border-gray-200 transition-colors"
-                 >
-                   <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center flex-shrink-0`}>
-                     {icon}
-                   </div>
-                   <span className="text-[13px] font-semibold text-gray-800">{label}</span>
-                 </Link>
-               ))}
-             </div>
-           </div>
+          {/* ── Quick Links ───────────────────────────────────────── */}
+          <div className="h-3 bg-gray-50" />
+          <div className="bg-white px-5 pt-5 pb-6">
+            <h2 className="text-sm font-bold text-gray-900 mb-3">Akses Cepat</h2>
+            <div className="grid grid-cols-2 gap-3">
+              {[
+                { href: route('investor.lots.index'), icon: <IconPlant className="w-5 h-5 text-emerald-600" />, label: 'Lot Marketplace', bg: 'bg-emerald-50' },
+                { href: route('reports.index'), icon: <IconChart className="w-5 h-5 text-indigo-500" />, label: 'Laporan', bg: 'bg-indigo-50' },
+                { href: route('investor.payouts.index'), icon: <IconDollar className="w-5 h-5 text-emerald-500" />, label: 'Payout Saya', bg: 'bg-emerald-50' },
+                { href: route('investments.health-feed.index'), icon: <IconPlant className="w-5 h-5 text-green-500" />, label: 'Health Feed', bg: 'bg-green-50' },
+                { href: route('education.index'), icon: <IconTree className="w-5 h-5 text-orange-500" />, label: 'Edukasi', bg: 'bg-orange-50' },
+                { href: route('encyclopedia.index'), icon: <IconFlash className="w-5 h-5 text-blue-500" />, label: 'Ensiklopedia', bg: 'bg-blue-50' },
+              ].map(({ href, icon, label, bg }) => (
+                <Link
+                  key={label}
+                  href={href}
+                  className="flex items-center gap-3 p-3.5 bg-white rounded-xl border border-gray-100 shadow-sm hover:border-gray-200 transition-colors"
+                >
+                  <div className={`w-9 h-9 ${bg} rounded-lg flex items-center justify-center flex-shrink-0`}>
+                    {icon}
+                  </div>
+                  <span className="text-[13px] font-semibold text-gray-800">{label}</span>
+                </Link>
+              ))}
+            </div>
+          </div>
 
         </div>{/* end scrollable */}
 

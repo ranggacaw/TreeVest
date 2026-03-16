@@ -119,14 +119,14 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                     <div className="bg-white px-5 pt-5 pb-6">
                         <h2 className="text-sm font-bold text-gray-900 mb-4">Informasi Lot</h2>
                         <div className="grid grid-cols-2 gap-3">
-                            <div className="bg-gradient-to-br from-gray-50 to-gray-100 border border-gray-200 rounded-2xl p-4">
+                            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-2xl p-4">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <IconTree className="w-5 h-5 text-gray-600" />
-                                    <p className="text-[10px] text-gray-500 uppercase tracking-wide font-semibold">
+                                    <IconTree className="w-5 h-5 text-green-600" />
+                                    <p className="text-[10px] text-green-500 uppercase tracking-wide font-semibold">
                                         Total Pohon
                                     </p>
                                 </div>
-                                <p className="text-xl font-bold text-gray-900">{lot.total_trees}</p>
+                                <p className="text-xl font-bold text-green-900">{lot.total_trees}</p>
                             </div>
 
                             <div className="bg-gradient-to-br from-emerald-50 to-emerald-100 border border-emerald-200 rounded-2xl p-4">
@@ -136,31 +136,31 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                         Harga/Pohon
                                     </p>
                                 </div>
-                                <p className="text-xl font-bold text-emerald-600">
+                                <p className="text-xl font-bold text-green-900">
                                     {formatRupiah(lot.current_price_per_tree_idr)}
                                 </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-blue-50 to-blue-100 border border-blue-200 rounded-2xl p-4">
+                            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-2xl p-4">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <IconChart className="w-5 h-5 text-blue-600" />
-                                    <p className="text-[10px] text-blue-700 uppercase tracking-wide font-semibold">
+                                    <IconChart className="w-5 h-5 text-green-600" />
+                                    <p className="text-[10px] text-green-700 uppercase tracking-wide font-semibold">
                                         Siklus
                                     </p>
                                 </div>
-                                <p className="text-xl font-bold text-blue-600">
+                                <p className="text-xl font-bold text-green-900">
                                     {currentCycleMonth} / {lot.cycle_months} bln
                                 </p>
                             </div>
 
-                            <div className="bg-gradient-to-br from-purple-50 to-purple-100 border border-purple-200 rounded-2xl p-4">
+                            <div className="bg-gradient-to-br from-green-50 to-green-100 border border-green-200 rounded-2xl p-4">
                                 <div className="flex items-center gap-2 mb-2">
-                                    <IconTrophy className="w-5 h-5 text-purple-600" />
-                                    <p className="text-[10px] text-purple-700 uppercase tracking-wide font-semibold">
+                                    <IconTrophy className="w-5 h-5 text-green-600" />
+                                    <p className="text-[10px] text-green-700 uppercase tracking-wide font-semibold">
                                         Investor
                                     </p>
                                 </div>
-                                <p className="text-xl font-bold text-purple-600">
+                                <p className="text-xl font-bold text-green-900">
                                     {lot.investments_count || 0}
                                 </p>
                             </div>
@@ -272,9 +272,8 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                 {Object.values(priceTable).map((row) => (
                                     <div
                                         key={row.month}
-                                        className={`flex justify-between items-center px-4 py-2.5 text-sm ${
-                                            row.month === currentCycleMonth ? 'bg-emerald-100' : ''
-                                        } ${row.month < currentCycleMonth ? 'text-gray-400' : ''}`}
+                                        className={`flex justify-between items-center px-4 py-2.5 text-sm ${row.month === currentCycleMonth ? 'bg-emerald-100' : ''
+                                            } ${row.month < currentCycleMonth ? 'text-gray-400' : ''}`}
                                     >
                                         <div className="flex items-center gap-2">
                                             <span className="font-semibold w-16">
@@ -355,7 +354,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                         >
                                             -
                                         </button>
-                                         <input
+                                        <input
                                             type="number"
                                             min="1"
                                             max={lot.available_trees}
@@ -374,7 +373,7 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                                     {errors.trees && (
                                         <p className="text-red-500 text-xs mt-1.5">{errors.trees}</p>
                                     )}
-                                     <p className="text-xs text-gray-500 mt-1.5">
+                                    <p className="text-xs text-gray-500 mt-1.5">
                                         Tersedia: {lot.available_trees} dari {lot.total_trees} pohon
                                     </p>
                                 </div>
@@ -400,11 +399,11 @@ export default function Show({ lot, priceTable, currentCycleMonth, myInvestment,
                             </form>
                         </div>
                     ) : (
-                            <div className="bg-gray-50 px-5 pt-5 pb-6">
-                                <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center">
-                                    <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
-                                        <IconInfoCircle className="w-6 h-6 text-gray-400" />
-                                    </div>
+                        <div className="bg-gray-50 px-5 pt-5 pb-6">
+                            <div className="bg-white border border-gray-200 rounded-2xl p-5 text-center">
+                                <div className="w-12 h-12 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-3">
+                                    <IconInfoCircle className="w-6 h-6 text-gray-400" />
+                                </div>
                                 <h3 className="text-sm font-bold text-gray-900 mb-2">
                                     Window Investasi Ditutup
                                 </h3>
